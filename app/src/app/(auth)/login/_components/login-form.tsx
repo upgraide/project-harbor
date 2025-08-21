@@ -19,26 +19,26 @@ import { toast } from "sonner";
 
 const LoginForm = () => {
   const router = useRouter();
-  const [usernamePending, startUsernameTransition] = useTransition();
-  const [username, setUsername] = useState("");
+  const [pending, startTransition] = useTransition();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Bem-vindo de volta!</CardTitle>
-        <CardDescription>Entre com a conta Google ou Email</CardDescription>
+        <CardDescription>Insira as credenciais de acesso</CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
         <div className="grid gap-3">
           <div className="grid gap-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="username"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="exemplo@exemplo.com"
               required
             />
           </div>
@@ -54,8 +54,8 @@ const LoginForm = () => {
             />
           </div>
 
-          <Button className="w-full" disabled={usernamePending}>
-            {usernamePending ? (
+          <Button className="w-full" disabled={pending}>
+            {pending ? (
               <>
                 <Loader className="size-4 animate-spin" />
                 <span>A carregar...</span>
@@ -63,7 +63,7 @@ const LoginForm = () => {
             ) : (
               <>
                 <Send className="size-4" />
-                <span>Continuar com username</span>
+                <span>Continuar</span>
               </>
             )}
           </Button>
