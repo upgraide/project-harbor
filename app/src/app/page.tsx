@@ -1,5 +1,6 @@
-import { Button, buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
+import { ModeToggle } from "@/components/mode-toggle";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function Page() {
   return (
@@ -9,6 +10,7 @@ export default function Page() {
       <Link href="/login" className={buttonVariants()}>
         Login
       </Link>
+      <ModeToggle />
     </div>
   );
 }
