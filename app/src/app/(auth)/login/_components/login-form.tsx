@@ -1,5 +1,10 @@
 "use client";
 
+import { Loader, Send } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,24 +15,37 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/auth-client";
 import { homePath, registerPath } from "@/paths";
-import { Loader, Send } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
 
 const LoginForm = () => {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
+  async function sendEmailOTP() {
+    startTransition(async () => {
+      await authClient.emailOtp.sendVerificationOtp({
+        email: email,
+        type: "sign-in",
+        fetchOptions: {
+          onSuccess: () => {
+            toast.success("Login realizado com sucesso! Redirecionando...");
+            router.push(homePath());
+          },
+          onError: () => {
+            toast.error("Ocorreu um erro ao fazer login");
+          },
+        },
+      });
+    });
+  }
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>Bem-vindo de volta!</CardTitle>
-        <CardDescription>Insira as credenciais de acesso</CardDescription>
+        <CardDescription>Insira o seu email para continuar</CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
@@ -39,17 +57,6 @@ const LoginForm = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="exemplo@exemplo.com"
-              required
-            />
-          </div>
-
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="********"
               required
             />
           </div>
