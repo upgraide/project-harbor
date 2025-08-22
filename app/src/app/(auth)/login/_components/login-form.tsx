@@ -16,25 +16,27 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
-import { homePath, registerPath } from "@/paths";
+import { dashboardPath, homePath, registerPath } from "@/paths";
 
 const LoginForm = () => {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  async function sendEmailOTP() {
+  async function signIn() {
     startTransition(async () => {
-      await authClient.emailOtp.sendVerificationOtp({
-        email: email,
-        type: "sign-in",
+      await authClient.signIn.email({
+        email,
+        password,
+        callbackURL: dashboardPath(),
         fetchOptions: {
           onSuccess: () => {
             toast.success("Login realizado com sucesso! Redirecionando...");
             router.push(homePath());
           },
           onError: () => {
-            toast.error("Ocorreu um erro ao fazer login");
+            toast.error("Erro ao fazer login, tente novamente.");
           },
         },
       });
@@ -53,7 +55,8 @@ const LoginForm = () => {
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
-              type="text"
+              id="email"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="exemplo@exemplo.com"
@@ -61,7 +64,20 @@ const LoginForm = () => {
             />
           </div>
 
-          <Button className="w-full" disabled={pending}>
+          <div className="grid gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              autoComplete="password"
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="********"
+              required
+            />
+          </div>
+
+          <Button className="w-full" disabled={pending} onClick={signIn}>
             {pending ? (
               <>
                 <Loader className="size-4 animate-spin" />
