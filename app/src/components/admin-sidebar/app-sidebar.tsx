@@ -25,7 +25,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { adminDashboardPath, adminInvestmentsPath } from "@/paths";
+import { adminDashboardPath, adminProjectsPath } from "@/paths";
 import IconDark from "../../../public/brand/icon-dark.png";
 import IconLight from "../../../public/brand/icon-light.png";
 
@@ -37,8 +37,8 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Investments",
-      url: adminInvestmentsPath(),
+      title: "Project Management",
+      url: adminProjectsPath(),
       icon: IconListDetails,
     },
     {

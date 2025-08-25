@@ -13,8 +13,7 @@ export const dashboardPath = () => "/dashboard";
 // Admin Dashboard Paths
 export const adminDashboardPath = () => "/admin";
 
-// Admin Investments Part
-export const adminInvestmentsPath = () => "/admin/investments";
-export const adminInvestmentDetailsPath = (id: string) =>
-  `/admin/investments/${id}`;
-export const adminInvestmentCreatePath = () => "/admin/investments/create";
+// Admin Investments Parths
+export const adminProjectsPath = () => "/admin/projects";
+export const adminProjectDetailsPath = (id: string) => `/admin/projects/${id}`;
+export const adminProjectCreatePath = () => "/admin/projects/create";
