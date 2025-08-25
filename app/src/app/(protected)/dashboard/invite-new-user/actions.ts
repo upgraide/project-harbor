@@ -1,9 +1,11 @@
 "use server";
 
 import { requireAdmin } from "@/data/require-auth";
+import InviteNewUser from "@/emails/auth/invite-new-user";
 import { auth } from "@/lib/auth";
 import { resend } from "@/lib/resend";
 import type { ApiResponse } from "@/lib/types/api-response";
+import { generatePassword } from "@/lib/utils";
 import type { InviteNewUserSchemaType } from "@/lib/zod/invite-new-user-schema";
 
 export async function inviteNewUser(
@@ -12,6 +14,8 @@ export async function inviteNewUser(
   await requireAdmin();
 
   try {
+    data.password = generatePassword(12);
+
     await auth.api.signUpEmail({
       body: {
         name: data.name, // required
@@ -26,7 +30,11 @@ export async function inviteNewUser(
       from: "Harbor Partners <onboarding@resend.dev>",
       to: data.email,
       subject: "Welcome to Harbor Partners",
-      react: ,
+      react: InviteNewUser({
+        toName: data.name,
+        email: data.email,
+        password: data.password,
+      }),
     });
 
     return {
