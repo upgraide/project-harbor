@@ -2,7 +2,6 @@
 
 import { Loader, Send } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -16,10 +15,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
-import { dashboardPath, homePath, registerPath } from "@/paths";
+import { dashboardPath, registerPath } from "@/paths";
 
 const LoginForm = () => {
-  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +31,6 @@ const LoginForm = () => {
         fetchOptions: {
           onSuccess: () => {
             toast.success("Login realizado com sucesso! Redirecionando...");
-            router.push(homePath());
           },
           onError: () => {
             toast.error("Erro ao fazer login, tente novamente.");
