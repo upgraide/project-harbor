@@ -8,11 +8,7 @@ export const env = createEnv({
     BETTER_AUTH_URL: z.url(),
     RESEND_API_KEY: z.string().min(1),
   },
-  client: {
-    NEXT_PUBLIC_PUBLISHABLE_KEY: z.string().min(1),
-  },
+  client: {},
 
-  experimental__runtimeEnv: {
-    NEXT_PUBLIC_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
-  },
+  experimental__runtimeEnv: {},
 });
