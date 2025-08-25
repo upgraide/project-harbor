@@ -11,10 +11,13 @@ import {
 
 type Props = {
   toName: string;
-  inviteUrl: string;
+  email: string;
+  password: string;
 };
 
-const InviteNewUser = ({ toName, inviteUrl }: Props) => {
+const websiteLink = "https://harbor.com";
+
+const InviteNewUser = ({ toName, email, password }: Props) => {
   return (
     <Html>
       <Head />
@@ -51,8 +54,12 @@ const InviteNewUser = ({ toName, inviteUrl }: Props) => {
               </Text>
             </Section>
             <Section className="text-center">
+              <span className="font-bold">Email:</span> {email}
+              <br />
+              <span className="font-bold">Password:</span> {password}
+              <br />
               <Button
-                href={inviteUrl}
+                href={websiteLink}
                 style={{
                   backgroundColor: "#11112D",
                   color: "#ffffff",
@@ -62,8 +69,9 @@ const InviteNewUser = ({ toName, inviteUrl }: Props) => {
                   fontWeight: "600",
                   display: "inline-block",
                 }}
+                className="mt-4"
               >
-                Aceitar Convite
+                Ir Para a Plataforma
               </Button>
             </Section>
             <Section>
@@ -81,7 +89,8 @@ const InviteNewUser = ({ toName, inviteUrl }: Props) => {
 
 InviteNewUser.PreviewProps = {
   toName: "John Doe",
-  inviteUrl: "https://example.com/invite/123",
+  email: "john.doe@example.com",
+  password: "password123",
 };
 
 export default InviteNewUser;
