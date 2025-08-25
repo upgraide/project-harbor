@@ -13,7 +13,7 @@ export default async function ProtectedLayout({
   });
 
   if (!session) {
-    // redirect(loginPath());
+    redirect(loginPath());
   }
 
   return <>{children}</>;
