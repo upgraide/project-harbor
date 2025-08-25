@@ -34,9 +34,6 @@ const InviteNewUserForm = () => {
     defaultValues: {
       name: "",
       email: "",
-      password: "",
-      image: "",
-      callbackURL: "",
     },
   });
 
@@ -68,7 +65,7 @@ const InviteNewUserForm = () => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Estado</FormLabel>
+              <FormLabel>Nome</FormLabel>
               <FormControl>
                 <Input placeholder="Nome do Utilizador" {...field} />
               </FormControl>
@@ -101,7 +98,7 @@ const InviteNewUserForm = () => {
             </>
           ) : (
             <>
-              Atualizar Estado
+              Convidar Utilizador
               <PlusIcon className="ml-1" size={16} />
             </>
           )}
