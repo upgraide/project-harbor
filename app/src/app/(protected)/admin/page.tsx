@@ -1,6 +1,6 @@
-import { ChartAreaInteractive } from "@/components/admin-sidebar/chart-area-interactive";
-import { DataTable } from "@/components/admin-sidebar/data-table";
-import { SectionCards } from "@/components/admin-sidebar/section-cards";
+import { ChartAreaInteractive } from "@/app/(protected)/admin/_components/admin-sidebar/chart-area-interactive";
+import { DataTable } from "@/app/(protected)/admin/_components/admin-sidebar/data-table";
+import { SectionCards } from "@/app/(protected)/admin/_components/admin-sidebar/section-cards";
 
 import data from "./data.json";
 
