@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { loginPath } from "@/paths";
+import { Navbar } from "./_components/navbar";
 
 export default async function ProtectedLayout({
   children,
@@ -16,5 +17,10 @@ export default async function ProtectedLayout({
     redirect(loginPath());
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
 }

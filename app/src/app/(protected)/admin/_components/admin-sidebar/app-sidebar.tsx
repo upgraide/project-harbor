@@ -13,9 +13,9 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type * as React from "react";
-import { NavMain } from "@/components/admin-sidebar/nav-main";
-import { NavSecondary } from "@/components/admin-sidebar/nav-secondary";
-import { NavUser } from "@/components/admin-sidebar/nav-user";
+import { NavMain } from "@/app/(protected)/admin/_components/admin-sidebar/nav-main";
+import { NavSecondary } from "@/app/(protected)/admin/_components/admin-sidebar/nav-secondary";
+import { NavUser } from "@/app/(protected)/admin/_components/admin-sidebar/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -25,9 +25,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { adminDashboardPath, adminInvestmentsPath } from "@/paths";
-import IconDark from "../../../public/brand/icon-dark.png";
-import IconLight from "../../../public/brand/icon-light.png";
+import { adminDashboardPath, adminProjectsPath } from "@/paths";
+import IconDark from "../../../../../../public/brand/icon-dark.png";
+import IconLight from "../../../../../../public/brand/icon-light.png";
 
 const data = {
   navMain: [
@@ -37,8 +37,8 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Investments",
-      url: adminInvestmentsPath(),
+      title: "Project Management",
+      url: adminProjectsPath(),
       icon: IconListDetails,
     },
     {

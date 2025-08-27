@@ -1,10 +1,13 @@
-import { ModeToggle } from "@/components/mode-toggle";
-import { buttonVariants } from "@/components/ui/button";
-import { homePath, privacyPath, termsPath } from "@/paths";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { buttonVariants } from "@/components/ui/button";
+import { homePath, privacyPath, termsPath } from "@/paths";
+
+export const metadata = {
+  title: "Sign In",
+};
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
   return (

@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { adminInvestmentCreatePath } from "@/paths";
+import { adminProjectCreatePath } from "@/paths";
 
 export function NavMain({
   items,
@@ -30,7 +30,7 @@ export function NavMain({
               tooltip="Quick Create"
               className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
             >
-              <Link href={adminInvestmentCreatePath()}>
+              <Link href={adminProjectCreatePath()}>
                 <IconCirclePlusFilled />
                 <span>Quick Create</span>
               </Link>
