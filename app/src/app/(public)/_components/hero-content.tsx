@@ -26,10 +26,12 @@ export default function HeroContent() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button>Request access</Button>
+              <Button variant={"default"} size={"lg"}>
+                Request access
+              </Button>
               <Link
                 href={loginPath()}
-                className={buttonVariants({ variant: "outline" })}
+                className={buttonVariants({ variant: "outline", size: "lg" })}
               >
                 <Lock className="size-4 mr-2" />
                 Membership login

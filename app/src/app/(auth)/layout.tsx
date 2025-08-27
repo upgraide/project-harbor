@@ -2,7 +2,6 @@ import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ModeToggle } from "@/components/mode-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { homePath, privacyPath, termsPath } from "@/paths";
 
@@ -23,7 +22,6 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
         <ArrowLeft className="size-4" />
         Voltar
       </Link>
-      <ModeToggle />
 
       <div className="flex w-full max-w-sm flex-col gap-6">
         <Link
