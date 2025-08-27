@@ -17,3 +17,9 @@ export const adminDashboardPath = () => "/admin";
 export const adminProjectsPath = () => "/admin/projects";
 export const adminProjectDetailsPath = (id: string) => `/admin/projects/${id}`;
 export const adminProjectCreatePath = () => "/admin/projects/create";
+
+// User Settings
+export const userSettingsPath = () => `/dashboard/settings`;
+
+// Admin Settings
+export const adminSettingsPath = () => `/admin/settings`;
