@@ -13,9 +13,9 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type * as React from "react";
-import { NavMain } from "@/components/admin-sidebar/nav-main";
-import { NavSecondary } from "@/components/admin-sidebar/nav-secondary";
-import { NavUser } from "@/components/admin-sidebar/nav-user";
+import { NavMain } from "@/app/(protected)/admin/_components/admin-sidebar/nav-main";
+import { NavSecondary } from "@/app/(protected)/admin/_components/admin-sidebar/nav-secondary";
+import { NavUser } from "@/app/(protected)/admin/_components/admin-sidebar/nav-user";
 import {
   Sidebar,
   SidebarContent,

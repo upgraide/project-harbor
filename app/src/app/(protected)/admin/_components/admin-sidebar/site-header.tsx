@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ModeToggle } from "../mode-toggle";
+import { ModeToggle } from "../../../../../components/mode-toggle";
 
 export function SiteHeader() {
   const pathname = usePathname();
