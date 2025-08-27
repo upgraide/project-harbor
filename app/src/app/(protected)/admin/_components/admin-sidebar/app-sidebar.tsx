@@ -26,8 +26,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { adminDashboardPath, adminProjectsPath } from "@/paths";
-import IconDark from "../../../public/brand/icon-dark.png";
-import IconLight from "../../../public/brand/icon-light.png";
+import IconDark from "../../../../../../public/brand/icon-dark.png";
+import IconLight from "../../../../../../public/brand/icon-light.png";
 
 const data = {
   navMain: [

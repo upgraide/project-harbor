@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { AppSidebar } from "@/components/admin-sidebar/app-sidebar";
-import { SiteHeader } from "@/components/admin-sidebar/site-header";
+import { AppSidebar } from "@/app/(protected)/admin/_components/admin-sidebar/app-sidebar";
+import { SiteHeader } from "@/app/(protected)/admin/_components/admin-sidebar/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
 import { loginPath } from "@/paths";
