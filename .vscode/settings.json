@@ -24,5 +24,11 @@
 	"search.exclude": {
 		"**/node_modules": true
 	},
-	"tailwindCSS.experimental.configFile": "harbor-app/packages/ui/src/styles/globals.css"
+	"tailwindCSS.experimental.configFile": "harbor-app/packages/ui/src/styles/globals.css",
+	"[dotenv]": {
+		"editor.defaultFormatter": "foxundermoon.shell-format"
+	},
+	"[ignore]": {
+		"editor.defaultFormatter": "foxundermoon.shell-format"
+	}
 }
