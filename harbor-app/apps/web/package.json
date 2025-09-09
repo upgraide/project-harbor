@@ -15,6 +15,7 @@
     "@harbor-app/ui": "workspace:*",
     "@openstatus/react": "^0.0.3",
     "next": "15.5.2",
+    "next-safe-action": "^8.0.11",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
