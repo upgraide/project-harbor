@@ -1,11 +1,12 @@
 import { getEmailUrl } from "@harbor-app/utils/envs";
-import { Img, Link, Section } from "@react-email/components";
+import { Img, Section } from "@react-email/components";
 
 const baseUrl = getEmailUrl();
 
-export function LogoFooter() {
+export function Logo() {
+  // CSS-blended version for automatic dark mode adaptation
   return (
-    <Section>
+    <Section className="mt-[32px]">
       <style>{`
           .logo-blend {
             filter: none;
@@ -32,14 +33,13 @@ export function LogoFooter() {
           }
         `}</style>
 
-      <Link href={baseUrl}>
-        <Img
-          alt="Harbor Partners"
-          className="block logo-blend"
-          src={`${baseUrl}/email/logo-footer.png`}
-          width="80"
-        />
-      </Link>
+      <Img
+        alt="Harbor Partners"
+        className="my-0 mx-auto block logo-blend"
+        height="40"
+        src={`${baseUrl}/email/logo.png`}
+        width="40"
+      />
     </Section>
   );
 }
