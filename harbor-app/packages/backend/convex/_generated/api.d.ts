@@ -8,6 +8,8 @@
  * @module
  */
 
+import type * as env from "../env.js";
+import type * as http from "../http.js";
 import type * as sendEmails from "../sendEmails.js";
 
 import type {
@@ -25,6 +27,8 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  env: typeof env;
+  http: typeof http;
   sendEmails: typeof sendEmails;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
