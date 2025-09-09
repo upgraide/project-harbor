@@ -12,6 +12,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@convex-dev/resend": "^0.1.12",
     "convex": "^1.27.0",
     "convex-helpers": "^0.1.104"
   }
