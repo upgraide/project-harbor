@@ -3,11 +3,11 @@
 import { useEffect, useRef } from "react";
 
 export function DevMessage() {
-	const ref = useRef<boolean>(false);
+  const ref = useRef<boolean>(false);
 
-	useEffect(() => {
-		if (!ref.current) {
-			console.log(`
+  useEffect(() => {
+    if (!ref.current) {
+      console.log(`
         -------------------------------------------------
         ░▒▓█▓▒░░▒▓█▓▒░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓█▓▒░▒▓███████▓▒░░▒▓████████▓▒░ 
         ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░        
@@ -19,10 +19,10 @@ export function DevMessage() {
         -------------------------------------------------
         We are Upgraide: https://upgraide.ai
         Developer: https://rodrigosantos.dev
-    `);
-			ref.current = true;
-		}
-	}, []);
+        `);
+      ref.current = true;
+    }
+  }, []);
 
-	return null;
+  return null;
 }
