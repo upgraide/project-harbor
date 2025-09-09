@@ -3,9 +3,9 @@
 import { getStatus } from "@openstatus/react";
 
 export async function fetchStatus() {
-	const res = await getStatus("midday"); // TODO: Change to Harbor
+  const res = await getStatus("midday"); // TODO: Change to Harbor
 
-	const { status } = res;
+  const { status } = res;
 
-	return status;
+  return status;
 }

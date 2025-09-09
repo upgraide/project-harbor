@@ -30,5 +30,6 @@
 	},
 	"[ignore]": {
 		"editor.defaultFormatter": "foxundermoon.shell-format"
-	}
+	},
+	"biome.configurationPath": "harbor-app/biome.json"
 }
