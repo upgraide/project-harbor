@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@harbor-app/ui/globals.css";
-import { DevMessage } from "@/components/dev-message";
 import { Providers } from "@/components/providers";
 import { baseUrl } from "./sitemap";
 
@@ -90,12 +89,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
       >
-        <Providers>
-          {children}
-          <DevMessage />
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
