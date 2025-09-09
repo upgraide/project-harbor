@@ -1,0 +1,27 @@
+{
+  "name": "@harbor-app/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack --port 3001",
+    "build": "next build --turbopack",
+    "clean": "git clean -xdf .next .turbo node_modules",
+    "lint": "biome lint",
+    "start": "next start",
+    "format": "biome format --write .",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@harbor-app/ui": "workspace:*",
+    "next": "15.5.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@harbor-app/typescript-config": "workspace:*",
+    "@types/node": "^20.19.9",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "typescript": "^5.9.2"
+  }
+}

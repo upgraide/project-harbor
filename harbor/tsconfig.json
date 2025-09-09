@@ -1,3 +1,0 @@
-{
-  "extends": "@harbor/typescript-config/base.json"
-}

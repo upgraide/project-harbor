@@ -1,18 +1,18 @@
 {
-	"name": "harbor",
+	"name": "harbor-app",
 	"private": true,
 	"scripts": {
 		"build": "turbo run build",
 		"clean": "git clean -xdf node_modules",
 		"clean:workspaces": "turbo clean",
 		"dev": "turbo run dev",
-		"dev:web": "turbo dev --filter=@harbor/web",
-		"dev:app": "turbo dev --filter=@harbor/app",
-		"start:web": "turbo start --filter=@harbor/web",
-		"start:app": "turbo start --filter=@harbor/app",
+		"dev:web": "turbo dev --filter=@harbor-app/web",
+		"dev:app": "turbo dev --filter=@harbor-app/app",
+		"start:web": "turbo start --filter=@harbor-app/web",
+		"start:app": "turbo start --filter=@harbor-app/app",
 		"test": "turbo test --parallel",
 		"format": "biome format --write .",
-		"lint": "turbo lint && bun lint:harbor",
+		"lint": "turbo lint && bun lint:harbor:fix",
 		"lint:harbor": "bunx sherif@latest",
 		"lint:harbor:fix": "bunx sherif@latest --fix",
 		"check-types": "turbo run check-types"
@@ -20,7 +20,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.2.3",
 		"turbo": "^2.5.6",
-		"typescript": "5.9.2"
+		"typescript": "^5.9.2"
 	},
 	"engines": {
 		"node": ">=20"

@@ -1,9 +1,9 @@
 {
-  "extends": "@harbor/typescript-config/react-library.json",
+  "extends": "@harbor-app/typescript-config/react-library.json",
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@harbor/ui/*": ["./src/*"]
+      "@harbor-app/ui/*": ["./src/*"]
     }
   },
   "include": ["."],

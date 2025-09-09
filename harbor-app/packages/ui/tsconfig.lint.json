@@ -1,5 +1,5 @@
 {
-  "extends": "@harbor/typescript-config/react-library.json",
+  "extends": "@harbor-app/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist"
   },

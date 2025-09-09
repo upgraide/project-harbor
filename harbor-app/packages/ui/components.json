@@ -11,10 +11,10 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@harbor/ui/components",
-    "utils": "@harbor/ui/lib/utils",
-    "hooks": "@harbor/ui/hooks",
-    "lib": "@harbor/ui/lib",
-    "ui": "@harbor/ui/components"
+    "components": "@harbor-app/ui/components",
+    "utils": "@harbor-app/ui/lib/utils",
+    "hooks": "@harbor-app/ui/hooks",
+    "lib": "@harbor-app/ui/lib",
+    "ui": "@harbor-app/ui/components"
   }
 }

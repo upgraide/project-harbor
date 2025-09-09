@@ -1,5 +1,5 @@
 {
-  "name": "@harbor/typescript-config",
+  "name": "@harbor-app/typescript-config",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
