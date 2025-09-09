@@ -8,3 +8,5 @@ export const sendRequestSchema = z.object({
   type: z.string(),
   message: z.string(),
 });
+
+export type SendRequestSchemaType = z.infer<typeof sendRequestSchema>;
