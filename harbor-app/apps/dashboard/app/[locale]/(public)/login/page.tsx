@@ -10,6 +10,7 @@ import DarkIcon from "@/public/icon-dark.png";
 import LightIcon from "@/public/icon-light.png";
 import { Cookies } from "@/utils/constants";
 import { ConsentBanner } from "./_components/consent-banner";
+import PasswordSignInForm from "./_components/password-signin-form";
 
 export const metadata: Metadata = {
   title: "Login | Harbor Partners",
@@ -61,7 +62,9 @@ export default async function Page() {
               </div>
 
               {/* Sign In Options */}
-              <div className="space-y-4">{/* Primary Sign In Option */}</div>
+              <div className="space-y-4">
+                <PasswordSignInForm />
+              </div>
 
               {/* Terms and Privacy */}
               <div className="text-center absolute bottom-4 left-0 right-0">

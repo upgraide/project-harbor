@@ -1,5 +1,3 @@
-// middleware.ts
-
 import {
   convexAuthNextjsMiddleware,
   createRouteMatcher,
