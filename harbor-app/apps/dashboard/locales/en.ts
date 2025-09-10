@@ -1,11 +1,32 @@
 export default {
   dashboard: {
-    title: "Create your App",
+    title: "Our Opportunities",
+    description:
+      "Browse our investment opportunities and find the right one for you",
+
+    bodyTitle: "Get Started",
+    bodyDescription:
+      "To get started, please select a new opportunity by clicking on it",
+    bodyTip:
+      "Tip: You can choose to co-invest or become a lead investor by clicking on the button below",
+    documentationLink: "Learn More",
+
+    navigation: {
+      dashboard: "Dashboard",
+      opportunities: "Opportunities",
+      personalAccount: "Personal Account",
+      investors: "Investors",
+      settings: "Settings",
+      help: "Help",
+      logout: "Logout",
+      language: "Language",
+      theme: "Theme",
+    },
   },
   error: {
     title: "Something went wrong",
     description:
-      "An unexpected error has occurred. Please try again <br /> or contact support if the issue persists.",
+      "An unexpected error has occurred. Please try again or contact support if the issue persists.",
     tryAgain: "Try again",
     contactUs: "Contact us",
   },

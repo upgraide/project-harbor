@@ -1,11 +1,32 @@
 export default {
   dashboard: {
-    title: "Criar a sua Aplicação",
+    title: "As Nossas Oportunidades",
+    description:
+      "Explore as nossas oportunidades de investimento e encontre a mais adequada para si",
+
+    bodyTitle: "Comece Agora",
+    bodyDescription:
+      "Para começar, por favor selecione uma nova oportunidade clicando nela",
+    bodyTip:
+      "Dica: Pode optar por co-investir ou tornar-se investidor principal clicando no botão abaixo",
+    documentationLink: "Saber Mais",
+
+    navigation: {
+      dashboard: "Painel de Oportunidades",
+      opportunities: "Oportunidades",
+      personalAccount: "Conta Pessoal",
+      investors: "Investidores",
+      settings: "Configurações",
+      help: "Ajuda",
+      logout: "Sair",
+      language: "Idioma",
+      theme: "Tema",
+    },
   },
   error: {
     title: "Ocorreu um erro",
     description:
-      "Ocorreu um erro inesperado. Por favor, tente novamente <br /> ou contacte-nos se o problema persistir.",
+      "Ocorreu um erro inesperado. Por favor, tente novamente ou contacte-nos se o problema persistir.",
     tryAgain: "Tentar novamente",
     contactUs: "Contacte-nos",
   },

@@ -29,8 +29,8 @@ export default async function Page() {
           <DynamicImage
             alt="Background"
             className="h-8 w-auto"
-            darkSrc={DarkIcon}
-            lightSrc={LightIcon}
+            darkSrc={LightIcon}
+            lightSrc={DarkIcon}
           />
         </div>
       </header>
