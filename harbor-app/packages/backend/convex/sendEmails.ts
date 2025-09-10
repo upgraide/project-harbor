@@ -23,7 +23,7 @@ export const handleEmailEvent = internalMutation({
     id: vEmailId,
     event: vEmailEvent,
   },
-  handler: async (ctx, args): Promise<null> => {
+  handler: async (_ctx, args): Promise<null> => {
     console.log("Email event received", args);
     return null;
   },

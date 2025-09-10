@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-export const baseUrl = "https://www.harborpartners.pt/";
+export const baseUrl = "https://www.harborpartners.pt/"; // TODO: change to the correct base url
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [""].map((route) => ({
