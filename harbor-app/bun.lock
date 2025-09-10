@@ -17,6 +17,7 @@
       "dependencies": {
         "@harbor-app/ui": "workspace:*",
         "@openstatus/react": "^0.0.3",
+        "@paper-design/shaders-react": "^0.0.52",
         "next": "15.5.2",
         "next-safe-action": "^8.0.11",
         "react": "^19.1.1",
@@ -343,6 +344,10 @@
     "@nodelib/fs.walk": ["@nodelib/fs.walk@1.2.8", "", { "dependencies": { "@nodelib/fs.scandir": "2.1.5", "fastq": "^1.6.0" } }, "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg=="],
 
     "@openstatus/react": ["@openstatus/react@0.0.3", "", { "peerDependencies": { "react": "^18.0.0" } }, "sha512-uDiegz7e3H67pG8lTT+op+6w5keTT7XpcENrREaqlWl5j53TYyO8nheOG1PeNw2/Qgd5KaGeRJJFn1crhTUSYw=="],
+
+    "@paper-design/shaders": ["@paper-design/shaders@0.0.52", "", {}, "sha512-it+wjb8QQpKCVH0UvzuqY7MYL6Hcqvu1xN9akMt8hGHlW5W2LkC4Ljpwcp3mrlx3oKuex+O3WUhzNtu6ONpvIQ=="],
+
+    "@paper-design/shaders-react": ["@paper-design/shaders-react@0.0.52", "", { "dependencies": { "@paper-design/shaders": "0.0.52" }, "peerDependencies": { "@types/react": "^18 || ^19", "react": "^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-C+9RzOeubBwsGxPZpouf5tFgLfRN38+7TYxg6oMW15OendqFraZn1/YIVWLRjgQVfuv2AkJjZelzCcHfq7uk/w=="],
 
     "@pkgjs/parseargs": ["@pkgjs/parseargs@0.11.0", "", {}, "sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg=="],
 
