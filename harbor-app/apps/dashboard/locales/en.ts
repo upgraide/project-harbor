@@ -14,4 +14,17 @@ export default {
     description: "Could not find requested resource",
     returnHome: "Return Home",
   },
+  consentBanner: {
+    description:
+      "This site uses tracking technologies. You may opt in or opt out of the use of these technologies.",
+    deny: "Deny",
+    accept: "Accept",
+  },
+  login: {
+    title: "Welcome to Harbor Partners Platform",
+    description: "Enter your email and password to continue",
+    footer: "By signing in, you agree to our",
+    termsOfService: "Terms of Service",
+    privacyPolicy: "Privacy Policy",
+  },
 } as const;

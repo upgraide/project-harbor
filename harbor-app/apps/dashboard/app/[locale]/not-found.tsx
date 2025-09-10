@@ -5,7 +5,7 @@ import DarkIcon from "@/public/icon-dark.png";
 import LightIcon from "@/public/icon-light.png";
 
 export default async function NotFound() {
-  const t = await getScopedI18n("not-found");
+  const t = await getScopedI18n("notFound");
 
   return (
     <div className="h-screen flex flex-col items-center justify-center text-center text-sm text-[#606060]">
