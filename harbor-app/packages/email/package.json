@@ -9,7 +9,7 @@
     "./render": "./render.ts"
   },
   "scripts": {
-    "clean": "rm -rf .turbo node_modules",
+    "clean": "rm -rf .turbo node_modules .react-email",
     "lint": "biome check .",
     "format": "biome format --write .",
     "check-types": "tsc --noEmit",

@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "convex dev --tail-logs",
+    "clean": "rm -rf .turbo node_modules",
     "setup": "convex dev --once && convex env set VALIDATE_ENV=true",
     "seed": "convex dev --once && convex run init",
     "format": "biome format --write .",

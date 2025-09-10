@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "clean": "git clean -xdf node_modules",
+    "clean": "git clean -xdf node_modules .next .turbo",
     "clean:workspaces": "turbo clean",
     "dev": "turbo run dev",
     "dev:web": "turbo dev --filter=@harbor-app/web",
