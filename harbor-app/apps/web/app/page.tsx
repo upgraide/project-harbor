@@ -1,10 +1,5 @@
-import { Button } from "@harbor-app/ui/components/button";
+import { StartPage } from "@/components/start-page";
 
 export default function Home() {
-  return (
-    <>
-      <h1>Hello World</h1>
-      <Button>Click me</Button>
-    </>
-  );
+  return <StartPage />;
 }
