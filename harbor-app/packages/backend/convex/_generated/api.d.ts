@@ -12,6 +12,7 @@ import type * as auth from "../auth.js";
 import type * as env from "../env.js";
 import type * as http from "../http.js";
 import type * as sendEmails from "../sendEmails.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -32,6 +33,7 @@ declare const fullApi: ApiFromModules<{
   env: typeof env;
   http: typeof http;
   sendEmails: typeof sendEmails;
+  users: typeof users;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
