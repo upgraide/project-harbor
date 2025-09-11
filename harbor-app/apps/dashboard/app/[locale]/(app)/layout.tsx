@@ -1,3 +1,6 @@
+import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
+import { api } from "@harbor-app/backend/convex/_generated/api";
+import { preloadQuery } from "convex/nextjs";
 import { Navigation } from "./_components/navigation";
 
 export default async function Layout({
@@ -5,9 +8,16 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
+  // TODO: Implement the Onboarding Flow
+  const preloadedUser = await preloadQuery(
+    api.users.getUser,
+    {},
+    { token: await convexAuthNextjsToken() },
+  );
+
   return (
     <div className="flex min-h-[100vh] w-full flex-col bg-secondary dark:bg-black">
-      <Navigation />
+      <Navigation preloadedUser={preloadedUser} />
       {children}
     </div>
   );

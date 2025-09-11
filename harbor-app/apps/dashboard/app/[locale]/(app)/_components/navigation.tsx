@@ -1,6 +1,12 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
+import type { api } from "@harbor-app/backend/convex/_generated/api";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@harbor-app/ui/components/avatar";
 import { Button, buttonVariants } from "@harbor-app/ui/components/button";
 import {
   DropdownMenu,
@@ -11,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@harbor-app/ui/components/dropdown-menu";
 import { cn } from "@harbor-app/ui/lib/utils";
+import { type Preloaded, usePreloadedQuery } from "convex/react";
 import {
   Check,
   ChevronDown,
@@ -28,19 +35,24 @@ import LightIcon from "@/public/icon-light.png";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeSwitcher } from "./theme-switcher";
 
-export function Navigation() {
+export function Navigation({
+  preloadedUser,
+}: {
+  preloadedUser: Preloaded<typeof api.users.getUser>;
+}) {
   const t = useScopedI18n("dashboard");
   const { signOut } = useAuthActions();
   const pathname = usePathname();
   const router = useRouter();
+
   const isDashboardPath = pathname === "/";
   const isSettingsPath = pathname === "/settings";
 
-  const user = {
-    avatarUrl: "https://github.com/shadcn.png",
-    name: "Rodrigo Santos",
-    email: "rodrigo.santos@upgraide.ai",
-  };
+  const user = usePreloadedQuery(preloadedUser);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <nav className="sticky top-0 z-50 flex w-full flex-col border-b border-border bg-card px-6">
@@ -64,18 +76,23 @@ export function Navigation() {
                 variant="ghost"
               >
                 <div className="flex items-center gap-2">
-                  {user.avatarUrl ? (
-                    <img
-                      alt={user.name ?? user.email}
-                      className="h-8 w-8 rounded-full object-cover"
-                      src={user.avatarUrl}
+                  <Avatar className="h-8 w-8 rounded-full">
+                    <AvatarImage
+                      alt={user.email}
+                      src={
+                        user.avatarUrl ??
+                        `https://avatar.vercel.sh/${user.email}`
+                      }
                     />
-                  ) : (
-                    <span className="h-8 w-8 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
-                  )}
+                    <AvatarFallback className="h-8 w-8 rounded-full">
+                      {user.name && user.name.length > 0
+                        ? user.name.charAt(0).toUpperCase()
+                        : user.email?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
 
                   <p className="text-sm font-medium text-primary/80">
-                    {user?.name || ""}
+                    {user?.name || user.email}
                   </p>
                 </div>
                 <span className="flex flex-col items-center justify-center">
@@ -93,18 +110,23 @@ export function Navigation() {
               </DropdownMenuLabel>
               <DropdownMenuItem className="h-10 w-full cursor-pointer justify-between rounded-md bg-secondary px-2">
                 <div className="flex items-center gap-2">
-                  {user.avatarUrl ? (
-                    <img
-                      alt={user.name ?? user.email}
-                      className="h-6 w-6 rounded-full object-cover"
-                      src={user.avatarUrl}
+                  <Avatar className="h-6 w-6 rounded-full">
+                    <AvatarImage
+                      alt={user.email}
+                      src={
+                        user.avatarUrl ??
+                        `https://avatar.vercel.sh/${user.email}`
+                      }
                     />
-                  ) : (
-                    <span className="h-6 w-6 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
-                  )}
+                    <AvatarFallback className="h-6 w-6 rounded-full">
+                      {user.name && user.name.length > 0
+                        ? user.name.charAt(0).toUpperCase()
+                        : user.email?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
 
                   <p className="text-sm font-medium text-primary/80">
-                    {user.name || ""}
+                    {user.name || user.email?.split("@")[0]}
                   </p>
                 </div>
                 <Check className="h-[18px] w-[18px] stroke-[1.5px] text-primary/60" />
@@ -117,15 +139,19 @@ export function Navigation() {
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button className="h-8 w-8 rounded-full" variant="ghost">
-                {user.avatarUrl ? (
-                  <img
-                    alt={user.name ?? user.email}
-                    className="min-h-8 min-w-8 rounded-full object-cover"
-                    src={user.avatarUrl}
+                <Avatar className="h-8 w-8 rounded-full">
+                  <AvatarImage
+                    alt={user.email}
+                    src={
+                      user.avatarUrl ?? `https://avatar.vercel.sh/${user.email}`
+                    }
                   />
-                ) : (
-                  <span className="min-h-8 min-w-8 rounded-full bg-gradient-to-br from-lime-400 from-10% via-cyan-300 to-blue-500" />
-                )}
+                  <AvatarFallback className="h-8 w-8 rounded-full">
+                    {user.name && user.name.length > 0
+                      ? user.name.charAt(0).toUpperCase()
+                      : user.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -134,9 +160,9 @@ export function Navigation() {
             >
               <DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
                 <p className="text-sm font-medium text-primary/80 group-hover:text-primary group-focus:text-primary">
-                  {user?.name || ""}
+                  {user.name || user.email?.split("@")[0]}
                 </p>
-                <p className="text-sm text-primary/60">{user?.email}</p>
+                <p className="text-sm text-primary/60">{user.email}</p>
               </DropdownMenuItem>
 
               <DropdownMenuItem
