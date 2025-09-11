@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthActions } from "@convex-dev/auth/react";
 import { Button, buttonVariants } from "@harbor-app/ui/components/button";
 import {
   DropdownMenu,
@@ -29,6 +30,7 @@ import { ThemeSwitcher } from "./theme-switcher";
 
 export function Navigation() {
   const t = useScopedI18n("dashboard");
+  const { signOut } = useAuthActions();
   const pathname = usePathname();
   const router = useRouter();
   const isDashboardPath = pathname === "/";
@@ -173,7 +175,9 @@ export function Navigation() {
 
               <DropdownMenuItem
                 className="group h-9 w-full cursor-pointer justify-between rounded-md px-2"
-                onClick={() => {}}
+                onClick={() => {
+                  signOut();
+                }}
               >
                 <span className="text-sm text-primary/60 group-hover:text-primary group-focus:text-primary">
                   {t("navigation.logout")}

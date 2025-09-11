@@ -15,7 +15,7 @@ const schema = defineSchema({
 
     // Custom fields.
     imageId: v.optional(v.id("_storage")),
-  }),
+  }).index("email", ["email"]),
 });
 
 export default schema;

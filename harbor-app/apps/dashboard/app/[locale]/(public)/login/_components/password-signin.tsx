@@ -4,14 +4,14 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { Input } from "@harbor-app/ui/components/input";
 import { Label } from "@harbor-app/ui/components/label";
 import { SubmitButton } from "@harbor-app/ui/components/submit-button";
-import { ConvexError } from "convex/values";
 import { Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { useScopedI18n } from "@/locales/client";
 
 export default function PasswordSignIn() {
-  const INVALID_PASSWORD = "INVALID_PASSWORD";
+  const t = useScopedI18n("login.toastTitle");
   const router = useRouter();
   const { signIn } = useAuthActions();
   const [pending, startTransition] = useTransition();
@@ -19,24 +19,24 @@ export default function PasswordSignIn() {
   const [password, setPassword] = useState("");
 
   async function signInWithPassword() {
-    console.log("signing in with password", email, password);
+    if (!email.trim()) {
+      toast.error(t("emailRequired"));
+      return;
+    }
+
+    if (!password.trim()) {
+      toast.error(t("passwordRequired"));
+      return;
+    }
+
     startTransition(async () => {
-      signIn("password", { email, password })
+      await signIn("password", { email, password, flow: "signIn" })
         .then(() => {
-          console.log("signing in");
           router.push("/");
         })
         .catch((error) => {
-          console.error(error);
-
-          let toastTitle: string;
-          if (error instanceof ConvexError && error.data === INVALID_PASSWORD) {
-            toastTitle =
-              "Invalid password - check the requirements and try again.";
-          } else {
-            toastTitle = "Could not sign in, please contact support.";
-          }
-          toast.error(toastTitle);
+          console.log(error, "error");
+          toast.error(t("couldNotSignIn"));
         });
     });
   }

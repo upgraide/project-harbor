@@ -47,5 +47,10 @@ export default {
     footer: "Ao entrar, concorda com os nossos",
     termsOfService: "Termos de Serviço",
     privacyPolicy: "Política de Privacidade",
+    toastTitle: {
+      couldNotSignIn: "Não foi possível entrar, por favor tente novamente.",
+      emailRequired: "O Email é obrigatório.",
+      passwordRequired: "A Password é obrigatória.",
+    },
   },
 } as const;
