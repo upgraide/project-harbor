@@ -9,8 +9,7 @@
     "setup": "convex dev --once && convex env set VALIDATE_ENV=true",
     "seed": "convex dev --once && convex run init",
     "format": "biome format --write .",
-    "lint": "biome check .",
-    "check-types": "tsc --noEmit"
+    "lint": "biome check ."
   },
   "dependencies": {
     "@auth/core": "0.40.0",
