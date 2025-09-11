@@ -53,4 +53,43 @@ export default {
       passwordRequired: "A Password é obrigatória.",
     },
   },
+  settings: {
+    title: "Definições",
+    headerTitle: "Definições",
+    headerDescription: "Gerir as suas definições da conta.",
+    avatar: {
+      title: "Imagem de Perfil",
+      description: "Esta é a sua imagem de perfil. Será exibida no seu perfil.",
+      uploadHint:
+        "Clique na imagem de perfil para carregar uma imagem dos seus ficheiros.",
+      resetButton: "Remover",
+    },
+    handleUpdateUserImage: {
+      toast: {
+        loading: "A atualizar a imagem de perfil...",
+        success: "Imagem de perfil atualizada com sucesso!",
+        error: "Não foi possível atualizar a imagem de perfil",
+      },
+    },
+    handleUpdateUsername: {
+      toast: {
+        loading: "A atualizar o nome do utilizador...",
+        success: "Nome do utilizador atualizado com sucesso!",
+        error: "Não foi possível atualizar o nome do utilizador",
+      },
+    },
+    handleRemoveUserImage: {
+      toast: {
+        loading: "A remover a imagem de perfil...",
+        success: "Imagem de perfil removida com sucesso!",
+        error: "Não foi possível remover a imagem de perfil",
+      },
+    },
+    username: {
+      title: "Nome do Utilizador",
+      description: "Primeiro nome e último nome. Será exibido no seu perfil.",
+      saveButton: "Guardar",
+      warning: "Por favor, use 32 caracteres no máximo.",
+    },
+  },
 } as const;
