@@ -20,6 +20,7 @@ export function ThemeSwitcher({ triggerClass }: { triggerClass?: string }) {
           "h-6 rounded border-primary/20 bg-secondary !px-2 hover:border-primary/40",
           triggerClass,
         )}
+        size="sm"
       >
         <div className="flex items-start gap-2">
           {currentTheme === "light" ? (

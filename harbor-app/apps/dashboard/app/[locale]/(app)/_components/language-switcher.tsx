@@ -23,7 +23,10 @@ export function LanguageSwitcher() {
 
   return (
     <Select onValueChange={changeLocale} value={locale}>
-      <SelectTrigger className="h-6 rounded border-primary/20 bg-secondary !px-2 hover:border-primary/40">
+      <SelectTrigger
+        className="h-6 rounded border-primary/20 bg-secondary !px-2 hover:border-primary/40"
+        size="sm"
+      >
         <div className="flex items-start gap-2">
           <Languages className="h-[14px] w-[14px]" />
           <span className="text-xs font-medium">{formatLanguage(locale)}</span>
