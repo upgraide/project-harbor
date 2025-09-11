@@ -63,5 +63,33 @@ export default {
       uploadHint: "Click on the avatar to upload a custom one from your files.",
       resetButton: "Reset",
     },
+    handleUpdateUserImage: {
+      toast: {
+        loading: "Updating user image...",
+        success: "User image updated successfully!",
+        error: "Failed to update user image",
+      },
+    },
+    handleUpdateUsername: {
+      toast: {
+        loading: "Updating username...",
+        success: "Username updated successfully!",
+        error: "Failed to update username",
+      },
+    },
+    handleRemoveUserImage: {
+      toast: {
+        loading: "Removing avatar...",
+        success: "Avatar removed successfully!",
+        error: "Failed to remove avatar",
+      },
+    },
+    username: {
+      title: "Your Username",
+      description:
+        "This is your username. It will be displayed on your profile.",
+      saveButton: "Save",
+      warning: "Please use 32 characters at maximum.",
+    },
   },
 } as const;

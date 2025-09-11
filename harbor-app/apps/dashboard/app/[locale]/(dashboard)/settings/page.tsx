@@ -50,9 +50,9 @@ export default function DashboardSettings() {
     });
 
     toast.promise(updatePromise, {
-      loading: "Updating user image...",
-      success: "User image updated successfully!",
-      error: "Failed to update user image",
+      loading: t("handleUpdateUserImage.toast.loading"),
+      success: t("handleUpdateUserImage.toast.success"),
+      error: t("handleUpdateUserImage.toast.error"),
     });
   };
 
@@ -78,9 +78,9 @@ export default function DashboardSettings() {
     });
 
     toast.promise(updatePromise, {
-      loading: "Updating username...",
-      success: "Username updated successfully!",
-      error: "Failed to update username",
+      loading: t("handleUpdateUsername.toast.loading"),
+      success: t("handleUpdateUsername.toast.success"),
+      error: t("handleUpdateUsername.toast.error"),
     });
   }
 
@@ -97,9 +97,9 @@ export default function DashboardSettings() {
     });
 
     toast.promise(removePromise, {
-      loading: "Removing avatar...",
-      success: "Avatar removed successfully!",
-      error: "Failed to remove avatar",
+      loading: t("handleRemoveUserImage.toast.loading"),
+      success: t("handleRemoveUserImage.toast.success"),
+      error: t("handleRemoveUserImage.toast.error"),
     });
   }
 
@@ -181,16 +181,17 @@ export default function DashboardSettings() {
       >
         <div className="flex w-full flex-col gap-4 rounded-lg p-6">
           <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-medium text-primary">Your Username</h2>
+            <h2 className="text-xl font-medium text-primary">
+              {t("username.title")}
+            </h2>
             <p className="text-sm font-normal text-primary/60">
-              This is your username. It will be displayed on your profile.
+              {t("username.description")}
             </p>
           </div>
           <usernameForm.Field
             name="username"
             validators={{
               onBlur: ({ value }) => {
-                // Don't validate empty values during onBlur
                 if (!value || value.trim() === "") {
                   return undefined;
                 }
@@ -239,14 +240,14 @@ export default function DashboardSettings() {
         </div>
         <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 dark:bg-card">
           <p className="text-sm font-normal text-primary/60">
-            Please use 32 characters at maximum.
+            {t("username.warning")}
           </p>
           <SubmitButton
             isSubmitting={updateUsernamePending}
             size="sm"
             type="submit"
           >
-            Save
+            {t("username.saveButton")}
           </SubmitButton>
         </div>
       </form>
