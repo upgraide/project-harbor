@@ -13,6 +13,7 @@
     "test": "turbo test --parallel",
     "format": "biome format --write .",
     "lint": "turbo lint && bun lint:harbor:fix",
+    "lint:ci": "turbo lint && bun lint:harbor",
     "lint:harbor": "bunx sherif@latest",
     "lint:harbor:fix": "bunx sherif@latest --fix",
     "check-types": "turbo run check-types"
