@@ -32,24 +32,20 @@ export default function DashboardSettings() {
     useTransition();
   const [updateUsernamePending, startUpdateUsernameTransition] =
     useTransition();
-  const [, startUpdateUserImageTransition] = useTransition();
 
-  const handleUpdateUserImage = (uploaded: UploadFileResponse[]) => {
-    const updatePromise = new Promise<void>((resolve, reject) => {
-      startUpdateUserImageTransition(async () => {
-        try {
-          await updateUserImage({
-            imageId: (uploaded[0]?.response as { storageId: Id<"_storage"> })
-              .storageId,
-          });
-          resolve();
-        } catch (error) {
-          reject(error);
-        }
-      });
+  const handleUpdateUserImage = async (uploaded: UploadFileResponse[]) => {
+    await updateUserImage({
+      imageId: (uploaded[0]?.response as { storageId: Id<"_storage"> })
+        .storageId,
+    });
+  };
+
+  const handleUploadStart = (uploadPromise: Promise<UploadFileResponse[]>) => {
+    const fullUploadPromise = uploadPromise.then(async (uploaded) => {
+      await handleUpdateUserImage(uploaded);
     });
 
-    toast.promise(updatePromise, {
+    toast.promise(fullUploadPromise, {
       loading: t("handleUpdateUserImage.toast.loading"),
       success: t("handleUpdateUserImage.toast.success"),
       error: t("handleUpdateUserImage.toast.error"),
@@ -144,7 +140,7 @@ export default function DashboardSettings() {
             className="peer sr-only"
             generateUploadUrl={generateUploadUrl}
             id="avatar_field"
-            onUploadComplete={handleUpdateUserImage}
+            onUploadStart={handleUploadStart}
             required
             tabIndex={user ? -1 : 0}
             type="file"

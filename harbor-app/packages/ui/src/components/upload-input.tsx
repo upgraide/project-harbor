@@ -8,10 +8,12 @@ import { type InputHTMLAttributes, useRef } from "react";
 export function UploadInput({
   generateUploadUrl,
   onUploadComplete,
+  onUploadStart,
   ...props
 }: {
   generateUploadUrl: () => Promise<string>;
-  onUploadComplete: (uploaded: UploadFileResponse[]) => void;
+  onUploadComplete?: (uploaded: UploadFileResponse[]) => Promise<void> | void;
+  onUploadStart?: (uploadPromise: Promise<UploadFileResponse[]>) => void;
 } & Pick<
   InputHTMLAttributes<HTMLInputElement>,
   "accept" | "id" | "type" | "className" | "required" | "tabIndex"
@@ -22,7 +24,9 @@ export function UploadInput({
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
-      onUploadComplete(uploaded);
+      if (onUploadComplete) {
+        await onUploadComplete(uploaded);
+      }
     },
   });
   return (
@@ -35,7 +39,9 @@ export function UploadInput({
         if (files.length === 0) {
           return;
         }
-        startUpload(files);
+
+        const uploadPromise = startUpload(files);
+        onUploadStart?.(uploadPromise);
       }}
       ref={fileInputRef}
       type="file"
