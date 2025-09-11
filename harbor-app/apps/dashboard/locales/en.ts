@@ -53,4 +53,15 @@ export default {
       passwordRequired: "Password is required.",
     },
   },
+  settings: {
+    title: "Settings",
+    headerTitle: "Settings",
+    headerDescription: "Manage your account settings.",
+    avatar: {
+      title: "Your Avatar",
+      description: "This is your avatar. It will be displayed on your profile.",
+      uploadHint: "Click on the avatar to upload a custom one from your files.",
+      resetButton: "Reset",
+    },
+  },
 } as const;
