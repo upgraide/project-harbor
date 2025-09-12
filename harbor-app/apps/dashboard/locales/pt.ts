@@ -55,6 +55,9 @@ export default {
     title: "Definições",
     headerTitle: "Definições",
     headerDescription: "Gerir as suas definições da conta.",
+    sidebar: {
+      general: "Geral",
+    },
     avatar: {
       title: "Imagem de Perfil",
       description: "Esta é a sua imagem de perfil. Será exibida no seu perfil.",

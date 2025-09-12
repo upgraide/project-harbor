@@ -57,6 +57,9 @@ export default {
     title: "Settings",
     headerTitle: "Settings",
     headerDescription: "Manage your account settings.",
+    sidebar: {
+      general: "General",
+    },
     avatar: {
       title: "Your Avatar",
       description: "This is your avatar. It will be displayed on your profile.",
