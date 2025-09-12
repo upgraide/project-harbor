@@ -140,6 +140,7 @@ export default function DashboardSettings() {
             className="peer sr-only"
             generateUploadUrl={generateUploadUrl}
             id="avatar_field"
+            multiple={false}
             onUploadStart={handleUploadStart}
             required
             tabIndex={user ? -1 : 0}

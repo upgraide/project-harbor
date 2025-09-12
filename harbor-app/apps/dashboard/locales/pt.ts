@@ -14,7 +14,7 @@ export default {
       opportunities: "Oportunidades",
       personalAccount: "Conta Pessoal",
       investors: "Investidores",
-      settings: "Configurações",
+      settings: "Definições",
       help: "Ajuda",
       logout: "Sair",
       language: "Idioma",

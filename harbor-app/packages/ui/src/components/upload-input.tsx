@@ -16,10 +16,10 @@ export function UploadInput({
   onUploadStart?: (uploadPromise: Promise<UploadFileResponse[]>) => void;
 } & Pick<
   InputHTMLAttributes<HTMLInputElement>,
-  "accept" | "id" | "type" | "className" | "required" | "tabIndex"
+  "accept" | "id" | "type" | "className" | "required" | "tabIndex" | "multiple"
 >) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { startUpload } = useUploadFiles(generateUploadUrl, {
+  const { startUpload, isUploading } = useUploadFiles(generateUploadUrl, {
     onUploadComplete: async (uploaded: UploadFileResponse[]) => {
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
@@ -31,6 +31,7 @@ export function UploadInput({
   });
   return (
     <input
+      disabled={isUploading}
       onChange={async (event) => {
         if (!event.target.files) {
           return;
