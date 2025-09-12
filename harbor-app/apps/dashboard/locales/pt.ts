@@ -3,10 +3,8 @@ export default {
     title: "As Nossas Oportunidades",
     description:
       "Explore as nossas oportunidades de investimento e encontre a mais adequada para si",
-
     bodyTitle: "Comece Agora",
-    bodyDescription:
-      "Para começar, por favor selecione uma nova oportunidade clicando nela",
+    bodyDescription: "Para começar, por favor selecione uma nova oportunidade",
     bodyTip:
       "Dica: Pode optar por co-investir ou tornar-se investidor principal clicando no botão abaixo",
     documentationLink: "Saber Mais",
