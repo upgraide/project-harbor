@@ -55,14 +55,31 @@ export const generateUploadUrl = mutation({
 
 export const updateUserImage = mutation({
   args: {
-    imageId: v.id("_storage"),
+    newImageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
       return;
     }
-    ctx.db.patch(userId, { imageId: args.imageId });
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      return;
+    }
+
+    const oldImageId = user.imageId;
+
+    // Update database first to avoid data loss
+    await ctx.db.patch(userId, { imageId: args.newImageId });
+
+    // Clean up old image after successful DB update
+    if (oldImageId) {
+      try {
+        await ctx.storage.delete(oldImageId);
+      } catch (error) {
+        console.error("Failed to delete old image:", error);
+      }
+    }
   },
 });
 
@@ -73,6 +90,21 @@ export const removeUserImage = mutation({
     if (!userId) {
       return;
     }
-    ctx.db.patch(userId, { imageId: undefined, image: undefined });
+    const user = await ctx.db.get(userId);
+    if (!user) {
+      return;
+    }
+    const imageId = user.imageId;
+    if (!imageId) {
+      return;
+    }
+
+    await ctx.db.patch(userId, { imageId: undefined });
+
+    try {
+      await ctx.storage.delete(imageId);
+    } catch (error) {
+      console.error("Failed to delete image from storage:", imageId, error);
+    }
   },
 });

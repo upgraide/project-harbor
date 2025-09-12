@@ -7,6 +7,7 @@ import { ConvexError } from "convex/values";
 import { useState } from "react";
 import { toast } from "sonner";
 
+// TODO: Delete this page, used for testing purposes
 export default function SignUpPage() {
   const { signIn } = useAuthActions();
   const [submitting, setSubmitting] = useState(false);

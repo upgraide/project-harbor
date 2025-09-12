@@ -34,15 +34,25 @@ export default function DashboardSettings() {
     useTransition();
 
   const handleUpdateUserImage = async (uploaded: UploadFileResponse[]) => {
-    await updateUserImage({
-      imageId: (uploaded[0]?.response as { storageId: Id<"_storage"> })
-        .storageId,
-    });
+    try {
+      await updateUserImage({
+        newImageId: (uploaded[0]?.response as { storageId: Id<"_storage"> })
+          .storageId,
+      });
+    } catch (error) {
+      console.error("Failed to update user image:", error);
+      toast.error(t("handleUpdateUserImage.toast.error"));
+    }
   };
 
   const handleUploadStart = (uploadPromise: Promise<UploadFileResponse[]>) => {
     const fullUploadPromise = uploadPromise.then(async (uploaded) => {
-      await handleUpdateUserImage(uploaded);
+      try {
+        await handleUpdateUserImage(uploaded);
+      } catch (error) {
+        console.error("Failed to update user image:", error);
+        toast.error(t("handleUpdateUserImage.toast.error"));
+      }
     });
 
     toast.promise(fullUploadPromise, {
