@@ -1,4 +1,4 @@
-export const DashboardLayout = ({
+export const BackofficeLayout = ({
   children,
 }: {
   children: React.ReactNode;
