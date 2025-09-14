@@ -81,7 +81,13 @@ export const BackofficeSidebar = () => {
   return (
     <Sidebar className="group" collapsible="icon">
       <SidebarHeader>
-        <SidebarTrigger />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip={t("toggle")}>
+            <SidebarTrigger size="lg" className="size-8" />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>

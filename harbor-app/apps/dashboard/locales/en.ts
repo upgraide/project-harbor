@@ -97,6 +97,7 @@ export default {
   },
   backoffice: {
     sidebar: {
+      toggle: "Toggle Sidebar",
       customerSupport: {
         title: "Customer Support",
         customerSupportItems: {

@@ -95,6 +95,7 @@ export default {
   },
   backoffice: {
     sidebar: {
+      toggle: "Abrir/Fechar Menu",
       customerSupport: {
         title: "Suporte ao Cliente",
         customerSupportItems: {
