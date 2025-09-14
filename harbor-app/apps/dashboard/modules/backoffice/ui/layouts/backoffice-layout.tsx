@@ -10,7 +10,7 @@ export const BackofficeLayout = async ({
   const defaultOpen = cookieStore.get("sidebar-state")?.value === "true";
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={defaultOpen}>
       <main className="flex flex-1 flex-col">{children}</main>
     </SidebarProvider>
   );
