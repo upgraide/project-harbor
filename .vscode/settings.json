@@ -1,35 +1,35 @@
 {
-	"editor.defaultFormatter": "biomejs.biome",
-	"[javascript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[typescript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[typescriptreact]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"editor.codeActionsOnSave": {
-		"source.fixAll.biome": "explicit",
-		"source.organizeImports.biome": "explicit"
-	},
-	"editor.formatOnSave": true,
-	"typescript.enablePromptUseWorkspaceTsdk": true,
-	"typescript.tsdk": "harbor-app/node_modules/typescript/lib",
-	"typescript.preferences.autoImportFileExcludePatterns": [
-		"next/router.d.ts",
-		"next/dist/client/router.d.ts"
-	],
-	"terminal.integrated.localEchoStyle": "dim",
-	"search.exclude": {
-		"**/node_modules": true
-	},
-	"tailwindCSS.experimental.configFile": "harbor-app/packages/ui/src/styles/globals.css",
-	"[dotenv]": {
-		"editor.defaultFormatter": "foxundermoon.shell-format"
-	},
-	"[ignore]": {
-		"editor.defaultFormatter": "foxundermoon.shell-format"
-	},
-	"biome.configurationPath": "harbor-app/biome.json"
+  "editor.defaultFormatter": "biomejs.biome",
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "editor.formatOnSave": true,
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "harbor-app/node_modules/typescript/lib",
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "next/router.d.ts",
+    "next/dist/client/router.d.ts"
+  ],
+  "terminal.integrated.localEchoStyle": "dim",
+  "search.exclude": {
+    "**/node_modules": true
+  },
+  "tailwindCSS.experimental.configFile": "harbor-app/packages/ui/src/styles/globals.css",
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "biome.configurationPath": "harbor-app/biome.json"
 }

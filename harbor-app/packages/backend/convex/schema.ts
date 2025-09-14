@@ -15,6 +15,7 @@ const schema = defineSchema({
 
     // Custom fields.
     imageId: v.optional(v.id("_storage")),
+    role: v.optional(v.string()), // [user, admin]
   }).index("email", ["email"]),
 
   opportunitiesMergersAndAcquisitions: defineTable({

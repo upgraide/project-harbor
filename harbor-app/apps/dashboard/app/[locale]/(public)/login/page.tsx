@@ -24,7 +24,6 @@ export default async function Page() {
 
   return (
     <div className="h-screen p-2">
-      {/* Header - Logo */}
       <header className="absolute top-0 left-0 z-30 w-full">
         <div className="p-6 md:p-8">
           <DynamicImage
@@ -36,9 +35,7 @@ export default async function Page() {
         </div>
       </header>
 
-      {/* Main Layout */}
       <div className="flex h-full">
-        {/* Background Image Section - Hidden on mobile, visible on desktop */}
         <div className="hidden lg:flex lg:w-1/2 relative">
           <DynamicImage
             alt="Background"
@@ -48,12 +45,9 @@ export default async function Page() {
           />
         </div>
 
-        {/* Login Form Section */}
         <div className="w-full lg:w-1/2 relative">
-          {/* Form Content */}
           <div className="relative z-10 flex h-full items-center justify-center p-6">
             <div className="w-full max-w-md space-y-8">
-              {/* Welcome Section */}
               <div className="text-center">
                 <h1 className="text-lg mb-4 font-serif">{t("title")}</h1>
                 <p className="text-[#878787] text-sm mb-8">
@@ -61,12 +55,10 @@ export default async function Page() {
                 </p>
               </div>
 
-              {/* Sign In Options */}
               <div className="space-y-4">
                 <PasswordSignInForm />
               </div>
 
-              {/* Terms and Privacy */}
               <div className="text-center absolute bottom-4 left-0 right-0">
                 <p className="text-xs text-[#878787] leading-relaxed font-mono">
                   {t("footer")}{" "}
@@ -88,7 +80,6 @@ export default async function Page() {
         </div>
       </div>
 
-      {/* Consent Banner */}
       {showTrackingConsent && <ConsentBanner />}
     </div>
   );
