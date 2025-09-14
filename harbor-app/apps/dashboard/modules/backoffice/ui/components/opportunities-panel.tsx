@@ -32,22 +32,22 @@ export const OpportunitiesPanel = () => {
                 <span>All</span>
               </div>
             </SelectItem>
-            <SelectItem value="pre-nda">
+            <SelectItem value="no-interest">
               <div className="flex items-center gap-2">
                 <ArrowRightIcon className="size-4" />
-                <span>Pre-NDA</span>
+                <span>No Interest</span>
               </div>
             </SelectItem>
-            <SelectItem value="post-nda">
+            <SelectItem value="interested">
               <div className="flex items-center gap-2">
                 <ArrowUpIcon className="size-4" />
-                <span>Post-NDA</span>
+                <span>Interested</span>
               </div>
             </SelectItem>
-            <SelectItem value="closed">
+            <SelectItem value="completed">
               <div className="flex items-center gap-2">
                 <CheckIcon className="size-4" />
-                <span>Closed</span>
+                <span>Completed</span>
               </div>
             </SelectItem>
           </SelectContent>

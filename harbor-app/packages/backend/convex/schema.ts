@@ -53,6 +53,11 @@ const schema = defineSchema({
       v.literal("Minority"),
       v.literal("Full"),
     ), // [Majority, Minority, Full]
+    status: v.union(
+      v.literal("No Interest"),
+      v.literal("Interested"),
+      v.literal("Completed"),
+    ), // [No Interest, Interested, Completed]
   }),
 });
 
