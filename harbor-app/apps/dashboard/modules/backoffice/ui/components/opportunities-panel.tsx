@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollArea } from "@harbor-app/ui/components/scroll-area";
 import {
   Select,
   SelectContent,
@@ -13,6 +14,7 @@ import {
   CheckIcon,
   CornerUpLeftIcon,
   ListIcon,
+  Scroll,
 } from "lucide-react";
 
 export const OpportunitiesPanel = () => {
@@ -30,27 +32,30 @@ export const OpportunitiesPanel = () => {
                 <span>All</span>
               </div>
             </SelectItem>
-            <SelectItem value="no-interest">
+            <SelectItem value="pre-nda">
               <div className="flex items-center gap-2">
                 <ArrowRightIcon className="size-4" />
-                <span>No Interest</span>
+                <span>Pre-NDA</span>
               </div>
             </SelectItem>
-            <SelectItem value="interested">
+            <SelectItem value="post-nda">
               <div className="flex items-center gap-2">
                 <ArrowUpIcon className="size-4" />
-                <span>Interested</span>
+                <span>Post-NDA</span>
               </div>
             </SelectItem>
-            <SelectItem value="completed">
+            <SelectItem value="closed">
               <div className="flex items-center gap-2">
                 <CheckIcon className="size-4" />
-                <span>Completed</span>
+                <span>Closed</span>
               </div>
             </SelectItem>
           </SelectContent>
         </Select>
       </div>
+      <ScrollArea className="max-h-[calc(100vh-53px)]">
+        <div className="flex w-full flex-1 flex-col text-sm"></div>
+      </ScrollArea>
     </div>
   );
 };
