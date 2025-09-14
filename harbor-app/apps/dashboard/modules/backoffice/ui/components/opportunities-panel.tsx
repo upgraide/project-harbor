@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Select,
   SelectContent,
@@ -26,6 +28,24 @@ export const OpportunitiesPanel = () => {
               <div className="flex items-center gap-2">
                 <ListIcon className="size-4" />
                 <span>All</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="no-interest">
+              <div className="flex items-center gap-2">
+                <ArrowRightIcon className="size-4" />
+                <span>No Interest</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="interested">
+              <div className="flex items-center gap-2">
+                <ArrowUpIcon className="size-4" />
+                <span>Interested</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="completed">
+              <div className="flex items-center gap-2">
+                <CheckIcon className="size-4" />
+                <span>Completed</span>
               </div>
             </SelectItem>
           </SelectContent>
