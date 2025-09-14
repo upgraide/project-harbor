@@ -95,4 +95,29 @@ export default {
       warning: "Please use 32 characters at maximum.",
     },
   },
+  backoffice: {
+    sidebar: {
+      customerSupport: {
+        title: "Customer Support",
+        customerSupportItems: {
+          conversations: "Conversations",
+          knowledge_base: "Knowledge Base",
+        },
+      },
+      configuration: {
+        title: "Configuration",
+        configurationItems: {
+          opportunities: "Opportunities",
+          investors: "Investors",
+          team: "Team",
+        },
+      },
+      account: {
+        title: "Account",
+        accountItems: {
+          settings: "Settings",
+        },
+      },
+    },
+  },
 } as const;
