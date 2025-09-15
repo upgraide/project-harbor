@@ -22,16 +22,7 @@ import { cn } from "@harbor-app/ui/lib/utils";
 import { usePaginatedQuery } from "convex/react";
 import { formatDistanceToNow } from "date-fns";
 import { useAtomValue, useSetAtom } from "jotai";
-import {
-  ArrowRightIcon,
-  ArrowUpIcon,
-  CheckIcon,
-  CornerUpLeftIcon,
-  ListIcon,
-  Loader,
-  Loader2,
-  Scroll,
-} from "lucide-react";
+import { ArrowRightIcon, ArrowUpIcon, CheckIcon, ListIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { RefObject } from "react";
