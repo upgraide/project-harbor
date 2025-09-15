@@ -115,7 +115,7 @@ export const OpportunitiesPanel = () => {
                       `/backoffice/opportunities/${opportunity._id}` &&
                       "bg-accent text-accent-foreground",
                   )}
-                  href={`backoffice/opportunities/${opportunity._id}`}
+                  href={`/backoffice/opportunities/${opportunity._id}`}
                   key={opportunity._id}
                 >
                   <div

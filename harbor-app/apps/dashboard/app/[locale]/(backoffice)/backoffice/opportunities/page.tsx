@@ -1,3 +1,5 @@
+import { OpportunityView } from "@/modules/backoffice/ui/views/opportunity-view";
+
 export default function OpportunitiesPage() {
-  return <div>Opportunities</div>;
+  return <OpportunityView />;
 }
