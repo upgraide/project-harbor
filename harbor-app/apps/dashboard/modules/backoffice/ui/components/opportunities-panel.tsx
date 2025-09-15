@@ -1,5 +1,11 @@
 "use client";
 
+import { api } from "@harbor-app/backend/convex/_generated/api";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@harbor-app/ui/components/avatar";
 import { ScrollArea } from "@harbor-app/ui/components/scroll-area";
 import {
   Select,
@@ -8,6 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@harbor-app/ui/components/select";
+import { cn } from "@harbor-app/ui/lib/utils";
+import { usePaginatedQuery, useQuery } from "convex/react";
 import {
   ArrowRightIcon,
   ArrowUpIcon,
@@ -16,8 +24,21 @@ import {
   ListIcon,
   Scroll,
 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export const OpportunitiesPanel = () => {
+  const pathname = usePathname();
+  const opportunities = usePaginatedQuery(
+    api.private.opportunities.getManyMergersAndAcquisition,
+    {
+      status: undefined,
+    },
+    {
+      initialNumItems: 10,
+    },
+  );
+
   return (
     <div className="flex h-full flex-col w-full bg-background text-sidebar-foreground">
       <div className="flex flex-col gap-3.5 border-b p-2">
@@ -54,7 +75,46 @@ export const OpportunitiesPanel = () => {
         </Select>
       </div>
       <ScrollArea className="max-h-[calc(100vh-53px)]">
-        <div className="flex w-full flex-1 flex-col text-sm"></div>
+        <div className="flex w-full flex-1 flex-col text-sm">
+          {opportunities.results.map((opportunity) => {
+            return (
+              <Link
+                className={cn(
+                  "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
+                  pathname === `/backoffice/opportunities/${opportunity._id}` &&
+                    "bg-accent text-accent-foreground",
+                )}
+                href={`backoffice/opportunities/${opportunity._id}`}
+                key={opportunity._id}
+              >
+                <div
+                  className={cn(
+                    "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity",
+                    pathname ===
+                      `/backoffice/opportunities/${opportunity._id}` &&
+                      "opacity-100",
+                  )}
+                />
+
+                <Avatar className="h-8 w-8 rounded-full">
+                  <AvatarImage
+                    alt={opportunity.createdBy?.email}
+                    src={
+                      opportunity.createdBy?.avatarURL ??
+                      `https://avatar.vercel.sh/${opportunity.createdBy?.email}`
+                    }
+                  />
+                  <AvatarFallback className="h-8 w-8 rounded-full">
+                    {opportunity.createdBy?.name &&
+                    opportunity.createdBy?.name.length > 0
+                      ? opportunity.createdBy?.name.charAt(0).toUpperCase()
+                      : opportunity.createdBy?.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
+            );
+          })}
+        </div>
       </ScrollArea>
     </div>
   );

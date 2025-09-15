@@ -7,10 +7,12 @@ import { query } from "../_generated/server";
 export const getManyMergersAndAcquisition = query({
   args: {
     paginationOpts: paginationOptsValidator,
-    status: v.union(
-      v.literal("No Interest"),
-      v.literal("Interested"),
-      v.literal("Completed"),
+    status: v.optional(
+      v.union(
+        v.literal("No Interest"),
+        v.literal("Interested"),
+        v.literal("Completed"),
+      ),
     ),
   },
   handler: async (ctx, args) => {
@@ -47,6 +49,28 @@ export const getManyMergersAndAcquisition = query({
         .paginate(args.paginationOpts);
     }
 
-    return opportunities;
+    const enrichedOpportunities = await Promise.all(
+      opportunities.page.map(async (opportunity) => {
+        const createdBy = await ctx.db.get(opportunity.createdBy);
+        return {
+          ...opportunity,
+          createdBy: createdBy
+            ? {
+                _id: createdBy._id,
+                name: createdBy.name,
+                email: createdBy.email,
+                avatarURL: createdBy.imageId
+                  ? await ctx.storage.getUrl(createdBy.imageId)
+                  : undefined,
+              }
+            : null,
+        };
+      }),
+    );
+
+    return {
+      ...opportunities,
+      page: enrichedOpportunities,
+    };
   },
 });
