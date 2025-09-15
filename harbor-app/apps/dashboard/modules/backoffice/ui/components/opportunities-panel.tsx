@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@harbor-app/backend/convex/_generated/api";
+import type { Doc } from "@harbor-app/backend/convex/_generated/dataModel";
 import {
   Avatar,
   AvatarFallback,
@@ -15,8 +16,9 @@ import {
   SelectValue,
 } from "@harbor-app/ui/components/select";
 import { cn } from "@harbor-app/ui/lib/utils";
-import { usePaginatedQuery, useQuery } from "convex/react";
+import { usePaginatedQuery } from "convex/react";
 import { formatDistanceToNow } from "date-fns";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
   ArrowRightIcon,
   ArrowUpIcon,
@@ -27,13 +29,18 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { statusFilterAtom } from "../../atoms";
 
 export const OpportunitiesPanel = () => {
   const pathname = usePathname();
+
+  const statusFilter = useAtomValue(statusFilterAtom);
+  const setStatusFilter = useSetAtom(statusFilterAtom);
+
   const opportunities = usePaginatedQuery(
     api.private.opportunities.getManyMergersAndAcquisition,
     {
-      status: undefined,
+      status: statusFilter === "all" ? undefined : statusFilter,
     },
     {
       initialNumItems: 10,
@@ -43,7 +50,17 @@ export const OpportunitiesPanel = () => {
   return (
     <div className="flex h-full flex-col w-full bg-background text-sidebar-foreground">
       <div className="flex flex-col gap-3.5 border-b p-2">
-        <Select defaultValue="all" onValueChange={() => {}} value="all">
+        <Select
+          defaultValue="all"
+          onValueChange={(value) =>
+            setStatusFilter(
+              value as
+                | Doc<"opportunitiesMergersAndAcquisitions">["status"]
+                | "all",
+            )
+          }
+          value={statusFilter}
+        >
           <SelectTrigger className="h-8 border-none px-1.5 shadow-none ring-0 hover:bg-accent hover:text-accent-foreground focus-visible:ring-0">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>

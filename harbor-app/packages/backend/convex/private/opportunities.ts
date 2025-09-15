@@ -9,9 +9,9 @@ export const getManyMergersAndAcquisition = query({
     paginationOpts: paginationOptsValidator,
     status: v.optional(
       v.union(
-        v.literal("No Interest"),
-        v.literal("Interested"),
-        v.literal("Completed"),
+        v.literal("no-interest"),
+        v.literal("interested"),
+        v.literal("completed"),
       ),
     ),
   },
