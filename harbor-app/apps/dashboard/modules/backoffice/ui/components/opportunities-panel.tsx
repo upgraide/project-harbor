@@ -16,6 +16,7 @@ import {
 } from "@harbor-app/ui/components/select";
 import { cn } from "@harbor-app/ui/lib/utils";
 import { usePaginatedQuery, useQuery } from "convex/react";
+import { formatDistanceToNow } from "date-fns";
 import {
   ArrowRightIcon,
   ArrowUpIcon,
@@ -96,7 +97,7 @@ export const OpportunitiesPanel = () => {
                   )}
                 />
 
-                <Avatar className="h-8 w-8 rounded-full">
+                <Avatar className="h-10 w-10 rounded-full">
                   <AvatarImage
                     alt={opportunity.createdBy?.email}
                     src={
@@ -104,13 +105,31 @@ export const OpportunitiesPanel = () => {
                       `https://avatar.vercel.sh/${opportunity.createdBy?.email}`
                     }
                   />
-                  <AvatarFallback className="h-8 w-8 rounded-full">
+                  <AvatarFallback className="h-10 w-10 rounded-full">
                     {opportunity.createdBy?.name &&
                     opportunity.createdBy?.name.length > 0
                       ? opportunity.createdBy?.name.charAt(0).toUpperCase()
                       : opportunity.createdBy?.email?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
+
+                <div className="flex-1">
+                  <div className="flex w-full items-center gap-2">
+                    <span className="truncate font-bold">
+                      {opportunity.name}
+                    </span>
+                    <span className="ml-auto shrink-0 text-muted-foreground text-xs">
+                      {formatDistanceToNow(opportunity._creationTime)}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex items-center justify-between gap-2">
+                    <div className="flex w-0 grow items-center gap-1">
+                      <span className="line-clamp-1 text-muted-foreground text-xs">
+                        {opportunity.description}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </Link>
             );
           })}

@@ -58,8 +58,6 @@ const schema = defineSchema({
       v.literal("Interested"),
       v.literal("Completed"),
     ), // [No Interest, Interested, Completed]
-    createdAt: v.number(),
-    updatedAt: v.number(),
     createdBy: v.id("users"),
   }),
 });
