@@ -12,6 +12,7 @@ import type * as auth from "../auth.js";
 import type * as env from "../env.js";
 import type * as http from "../http.js";
 import type * as private_opportunities from "../private/opportunities.js";
+import type * as public_opportunities from "../public/opportunities.js";
 import type * as sendEmails from "../sendEmails.js";
 import type * as users from "../users.js";
 import type * as utils from "../utils.js";
@@ -35,6 +36,7 @@ declare const fullApi: ApiFromModules<{
   env: typeof env;
   http: typeof http;
   "private/opportunities": typeof private_opportunities;
+  "public/opportunities": typeof public_opportunities;
   sendEmails: typeof sendEmails;
   users: typeof users;
   utils: typeof utils;

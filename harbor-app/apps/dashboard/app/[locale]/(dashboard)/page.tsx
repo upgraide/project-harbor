@@ -1,5 +1,6 @@
 import { Plus } from "lucide-react";
 import { getScopedI18n } from "@/locales/server";
+import DashboardView from "@/modules/dashboard/ui/view/dashboard-view";
 import { Header } from "./_components/header";
 
 export default async function Page() {
@@ -23,26 +24,7 @@ export default async function Page() {
             <div className="flex w-full px-6">
               <div className="w-full border-b border-border" />
             </div>
-            {/* TODO: Add the opportunities cards here, map them from the opportunities array */}
-            <div className="relative mx-auto flex w-full  flex-col items-center p-6">
-              <div className="relative flex w-full flex-col items-center justify-center gap-6 overflow-hidden rounded-lg border border-border bg-secondary px-6 py-24 dark:bg-card">
-                <div className="z-10 flex max-w-[460px] flex-col items-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-primary/20 bg-card hover:border-primary/40">
-                    <Plus className="h-8 w-8 stroke-[1.5px] text-primary/60" />
-                  </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <p className="text-base font-medium text-primary">
-                      {t("title")}
-                    </p>
-                    <p className="text-center text-base font-normal text-primary/60">
-                      {t("description")}
-                    </p>
-                  </div>
-                </div>
-                <div className="base-grid absolute h-full w-full opacity-40" />
-                <div className="absolute bottom-0 h-full w-full bg-gradient-to-t from-[hsl(var(--card))] to-transparent" />
-              </div>
-            </div>
+            <DashboardView />
           </div>
         </div>
       </div>
