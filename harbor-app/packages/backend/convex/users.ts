@@ -1,5 +1,5 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { username } from "./utils";
 
@@ -13,6 +13,39 @@ export const getUser = query({
     if (!user) {
       return;
     }
+    return {
+      ...user,
+      name: user.name,
+      avatarUrl: user.imageId
+        ? await ctx.storage.getUrl(user.imageId)
+        : undefined,
+    };
+  },
+});
+
+export const getUserById = query({
+  args: {
+    toGetUserId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    const user = await ctx.db.get(args.toGetUserId);
+
+    if (!user) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "User not found",
+      });
+    }
+
     return {
       ...user,
       name: user.name,
