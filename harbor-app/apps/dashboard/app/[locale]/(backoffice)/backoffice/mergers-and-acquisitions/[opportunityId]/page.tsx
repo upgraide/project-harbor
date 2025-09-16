@@ -1,13 +1,14 @@
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { api } from "@harbor-app/backend/convex/_generated/api";
-import { Id } from "@harbor-app/backend/convex/_generated/dataModel";
+import type { Id } from "@harbor-app/backend/convex/_generated/dataModel";
 import {
   Card,
-  CardTitle,
-  CardHeader,
   CardContent,
+  CardHeader,
+  CardTitle,
 } from "@harbor-app/ui/components/card";
 import { fetchQuery } from "convex/nextjs";
+import Image from "next/image";
 
 const Page = async ({
   params,
@@ -45,6 +46,19 @@ const Page = async ({
           <p>{opportunity.createdBy?.avatarURL}</p>
         </CardContent>
       </Card>
+      {opportunity.imagesURLs.length > 0 && (
+        <div className="flex flex-wrap gap-4">
+          {opportunity.imagesURLs.map((image) => (
+            <Image
+              alt="Opportunity Image"
+              height={1250}
+              key={image}
+              src={image}
+              width={1250}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

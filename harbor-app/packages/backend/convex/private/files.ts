@@ -4,7 +4,7 @@ import {
 } from "@convex-dev/rag";
 import { ConvexError, v } from "convex/values";
 import type { Id } from "../_generated/dataModel";
-import { action, mutation } from "../_generated/server";
+import { action, mutation, query } from "../_generated/server";
 
 /**
  * Guess the mime type of a file. Uses RAG to guess the mime type of a file.
@@ -86,7 +86,6 @@ export const addFile = action({
 
     // TODO: Check if the user is authorized to add a file in the category
     // TODO: Check if the user is team or admin
-
     const { bytes, filename } = args;
 
     const mimeType = args.mimeType || guessMimeType(filename, bytes);
@@ -104,5 +103,26 @@ export const addFile = action({
     return {
       url: await ctx.storage.getUrl(storageId),
     };
+  },
+});
+
+/**
+ * Generate a upload url for a file
+ *
+ * @returns The upload url
+ */
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    return await ctx.storage.generateUploadUrl();
   },
 });

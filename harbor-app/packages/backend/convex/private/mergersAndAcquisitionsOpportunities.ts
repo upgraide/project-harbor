@@ -1,7 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { type PaginationResult, paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
-import type { Doc } from "../_generated/dataModel";
+import type { Doc, Id } from "../_generated/dataModel";
 import { query } from "../_generated/server";
 
 export const getMany = query({
@@ -110,16 +110,29 @@ export const getById = query({
       });
     }
 
+    let images: string[] = [];
+
+    if (opportunity.images) {
+      images = (await Promise.all(
+        (opportunity.images as Id<"_storage">[]).map(async (imageId) => {
+          const url = await ctx.storage.getUrl(imageId);
+          return url;
+        }),
+      )) as string[];
+    }
+
     const createdBy = await ctx.db.get(opportunity.createdBy);
+
     const enrichedOpportunity = {
       ...opportunity,
+      imagesURLs: images.filter((image): image is string => image !== null),
       createdBy: createdBy
         ? {
             _id: createdBy._id,
             name: createdBy.name,
             email: createdBy.email,
             avatarURL: createdBy.imageId
-              ? await ctx.storage.getUrl(createdBy.imageId)
+              ? (await ctx.storage.getUrl(createdBy.imageId)) || undefined
               : undefined,
           }
         : null,
