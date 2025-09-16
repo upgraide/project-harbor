@@ -3,7 +3,8 @@ import {
   guessMimeTypeFromExtension,
 } from "@convex-dev/rag";
 import { ConvexError, v } from "convex/values";
-import { action } from "../_generated/server";
+import type { Id } from "../_generated/dataModel";
+import { action, mutation } from "../_generated/server";
 
 /**
  * Guess the mime type of a file. Uses RAG to guess the mime type of a file.
@@ -19,6 +20,29 @@ function guessMimeType(filename: string, bytes: ArrayBuffer): string {
     "application/octet-stream"
   );
 }
+
+/**
+ * Delete a file from the storage
+ *
+ * @param storageId - The storage id of the file
+ */
+export const deleteFile = mutation({
+  args: {
+    storageId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    await ctx.storage.delete(args.storageId as Id<"_storage">);
+  },
+});
 
 /**
  * Add a file to the storage
