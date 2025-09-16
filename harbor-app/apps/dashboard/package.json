@@ -12,6 +12,7 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@convex-dev/rag": "^0.5.3",
     "@harbor-app/backend": "workspace:*",
     "@harbor-app/location": "workspace:*",
     "@harbor-app/ui": "workspace:*",

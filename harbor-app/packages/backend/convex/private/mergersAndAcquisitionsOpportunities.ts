@@ -77,12 +77,12 @@ export const getMany = query({
 
 /**
  * Get a mergers and acquisitions opportunity by id
- * 
+ *
  * This query returns all the information about the opportunity, including the createdBy user
  * Becarefull with data leakage, we don't want to return the full NDA information in user-facing queries
- * 
+ *
  * Only works for users with the role of admin or team
- * 
+ *
  * @param args.opportunityId - The id of the opportunity to get
  * @returns The opportunity with the createdBy user enriched
  */
@@ -100,7 +100,7 @@ export const getById = query({
       });
     }
 
-     // TODO: Check if user is admin or team at least
+    // TODO: Check if user is admin or team at least
     const opportunity = await ctx.db.get(args.opportunityId);
 
     if (!opportunity) {

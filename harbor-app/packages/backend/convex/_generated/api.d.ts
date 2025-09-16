@@ -11,6 +11,7 @@
 import type * as auth from "../auth.js";
 import type * as env from "../env.js";
 import type * as http from "../http.js";
+import type * as private_files from "../private/files.js";
 import type * as private_mergersAndAcquisitionsOpportunities from "../private/mergersAndAcquisitionsOpportunities.js";
 import type * as sendEmails from "../sendEmails.js";
 import type * as users from "../users.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   env: typeof env;
   http: typeof http;
+  "private/files": typeof private_files;
   "private/mergersAndAcquisitionsOpportunities": typeof private_mergersAndAcquisitionsOpportunities;
   sendEmails: typeof sendEmails;
   users: typeof users;

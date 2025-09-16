@@ -130,7 +130,7 @@ export const MergersAndAcquisitionsPanel = () => {
                   <Avatar className="h-10 w-10 rounded-full">
                     <AvatarImage
                       alt={opportunity.createdBy?.email}
-                      src={ 
+                      src={
                         opportunity.createdBy?.avatarURL ??
                         `https://avatar.vercel.sh/${opportunity.createdBy?.email}`
                       }
