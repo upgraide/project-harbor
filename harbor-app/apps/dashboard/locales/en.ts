@@ -105,13 +105,20 @@ export default {
           knowledge_base: "Knowledge Base",
         },
       },
+      navUserSidebar: {
+        account: "Account",
+        notifications: "Notifications",
+        language: "Language",
+        theme: "Theme",
+        logout: "Logout",
+      },
       configuration: {
         title: "Configuration",
         configurationItems: {
           opportunities_mergers_and_acquisitions: "Opportunities M&A",
           opportunities_real_estate: "Opportunities Real Estate",
           investors: "Investors",
-          team: "Team", 
+          team: "Team",
         },
       },
       account: {

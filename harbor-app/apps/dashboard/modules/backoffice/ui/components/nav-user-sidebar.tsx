@@ -32,11 +32,13 @@ import {
 } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import { useScopedI18n } from "@/locales/client";
 
 const NavUserSidebar = () => {
   const user = useQuery(api.users.getUser);
   const { isMobile } = useSidebar();
   const { signOut } = useAuthActions();
+  const t = useScopedI18n("backoffice.sidebar.navUserSidebar");
 
   if (!user) {
     return <Skeleton className="size-8 shrink-0 rounded-full" />;
@@ -106,26 +108,26 @@ const NavUserSidebar = () => {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <UserIcon />
-                Account
+                {t("account")}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <InboxIcon />
-                Notifications
+                {t("notifications")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem className="flex items-center justify-between">
-                Language <LanguageSwitcher />
+                {t("language")} <LanguageSwitcher />
               </DropdownMenuItem>
               <DropdownMenuItem className="flex items-center justify-between">
-                Theme <ThemeSwitcher />
+                {t("theme")} <ThemeSwitcher />
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => void signOut()}>
               <LogOutIcon />
-              Log out
+              {t("logout")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -103,6 +103,13 @@ export default {
           knowledge_base: "Base de Conhecimento",
         },
       },
+      navUserSidebar: {
+        account: "Conta",
+        notifications: "Notificações",
+        language: "Idioma",
+        theme: "Tema",
+        logout: "Sair",
+      },
       configuration: {
         title: "Configuração",
         configurationItems: {

@@ -19,7 +19,6 @@ import {
   HouseIcon,
   InboxIcon,
   LibraryBigIcon,
-  UserIcon,
   Users2Icon,
   UsersIcon,
 } from "lucide-react";
@@ -76,15 +75,13 @@ export const BackofficeSidebar = () => {
     return pathname.startsWith(url);
   };
 
-  
-
   return (
     <Sidebar className="group" collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip={t("toggle")}>
-            <SidebarTrigger size="lg" className="size-8" />
+              <SidebarTrigger className="size-8" size="lg" />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
