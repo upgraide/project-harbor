@@ -29,11 +29,11 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { DynamicImage } from "@/components/dynamic-image";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { useScopedI18n } from "@/locales/client";
 import DarkIcon from "@/public/icon-dark.png";
 import LightIcon from "@/public/icon-light.png";
-import { LanguageSwitcher } from "./language-switcher";
-import { ThemeSwitcher } from "./theme-switcher";
 
 export function Navigation({
   preloadedUser,

@@ -30,6 +30,8 @@ import {
   LogOutIcon,
   UserIcon,
 } from "lucide-react";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 const NavUserSidebar = () => {
   const user = useQuery(api.users.getUser);
@@ -109,6 +111,15 @@ const NavUserSidebar = () => {
               <DropdownMenuItem>
                 <InboxIcon />
                 Notifications
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                Language <LanguageSwitcher />
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center gap-2">
+                Theme <ThemeSwitcher />
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
