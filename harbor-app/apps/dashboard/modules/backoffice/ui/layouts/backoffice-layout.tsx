@@ -1,6 +1,7 @@
 import { SidebarProvider } from "@harbor-app/ui/components/sidebar";
 import { Provider } from "jotai";
 import { cookies } from "next/headers";
+import { AuthGuard } from "@/modules/auth/ui/components/auth-guard";
 import { BackofficeSidebar } from "../components/backoffice-sidebar";
 
 export const BackofficeLayout = async ({
@@ -12,11 +13,13 @@ export const BackofficeLayout = async ({
   const defaultOpen = cookieStore.get("sidebar-state")?.value === "true";
 
   return (
-    <Provider>
-      <SidebarProvider defaultOpen={defaultOpen}>
-        <BackofficeSidebar />
-        <main className="flex flex-1 flex-col">{children}</main>
-      </SidebarProvider>
-    </Provider>
+    <AuthGuard>
+      <Provider>
+        <SidebarProvider defaultOpen={defaultOpen}>
+          <BackofficeSidebar />
+          <main className="flex flex-1 flex-col">{children}</main>
+        </SidebarProvider>
+      </Provider>
+    </AuthGuard>
   );
 };

@@ -10,7 +10,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { useScopedI18n } from "@/locales/client";
 
-export default function PasswordSignIn() {
+export const PasswordSignIn = () => {
   const t = useScopedI18n("login.toastTitle");
   const router = useRouter();
   const { signIn } = useAuthActions();
@@ -77,4 +77,4 @@ export default function PasswordSignIn() {
       </SubmitButton>
     </div>
   );
-}
+};

@@ -12,7 +12,7 @@ const I18nMiddleware = createI18nMiddleware({
   urlMappingStrategy: "rewrite",
 });
 
-const isSignInPage = createRouteMatcher(["/login"]);
+const isSignInPage = createRouteMatcher(["/sign-in"]);
 
 export default convexAuthNextjsMiddleware(
   async (request: NextRequest, { convexAuth }) => {
@@ -23,8 +23,8 @@ export default convexAuthNextjsMiddleware(
       return nextjsMiddlewareRedirect(request, "/");
     }
     if (!isSignIn && !isAuthenticated) {
-      console.log("redirecting to /login", { isSignIn, isAuthenticated });
-      return nextjsMiddlewareRedirect(request, "/login");
+      console.log("redirecting to /sign-in", { isSignIn, isAuthenticated });
+      return nextjsMiddlewareRedirect(request, "/sign-in");
     }
     console.log("no redirect", { isSignIn, isAuthenticated });
     return I18nMiddleware(request);

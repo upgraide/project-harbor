@@ -2,6 +2,7 @@ import { isEU } from "@harbor-app/location";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { ConsentBanner } from "@/components/consent-banner";
 import { DynamicImage } from "@/components/dynamic-image";
 import { getScopedI18n } from "@/locales/server";
 import backgroundLight from "@/public/assets/bg-login.jpg";
@@ -9,14 +10,16 @@ import backgroundDark from "@/public/assets/bg-login-dark.jpg";
 import DarkIcon from "@/public/icon-dark.png";
 import LightIcon from "@/public/icon-light.png";
 import { Cookies } from "@/utils/constants";
-import { ConsentBanner } from "./_components/consent-banner";
-import PasswordSignInForm from "./_components/password-signin-form";
 
 export const metadata: Metadata = {
   title: "Login | Harbor Partners",
 };
 
-export default async function Page() {
+export const AuthLayout = async ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const cookieStore = await cookies();
   const t = await getScopedI18n("login");
   const showTrackingConsent =
@@ -55,9 +58,7 @@ export default async function Page() {
                 </p>
               </div>
 
-              <div className="space-y-4">
-                <PasswordSignInForm />
-              </div>
+              <div className="space-y-4">{children}</div>
 
               <div className="text-center absolute bottom-4 left-0 right-0">
                 <p className="text-xs text-[#878787] leading-relaxed font-mono">
@@ -83,4 +84,4 @@ export default async function Page() {
       {showTrackingConsent && <ConsentBanner />}
     </div>
   );
-}
+};
