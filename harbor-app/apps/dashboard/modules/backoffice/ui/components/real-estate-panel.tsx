@@ -28,6 +28,7 @@ import { usePathname } from "next/navigation";
 import type { RefObject } from "react";
 import { statusFilterAtom } from "../../atoms";
 
+// TODO: Implement real estate panel
 export const RealEstatePanel = () => {
   const pathname = usePathname();
 
@@ -35,7 +36,7 @@ export const RealEstatePanel = () => {
   const setStatusFilter = useSetAtom(statusFilterAtom);
 
   const opportunities = usePaginatedQuery(
-    api.private.opportunities.getManyMergersAndAcquisition,
+    api.private.mergersAndAcquisitionsOpportunities.getMany,
     {
       status: statusFilter === "all" ? undefined : statusFilter,
     },

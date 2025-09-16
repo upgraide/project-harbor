@@ -4,7 +4,7 @@ import { ConvexError, v } from "convex/values";
 import type { Doc } from "../_generated/dataModel";
 import { query } from "../_generated/server";
 
-export const getManyMergersAndAcquisition = query({
+export const getMany = query({
   args: {
     paginationOpts: paginationOptsValidator,
     status: v.optional(
@@ -74,3 +74,5 @@ export const getManyMergersAndAcquisition = query({
     };
   },
 });
+
+

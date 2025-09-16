@@ -35,7 +35,7 @@ export const MergersAndAcquisitionsPanel = () => {
   const setStatusFilter = useSetAtom(statusFilterAtom);
 
   const opportunities = usePaginatedQuery(
-    api.private.opportunities.getManyMergersAndAcquisition,
+    api.private.mergersAndAcquisitionsOpportunities.getMany,
     {
       status: statusFilter === "all" ? undefined : statusFilter,
     },
