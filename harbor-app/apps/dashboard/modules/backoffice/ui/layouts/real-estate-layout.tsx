@@ -3,9 +3,9 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@harbor-app/ui/components/resizable";
-import { OpportunitiesPanel } from "../components/opportunities-panel";
+import { RealEstatePanel } from "../components/real-estate-panel";
 
-export const OpportunitiesLayout = ({
+export const RealEstateLayout = ({
   children,
 }: {
   children: React.ReactNode;
@@ -13,7 +13,7 @@ export const OpportunitiesLayout = ({
   return (
     <ResizablePanelGroup className="h-full flex-1" direction="horizontal">
       <ResizablePanel defaultSize={30} maxSize={30} minSize={20}>
-        <OpportunitiesPanel />
+        <RealEstatePanel />
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel className="h-full" defaultSize={70}>

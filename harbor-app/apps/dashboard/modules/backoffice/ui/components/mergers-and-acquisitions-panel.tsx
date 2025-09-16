@@ -28,7 +28,7 @@ import { usePathname } from "next/navigation";
 import type { RefObject } from "react";
 import { statusFilterAtom } from "../../atoms";
 
-export const OpportunitiesPanel = () => {
+export const MergersAndAcquisitionsPanel = () => {
   const pathname = usePathname();
 
   const statusFilter = useAtomValue(statusFilterAtom);
@@ -112,17 +112,17 @@ export const OpportunitiesPanel = () => {
                   className={cn(
                     "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
                     pathname ===
-                      `/backoffice/opportunities/${opportunity._id}` &&
+                      `/backoffice/mergers-and-acquisitions/${opportunity._id}` &&
                       "bg-accent text-accent-foreground",
                   )}
-                  href={`/backoffice/opportunities/${opportunity._id}`}
+                  href={`/backoffice/mergers-and-acquisitions/${opportunity._id}`}
                   key={opportunity._id}
                 >
                   <div
                     className={cn(
                       "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity",
                       pathname ===
-                        `/backoffice/opportunities/${opportunity._id}` &&
+                        `/backoffice/mergers-and-acquisitions/${opportunity._id}` &&
                         "opacity-100",
                     )}
                   />
@@ -130,7 +130,7 @@ export const OpportunitiesPanel = () => {
                   <Avatar className="h-10 w-10 rounded-full">
                     <AvatarImage
                       alt={opportunity.createdBy?.email}
-                      src={
+                      src={ 
                         opportunity.createdBy?.avatarURL ??
                         `https://avatar.vercel.sh/${opportunity.createdBy?.email}`
                       }
