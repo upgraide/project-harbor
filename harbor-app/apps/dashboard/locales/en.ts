@@ -108,9 +108,10 @@ export default {
       configuration: {
         title: "Configuration",
         configurationItems: {
-          opportunities: "Opportunities",
+          opportunities_mergers_and_acquisitions: "Opportunities M&A",
+          opportunities_real_estate: "Opportunities Real Estate",
           investors: "Investors",
-          team: "Team",
+          team: "Team", 
         },
       },
       account: {

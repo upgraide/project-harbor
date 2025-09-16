@@ -16,6 +16,7 @@ import {
 } from "@harbor-app/ui/components/sidebar";
 import {
   BriefcaseIcon,
+  HouseIcon,
   InboxIcon,
   LibraryBigIcon,
   UserIcon,
@@ -24,7 +25,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { DynamicImage } from "@/components/dynamic-image";
 import { useScopedI18n } from "@/locales/client";
 
 const customerSupportItems = [
@@ -42,9 +42,14 @@ const customerSupportItems = [
 
 const configurationItems = [
   {
-    title: "Opportunities",
-    url: "/backoffice/opportunities",
+    title: "Opportunities Mergers and Acquisitions",
+    url: "/backoffice/opportunities-mergers-and-acquisitions",
     icon: BriefcaseIcon,
+  },
+  {
+    title: "Opportunities Real Estate",
+    url: "/backoffice/opportunities-real-estate",
+    icon: HouseIcon,
   },
   {
     title: "Investors",
@@ -131,14 +136,14 @@ export const BackofficeSidebar = () => {
                     asChild
                     isActive={isActive(item.url)}
                     tooltip={t(
-                      `configuration.configurationItems.${item.title.replace(" ", "_").toLowerCase()}`,
+                      `configuration.configurationItems.${item.title.replace(/ /g, "_").toLowerCase()}`,
                     )}
                   >
                     <Link href={item.url}>
                       <item.icon className="size-4" />
                       <span>
                         {t(
-                          `configuration.configurationItems.${item.title.replace(" ", "_").toLowerCase()}`,
+                          `configuration.configurationItems.${item.title.replace(/ /g, "_").toLowerCase()}`,
                         )}
                       </span>
                     </Link>
