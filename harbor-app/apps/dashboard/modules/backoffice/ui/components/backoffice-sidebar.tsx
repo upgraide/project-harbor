@@ -26,6 +26,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useScopedI18n } from "@/locales/client";
+import NavUserSidebar from "./nav-user-sidebar";
 
 const customerSupportItems = [
   {
@@ -74,6 +75,8 @@ export const BackofficeSidebar = () => {
 
     return pathname.startsWith(url);
   };
+
+  
 
   return (
     <Sidebar className="group" collapsible="icon">
@@ -148,16 +151,7 @@ export const BackofficeSidebar = () => {
       </SidebarContent>
 
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/backoffice/account">
-                <UserIcon className="size-4" />
-                <span>{t("account.accountItems.settings")}</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <NavUserSidebar />
       </SidebarFooter>
 
       <SidebarRail />
