@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthActions } from "@convex-dev/auth/react";
 import { api } from "@harbor-app/backend/convex/_generated/api";
 import {
   Avatar,
@@ -33,6 +34,7 @@ import {
 const NavUserSidebar = () => {
   const user = useQuery(api.users.getUser);
   const { isMobile } = useSidebar();
+  const { signOut } = useAuthActions();
 
   if (!user) {
     return <Skeleton className="size-8 shrink-0 rounded-full" />;
@@ -110,7 +112,7 @@ const NavUserSidebar = () => {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => void signOut()}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
