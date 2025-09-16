@@ -128,5 +128,12 @@ export default {
         },
       },
     },
+    mergersAndAcquisitions: {
+      mergersAndAcquisitionsOportunity: {
+        name: "Name:",
+        description: "Description:",
+        location: "Location:",
+      },
+    },
   },
 } as const;

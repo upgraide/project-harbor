@@ -1,64 +1,117 @@
-import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
+"use client";
+
 import { api } from "@harbor-app/backend/convex/_generated/api";
 import type { Id } from "@harbor-app/backend/convex/_generated/dataModel";
+import { Button } from "@harbor-app/ui/components/button";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@harbor-app/ui/components/card";
-import { fetchQuery } from "convex/nextjs";
-import Image from "next/image";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@harbor-app/ui/components/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@harbor-app/ui/components/table";
+import { useQuery } from "convex/react";
+import {
+  LoaderIcon,
+  MoreHorizontalIcon,
+  PlusIcon,
+  TrashIcon,
+  WandSparklesIcon,
+} from "lucide-react";
+import { use } from "react";
+import { useScopedI18n } from "@/locales/client";
 
-const Page = async ({
+const Page = ({
   params,
 }: {
   params: Promise<{ opportunityId: Id<"opportunitiesMergersAndAcquisitions"> }>;
 }) => {
-  const { opportunityId } = await params;
+  const t = useScopedI18n(
+    "backoffice.mergersAndAcquisitions.mergersAndAcquisitionsOportunity",
+  );
+  const { opportunityId } = use(params);
 
-  const opportunity = await fetchQuery(
+  const opportunity = useQuery(
     api.private.mergersAndAcquisitionsOpportunities.getById,
     {
       opportunityId: opportunityId as Id<"opportunitiesMergersAndAcquisitions">,
     },
-    { token: await convexAuthNextjsToken() },
   );
 
+  if (!opportunity) {
+    return (
+      <div className="flex items-center justify-center h-full w-full">
+        <LoaderIcon className="size-4 animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full mx-auto my-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle>Project Overview</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>{opportunity.name}</p>
-          <p>{opportunity.description}</p>
-          <p>{opportunity.sales}</p>
-          <p>{opportunity.ebitda}</p>
-          <p>{opportunity.industry}</p>
-          <p>{opportunity.subIndustry}</p>
-          <p>{opportunity.type}</p>
-          <p>{opportunity.typeDetails}</p>
-          <p>{opportunity.status}</p>
-          <p>{opportunity.createdBy?.name}</p>
-          <p>{opportunity.createdBy?.email}</p>
-          <p>{opportunity.createdBy?.avatarURL}</p>
-        </CardContent>
-      </Card>
-      {opportunity.imagesURLs.length > 0 && (
-        <div className="flex flex-wrap gap-4">
-          {opportunity.imagesURLs.map((image) => (
-            <Image
-              alt="Opportunity Image"
-              height={1250}
-              key={image}
-              src={image}
-              width={1250}
-            />
-          ))}
+    <div className="flex min-h-screen flex-col p-8 bg-muted">
+      <div className="mx-auto max-w-screen-md w-full">
+        <div className="space-y-2">
+          <h1 className="text-2xl md:text-4xlfont-bold">{opportunity.name}</h1>
+          <p className=" text-muted-foreground">{opportunity.description}</p>
         </div>
-      )}
+
+        <div className="mt-8 rounde-lg border border-border bg-background rounded-lg">
+          <div className="flex items-center justify-end border-b px-6 py-4">
+            <Button
+              onClick={() => {
+                console.log("Add Note");
+              }}
+            >
+              <PlusIcon />
+              Add Note
+            </Button>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="px-6 py-4 font-medium">Metric</TableHead>
+                <TableHead className="px-6 py-4 font-medium">Value</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow className="hover:bg-muted/50">
+                <TableCell className="px-6 py-4">Sales</TableCell>
+                <TableCell className="px-6 py-4 text-muted-foreground">
+                  {opportunity.sales}
+                </TableCell>
+                <TableCell className="px-6 py-4 flex items-center justify-end">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className="size-8 p-0" size="sm" variant="ghost">
+                        <MoreHorizontalIcon />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => {}}>
+                        <WandSparklesIcon className="size-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => {}}
+                      >
+                        <TrashIcon className="size-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+      </div>
     </div>
   );
 };
