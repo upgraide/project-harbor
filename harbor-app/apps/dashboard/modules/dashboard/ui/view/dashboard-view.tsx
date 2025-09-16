@@ -4,8 +4,10 @@ import { api } from "@harbor-app/backend/convex/_generated/api";
 import { usePaginatedQuery } from "convex/react";
 
 const DashboardView = () => {
+  // TODO: Implement dashboard view, becarefull with the query, it's not the same as the other views
+  // I need to get only the pre-NDA information
   const opportunities = usePaginatedQuery(
-    api.public.opportunities.getManyMergersAndAcquisition,
+    api.private.mergersAndAcquisitionsOpportunities.getMany,
     {},
     {
       initialNumItems: 10,

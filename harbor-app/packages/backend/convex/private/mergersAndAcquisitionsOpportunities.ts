@@ -75,4 +75,56 @@ export const getMany = query({
   },
 });
 
+/**
+ * Get a mergers and acquisitions opportunity by id
+ * 
+ * This query returns all the information about the opportunity, including the createdBy user
+ * Becarefull with data leakage, we don't want to return the full NDA information in user-facing queries
+ * 
+ * Only works for users with the role of admin or team
+ * 
+ * @param args.opportunityId - The id of the opportunity to get
+ * @returns The opportunity with the createdBy user enriched
+ */
+export const getById = query({
+  args: {
+    opportunityId: v.id("opportunitiesMergersAndAcquisitions"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
 
+    if (userId === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+     // TODO: Check if user is admin or team at least
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    const createdBy = await ctx.db.get(opportunity.createdBy);
+    const enrichedOpportunity = {
+      ...opportunity,
+      createdBy: createdBy
+        ? {
+            _id: createdBy._id,
+            name: createdBy.name,
+            email: createdBy.email,
+            avatarURL: createdBy.imageId
+              ? await ctx.storage.getUrl(createdBy.imageId)
+              : undefined,
+          }
+        : null,
+    };
+
+    return enrichedOpportunity;
+  },
+});
