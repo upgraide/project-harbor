@@ -63,14 +63,6 @@ const configurationItems = [
   },
 ];
 
-const accountItems = [
-  {
-    title: "Settings",
-    url: "/backoffice/account",
-    icon: UserIcon,
-  },
-];
-
 export const BackofficeSidebar = () => {
   const t = useScopedI18n("backoffice.sidebar");
   const pathname = usePathname();
@@ -144,35 +136,6 @@ export const BackofficeSidebar = () => {
                       <span>
                         {t(
                           `configuration.configurationItems.${item.title.replace(/ /g, "_").toLowerCase()}`,
-                        )}
-                      </span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Configuration */}
-        <SidebarGroup>
-          <SidebarGroupLabel>{t("account.title")}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {accountItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={t(
-                      `account.accountItems.${item.title.replace(" ", "_").toLowerCase()}`,
-                    )}
-                  >
-                    <Link href={item.url}>
-                      <item.icon className="size-4" />
-                      <span>
-                        {t(
-                          `account.accountItems.${item.title.replace(" ", "_").toLowerCase()}`,
                         )}
                       </span>
                     </Link>
