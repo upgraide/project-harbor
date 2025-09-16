@@ -115,10 +115,10 @@ const NavUserSidebar = () => {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center justify-between">
                 Language <LanguageSwitcher />
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center gap-2">
+              <DropdownMenuItem className="flex items-center justify-between">
                 Theme <ThemeSwitcher />
               </DropdownMenuItem>
             </DropdownMenuGroup>
