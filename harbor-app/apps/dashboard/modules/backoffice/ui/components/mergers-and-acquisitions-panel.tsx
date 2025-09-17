@@ -7,7 +7,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@harbor-app/ui/components/avatar";
-import { Button, buttonVariants } from "@harbor-app/ui/components/button";
+import { buttonVariants } from "@harbor-app/ui/components/button";
 import { InfiniteScrollTrigger } from "@harbor-app/ui/components/infinite-scroll-trigger";
 import { ScrollArea } from "@harbor-app/ui/components/scroll-area";
 import {
