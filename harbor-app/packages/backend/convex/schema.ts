@@ -74,6 +74,8 @@ const schema = defineSchema({
     assetValue: v.optional(v.number()),
     salesCAGR: v.optional(v.number()), // In percentage
     ebitdaCAGR: v.optional(v.number()), // In percentage
+
+    // Post-NDA
     entrepriveValue: v.optional(v.number()),
     equityValue: v.optional(v.number()),
     evDashEbitdaEntry: v.optional(v.number()),
@@ -81,7 +83,7 @@ const schema = defineSchema({
     ebitdaMargin: v.optional(v.number()), // In percentage
     freeCashFlow: v.optional(v.number()),
     netDebtDashEbitda: v.optional(v.number()),
-    capexItensity: v.optional(v.number()), // In percentage
+    capexIntensity: v.optional(v.number()), // In percentage
     workingCapitalNeeds: v.optional(v.number()),
   }),
 });
