@@ -408,7 +408,7 @@ const Page = ({
             <ChartContainer className="h-[400px] w-full" config={chartConfig}>
               <LineChart
                 accessibilityLayer
-                data={opportunity.graphRows}
+                data={opportunity.graphRows || []}
                 margin={{
                   left: 20,
                   right: 20,
@@ -432,14 +432,14 @@ const Page = ({
                 <Line
                   dataKey="revenue"
                   dot={true}
-                  stroke="var(--color-chart-1)"
+                  stroke="var(--chart-1)"
                   strokeWidth={2}
                   type="monotone"
                 />
                 <Line
                   dataKey="ebitda"
                   dot={true}
-                  stroke="var(--color-chart-2)"
+                  stroke="var(--chart-2)"
                   strokeWidth={2}
                   type="monotone"
                 />
