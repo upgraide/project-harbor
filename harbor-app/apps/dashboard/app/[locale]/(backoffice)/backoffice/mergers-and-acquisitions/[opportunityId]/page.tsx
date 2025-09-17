@@ -30,6 +30,7 @@ import {
   ImageOffIcon,
   LoaderIcon,
   MoreHorizontalIcon,
+  PencilIcon,
   PlusIcon,
   TrashIcon,
   WandSparklesIcon,
@@ -81,7 +82,6 @@ const Page = ({
       <div className="mx-auto max-w-screen-md w-full">
         <div className="space-y-2">
           <h1 className="text-2xl md:text-4xlfont-bold">{opportunity.name}</h1>
-          <p className=" text-muted-foreground">{opportunity.description}</p>
         </div>
 
         <div className="mt-8 rounded-lg border border-border bg-background">
@@ -135,6 +135,142 @@ const Page = ({
                 </p>
               </div>
             )}
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-lg border border-border bg-background">
+          <div className="flex items-center justify-between border-b px-6">
+            <h1 className="text-lg font-semibold p-6">Description</h1>
+            <Button
+              onClick={() => {
+                console.log("Add Note");
+              }}
+            >
+              <PencilIcon />
+              Edit Description
+            </Button>
+          </div>
+          <p className="text-muted-foreground p-6">{opportunity.description}</p>
+        </div>
+
+        <div className="mt-8 rounded-lg border border-border bg-background">
+          <div className="flex items-center justify-between border-b px-6 py-4">
+            <h1 className="text-lg font-semibold">Financial Performance</h1>
+          </div>
+          <div className="p-6">
+            <ChartContainer className="h-[400px] w-full" config={chartConfig}>
+              <LineChart
+                accessibilityLayer
+                data={opportunity.graphRows || []}
+                margin={{
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  bottom: 20,
+                }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  axisLine={false}
+                  dataKey="year"
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <YAxis axisLine={false} tickLine={false} tickMargin={8} />
+                <ChartTooltip
+                  content={<ChartTooltipContent />}
+                  cursor={false}
+                />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Line
+                  dataKey="revenue"
+                  dot={true}
+                  stroke="var(--chart-1)"
+                  strokeWidth={2}
+                  type="monotone"
+                />
+                <Line
+                  dataKey="ebitda"
+                  dot={true}
+                  stroke="var(--chart-2)"
+                  strokeWidth={2}
+                  type="monotone"
+                />
+              </LineChart>
+            </ChartContainer>
+
+            <div className="mt-8 rounded-lg border border-border bg-background">
+              <div className="flex items-center justify-between border-b px-6 py-4">
+                <h1 className="text-lg font-medium">Graph Data</h1>
+                <Button
+                  onClick={() => {
+                    console.log("Add Note");
+                  }}
+                >
+                  <PlusIcon />
+                  Add Year
+                </Button>
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-6 py-4 font-medium">
+                      Year
+                    </TableHead>
+                    <TableHead className="px-6 py-4 font-medium">
+                      Revenue
+                    </TableHead>
+                    <TableHead className="px-6 py-4 font-medium">
+                      EBITDA
+                    </TableHead>
+                    <TableHead className="px-6 py-4 font-medium text-right">
+                      Actions
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {opportunity.graphRows?.map((row) => (
+                    <TableRow key={row.year}>
+                      <TableCell className="px-6 py-4 text-muted-foreground">
+                        {row.year}
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-muted-foreground">
+                        {row.revenue}
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-muted-foreground">
+                        {row.ebitda}
+                      </TableCell>
+                      <TableCell className="px-6 py-4 flex items-center justify-end">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              className="size-8 p-0"
+                              size="sm"
+                              variant="ghost"
+                            >
+                              <MoreHorizontalIcon />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => {}}>
+                              <WandSparklesIcon className="size-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => {}}
+                            >
+                              <TrashIcon className="size-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </div>
 
@@ -527,127 +663,6 @@ const Page = ({
               </TableRow>
             </TableBody>
           </Table>
-        </div>
-
-        <div className="mt-8 rounded-lg border border-border bg-background">
-          <div className="flex items-center justify-between border-b px-6 py-4">
-            <h1 className="text-lg font-semibold">Financial Performance</h1>
-          </div>
-          <div className="p-6">
-            <ChartContainer className="h-[400px] w-full" config={chartConfig}>
-              <LineChart
-                accessibilityLayer
-                data={opportunity.graphRows || []}
-                margin={{
-                  left: 20,
-                  right: 20,
-                  top: 20,
-                  bottom: 20,
-                }}
-              >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  axisLine={false}
-                  dataKey="year"
-                  tickLine={false}
-                  tickMargin={8}
-                />
-                <YAxis axisLine={false} tickLine={false} tickMargin={8} />
-                <ChartTooltip
-                  content={<ChartTooltipContent />}
-                  cursor={false}
-                />
-                <ChartLegend content={<ChartLegendContent />} />
-                <Line
-                  dataKey="revenue"
-                  dot={true}
-                  stroke="var(--chart-1)"
-                  strokeWidth={2}
-                  type="monotone"
-                />
-                <Line
-                  dataKey="ebitda"
-                  dot={true}
-                  stroke="var(--chart-2)"
-                  strokeWidth={2}
-                  type="monotone"
-                />
-              </LineChart>
-            </ChartContainer>
-
-            <div className="mt-8 rounded-lg border border-border bg-background">
-              <div className="flex items-center justify-between border-b px-6 py-4">
-                <h1 className="text-lg font-medium">Graph Data</h1>
-                <Button
-                  onClick={() => {
-                    console.log("Add Note");
-                  }}
-                >
-                  <PlusIcon />
-                  Add Year
-                </Button>
-              </div>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="px-6 py-4 font-medium">
-                      Year
-                    </TableHead>
-                    <TableHead className="px-6 py-4 font-medium">
-                      Revenue
-                    </TableHead>
-                    <TableHead className="px-6 py-4 font-medium">
-                      EBITDA
-                    </TableHead>
-                    <TableHead className="px-6 py-4 font-medium text-right">
-                      Actions
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {opportunity.graphRows?.map((row) => (
-                    <TableRow key={row.year}>
-                      <TableCell className="px-6 py-4 text-muted-foreground">
-                        {row.year}
-                      </TableCell>
-                      <TableCell className="px-6 py-4 text-muted-foreground">
-                        {row.revenue}
-                      </TableCell>
-                      <TableCell className="px-6 py-4 text-muted-foreground">
-                        {row.ebitda}
-                      </TableCell>
-                      <TableCell className="px-6 py-4 flex items-center justify-end">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              className="size-8 p-0"
-                              size="sm"
-                              variant="ghost"
-                            >
-                              <MoreHorizontalIcon />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => {}}>
-                              <WandSparklesIcon className="size-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-destructive"
-                              onClick={() => {}}
-                            >
-                              <TrashIcon className="size-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
         </div>
 
         <div className="mt-8 rounded-lg border border-border bg-background">

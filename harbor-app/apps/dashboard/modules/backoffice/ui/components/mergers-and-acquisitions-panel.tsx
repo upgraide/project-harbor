@@ -7,6 +7,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@harbor-app/ui/components/avatar";
+import { Button, buttonVariants } from "@harbor-app/ui/components/button";
 import { InfiniteScrollTrigger } from "@harbor-app/ui/components/infinite-scroll-trigger";
 import { ScrollArea } from "@harbor-app/ui/components/scroll-area";
 import {
@@ -22,7 +23,13 @@ import { cn } from "@harbor-app/ui/lib/utils";
 import { usePaginatedQuery } from "convex/react";
 import { formatDistanceToNow } from "date-fns";
 import { useAtomValue, useSetAtom } from "jotai";
-import { ArrowRightIcon, ArrowUpIcon, CheckIcon, ListIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  ArrowUpIcon,
+  CheckIcon,
+  ListIcon,
+  PlusIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { RefObject } from "react";
@@ -58,7 +65,7 @@ export const MergersAndAcquisitionsPanel = () => {
 
   return (
     <div className="flex h-full flex-col w-full bg-background text-sidebar-foreground">
-      <div className="flex flex-col gap-3.5 border-b p-2">
+      <div className="flex flex-row gap-3.5 border-b p-2 justify-between">
         <Select
           defaultValue="all"
           onValueChange={(value) =>
@@ -100,6 +107,15 @@ export const MergersAndAcquisitionsPanel = () => {
             </SelectItem>
           </SelectContent>
         </Select>
+        <div className="flex items-center gap-2">
+          <Link
+            className={buttonVariants()}
+            href="/backoffice/mergers-and-acquisitions/create"
+          >
+            <PlusIcon className="size-4" />
+            Add Opportunity
+          </Link>
+        </div>
       </div>
       {isLoadingFirstPage ? (
         <SkeletonOpportunitiesPanel />
