@@ -4,6 +4,8 @@ import { ConvexError, v } from "convex/values";
 import type { Doc, Id } from "../_generated/dataModel";
 import { mutation, query } from "../_generated/server";
 
+const MAX_IMAGES_VALUE = 10;
+
 export const getMany = query({
   args: {
     paginationOpts: paginationOptsValidator,
@@ -228,5 +230,57 @@ export const create = mutation({
       ...args,
       createdBy: userId,
     });
+  },
+});
+
+/**
+ * Add an image to a mergers and acquisitions opportunity
+ *
+ * @param args.opportunityId - The id of the opportunity to add the image to
+ * @param args.imageId - The id of the image to add to the opportunity
+ * @returns void
+ */
+export const addImage = mutation({
+  args: {
+    opportunityId: v.id("opportunitiesMergersAndAcquisitions"),
+    imageId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (userId === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    // TODO: Check if user is admin or team at least
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    if (opportunity.images?.length === MAX_IMAGES_VALUE) {
+      await ctx.storage.delete(args.imageId);
+
+      throw new ConvexError({
+        code: "BAD_REQUEST",
+        message: "Maximum number of images reached",
+      });
+    }
+
+    // Here we assert that the opportunity.images is not null
+    const updatedImages = [...(opportunity.images || []), args.imageId];
+
+    await ctx.db.patch(args.opportunityId, {
+      images: updatedImages,
+    });
+
+    return;
   },
 });

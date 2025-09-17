@@ -76,6 +76,7 @@ const Page = ({
               images={opportunity.imagesURLs || []}
               onAddImage={ACTION_HANDLERS.addImage}
               onDeleteImage={ACTION_HANDLERS.deleteImage}
+              opportunityId={opportunity._id}
               opportunityName={opportunity.name}
             />
           </div>
