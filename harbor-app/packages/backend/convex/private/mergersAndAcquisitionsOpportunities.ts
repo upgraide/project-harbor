@@ -2,7 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import { type PaginationResult, paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
 import type { Doc, Id } from "../_generated/dataModel";
-import { query } from "../_generated/server";
+import { mutation, query } from "../_generated/server";
 
 export const getMany = query({
   args: {
@@ -139,5 +139,94 @@ export const getById = query({
     };
 
     return enrichedOpportunity;
+  },
+});
+
+/**
+ * Create a new M&A opportunity
+ */
+export const create = mutation({
+  args: {
+    name: v.string(),
+    description: v.optional(v.string()),
+    images: v.optional(v.array(v.id("_storage"))),
+    sales: v.union(
+      v.literal("0-5"),
+      v.literal("5-10"),
+      v.literal("10-15"),
+      v.literal("20-30"),
+      v.literal("30+"),
+    ),
+    ebitda: v.union(
+      v.literal("1-2"),
+      v.literal("2-3"),
+      v.literal("3-5"),
+      v.literal("5+"),
+    ),
+    ebitdaNormalized: v.optional(v.number()),
+    netDebt: v.optional(v.number()),
+    industry: v.union(
+      v.literal("Services"),
+      v.literal("Transformation Industry"),
+      v.literal("Trading"),
+      v.literal("Energy & Infrastructure"),
+      v.literal("Fitness"),
+      v.literal("Healthcare & Pharmaceuticals"),
+      v.literal("IT"),
+      v.literal("TMT (Technology, Media & Telecommunications)"),
+      v.literal("Transports"),
+    ),
+    subIndustry: v.optional(v.string()),
+    type: v.union(v.literal("Buy In"), v.literal("Buy Out")),
+    typeDetails: v.union(
+      v.literal("Majority"),
+      v.literal("Minority"),
+      v.literal("Full"),
+    ),
+    status: v.union(
+      v.literal("no-interest"),
+      v.literal("interested"),
+      v.literal("completed"),
+    ),
+    graphRows: v.optional(
+      v.array(
+        v.object({
+          year: v.number(),
+          revenue: v.number(),
+          ebitda: v.number(),
+        }),
+      ),
+    ),
+    assetIncluded: v.optional(v.boolean()),
+    assetValue: v.optional(v.number()),
+    salesCAGR: v.optional(v.number()),
+    ebitdaCAGR: v.optional(v.number()),
+    entrepriveValue: v.optional(v.number()),
+    equityValue: v.optional(v.number()),
+    evDashEbitdaEntry: v.optional(v.number()),
+    evDashEbitdaExit: v.optional(v.number()),
+    ebitdaMargin: v.optional(v.number()),
+    freeCashFlow: v.optional(v.number()),
+    netDebtDashEbitda: v.optional(v.number()),
+    capexIntensity: v.optional(v.number()),
+    workingCapitalNeeds: v.optional(v.number()),
+  },
+  returns: v.id("opportunitiesMergersAndAcquisitions"),
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (userId === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    // TODO: Check if user is admin or team at least
+
+    return await ctx.db.insert("opportunitiesMergersAndAcquisitions", {
+      ...args,
+      createdBy: userId,
+    });
   },
 });
