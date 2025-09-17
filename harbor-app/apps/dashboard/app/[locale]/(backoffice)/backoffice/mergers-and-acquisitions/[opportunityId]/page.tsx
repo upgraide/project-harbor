@@ -396,6 +396,135 @@ const Page = ({
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
+              <TableRow>
+                <TableCell className="px-6 py-4 font-medium bg-muted/50">
+                  CAGR
+                </TableCell>
+                <TableCell className="px-6 py-4 font-medium bg-muted/50"></TableCell>
+                <TableCell className="px-6 py-4 font-medium bg-muted/50"></TableCell>
+              </TableRow>
+              <TableRow className="hover:bg-muted/50">
+                <TableCell className="px-6 py-4">Sales</TableCell>
+                <TableCell className="px-6 py-4 text-muted-foreground">
+                  {opportunity.salesCAGR || "-"}
+                  {opportunity.salesCAGR && <span>%</span>}
+                </TableCell>
+                <TableCell className="px-6 py-4 flex items-center justify-end">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className="size-8 p-0" size="sm" variant="ghost">
+                        <MoreHorizontalIcon />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => {}}>
+                        <WandSparklesIcon className="size-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => {}}
+                      >
+                        <TrashIcon className="size-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+              <TableRow className="hover:bg-muted/50">
+                <TableCell className="px-6 py-4">EBITDA</TableCell>
+                <TableCell className="px-6 py-4 text-muted-foreground">
+                  {opportunity.ebitdaCAGR || "-"}
+                  {opportunity.ebitdaCAGR && <span>%</span>}
+                </TableCell>
+                <TableCell className="px-6 py-4 flex items-center justify-end">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className="size-8 p-0" size="sm" variant="ghost">
+                        <MoreHorizontalIcon />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => {}}>
+                        <WandSparklesIcon className="size-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => {}}
+                      >
+                        <TrashIcon className="size-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="px-6 py-4 font-medium bg-muted/50">
+                  Asset
+                </TableCell>
+                <TableCell className="px-6 py-4 font-medium bg-muted/50"></TableCell>
+                <TableCell className="px-6 py-4 font-medium bg-muted/50"></TableCell>
+              </TableRow>
+              <TableRow className="hover:bg-muted/50">
+                <TableCell className="px-6 py-4">Asset Included</TableCell>
+                <TableCell className="px-6 py-4 text-muted-foreground">
+                  {opportunity.assetIncluded ? "Yes" : "No"}
+                </TableCell>
+                <TableCell className="px-6 py-4 flex items-center justify-end">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className="size-8 p-0" size="sm" variant="ghost">
+                        <MoreHorizontalIcon />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => {}}>
+                        <WandSparklesIcon className="size-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => {}}
+                      >
+                        <TrashIcon className="size-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+              <TableRow className="hover:bg-muted/50">
+                <TableCell className="px-6 py-4">Asset Value</TableCell>
+                <TableCell className="px-6 py-4 text-muted-foreground">
+                  {opportunity.assetValue || "-"}
+                  {opportunity.assetValue && <span>M€</span>}
+                </TableCell>
+                <TableCell className="px-6 py-4 flex items-center justify-end">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className="size-8 p-0" size="sm" variant="ghost">
+                        <MoreHorizontalIcon />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => {}}>
+                        <WandSparklesIcon className="size-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => {}}
+                      >
+                        <TrashIcon className="size-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </div>
