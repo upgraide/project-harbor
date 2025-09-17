@@ -129,7 +129,6 @@ export const UploadDialog = ({
                 generateUploadUrl={generateUploadUrl}
                 id="image-upload"
                 multiple={false}
-                onUploadComplete={handleUpdateImage}
                 onUploadStart={handleUploadStart}
                 required
                 type="file"

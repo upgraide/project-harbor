@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@harbor-app/ui/components/table";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { LoaderIcon } from "lucide-react";
 import { use } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
@@ -49,6 +49,8 @@ const Page = ({
     },
   );
 
+  const deleteImage = useMutation(api.private.files.deleteFile);
+
   if (!opportunity) {
     return (
       <div className="flex items-center justify-center h-full w-full">
@@ -74,8 +76,14 @@ const Page = ({
           <div className="p-6">
             <ImageGrid
               images={opportunity.imagesURLs || []}
+              imagesStorageIds={opportunity.images || []}
               onAddImage={ACTION_HANDLERS.addImage}
-              onDeleteImage={ACTION_HANDLERS.deleteImage}
+              onDeleteImage={(storageId) => {
+                deleteImage({
+                  opportunityId: opportunity._id,
+                  storageId: storageId as Id<"_storage">,
+                });
+              }}
               opportunityId={opportunity._id}
               opportunityName={opportunity.name}
             />

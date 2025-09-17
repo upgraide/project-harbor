@@ -8,6 +8,7 @@ import { mutation } from "../_generated/server";
  */
 export const deleteFile = mutation({
   args: {
+    opportunityId: v.id("opportunitiesMergersAndAcquisitions"),
     storageId: v.id("_storage"),
   },
   handler: async (ctx, args) => {
@@ -20,7 +21,20 @@ export const deleteFile = mutation({
       });
     }
 
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
     await ctx.storage.delete(args.storageId);
+
+    await ctx.db.patch(args.opportunityId, {
+      images: opportunity.images?.filter((image) => image !== args.storageId),
+    });
   },
 });
 

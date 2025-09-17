@@ -9,15 +9,17 @@ import { UploadDialog } from "./upload-dialog";
 
 interface ImageGridProps {
   images: string[];
+  imagesStorageIds: Id<"_storage">[];
   opportunityName: string;
   opportunityId: Id<"opportunitiesMergersAndAcquisitions">;
-  onDeleteImage?: (imageUrl: string) => void;
+  onDeleteImage?: (storageId: Id<"_storage">) => void;
   onAddImage?: () => void;
   showAddButton?: boolean;
 }
 
 export const ImageGrid = ({
   images,
+  imagesStorageIds,
   opportunityName,
   opportunityId,
   onDeleteImage,
@@ -66,7 +68,7 @@ export const ImageGrid = ({
         {images.map((image, index) => (
           <div
             className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted transition-all duration-200 hover:shadow-md hover:scale-105"
-            key={image}
+            key={imagesStorageIds[index]}
           >
             <Image
               alt={`${opportunityName} - Image ${index + 1}`}
@@ -79,7 +81,9 @@ export const ImageGrid = ({
               <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <Button
                   className="size-8 p-0"
-                  onClick={() => onDeleteImage(image)}
+                  onClick={() =>
+                    onDeleteImage(imagesStorageIds[index] as Id<"_storage">)
+                  }
                   size="sm"
                   variant="destructive"
                 >
