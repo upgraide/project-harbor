@@ -263,6 +263,35 @@ const Page = ({
                 </TableCell>
               </TableRow>
               <TableRow className="hover:bg-muted/50">
+                <TableCell className="px-6 py-4">EBITDA (Normalized)</TableCell>
+                <TableCell className="px-6 py-4 text-muted-foreground">
+                  {opportunity.ebitdaNormalized || "-"}
+                  {opportunity.ebitdaNormalized && <span>M€</span>}
+                </TableCell>
+                <TableCell className="px-6 py-4 flex items-center justify-end">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className="size-8 p-0" size="sm" variant="ghost">
+                        <MoreHorizontalIcon />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => {}}>
+                        <WandSparklesIcon className="size-4 mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => {}}
+                      >
+                        <TrashIcon className="size-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+              <TableRow className="hover:bg-muted/50">
                 <TableCell className="px-6 py-4">Net Debt</TableCell>
                 <TableCell className="px-6 py-4 text-muted-foreground">
                   {opportunity.netDebt || "-"}
