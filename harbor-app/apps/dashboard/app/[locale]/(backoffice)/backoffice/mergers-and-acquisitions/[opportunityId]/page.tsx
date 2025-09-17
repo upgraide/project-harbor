@@ -19,14 +19,14 @@ import {
 } from "@harbor-app/ui/components/table";
 import { useMutation, useQuery } from "convex/react";
 import { LoaderIcon } from "lucide-react";
-import { use } from "react";
+import { use, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ActionDropdown } from "@/modules/backoffice/ui/components/action-dropdown";
 import { ImageGrid } from "@/modules/backoffice/ui/components/image-grid";
 import { MetricTable } from "@/modules/backoffice/ui/components/metric-table";
 import { SectionHeader } from "@/modules/backoffice/ui/components/section-header";
+import { UploadDialog } from "@/modules/backoffice/ui/components/upload-dialog";
 import {
-  ACTION_HANDLERS,
   CHART_CONFIG,
   COMMON_STYLES,
 } from "@/modules/backoffice/ui/constants/opportunity-constants";
@@ -41,6 +41,7 @@ const Page = ({
   params: Promise<{ opportunityId: Id<"opportunitiesMergersAndAcquisitions"> }>;
 }) => {
   const { opportunityId } = use(params);
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
   const opportunity = useQuery(
     api.private.mergersAndAcquisitionsOpportunities.getById,
@@ -69,7 +70,7 @@ const Page = ({
         <div className={COMMON_STYLES.section}>
           <SectionHeader
             addButtonText="Add Image"
-            onAddClick={ACTION_HANDLERS.addImage}
+            onAddClick={() => setUploadDialogOpen(true)}
             showAddButton={true}
             title="Images"
           />
@@ -77,14 +78,13 @@ const Page = ({
             <ImageGrid
               images={opportunity.imagesURLs || []}
               imagesStorageIds={opportunity.images || []}
-              onAddImage={ACTION_HANDLERS.addImage}
+              onAddImage={() => setUploadDialogOpen(true)}
               onDeleteImage={(storageId) => {
                 deleteImage({
                   opportunityId: opportunity._id,
                   storageId: storageId as Id<"_storage">,
                 });
               }}
-              opportunityId={opportunity._id}
               opportunityName={opportunity.name}
             />
           </div>
@@ -93,7 +93,7 @@ const Page = ({
         <div className={COMMON_STYLES.section}>
           <SectionHeader
             editButtonText="Edit Description"
-            onEditClick={ACTION_HANDLERS.editDescription}
+            onEditClick={() => {}}
             showEditButton={true}
             title="Description"
           />
@@ -149,7 +149,7 @@ const Page = ({
             <div className="mt-8 rounded-lg border border-border bg-background">
               <SectionHeader
                 addButtonText="Add Year"
-                onAddClick={ACTION_HANDLERS.addYear}
+                onAddClick={() => {}}
                 showAddButton={true}
                 title="Graph Data"
               />
@@ -191,10 +191,7 @@ const Page = ({
                       <TableCell
                         className={`${COMMON_STYLES.cell} flex items-center justify-end`}
                       >
-                        <ActionDropdown
-                          onDelete={ACTION_HANDLERS.deleteMetric}
-                          onEdit={ACTION_HANDLERS.editMetric}
-                        />
+                        <ActionDropdown onDelete={() => {}} onEdit={() => {}} />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -207,7 +204,7 @@ const Page = ({
         <div className={COMMON_STYLES.section}>
           <SectionHeader
             addButtonText="Add Note"
-            onAddClick={ACTION_HANDLERS.addNote}
+            onAddClick={() => {}}
             showAddButton={true}
             title="Pre-NDA"
           />
@@ -217,13 +214,22 @@ const Page = ({
         <div className={COMMON_STYLES.section}>
           <SectionHeader
             addButtonText="Add Note"
-            onAddClick={ACTION_HANDLERS.addNote}
+            onAddClick={() => {}}
             showAddButton={true}
             title="Post-NDA"
           />
           <MetricTable data={createPostNDAData(opportunity)} />
         </div>
       </div>
+
+      <UploadDialog
+        onFileUploaded={() => {
+          // Optionally refresh data or show success message
+        }}
+        onOpenChange={setUploadDialogOpen}
+        open={uploadDialogOpen}
+        opportunityId={opportunity._id}
+      />
     </div>
   );
 };

@@ -19,16 +19,6 @@ export const COMMON_STYLES = {
   mutedText: "text-muted-foreground",
 } as const;
 
-export const ACTION_HANDLERS = {
-  addImage: () => console.log("Add image"),
-  editDescription: () => console.log("Edit description"),
-  addYear: () => console.log("Add year"),
-  addNote: () => console.log("Add note"),
-  editMetric: () => console.log("Edit metric"),
-  deleteMetric: () => console.log("Delete metric"),
-  deleteImage: (imageUrl: string) => console.log("Delete image", imageUrl),
-} as const;
-
 export type OpportunityData = {
   _id: Id<"opportunitiesMergersAndAcquisitions">;
   name: string;

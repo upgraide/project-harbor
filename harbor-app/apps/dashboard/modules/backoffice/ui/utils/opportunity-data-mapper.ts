@@ -1,5 +1,4 @@
 import type { OpportunityData } from "../constants/opportunity-constants";
-import { ACTION_HANDLERS } from "../constants/opportunity-constants";
 
 export const createPreNDAData = (opportunity: OpportunityData) =>
   [
@@ -28,8 +27,8 @@ export const createPreNDAData = (opportunity: OpportunityData) =>
     { label: "Asset Value", value: opportunity.assetValue, suffix: "M€" },
   ].map((item) => ({
     ...item,
-    onEdit: "isHeader" in item ? undefined : ACTION_HANDLERS.editMetric,
-    onDelete: "isHeader" in item ? undefined : ACTION_HANDLERS.deleteMetric,
+    onEdit: "isHeader" in item ? undefined : () => {},
+    onDelete: "isHeader" in item ? undefined : () => {},
   }));
 
 export const createPostNDAData = (opportunity: OpportunityData) =>
@@ -73,6 +72,6 @@ export const createPostNDAData = (opportunity: OpportunityData) =>
     },
   ].map((item) => ({
     ...item,
-    onEdit: ACTION_HANDLERS.editMetric,
-    onDelete: ACTION_HANDLERS.deleteMetric,
+    onEdit: "isHeader" in item ? undefined : () => {},
+    onDelete: "isHeader" in item ? undefined : () => {},
   }));
