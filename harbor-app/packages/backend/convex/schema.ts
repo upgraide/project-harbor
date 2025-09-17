@@ -35,6 +35,8 @@ const schema = defineSchema({
       v.literal("3-5"),
       v.literal("5+"),
     ), // In millions, Ranges [1-2, 2-3, 3-5, 5+]
+    ebitdaNormalized: v.optional(v.number()),
+    netDebt: v.optional(v.number()),
     industry: v.union(
       v.literal("Services"),
       v.literal("Transformation Industry"),
