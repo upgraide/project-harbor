@@ -61,7 +61,15 @@ const schema = defineSchema({
       v.literal("completed"),
     ), // [No Interest, Interested, Completed]
     createdBy: v.id("users"),
-    graphRows: v.optional(v.array(v.array(v.number()))), // [[Year, Revenue, EBITDA], [Year, Revenue, EBITDA], [Year, Revenue, EBITDA]]
+    graphRows: v.optional(
+      v.array(
+        v.object({
+          year: v.number(), // Year
+          revenue: v.number(), // Revenue
+          ebitda: v.number(), // EBITDA
+        }),
+      ),
+    ),
   }),
 });
 

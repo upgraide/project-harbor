@@ -6,6 +6,8 @@ import { Button } from "@harbor-app/ui/components/button";
 import {
   type ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@harbor-app/ui/components/chart";
@@ -34,16 +36,16 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { use } from "react";
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { useScopedI18n } from "@/locales/client";
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  revenue: {
+    label: "Revenue",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
+  ebitda: {
+    label: "EBITDA",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
@@ -136,7 +138,7 @@ const Page = ({
           </div>
         </div>
 
-        <div className="mt-8 rounde-lg border border-border bg-background rounded-lg">
+        <div className="mt-8 rounded-lg border border-border bg-background">
           <div className="flex items-center justify-between border-b px-6 py-4">
             <h1 className="text-lg font-semibold">Pre-NDA</h1>
             <Button
@@ -398,49 +400,125 @@ const Page = ({
           </Table>
         </div>
 
-        <div className="mt-8 rounde-lg border border-border bg-background rounded-lg"></div>
-
-        <div className="mt-8 rounde-lg border border-border bg-background rounded-lg">
+        <div className="mt-8 rounded-lg border border-border bg-background">
           <div className="flex items-center justify-between border-b px-6 py-4">
-            <h1 className="text-lg font-semibold">Graph</h1>
-            <Button
-              onClick={() => {
-                console.log("Add Note");
-              }}
-            >
-              <PlusIcon />
-              Add Year
-            </Button>
+            <h1 className="text-lg font-semibold">Financial Performance</h1>
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="px-6 py-4 font-medium">Year</TableHead>
-                <TableHead className="px-6 py-4 font-medium">Revenue</TableHead>
-                <TableHead className="px-6 py-4 font-medium">EBITDA</TableHead>
-                <TableHead className="px-6 py-4 font-medium text-right">
-                  Actions
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {opportunity.graphRows && opportunity.graphRows.length > 0 ? (
-                opportunity.graphRows.map((row, index) => (
-                  <TableRow key={row[0]}>
-                    <TableCell className="px-6 py-4">{row[0]}</TableCell>
-                    <TableCell className="px-6 py-4">{row[1]}</TableCell>
-                    <TableCell className="px-6 py-4">{row[2]}</TableCell>
+          <div className="p-6">
+            <ChartContainer className="h-[400px] w-full" config={chartConfig}>
+              <LineChart
+                accessibilityLayer
+                data={opportunity.graphRows}
+                margin={{
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  bottom: 20,
+                }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  axisLine={false}
+                  dataKey="year"
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <YAxis axisLine={false} tickLine={false} tickMargin={8} />
+                <ChartTooltip
+                  content={<ChartTooltipContent />}
+                  cursor={false}
+                />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Line
+                  dataKey="revenue"
+                  dot={true}
+                  stroke="var(--color-chart-1)"
+                  strokeWidth={2}
+                  type="monotone"
+                />
+                <Line
+                  dataKey="ebitda"
+                  dot={true}
+                  stroke="var(--color-chart-2)"
+                  strokeWidth={2}
+                  type="monotone"
+                />
+              </LineChart>
+            </ChartContainer>
+
+            <div className="mt-8 rounded-lg border border-border bg-background">
+              <div className="flex items-center justify-between border-b px-6 py-4">
+                <h1 className="text-lg font-medium">Graph Data</h1>
+                <Button
+                  onClick={() => {
+                    console.log("Add Note");
+                  }}
+                >
+                  <PlusIcon />
+                  Add Year
+                </Button>
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-6 py-4 font-medium">
+                      Year
+                    </TableHead>
+                    <TableHead className="px-6 py-4 font-medium">
+                      Revenue
+                    </TableHead>
+                    <TableHead className="px-6 py-4 font-medium">
+                      EBITDA
+                    </TableHead>
+                    <TableHead className="px-6 py-4 font-medium text-right">
+                      Actions
+                    </TableHead>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell className="px-6 py-4" colSpan={3}>
-                    No data
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                </TableHeader>
+                <TableBody>
+                  {opportunity.graphRows?.map((row) => (
+                    <TableRow key={row.year}>
+                      <TableCell className="px-6 py-4 text-muted-foreground">
+                        {row.year}
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-muted-foreground">
+                        {row.revenue}
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-muted-foreground">
+                        {row.ebitda}
+                      </TableCell>
+                      <TableCell className="px-6 py-4 flex items-center justify-end">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              className="size-8 p-0"
+                              size="sm"
+                              variant="ghost"
+                            >
+                              <MoreHorizontalIcon />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => {}}>
+                              <WandSparklesIcon className="size-4 mr-2" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => {}}
+                            >
+                              <TrashIcon className="size-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
