@@ -10,7 +10,8 @@ export const BackofficeLayout = async ({
   children: React.ReactNode;
 }) => {
   const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get("sidebar-state")?.value === "true";
+  const sidebarCookie = cookieStore.get("sidebar_state");
+  const defaultOpen = sidebarCookie?.value === "true";
 
   return (
     <AuthGuard>
