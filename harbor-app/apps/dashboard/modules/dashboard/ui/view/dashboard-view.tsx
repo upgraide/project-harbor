@@ -4,10 +4,11 @@ import { api } from "@harbor-app/backend/convex/_generated/api";
 import { Button } from "@harbor-app/ui/components/button";
 import { Card, CardContent } from "@harbor-app/ui/components/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@harbor-app/ui/components/tabs";
-import { usePaginatedQuery } from "convex/react";
+import { usePaginatedQuery, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
+import { ImageOffIcon } from "lucide-react";
 
 const DashboardView = () => {
   const router = useRouter();
@@ -21,8 +22,31 @@ const DashboardView = () => {
     },
   );
 
+  // Get all storage IDs from opportunities that have images
+  const allStorageIds = opportunities.results
+    .filter(opportunity => opportunity.images && opportunity.images.length > 0)
+    .map(opportunity => opportunity.images![0])
+    .filter((id): id is NonNullable<typeof id> => id !== undefined); // Get first image from each opportunity
+
+  // Get URLs for all storage IDs
+  const imageUrls = useQuery(
+    api.private.files.getStorageUrls,
+    allStorageIds.length > 0 ? { storageIds: allStorageIds } : "skip"
+  );
+
   const handleViewOpportunity = (opportunityId: string) => {
     router.push(`/opportunities/${opportunityId}`);
+  };
+
+  // Helper function to get the image URL for an opportunity
+  const getOpportunityImageUrl = (opportunity: typeof opportunities.results[0]) => {
+    if (!opportunity.images || opportunity.images.length === 0 || !imageUrls) {
+      return null;
+    }
+    
+    const firstImageId = opportunity.images[0];
+    const storageIndex = allStorageIds.findIndex(id => id === firstImageId);
+    return storageIndex !== -1 ? imageUrls[storageIndex] : null;
   };
 
   return (
@@ -43,10 +67,30 @@ const DashboardView = () => {
                 <CardContent className="p-0">
                   {/* Image */}
                   <div className="relative h-48 w-full overflow-hidden">
-                    <div className="h-full w-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-                      <div className="text-muted-foreground text-sm">No Image</div>
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                    {(() => {
+                      const imageUrl = getOpportunityImageUrl(opportunity);
+                      if (imageUrl) {
+                        return (
+                          <>
+                            <Image
+                              src={imageUrl}
+                              alt={opportunity.name}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                          </>
+                        );
+                      }
+                      return (
+                        <div className="h-full w-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
+                          <div className="flex flex-col items-center gap-2">
+                            <ImageOffIcon className="size-8 text-muted-foreground" />
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   {/* Content */}
