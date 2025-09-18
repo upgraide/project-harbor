@@ -20,7 +20,7 @@ import {
 import { useQuery } from "convex/react";
 import { LoaderIcon } from "lucide-react";
 import { use } from "react";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { ImageGrid } from "@/modules/backoffice/ui/components/image-grid";
 import {
   CHART_CONFIG,
@@ -147,10 +147,11 @@ const Page = ({
           </p>
         </div>
 
-        {opportunity.graphRows && opportunity.graphRows.length > 0 && (
+        {(opportunity.graphRows && opportunity.graphRows.length > 0) && (
           <div className={COMMON_STYLES.section}>
             <h2 className="text-xl font-semibold p-6 pb-0">Financial Performance</h2>
             <div className="p-6">
+
               <ChartContainer className="h-[400px] w-full" config={CHART_CONFIG}>
                 <LineChart
                   accessibilityLayer
@@ -170,25 +171,73 @@ const Page = ({
                     tickMargin={8}
                   />
                   <YAxis axisLine={false} tickLine={false} tickMargin={8} />
-                  <ChartTooltip
-                    content={<ChartTooltipContent />}
-                    cursor={false}
-                  />
-                  <ChartLegend content={<ChartLegendContent />} />
-                  <Line
-                    dataKey="revenue"
-                    dot={true}
-                    stroke="var(--chart-1)"
-                    strokeWidth={2}
-                    type="monotone"
-                  />
-                  <Line
-                    dataKey="ebitda"
-                    dot={true}
-                    stroke="var(--chart-2)"
-                    strokeWidth={2}
-                    type="monotone"
-                  />
+                   <Tooltip 
+                     cursor={{ 
+                       stroke: "hsl(var(--chart-1))", 
+                       strokeWidth: 2, 
+                       strokeDasharray: "5 5",
+                       opacity: 0.7
+                     }}
+                     labelFormatter={(value) => value ? `Year ${value}` : "Year"}
+                     formatter={(value, name) => [
+                       typeof value === 'number' ? `$${value}M` : value,
+                       CHART_CONFIG[name as keyof typeof CHART_CONFIG]?.label || name
+                     ]}
+                     contentStyle={{
+                       backgroundColor: "hsl(var(--background))",
+                       border: "1px solid hsl(var(--border))",
+                       borderRadius: "8px",
+                       boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+                       padding: "12px 16px",
+                       fontSize: "14px",
+                       fontFamily: "inherit"
+                     }}
+                     labelStyle={{
+                       color: "hsl(var(--foreground))",
+                       fontWeight: "600",
+                       fontSize: "14px",
+                       marginBottom: "8px"
+                     }}
+                     itemStyle={{
+                       color: "hsl(var(--foreground))",
+                       fontSize: "13px"
+                     }}
+                     separator=": "
+                     offset={10}
+                   />
+                   <Legend 
+                     verticalAlign="bottom"
+                     height={50}
+                     wrapperStyle={{
+                       paddingTop: "20px",
+                       paddingBottom: "10px"
+                     }}
+                     iconType="line"
+                     formatter={(value) => CHART_CONFIG[value as keyof typeof CHART_CONFIG]?.label || value}
+                     style={{
+                       color: "hsl(var(--foreground))",
+                       fontSize: "14px",
+                       fontWeight: "500"
+                     }}
+                   />
+                   <Line
+                     dataKey="revenue"
+                     name="revenue"
+                     strokeLinecap="round"
+                     strokeLinejoin="round"
+                     stroke="var(--chart-1)"
+                     strokeWidth={3}
+                     type="monotone"
+                   />
+                   <Line
+                     dataKey="ebitda"
+                     name="ebitda"
+                     strokeLinecap="round"
+                     strokeLinejoin="round"
+                     stroke="var(--chart-2)"
+                     strokeWidth={3}
+                     type="monotone"
+                   />
                 </LineChart>
               </ChartContainer>
             </div>
