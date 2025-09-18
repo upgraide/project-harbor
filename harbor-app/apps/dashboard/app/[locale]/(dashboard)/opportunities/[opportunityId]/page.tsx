@@ -147,51 +147,53 @@ const Page = ({
           </p>
         </div>
 
-        <div className={COMMON_STYLES.section}>
-          <h2 className="text-xl font-semibold p-6 pb-0">Financial Performance</h2>
-          <div className="p-6">
-            <ChartContainer className="h-[400px] w-full" config={CHART_CONFIG}>
-              <LineChart
-                accessibilityLayer
-                data={opportunity.graphRows || []}
-                margin={{
-                  left: 20,
-                  right: 20,
-                  top: 20,
-                  bottom: 20,
-                }}
-              >
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  axisLine={false}
-                  dataKey="year"
-                  tickLine={false}
-                  tickMargin={8}
-                />
-                <YAxis axisLine={false} tickLine={false} tickMargin={8} />
-                <ChartTooltip
-                  content={<ChartTooltipContent />}
-                  cursor={false}
-                />
-                <ChartLegend content={<ChartLegendContent />} />
-                <Line
-                  dataKey="revenue"
-                  dot={true}
-                  stroke="var(--chart-1)"
-                  strokeWidth={2}
-                  type="monotone"
-                />
-                <Line
-                  dataKey="ebitda"
-                  dot={true}
-                  stroke="var(--chart-2)"
-                  strokeWidth={2}
-                  type="monotone"
-                />
-              </LineChart>
-            </ChartContainer>
+        {opportunity.graphRows && opportunity.graphRows.length > 0 && (
+          <div className={COMMON_STYLES.section}>
+            <h2 className="text-xl font-semibold p-6 pb-0">Financial Performance</h2>
+            <div className="p-6">
+              <ChartContainer className="h-[400px] w-full" config={CHART_CONFIG}>
+                <LineChart
+                  accessibilityLayer
+                  data={opportunity.graphRows}
+                  margin={{
+                    left: 20,
+                    right: 20,
+                    top: 20,
+                    bottom: 20,
+                  }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    axisLine={false}
+                    dataKey="year"
+                    tickLine={false}
+                    tickMargin={8}
+                  />
+                  <YAxis axisLine={false} tickLine={false} tickMargin={8} />
+                  <ChartTooltip
+                    content={<ChartTooltipContent />}
+                    cursor={false}
+                  />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Line
+                    dataKey="revenue"
+                    dot={true}
+                    stroke="var(--chart-1)"
+                    strokeWidth={2}
+                    type="monotone"
+                  />
+                  <Line
+                    dataKey="ebitda"
+                    dot={true}
+                    stroke="var(--chart-2)"
+                    strokeWidth={2}
+                    type="monotone"
+                  />
+                </LineChart>
+              </ChartContainer>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className={COMMON_STYLES.section}>
           <h2 className="text-xl font-semibold p-6 pb-0">Pre-NDA</h2>
