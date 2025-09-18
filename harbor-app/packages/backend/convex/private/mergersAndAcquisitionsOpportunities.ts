@@ -391,3 +391,134 @@ export const addGraphRow = mutation({
     return null;
   },
 });
+
+/**
+ * Update a graph row in a mergers and acquisitions opportunity
+ *
+ * @param args.opportunityId - The id of the opportunity to update the graph row in
+ * @param args.oldYear - The current year of the row to update
+ * @param args.newYear - The new year for the graph row
+ * @param args.revenue - The new revenue for the year
+ * @param args.ebitda - The new EBITDA for the year
+ * @returns void
+ */
+export const updateGraphRow = mutation({
+  args: {
+    opportunityId: v.id("opportunitiesMergersAndAcquisitions"),
+    oldYear: v.number(),
+    newYear: v.number(),
+    revenue: v.number(),
+    ebitda: v.number(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (userId === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    // TODO: Check if user is admin or team at least
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    const existingRows = opportunity.graphRows || [];
+    
+    // Check if the old year exists
+    const oldRowIndex = existingRows.findIndex((row) => row.year === args.oldYear);
+    if (oldRowIndex === -1) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Graph row not found",
+      });
+    }
+
+    // Check if new year already exists (and it's not the same as old year)
+    if (args.newYear !== args.oldYear) {
+      const yearExists = existingRows.some((row) => row.year === args.newYear);
+      if (yearExists) {
+        throw new ConvexError({
+          code: "BAD_REQUEST",
+          message: "Year already exists in the graph data",
+        });
+      }
+    }
+
+    // Update the row
+    const updatedRows = [...existingRows];
+    updatedRows[oldRowIndex] = {
+      year: args.newYear,
+      revenue: args.revenue,
+      ebitda: args.ebitda,
+    };
+
+    // Sort by year
+    const sortedRows = updatedRows.sort((a, b) => a.year - b.year);
+
+    await ctx.db.patch(args.opportunityId, {
+      graphRows: sortedRows,
+    });
+
+    return null;
+  },
+});
+
+/**
+ * Delete a graph row from a mergers and acquisitions opportunity
+ *
+ * @param args.opportunityId - The id of the opportunity to delete the graph row from
+ * @param args.year - The year of the row to delete
+ * @returns void
+ */
+export const deleteGraphRow = mutation({
+  args: {
+    opportunityId: v.id("opportunitiesMergersAndAcquisitions"),
+    year: v.number(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (userId === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    // TODO: Check if user is admin or team at least
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    const existingRows = opportunity.graphRows || [];
+    const filteredRows = existingRows.filter((row) => row.year !== args.year);
+
+    if (filteredRows.length === existingRows.length) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Graph row not found",
+      });
+    }
+
+    await ctx.db.patch(args.opportunityId, {
+      graphRows: filteredRows,
+    });
+
+    return null;
+  },
+});

@@ -23,7 +23,9 @@ import { use, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ActionDropdown } from "@/modules/backoffice/ui/components/action-dropdown";
 import { AddYearDialog } from "@/modules/backoffice/ui/components/add-year-dialog";
+import { DeleteYearAlertDialog } from "@/modules/backoffice/ui/components/delete-year-alert-dialog";
 import { DescriptionEditDialog } from "@/modules/backoffice/ui/components/description-edit-dialog";
+import { EditYearDialog } from "@/modules/backoffice/ui/components/edit-year-dialog";
 import { ImageGrid } from "@/modules/backoffice/ui/components/image-grid";
 import { MetricTable } from "@/modules/backoffice/ui/components/metric-table";
 import { SectionHeader } from "@/modules/backoffice/ui/components/section-header";
@@ -47,6 +49,13 @@ const Page = ({
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [descriptionDialogOpen, setDescriptionDialogOpen] = useState(false);
   const [addYearDialogOpen, setAddYearDialogOpen] = useState(false);
+  const [editYearDialogOpen, setEditYearDialogOpen] = useState(false);
+  const [deleteYearDialogOpen, setDeleteYearDialogOpen] = useState(false);
+  const [selectedYearData, setSelectedYearData] = useState<{
+    year: number;
+    revenue: number;
+    ebitda: number;
+  } | null>(null);
 
   const opportunity = useQuery(
     api.private.mergersAndAcquisitionsOpportunities.getById,
@@ -64,6 +73,16 @@ const Page = ({
     });
 
     toast.success("Image deleted successfully");
+  };
+
+  const handleEditYear = (yearData: { year: number; revenue: number; ebitda: number }) => {
+    setSelectedYearData(yearData);
+    setEditYearDialogOpen(true);
+  };
+
+  const handleDeleteYear = (yearData: { year: number; revenue: number; ebitda: number }) => {
+    setSelectedYearData(yearData);
+    setDeleteYearDialogOpen(true);
   };
 
   if (!opportunity) {
@@ -202,7 +221,10 @@ const Page = ({
                       <TableCell
                         className={`${COMMON_STYLES.cell} flex items-center justify-end`}
                       >
-                        <ActionDropdown onDelete={() => {}} onEdit={() => {}} />
+                        <ActionDropdown 
+                          onDelete={() => handleDeleteYear(row)} 
+                          onEdit={() => handleEditYear(row)} 
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -260,6 +282,27 @@ const Page = ({
         }}
         open={addYearDialogOpen}
         opportunityId={opportunity._id}
+      />
+
+      <EditYearDialog
+        currentData={selectedYearData || undefined}
+        existingYears={opportunity.graphRows?.map((row) => row.year) || []}
+        onOpenChange={setEditYearDialogOpen}
+        onYearUpdated={() => {
+          // Optionally refresh data or show success message
+        }}
+        open={editYearDialogOpen}
+        opportunityId={opportunity._id}
+      />
+
+      <DeleteYearAlertDialog
+        onOpenChange={setDeleteYearDialogOpen}
+        onYearDeleted={() => {
+          // Optionally refresh data or show success message
+        }}
+        open={deleteYearDialogOpen}
+        opportunityId={opportunity._id}
+        yearToDelete={selectedYearData?.year}
       />
     </div>
   );
