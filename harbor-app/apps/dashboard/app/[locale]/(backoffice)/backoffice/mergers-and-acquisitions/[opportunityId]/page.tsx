@@ -34,6 +34,7 @@ import {
   createPostNDAData,
   createPreNDAData,
 } from "@/modules/backoffice/ui/utils/opportunity-data-mapper";
+import { toast } from "sonner";
 
 const Page = ({
   params,
@@ -51,6 +52,15 @@ const Page = ({
   );
 
   const deleteImage = useMutation(api.private.files.deleteFile);
+
+  const handleDeleteImage = (storageId: Id<"_storage">) => {
+    deleteImage({
+      opportunityId: opportunityId as Id<"opportunitiesMergersAndAcquisitions">,
+      storageId: storageId as Id<"_storage">,
+    });
+
+    toast.success("Image deleted successfully");
+  };
 
   if (!opportunity) {
     return (
@@ -80,10 +90,7 @@ const Page = ({
               imagesStorageIds={opportunity.images || []}
               onAddImage={() => setUploadDialogOpen(true)}
               onDeleteImage={(storageId) => {
-                deleteImage({
-                  opportunityId: opportunity._id,
-                  storageId: storageId as Id<"_storage">,
-                });
+               handleDeleteImage(storageId);
               }}
               opportunityName={opportunity.name}
             />
