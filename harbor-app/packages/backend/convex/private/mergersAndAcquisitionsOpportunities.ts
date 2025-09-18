@@ -522,3 +522,81 @@ export const deleteGraphRow = mutation({
     return null;
   },
 });
+
+/**
+ * Update a specific field in a mergers and acquisitions opportunity
+ *
+ * @param args.opportunityId - The id of the opportunity to update
+ * @param args.field - The field name to update
+ * @param args.value - The new value for the field
+ * @returns void
+ */
+export const updateOpportunityField = mutation({
+  args: {
+    opportunityId: v.id("opportunitiesMergersAndAcquisitions"),
+    field: v.string(),
+    value: v.any(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (userId === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    // TODO: Check if user is admin or team at least
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    // Validate field name to prevent arbitrary field updates
+    const allowedFields = [
+      "type",
+      "typeDetails", 
+      "industry",
+      "subIndustry",
+      "sales",
+      "ebitda",
+      "ebitdaNormalized",
+      "netDebt",
+      "salesCAGR",
+      "ebitdaCAGR",
+      "assetIncluded",
+      "assetValue",
+      "entrepriveValue",
+      "equityValue",
+      "evDashEbitdaEntry",
+      "evDashEbitdaExit",
+      "ebitdaMargin",
+      "freeCashFlow",
+      "netDebtDashEbitda",
+      "capexIntensity",
+      "workingCapitalNeeds",
+    ];
+
+    if (!allowedFields.includes(args.field)) {
+      throw new ConvexError({
+        code: "BAD_REQUEST",
+        message: "Invalid field name",
+      });
+    }
+
+    // Handle null values for optional fields - convert to undefined
+    const value = args.value === null ? undefined : args.value;
+    
+    await ctx.db.patch(args.opportunityId, {
+      [args.field]: value,
+    });
+
+    return null;
+  },
+});

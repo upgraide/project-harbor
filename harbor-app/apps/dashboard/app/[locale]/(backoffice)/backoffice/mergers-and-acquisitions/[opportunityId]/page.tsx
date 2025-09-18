@@ -23,8 +23,10 @@ import { use, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ActionDropdown } from "@/modules/backoffice/ui/components/action-dropdown";
 import { AddYearDialog } from "@/modules/backoffice/ui/components/add-year-dialog";
+import { DeleteFieldAlertDialog } from "@/modules/backoffice/ui/components/delete-field-alert-dialog";
 import { DeleteYearAlertDialog } from "@/modules/backoffice/ui/components/delete-year-alert-dialog";
 import { DescriptionEditDialog } from "@/modules/backoffice/ui/components/description-edit-dialog";
+import { EditFieldDialog } from "@/modules/backoffice/ui/components/edit-field-dialog";
 import { EditYearDialog } from "@/modules/backoffice/ui/components/edit-year-dialog";
 import { ImageGrid } from "@/modules/backoffice/ui/components/image-grid";
 import { MetricTable } from "@/modules/backoffice/ui/components/metric-table";
@@ -51,10 +53,17 @@ const Page = ({
   const [addYearDialogOpen, setAddYearDialogOpen] = useState(false);
   const [editYearDialogOpen, setEditYearDialogOpen] = useState(false);
   const [deleteYearDialogOpen, setDeleteYearDialogOpen] = useState(false);
+  const [editFieldDialogOpen, setEditFieldDialogOpen] = useState(false);
+  const [deleteFieldDialogOpen, setDeleteFieldDialogOpen] = useState(false);
   const [selectedYearData, setSelectedYearData] = useState<{
     year: number;
     revenue: number;
     ebitda: number;
+  } | null>(null);
+  const [selectedFieldData, setSelectedFieldData] = useState<{
+    field: string;
+    value: any;
+    label: string;
   } | null>(null);
 
   const opportunity = useQuery(
@@ -83,6 +92,16 @@ const Page = ({
   const handleDeleteYear = (yearData: { year: number; revenue: number; ebitda: number }) => {
     setSelectedYearData(yearData);
     setDeleteYearDialogOpen(true);
+  };
+
+  const handleEditField = (field: string, value: any) => {
+    setSelectedFieldData({ field, value, label: field });
+    setEditFieldDialogOpen(true);
+  };
+
+  const handleDeleteField = (field: string, label: string) => {
+    setSelectedFieldData({ field, value: null, label });
+    setDeleteFieldDialogOpen(true);
   };
 
   if (!opportunity) {
@@ -241,7 +260,7 @@ const Page = ({
             showAddButton={true}
             title="Pre-NDA"
           />
-          <MetricTable data={createPreNDAData(opportunity)} />
+          <MetricTable data={createPreNDAData(opportunity, { onEdit: handleEditField, onDelete: handleDeleteField })} />
         </div>
 
         <div className={COMMON_STYLES.section}>
@@ -251,7 +270,7 @@ const Page = ({
             showAddButton={true}
             title="Post-NDA"
           />
-          <MetricTable data={createPostNDAData(opportunity)} />
+          <MetricTable data={createPostNDAData(opportunity, { onEdit: handleEditField, onDelete: handleDeleteField })} />
         </div>
       </div>
 
@@ -303,6 +322,32 @@ const Page = ({
         open={deleteYearDialogOpen}
         opportunityId={opportunity._id}
         yearToDelete={selectedYearData?.year}
+      />
+
+      <EditFieldDialog
+        currentValue={selectedFieldData?.value}
+        fieldConfig={selectedFieldData ? {
+          label: selectedFieldData.label,
+          field: selectedFieldData.field,
+          type: "text", // This will be determined by the field config in the component
+        } : undefined}
+        onFieldUpdated={() => {
+          // Optionally refresh data or show success message
+        }}
+        onOpenChange={setEditFieldDialogOpen}
+        open={editFieldDialogOpen}
+        opportunityId={opportunity._id}
+      />
+
+      <DeleteFieldAlertDialog
+        fieldLabel={selectedFieldData?.label}
+        fieldName={selectedFieldData?.field}
+        onFieldDeleted={() => {
+          // Optionally refresh data or show success message
+        }}
+        onOpenChange={setDeleteFieldDialogOpen}
+        open={deleteFieldDialogOpen}
+        opportunityId={opportunity._id}
       />
     </div>
   );
