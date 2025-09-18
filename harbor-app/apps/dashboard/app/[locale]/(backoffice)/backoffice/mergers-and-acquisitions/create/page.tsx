@@ -28,12 +28,13 @@ import {
 import { SubmitButton } from "@harbor-app/ui/components/submit-button";
 import { Textarea } from "@harbor-app/ui/components/textarea";
 import { UploadInput } from "@harbor-app/ui/components/upload-input";
+import { Upload, X, ImageIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "convex/react";
 import { ArrowLeftIcon, LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useTransition, useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -96,7 +97,7 @@ const formSchema = z.object({
   industry: z.enum([
     "Services",
     "Transformation Industry",
-    "Trading", 
+    "Trading",
     "Energy & Infrastructure",
     "Fitness",
     "Healthcare & Pharmaceuticals",
@@ -222,11 +223,121 @@ const SelectField = ({ control, name, label, placeholder, options, required }: S
   />
 );
 
+// Custom Image Dropzone Component using existing UploadInput
+interface ImageDropzoneProps {
+  images: Id<"_storage">[];
+  onImagesChange: (images: Id<"_storage">[]) => void;
+  generateUploadUrl: () => Promise<string>;
+  maxFiles?: number;
+}
+
+const ImageDropzone = ({ images, onImagesChange, generateUploadUrl, maxFiles = 10 }: ImageDropzoneProps) => {
+  const [isUploading, setIsUploading] = useState(false);
+
+  const removeImage = (index: number) => {
+    const newImages = images.filter((_, i) => i !== index);
+    onImagesChange(newImages);
+  };
+
+  const handleUploadComplete = useCallback((uploaded: any[]) => {
+    setIsUploading(false);
+    console.log('Upload complete:', uploaded);
+    
+    // Extract storage IDs from the uploaded files
+    const newStorageIds = uploaded.map((file) => 
+      (file.response as { storageId: Id<"_storage"> }).storageId
+    );
+    
+    onImagesChange([...images, ...newStorageIds]);
+    toast.success(`${newStorageIds.length} image(s) uploaded successfully`);
+  }, [images, onImagesChange]);
+
+  const handleUploadStart = useCallback((uploadPromise: Promise<any[]>) => {
+    setIsUploading(true);
+    uploadPromise
+      .then(handleUploadComplete)
+      .catch((error) => {
+        console.error('Upload failed:', error);
+        setIsUploading(false);
+        toast.error('Failed to upload images');
+      });
+  }, [handleUploadComplete]);
+
+  return (
+    <div className="space-y-4">
+      {/* Dropzone */}
+      <div className="relative">
+        <div className={`
+          border-2 border-dashed rounded-lg p-8 text-center transition-colors
+          ${isUploading || images.length >= maxFiles ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:border-primary/50 hover:bg-muted/80'}
+          border-border bg-muted/50
+        `}>
+          <UploadInput
+            accept="image/*"
+            generateUploadUrl={generateUploadUrl}
+            multiple
+            onUploadComplete={handleUploadComplete}
+            onUploadStart={handleUploadStart}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
+          <div className="flex flex-col items-center space-y-2">
+            {isUploading ? (
+              <LoaderIcon className="h-8 w-8 animate-spin text-muted-foreground" />
+            ) : (
+              <Upload className="h-8 w-8 text-muted-foreground" />
+            )}
+            <div className="text-sm">
+              <p className="font-medium text-foreground">
+                {isUploading ? 'Uploading...' : 'Click to upload images'}
+              </p>
+              <p className="text-muted-foreground">
+                {images.length >= maxFiles 
+                  ? `Maximum ${maxFiles} images allowed`
+                  : `Up to ${maxFiles - images.length} more images`
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Image Preview Grid */}
+      {images.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {images.map((imageId, index) => (
+            <div key={imageId} className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
+              <div className="w-full h-full flex items-center justify-center bg-muted">
+                <ImageIcon className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeImage(index);
+                }}
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function CreateMAOpportunity() {
   const router = useRouter();
   const createOpportunity = useMutation(api.private.mergersAndAcquisitionsOpportunities.create);
-  const generateUploadUrl = useMutation(api.private.files.generateUploadUrl);
+  const generateUploadUrlMutation = useMutation(api.private.files.generateUploadUrl);
   const [isPending, startTransition] = useTransition();
+  const [uploadedImages, setUploadedImages] = useState<Id<"_storage">[]>([]);
+
+  // Helper function to generate upload URL
+  const generateUploadUrl = async (): Promise<string> => {
+    const response = await generateUploadUrlMutation();
+    return response;
+  };
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -245,16 +356,14 @@ export default function CreateMAOpportunity() {
   });
 
   const onSubmit = async (data: FormData) => {
+    console.log('Form data:', data);
+    console.log('Uploaded images:', uploadedImages);
+    
     startTransition(async () => {
       try {
-        const imageIds: Id<"_storage">[] = [];
-        if (data.images && data.images.length > 0) {
-          // TODO: Convert uploaded file URLs to storage IDs
-        }
-
         await createOpportunity({
           ...data,
-          images: imageIds.length > 0 ? imageIds : undefined,
+          images: uploadedImages.length > 0 ? uploadedImages : undefined,
         });
 
         toast.success("M&A opportunity created successfully");
@@ -283,7 +392,10 @@ export default function CreateMAOpportunity() {
       </div>
 
       <Form {...form}>
-        <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit, (errors) => {
+          console.log('Form validation errors:', errors);
+          toast.error('Please fix the form errors before submitting');
+        })}>
           {/* Basic Information */}
           <Card>
             <CardHeader>
@@ -302,33 +414,26 @@ export default function CreateMAOpportunity() {
                 control={form.control}
                 name="description"
                 label="Description"
-                placeholder="Enter opportunity description"
+                        placeholder="Enter opportunity description"
                 type="textarea"
               />
 
-              <FormField
-                control={form.control}
-                name="images"
-                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Images</FormLabel>
                     <FormControl>
-                      <UploadInput
-                        accept="image/*"
+                  <ImageDropzone
+                    images={uploadedImages}
+                    onImagesChange={(images) => {
+                      setUploadedImages(images);
+                      // Convert storage IDs to strings for form validation
+                      form.setValue('images', images.map(id => id as string));
+                    }}
                         generateUploadUrl={generateUploadUrl}
-                        multiple
-                        onUploadComplete={(uploaded) => {
-                          const urls = uploaded.map(
-                            (file) => (file.response as { url: string }).url,
-                          );
-                          field.onChange(urls);
-                        }}
+                    maxFiles={10}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
-                )}
-              />
             </CardContent>
           </Card>
 
@@ -362,17 +467,17 @@ export default function CreateMAOpportunity() {
                   control={form.control}
                   name="ebitdaNormalized"
                   label="EBITDA Normalized (€M)"
-                  placeholder="Enter normalized EBITDA"
+                          placeholder="Enter normalized EBITDA"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
                 <FormFieldWrapper
                   control={form.control}
                   name="netDebt"
                   label="Net Debt (€M)"
-                  placeholder="Enter net debt"
+                          placeholder="Enter net debt"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
               </div>
             </CardContent>
@@ -450,7 +555,7 @@ export default function CreateMAOpportunity() {
                           type="checkbox"
                         />
                       </FormControl>
-                      <FormLabel>Asset Included</FormLabel>
+                        <FormLabel>Asset Included</FormLabel>
                     </FormItem>
                   )}
                 />
@@ -461,25 +566,25 @@ export default function CreateMAOpportunity() {
                   control={form.control}
                   name="assetValue"
                   label="Asset Value (€M)"
-                  placeholder="Enter asset value"
+                          placeholder="Enter asset value"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
                 <FormFieldWrapper
                   control={form.control}
                   name="salesCAGR"
                   label="Sales CAGR (%)"
-                  placeholder="Enter sales CAGR"
+                          placeholder="Enter sales CAGR"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
                 <FormFieldWrapper
                   control={form.control}
                   name="ebitdaCAGR"
                   label="EBITDA CAGR (%)"
-                  placeholder="Enter EBITDA CAGR"
+                          placeholder="Enter EBITDA CAGR"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
               </div>
             </CardContent>
@@ -496,17 +601,17 @@ export default function CreateMAOpportunity() {
                   control={form.control}
                   name="entrepriveValue"
                   label="Enterprise Value (€M)"
-                  placeholder="Enter enterprise value"
+                          placeholder="Enter enterprise value"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
                 <FormFieldWrapper
                   control={form.control}
                   name="equityValue"
                   label="Equity Value (€M)"
-                  placeholder="Enter equity value"
+                          placeholder="Enter equity value"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
               </div>
 
@@ -515,17 +620,17 @@ export default function CreateMAOpportunity() {
                   control={form.control}
                   name="evDashEbitdaEntry"
                   label="EV/EBITDA Entry"
-                  placeholder="Enter EV/EBITDA entry"
+                          placeholder="Enter EV/EBITDA entry"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
                 <FormFieldWrapper
                   control={form.control}
                   name="evDashEbitdaExit"
                   label="EV/EBITDA Exit"
-                  placeholder="Enter EV/EBITDA exit"
+                          placeholder="Enter EV/EBITDA exit"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
               </div>
 
@@ -534,17 +639,17 @@ export default function CreateMAOpportunity() {
                   control={form.control}
                   name="ebitdaMargin"
                   label="EBITDA Margin (%)"
-                  placeholder="Enter EBITDA margin"
+                          placeholder="Enter EBITDA margin"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
                 <FormFieldWrapper
                   control={form.control}
                   name="freeCashFlow"
                   label="Free Cash Flow (€M)"
-                  placeholder="Enter free cash flow"
+                          placeholder="Enter free cash flow"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
               </div>
 
@@ -553,25 +658,25 @@ export default function CreateMAOpportunity() {
                   control={form.control}
                   name="netDebtDashEbitda"
                   label="Net Debt/EBITDA"
-                  placeholder="Enter net debt/EBITDA"
+                          placeholder="Enter net debt/EBITDA"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
                 <FormFieldWrapper
                   control={form.control}
                   name="capexIntensity"
                   label="Capex Intensity (%)"
-                  placeholder="Enter capex intensity"
+                          placeholder="Enter capex intensity"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
                 <FormFieldWrapper
                   control={form.control}
                   name="workingCapitalNeeds"
                   label="Working Capital Needs (€M)"
-                  placeholder="Enter working capital needs"
+                          placeholder="Enter working capital needs"
                   type="number"
-                  step="0.1"
+                          step="0.1"
                 />
               </div>
             </CardContent>
