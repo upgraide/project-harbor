@@ -22,6 +22,7 @@ import { LoaderIcon } from "lucide-react";
 import { use, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ActionDropdown } from "@/modules/backoffice/ui/components/action-dropdown";
+import { AddYearDialog } from "@/modules/backoffice/ui/components/add-year-dialog";
 import { DescriptionEditDialog } from "@/modules/backoffice/ui/components/description-edit-dialog";
 import { ImageGrid } from "@/modules/backoffice/ui/components/image-grid";
 import { MetricTable } from "@/modules/backoffice/ui/components/metric-table";
@@ -45,6 +46,7 @@ const Page = ({
   const { opportunityId } = use(params);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [descriptionDialogOpen, setDescriptionDialogOpen] = useState(false);
+  const [addYearDialogOpen, setAddYearDialogOpen] = useState(false);
 
   const opportunity = useQuery(
     api.private.mergersAndAcquisitionsOpportunities.getById,
@@ -158,7 +160,7 @@ const Page = ({
             <div className="mt-8 rounded-lg border border-border bg-background">
               <SectionHeader
                 addButtonText="Add Year"
-                onAddClick={() => {}}
+                onAddClick={() => setAddYearDialogOpen(true)}
                 showAddButton={true}
                 title="Graph Data"
               />
@@ -247,6 +249,16 @@ const Page = ({
         }}
         onOpenChange={setDescriptionDialogOpen}
         open={descriptionDialogOpen}
+        opportunityId={opportunity._id}
+      />
+
+      <AddYearDialog
+        existingYears={opportunity.graphRows?.map((row) => row.year) || []}
+        onOpenChange={setAddYearDialogOpen}
+        onYearAdded={() => {
+          // Optionally refresh data or show success message
+        }}
+        open={addYearDialogOpen}
         opportunityId={opportunity._id}
       />
     </div>

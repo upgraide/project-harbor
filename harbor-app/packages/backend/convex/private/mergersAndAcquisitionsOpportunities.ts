@@ -325,3 +325,69 @@ export const updateDescription = mutation({
     return null;
   },
 });
+
+/**
+ * Add a graph row to a mergers and acquisitions opportunity
+ *
+ * @param args.opportunityId - The id of the opportunity to add the graph row to
+ * @param args.year - The year for the graph row
+ * @param args.revenue - The revenue for the year
+ * @param args.ebitda - The EBITDA for the year
+ * @returns void
+ */
+export const addGraphRow = mutation({
+  args: {
+    opportunityId: v.id("opportunitiesMergersAndAcquisitions"),
+    year: v.number(),
+    revenue: v.number(),
+    ebitda: v.number(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (userId === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    // TODO: Check if user is admin or team at least
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    // Check if year already exists
+    const existingRows = opportunity.graphRows || [];
+    const yearExists = existingRows.some((row) => row.year === args.year);
+
+    if (yearExists) {
+      throw new ConvexError({
+        code: "BAD_REQUEST",
+        message: "Year already exists in the graph data",
+      });
+    }
+
+    const newGraphRow = {
+      year: args.year,
+      revenue: args.revenue,
+      ebitda: args.ebitda,
+    };
+
+    const updatedGraphRows = [...existingRows, newGraphRow].sort(
+      (a, b) => a.year - b.year,
+    );
+
+    await ctx.db.patch(args.opportunityId, {
+      graphRows: updatedGraphRows,
+    });
+
+    return null;
+  },
+});
