@@ -22,6 +22,7 @@ import { LoaderIcon } from "lucide-react";
 import { use, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ActionDropdown } from "@/modules/backoffice/ui/components/action-dropdown";
+import { DescriptionEditDialog } from "@/modules/backoffice/ui/components/description-edit-dialog";
 import { ImageGrid } from "@/modules/backoffice/ui/components/image-grid";
 import { MetricTable } from "@/modules/backoffice/ui/components/metric-table";
 import { SectionHeader } from "@/modules/backoffice/ui/components/section-header";
@@ -43,6 +44,7 @@ const Page = ({
 }) => {
   const { opportunityId } = use(params);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [descriptionDialogOpen, setDescriptionDialogOpen] = useState(false);
 
   const opportunity = useQuery(
     api.private.mergersAndAcquisitionsOpportunities.getById,
@@ -100,7 +102,7 @@ const Page = ({
         <div className={COMMON_STYLES.section}>
           <SectionHeader
             editButtonText="Edit Description"
-            onEditClick={() => {}}
+            onEditClick={() => setDescriptionDialogOpen(true)}
             showEditButton={true}
             title="Description"
           />
@@ -235,6 +237,16 @@ const Page = ({
         }}
         onOpenChange={setUploadDialogOpen}
         open={uploadDialogOpen}
+        opportunityId={opportunity._id}
+      />
+
+      <DescriptionEditDialog
+        currentDescription={opportunity.description}
+        onDescriptionUpdated={() => {
+          // Optionally refresh data or show success message
+        }}
+        onOpenChange={setDescriptionDialogOpen}
+        open={descriptionDialogOpen}
         opportunityId={opportunity._id}
       />
     </div>

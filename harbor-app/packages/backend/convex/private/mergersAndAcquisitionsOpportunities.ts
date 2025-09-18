@@ -284,3 +284,44 @@ export const addImage = mutation({
     return;
   },
 });
+
+/**
+ * Update the description of a mergers and acquisitions opportunity
+ *
+ * @param args.opportunityId - The id of the opportunity to update
+ * @param args.description - The new description for the opportunity
+ * @returns void
+ */
+export const updateDescription = mutation({
+  args: {
+    opportunityId: v.id("opportunitiesMergersAndAcquisitions"),
+    description: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (userId === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    // TODO: Check if user is admin or team at least
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    await ctx.db.patch(args.opportunityId, {
+      description: args.description,
+    });
+
+    return null;
+  },
+});
