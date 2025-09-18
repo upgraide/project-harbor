@@ -30,7 +30,7 @@ import { Textarea } from "@harbor-app/ui/components/textarea";
 import { UploadInput } from "@harbor-app/ui/components/upload-input";
 import { Upload, X, ImageIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { ArrowLeftIcon, LoaderIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -233,6 +233,11 @@ interface ImageDropzoneProps {
 
 const ImageDropzone = ({ images, onImagesChange, generateUploadUrl, maxFiles = 10 }: ImageDropzoneProps) => {
   const [isUploading, setIsUploading] = useState(false);
+  
+  // Get image URLs for preview
+  const imageUrls = useQuery(api.private.files.getStorageUrls, {
+    storageIds: images,
+  });
 
   const removeImage = (index: number) => {
     const newImages = images.filter((_, i) => i !== index);
@@ -304,22 +309,36 @@ const ImageDropzone = ({ images, onImagesChange, generateUploadUrl, maxFiles = 1
       {/* Image Preview Grid */}
       {images.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {images.map((imageId, index) => (
-            <div key={imageId} className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
-              <div className="w-full h-full flex items-center justify-center bg-muted">
-                <ImageIcon className="h-8 w-8 text-muted-foreground" />
+          {images.map((imageId, index) => {
+            const imageUrl = imageUrls?.[index];
+            return (
+              <div key={imageId} className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={`Upload ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center bg-muted p-2">
+                    <ImageIcon className="h-8 w-8 text-muted-foreground mb-2" />
+                    <span className="text-xs text-muted-foreground text-center">
+                      Loading...
+                    </span>
+                  </div>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeImage(index);
+                  }}
+                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+                >
+                  <X className="h-3 w-3" />
+                </button>
               </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeImage(index);
-                }}
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

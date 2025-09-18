@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation } from "../_generated/server";
+import { mutation, query } from "../_generated/server";
 
 /**
  * Delete a file from the storage
@@ -56,5 +56,41 @@ export const generateUploadUrl = mutation({
     }
 
     return await ctx.storage.generateUploadUrl();
+  },
+});
+
+/**
+ * Get storage URLs for multiple storage IDs
+ *
+ * @param storageIds - Array of storage IDs
+ * @returns Array of storage URLs
+ */
+export const getStorageUrls = query({
+  args: {
+    storageIds: v.array(v.id("_storage")),
+  },
+  returns: v.array(v.union(v.string(), v.null())),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    const urls = await Promise.all(
+      args.storageIds.map(async (storageId) => {
+        try {
+          return await ctx.storage.getUrl(storageId);
+        } catch (error) {
+          console.error(`Failed to get URL for storage ID ${storageId}:`, error);
+          return null;
+        }
+      })
+    );
+
+    return urls;
   },
 });
