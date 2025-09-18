@@ -239,9 +239,32 @@ const ImageDropzone = ({ images, onImagesChange, generateUploadUrl, maxFiles = 1
     storageIds: images,
   });
 
-  const removeImage = (index: number) => {
+  // Mutation to delete file from storage
+  const deleteFileFromStorage = useMutation(api.private.files.deleteFileFromStorage);
+
+  const removeImage = async (index: number) => {
+    const imageToRemove = images[index];
+    if (!imageToRemove) return;
+    
     const newImages = images.filter((_, i) => i !== index);
-    onImagesChange(newImages);
+    
+    try {
+      // Delete from storage
+      await deleteFileFromStorage({
+        storageId: imageToRemove,
+      });
+      
+      // Update the frontend state
+      onImagesChange(newImages);
+      
+      toast.success("Image removed successfully");
+    } catch (error) {
+      console.error("Failed to delete image:", error);
+      toast.error("Failed to delete image from storage");
+      
+      // Still update the frontend state even if storage deletion fails
+      onImagesChange(newImages);
+    }
   };
 
   const handleUploadComplete = useCallback((uploaded: any[]) => {

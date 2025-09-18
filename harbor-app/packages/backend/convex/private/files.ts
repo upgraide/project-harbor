@@ -94,3 +94,28 @@ export const getStorageUrls = query({
     return urls;
   },
 });
+
+/**
+ * Delete a file from storage only (without updating any opportunity record)
+ *
+ * @param storageId - The storage id of the file to delete
+ */
+export const deleteFileFromStorage = mutation({
+  args: {
+    storageId: v.id("_storage"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (identity === null) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Identity not found",
+      });
+    }
+
+    await ctx.storage.delete(args.storageId);
+    return null;
+  },
+});
