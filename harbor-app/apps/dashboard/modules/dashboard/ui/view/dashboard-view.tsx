@@ -64,7 +64,7 @@ const DashboardView = () => {
                 key={opportunity._id}
                 className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border-border"
               >
-                <CardContent className="p-0">
+                <CardContent className="p-0 -mt-6">
                   {/* Image */}
                   <div className="relative h-48 w-full overflow-hidden">
                     {(() => {
@@ -76,7 +76,7 @@ const DashboardView = () => {
                               src={imageUrl}
                               alt={opportunity.name}
                               fill
-                              className="object-cover"
+                              className="object-cover w-full h-full"
                               sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -85,9 +85,7 @@ const DashboardView = () => {
                       }
                       return (
                         <div className="h-full w-full bg-gradient-to-br from-muted to-muted/50 flex items-center justify-center">
-                          <div className="flex flex-col items-center gap-2">
-                            <ImageOffIcon className="size-8 text-muted-foreground" />
-                          </div>
+                          <ImageOffIcon className="size-12 text-muted-foreground" />
                         </div>
                       );
                     })()}
