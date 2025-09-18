@@ -9,6 +9,8 @@ import backgroundLight from "@/public/assets/bg-login.jpg";
 import backgroundDark from "@/public/assets/bg-login-dark.jpg";
 import DarkIcon from "@/public/icon-dark.png";
 import LightIcon from "@/public/icon-light.png";
+import LogoLight from "@/public/logo-light.png";
+import LogoDark from "@/public/logo-dark.png";
 import { Cookies } from "@/utils/constants";
 
 export const metadata: Metadata = {
@@ -38,44 +40,41 @@ export const AuthLayout = async ({
         </div>
       </header>
 
-      <div className="flex h-full">
-        <div className="hidden lg:flex lg:w-1/2 relative">
-          <DynamicImage
-            alt="Background"
-            className="object-cover"
-            darkSrc={backgroundDark}
-            lightSrc={backgroundLight}
-          />
-        </div>
-
-        <div className="w-full lg:w-1/2 relative">
-          <div className="relative z-10 flex h-full items-center justify-center p-6">
-            <div className="w-full max-w-md space-y-8">
-              <div className="text-center">
-                <h1 className="text-lg mb-4 font-serif">{t("title")}</h1>
-                <p className="text-[#878787] text-sm mb-8">
-                  {t("description")}
-                </p>
+      <div className="w-full h-full relative items-center justify-center">
+        <div className="relative z-10 flex h-full items-center justify-center p-6">
+          <div className="w-full max-w-md space-y-8">
+            <div className="text-center">
+              <div className="mb-6">
+                <DynamicImage
+                  alt="Background"
+                  className="h-16 w-auto object-contain mx-auto"
+                  darkSrc={LogoLight}
+                  lightSrc={LogoDark}
+                />
               </div>
+              <h1 className="text-lg mb-4 font-serif">{t("title")}</h1>
+              <p className="text-[#878787] text-sm mb-8">
+                {t("description")}
+              </p>
+            </div>
 
-              <div className="space-y-4">{children}</div>
+            <div className="space-y-4">{children}</div>
 
-              <div className="text-center absolute bottom-4 left-0 right-0">
-                <p className="text-xs text-[#878787] leading-relaxed font-mono">
-                  {t("footer")}{" "}
-                  <Link className="underline" href="">
-                    {" "}
-                    {/*TODO: Change to the correct URL*/}
-                    {t("termsOfService")}
-                  </Link>{" "}
-                  &{" "}
-                  <Link className="underline" href="">
-                    {" "}
-                    {/*TODO: Change to the correct URL*/}
-                    {t("privacyPolicy")}
-                  </Link>
-                </p>
-              </div>
+            <div className="text-center absolute bottom-4 left-0 right-0">
+              <p className="text-xs text-[#878787] leading-relaxed font-mono">
+                {t("footer")}{" "}
+                <Link className="underline" href="">
+                  {" "}
+                  {/*TODO: Change to the correct URL*/}
+                  {t("termsOfService")}
+                </Link>{" "}
+                &{" "}
+                <Link className="underline" href="">
+                  {" "}
+                  {/*TODO: Change to the correct URL*/}
+                  {t("privacyPolicy")}
+                </Link>
+              </p>
             </div>
           </div>
         </div>
