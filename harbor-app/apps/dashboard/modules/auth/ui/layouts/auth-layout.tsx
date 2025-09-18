@@ -5,8 +5,6 @@ import Link from "next/link";
 import { ConsentBanner } from "@/components/consent-banner";
 import { DynamicImage } from "@/components/dynamic-image";
 import { getScopedI18n } from "@/locales/server";
-import backgroundLight from "@/public/assets/bg-login.jpg";
-import backgroundDark from "@/public/assets/bg-login-dark.jpg";
 import DarkIcon from "@/public/icon-dark.png";
 import LightIcon from "@/public/icon-light.png";
 import LogoLight from "@/public/logo-light.png";
