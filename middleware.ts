@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 
 const I18nMiddleware = createI18nMiddleware({
   locales: ["en", "pt"],
-  defaultLocale: "en",
+  defaultLocale: "pt",
   urlMappingStrategy: "rewrite",
 });
 
@@ -12,5 +12,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|static|.*\\..*|_next|favicon.ico|robots.txt).*)"],
+  // Run middleware on all routes except static assets and api routes
+  matcher: ["/((?!.*\\..*|_next|api/auth).*)", "/", "/trpc(.*)"],
 };
