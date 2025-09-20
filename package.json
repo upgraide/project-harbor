@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:convex": "convex dev",
     "build": "next build --turbopack",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "start": "next start",
