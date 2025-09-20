@@ -1,3 +1,5 @@
+"use client";
+
 import { Metadata } from "next";
 import Link from "next/link";
 import logoLight from "@/public/assets/logo-light.png";
@@ -8,18 +10,10 @@ import { homePath, requestAccessPath } from "@/lib/paths";
 import { ThemeSwitcherHome } from "@/components/theme-switcher";
 import { ArrowLeftIcon } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { getScopedI18n } from "@/locales/server";
+import { useScopedI18n } from "@/locales/client";
 
-export const metadata: Metadata = {
-  title: "Login",
-};
-
-export const AuthLayout = async ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const t = await getScopedI18n("signInPage");
+export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+  const t = useScopedI18n("signInPage");
 
   return (
     <div className="min-h-svh w-full flex flex-col items-center justify-center p-4 space-y-4">

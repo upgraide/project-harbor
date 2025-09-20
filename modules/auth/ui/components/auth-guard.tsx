@@ -6,6 +6,7 @@ import { DynamicImage } from "@/components/dynamic-image";
 import { SignInView } from "@/modules/auth/ui/views/sign-in-view";
 import DarkLogo from "@/public/assets/logo-dark.png";
 import LightLogo from "@/public/assets/logo-light.png";
+import { AuthLayout } from "@/modules/auth/ui/layouts/auth-layout";
 
 export const AuthGuard = ({ children }: { children: ReactNode }) => {
   return (
@@ -24,7 +25,9 @@ export const AuthGuard = ({ children }: { children: ReactNode }) => {
       </AuthLoading>
       <Authenticated>{children}</Authenticated>
       <Unauthenticated>
-        <SignInView />
+        <AuthLayout>
+          <SignInView />
+        </AuthLayout>
       </Unauthenticated>
     </>
   );
