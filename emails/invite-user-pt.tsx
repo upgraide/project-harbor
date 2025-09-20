@@ -12,7 +12,7 @@ import {
   Text,
 } from "@react-email/components";
 
-interface InviteUserEmailEnProps {
+interface InviteUserEmailPtProps {
   toName?: string;
   toEmail?: string;
   toPassword?: string;
@@ -23,12 +23,12 @@ const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "";
 
-export const InviteUserEmailEn = ({
+export const InviteUserEmailPt = ({
   toName,
   toEmail,
   toPassword,
   inviteLink,
-}: InviteUserEmailEnProps) => {
+}: InviteUserEmailPtProps) => {
   const previewText = `Convite Exclusivo - Acesso à Harbor Exclusive Investment Opportunities`;
   return (
     <Html>
@@ -101,11 +101,11 @@ export const InviteUserEmailEn = ({
   );
 };
 
-InviteUserEmailEn.PreviewProps = {
+InviteUserEmailPt.PreviewProps = {
   toName: "alanturing",
   toEmail: "alanturing@example.com",
   toPassword: "123456",
   inviteLink: "https://localhost:3000",
-} as InviteUserEmailEnProps;
+} as InviteUserEmailPtProps;
 
-export default InviteUserEmailEn;
+export default InviteUserEmailPt;
