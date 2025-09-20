@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { dashboardPath } from "@/lib/paths";
 import { useScopedI18n } from "@/locales/client";
 
-export default function SignInForm() {
+export const SignInView = () => {
   const t = useScopedI18n("signInPage");
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -133,4 +133,4 @@ export default function SignInForm() {
       </CardContent>
     </Card>
   );
-}
+};
