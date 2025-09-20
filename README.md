@@ -10,8 +10,8 @@
     altamente eficiente no acesso a oportunidades de investimento.
     <br />
     <br />
-    <a href="https://the-profit-blueprint.com"><strong>Website</strong></a> ·
-    <a href="https://github.com/RodrigoRafaelSantos7/TPB002/issues"><strong>Issues</strong></a> ·
+    <a href="https://app.harborpartners.pt"><strong>Website</strong></a> ·
+    <a href="https://upgraide-artificial-intelligence-lda.ghe.com/upgraide/harbor001/issues"><strong>Issues</strong></a> ·
     <a href="#whats-included"><strong>What's included</strong></a> ·
     <a href="#prerequisites"><strong>Prerequisites</strong></a> ·
     <a href="#getting-started"><strong>Getting Started</strong></a> ·
@@ -30,16 +30,21 @@ A interface é clara, intuitiva e responsiva, permitindo que o utilizador:
 
 ## What's included
 
-[Next.js](https://nextjs.org/) - React framework with App Router<br>
-[React](https://react.dev/) - UI library<br>
+[Convex](https://convex.dev/) - Database, storage, background jobs, validated server actions, cache, rate limiting<br>
+[Next.js](https://nextjs.org/) - Framework<br>
 [TypeScript](https://www.typescriptlang.org/) - Type safety<br>
 [TailwindCSS](https://tailwindcss.com/) - Utility-first CSS framework<br>
-[Shadcn/ui](https://ui.shadcn.com/) - Re-usable components built with Radix UI and Tailwind CSS<br>
-[Lucide React](https://lucide.dev/) - Beautiful & consistent icon toolkit<br>
-[ESLint](https://eslint.org/) - Linter for JavaScript and TypeScript<br>
-[Prettier](https://prettier.io/) - Code formatter<br>
+[Eslint](https://eslint.org/) - Linter<br>
+[Prettier](https://prettier.io/) - Formater<br>
+[TailwindCSS](https://tailwindcss.com/) - Styling<br>
+[Shadcn](https://ui.shadcn.com/) - UI components<br>
+[TypeScript](https://www.typescriptlang.org/) - Type safety<br>
+[React Email](https://react.email/) - Email templates<br>
+[Resend](https://resend.com/) - Email delivery<br>
+[PostHog](https://posthog.com/) - Analytics<br>
 [Husky](https://typicode.github.io/husky/) - Git hooks made easy<br>
 [Lint-staged](https://github.com/okonet/lint-staged) - Run linters on staged files<br>
+[next-themes](https://next-themes-example.vercel.app/) - Theme manager<br>
 
 ## Directory Structure
 
@@ -50,8 +55,7 @@ A interface é clara, intuitiva e responsiva, permitindo que o utilizador:
 │   ├── globals.css              # Global styles
 │   └── layout.tsx               # Root layout component
 ├── docs/                        # Project documentation
-│   ├── pm-handoff-prompt.md
-│   └── project-brief.md
+│   └── ...
 ├── docs_client/                 # Client documentation and assets
 │   ├── Documentos Recebidos/
 │   └── Harbor Partners.pdf
