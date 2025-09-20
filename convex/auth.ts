@@ -4,6 +4,7 @@ import { components } from "./_generated/api";
 import { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import { betterAuth } from "better-auth";
+import { getStaticAuth } from "@convex-dev/better-auth";
 
 const siteUrl = process.env.SITE_URL!;
 
@@ -34,6 +35,8 @@ export const createAuth = (
     ],
   });
 };
+
+export const auth = getStaticAuth(createAuth);
 
 // Example function for getting the current user
 // Feel free to edit, omit, etc.

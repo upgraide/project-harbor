@@ -1,8 +1,10 @@
 export const homePath = () => "/";
 
-// (Auth)
-export const signInPath = () => "/sign-in";
-export const requestAccessPath = () => "/request-access";
+// (Auth) - Localized
+export const signInPath = (locale: string = "pt") => `/${locale}/sign-in`;
+export const signUpPath = (locale: string = "pt") => `/${locale}/sign-up`;
+export const requestAccessPath = (locale: string = "pt") =>
+  `/${locale}/request-access`;
 
-// (Dashboard) - User Facing (Protected)
-export const dashboardPath = () => "/dashboard";
+// (Dashboard) - User Facing (Protected) - Localized
+export const dashboardPath = (locale: string = "pt") => `/${locale}/dashboard`;
