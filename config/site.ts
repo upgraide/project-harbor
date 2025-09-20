@@ -4,7 +4,8 @@ export const siteConfig = {
   template: "%s | Harbor Partners",
   url: "https://app.harborpartners.pt",
   generator: "Next.js",
-  description: "Harbor Partners Web Application",
+  description:
+    "Harbor Partners is a Lisbon based, Investment Advisory Firm, dedicated to providing holistic and integrated services to institutional and high net worth individual clients.",
   keywords: ["Harbor Partners", "Web Application", "Harbor Partners"],
   links: {
     email: "support@harborpartners.pt",
@@ -28,7 +29,8 @@ export const siteConfig = {
   },
   openGraph: {
     title: "Harbor Partners | Web Application",
-    description: "Harbor Partners Web Application",
+    description:
+      "Harbor Partners is a Lisbon based, Investment Advisory Firm, dedicated to providing holistic and integrated services to institutional and high net worth individual clients.",
     url: "https://app.harborpartners.pt",
     siteName: "Harbor Partners | Web Application",
     locale: "pt_PT",
@@ -45,7 +47,8 @@ export const siteConfig = {
   twitter: {
     card: "summary_large_image",
     title: "Harbor Partners | Web Application",
-    description: "Harbor Partners Web Application",
+    description:
+      "Harbor Partners is a Lisbon based, Investment Advisory Firm, dedicated to providing holistic and integrated services to institutional and high net worth individual clients.",
     images: [""], // TODO: Add image
   },
   manifest: "https://app.harborpartners.pt/site.webmanifest",
