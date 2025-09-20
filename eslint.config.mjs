@@ -21,6 +21,7 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  eslintConfigPrettier,
 ];
 
-export default [eslintConfig, eslintConfigPrettier];
+export default eslintConfig;
