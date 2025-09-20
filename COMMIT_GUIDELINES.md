@@ -8,18 +8,19 @@ This guide standardizes branch naming and commit conventions at Upgraide - Artif
 
 Branches must follow the patterns below, always including the GitHub issue number with a `#`, except for specific cases where no issue exists (e.g., initial project release):
 
-| Type | Example | Description |
-|------|---------|-------------|
-| Feature | `feature/#123-user-authentication` | New functionalities or features |
-| Bugfix | `bugfix/#456-api-error-handling` | Bug fixes reported in issues |
-| Hotfix | `hotfix/#789-critical-security-patch` | Critical urgent fixes in production |
-| Chore | `chore/#101-update-dependencies` | General maintenance, administrative updates |
-| Docs | `docs/#202-api-documentation` | Documentation updates |
+| Type     | Example                                   | Description                                     |
+| -------- | ----------------------------------------- | ----------------------------------------------- |
+| Feature  | `feature/#123-user-authentication`        | New functionalities or features                 |
+| Bugfix   | `bugfix/#456-api-error-handling`          | Bug fixes reported in issues                    |
+| Hotfix   | `hotfix/#789-critical-security-patch`     | Critical urgent fixes in production             |
+| Chore    | `chore/#101-update-dependencies`          | General maintenance, administrative updates     |
+| Docs     | `docs/#202-api-documentation`             | Documentation updates                           |
 | Refactor | `refactor/#303-optimize-database-queries` | Code refactoring without changing functionality |
-| Test | `test/#404-add-integration-tests` | Adding or updating tests |
-| Style | `style/#505-update-ui-components` | UI/UX updates, styling changes |
+| Test     | `test/#404-add-integration-tests`         | Adding or updating tests                        |
+| Style    | `style/#505-update-ui-components`         | UI/UX updates, styling changes                  |
 
 ### Practical Examples:
+
 - New feature for issue #123:
   - `feature/#123-payment-integration`
 - Bug fix for API issue #456:
@@ -36,11 +37,13 @@ Commits should be clear, concise, and follow this format:
 ```
 
 ### Examples:
+
 - `[#123] Add user authentication endpoint`
 - `[#456] Fix CORS configuration for external API calls`
 - `[#789] Update setup documentation with Docker instructions`
 
 For cases without an associated issue (e.g., initial release):
+
 ```
 [vX.X.X] Brief objective description of the change
 ```
@@ -81,6 +84,7 @@ $ git push origin --delete feature/#123-payment-integration
 ## Commit Message Best Practices
 
 ### Good Examples:
+
 - `[#234] Add user dashboard with analytics`
 - `[#567] Fix memory leak in data processing service`
 - `[#890] Refactor authentication middleware for better performance`
@@ -89,6 +93,7 @@ $ git push origin --delete feature/#123-payment-integration
 - `[#333] Add unit tests for payment service`
 
 ### Bad Examples:
+
 - `fix bug` ❌ (too vague, no issue reference)
 - `WIP` ❌ (uninformative)
 - `[#123] Fixed stuff and added things` ❌ (unclear description)
@@ -97,21 +102,25 @@ $ git push origin --delete feature/#123-payment-integration
 ## Technology-Specific Guidelines
 
 ### Frontend Development
+
 - `[#XXX] Add {component_name} component for {feature}`
 - `[#XXX] Update UI for {page/section} improving {metric}`
 - `[#XXX] Fix responsive layout in {component/page}`
 
 ### Backend Development
+
 - `[#XXX] Add {endpoint} endpoint for {resource}`
 - `[#XXX] Optimize {query/operation} reducing response time`
 - `[#XXX] Implement {service_name} service for {functionality}`
 
 ### Database Changes
+
 - `[#XXX] Add migration for {table/schema} changes`
 - `[#XXX] Create index on {table.column} for performance`
 - `[#XXX] Update {model} schema to support {feature}`
 
 ### DevOps & Infrastructure
+
 - `[#XXX] Configure {service} for {environment}`
 - `[#XXX] Add CI/CD pipeline for {process}`
 - `[#XXX] Update Docker configuration for {service}`
@@ -121,5 +130,6 @@ $ git push origin --delete feature/#123-payment-integration
 Contact the Upgraide development team or open a discussion in the project's GitHub repository.
 
 ---
-*Last updated: January 2025*
-*Upgraide - Artificial Intelligence, Lda.*
+
+_Last updated: January 2025_
+_Upgraide - Artificial Intelligence, Lda._
