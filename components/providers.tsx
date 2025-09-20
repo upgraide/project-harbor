@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { I18nProviderClient } from "@/locales/client";
+import { ConvexClientProvider } from "./convex-client-provider";
 
 type ProviderProps = {
   locale: string;
@@ -9,5 +10,9 @@ type ProviderProps = {
 };
 
 export function Providers({ children, locale }: ProviderProps) {
-  return <I18nProviderClient locale={locale}>{children}</I18nProviderClient>;
+  return (
+    <I18nProviderClient locale={locale}>
+      <ConvexClientProvider>{children}</ConvexClientProvider>
+    </I18nProviderClient>
+  );
 }
