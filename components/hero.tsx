@@ -3,13 +3,13 @@ import { Lock } from "lucide-react";
 import Link from "next/link";
 import { signInPath } from "@/lib/paths";
 
-export function Hero() {
+export const Hero = () => {
   return (
     <main className="absolute inset-0 z-20 flex items-center justify-center">
       <div className="max-w-7xl mx-auto px-8 w-full">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           <div className="text-left">
-            <h1 className="text-2xl md:text-4xl lg:text-6xl xl:text-7xl font-medium text-white leading-[1.2] ">
+            <h1 className="text-2xl md:text-4xl lg:text-6xl xl:text-7xl text-white font-medium leading-[1.2] ">
               YOUR TRUSTED
               <br />
               PARTNER FOR
@@ -42,4 +42,4 @@ export function Hero() {
       </div>
     </main>
   );
-}
+};
