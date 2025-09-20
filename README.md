@@ -39,6 +39,7 @@ A interface é clara, intuitiva e responsiva, permitindo que o utilizador:
 [TailwindCSS](https://tailwindcss.com/) - Styling<br>
 [Shadcn](https://ui.shadcn.com/) - UI components<br>
 [TypeScript](https://www.typescriptlang.org/) - Type safety<br>
+[i18n](https://next-international.vercel.app/) - Internationalization
 [React Email](https://react.email/) - Email templates<br>
 [Resend](https://resend.com/) - Email delivery<br>
 [PostHog](https://posthog.com/) - Analytics<br>
