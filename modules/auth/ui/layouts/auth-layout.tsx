@@ -1,6 +1,5 @@
 "use client";
 
-import { Metadata } from "next";
 import Link from "next/link";
 import logoLight from "@/public/assets/logo-light.png";
 import logoDark from "@/public/assets/logo-dark.png";
