@@ -54,7 +54,8 @@ const MergersAndAcquisitionsCreateForm = () => {
   const onSubmit = (values: CreateMergersAndAcquisitionsFormSchemaType) => {
     toast.promise(
       createMergersAndAcquisitions({
-        name: values.name,
+        ...values,
+        images: undefined,
       }),
       {
         loading: "Creating M&A Opportunity",
@@ -383,6 +384,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -401,6 +409,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -437,6 +452,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -455,6 +477,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -500,6 +529,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
                       />
                     </FormControl>
                     <FormMessage />
