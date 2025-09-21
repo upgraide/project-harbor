@@ -128,6 +128,7 @@ export default {
         investors: "Investors",
         team: "Team",
       },
+      searchPlaceholder: "Type to search...",
     },
   },
 } as const;

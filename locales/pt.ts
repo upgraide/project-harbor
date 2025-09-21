@@ -124,6 +124,7 @@ export default {
         investors: "Investidores",
         team: "Equipa",
       },
+      searchPlaceholder: "Pesquisar...",
     },
   },
 } as const;

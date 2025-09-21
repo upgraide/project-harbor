@@ -7,6 +7,7 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
+  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -19,6 +20,7 @@ import NavUserSidebar from "./nav-user";
 import { DynamicImage } from "@/components/dynamic-image";
 import DarkIcon from "@/public/assets/icon-dark.png";
 import LightIcon from "@/public/assets/icon-light.png";
+import { Label } from "@/components/ui/label";
 
 const navigationItems = [
   {
@@ -125,6 +127,22 @@ export const BackofficeSidebar = ({
         <SidebarFooter>
           <NavUserSidebar />
         </SidebarFooter>
+      </Sidebar>
+
+      <Sidebar collapsible="none" className="hidden flex-1 md:flex">
+        <SidebarHeader className="gap-3.5 border-b p-4">
+          <div className="flex w-full items-center justify-between">
+            <div className="text-foreground text-base font-medium">
+              {navigationItems.find((item) => item.url === pathname)?.title}
+            </div>
+          </div>
+          <SidebarInput placeholder={t("searchPlaceholder")} />
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup className="px-0">
+            <SidebarGroupContent></SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
       </Sidebar>
     </Sidebar>
   );
