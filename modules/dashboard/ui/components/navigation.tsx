@@ -13,14 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { type Preloaded, usePreloadedQuery } from "convex/react";
-import {
-  Check,
-  ChevronDown,
-  ChevronUp,
-  LogOut,
-  Settings,
-  Slash,
-} from "lucide-react";
+import { LogOut, Settings, Slash } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { DynamicImage } from "@/components/dynamic-image";
@@ -180,7 +173,7 @@ export function Navigation({
             className={cn(
               `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`,
             )}
-            href=""
+            href={dashboardPath()}
           >
             {t("dashboard")}
           </Link>
