@@ -72,6 +72,10 @@ export default {
     },
   },
   dashboard: {
+    header: {
+      title: "Dashboard",
+      description: "Welcome to your dashboard",
+    },
     navigation: {
       dashboard: "Dashboard",
       settings: "Settings",

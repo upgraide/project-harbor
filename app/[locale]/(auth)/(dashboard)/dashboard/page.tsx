@@ -1,22 +1,12 @@
-"use client";
+import { getScopedI18n } from "@/locales/server";
+import Header from "@/modules/dashboard/ui/components/header";
 
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { signInPath } from "@/lib/paths";
-
-const Page = () => {
-  const router = useRouter();
-
-  const handleSignOut = async () => {
-    await authClient.signOut();
-    router.push(signInPath());
-  };
+const Page = async () => {
+  const t = await getScopedI18n("dashboard.header");
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <Button onClick={handleSignOut}>Sign Out</Button>
+      <Header description={t("description")} title={t("title")} />
     </div>
   );
 };
