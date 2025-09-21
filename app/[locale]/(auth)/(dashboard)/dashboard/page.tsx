@@ -5,7 +5,7 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { signInPath } from "@/lib/paths";
 
-export default function DashboardPage() {
+const Page = () => {
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -19,4 +19,6 @@ export default function DashboardPage() {
       <Button onClick={handleSignOut}>Sign Out</Button>
     </div>
   );
-}
+};
+
+export default Page;
