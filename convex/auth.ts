@@ -7,8 +7,9 @@ import { betterAuth } from "better-auth";
 import { getStaticAuth } from "@convex-dev/better-auth";
 import { requireActionCtx } from "@convex-dev/better-auth/utils";
 import { api } from "./_generated/api";
+import { ConvexError, v } from "convex/values";
 
-const siteUrl = process.env.SITE_URL!;
+const siteUrl = process.env.SITE_URL;
 
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
@@ -59,5 +60,19 @@ export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
     return safeGetUser(ctx);
+  },
+});
+
+export const getCurrentUserId = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await safeGetUser(ctx);
+    if (!user) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "User not found",
+      });
+    }
+    return user._id;
   },
 });

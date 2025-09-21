@@ -1,4 +1,3 @@
-import { getScopedI18n } from "@/locales/server";
 import { z } from "zod";
 
 export const passwordResetSchema = z.object({

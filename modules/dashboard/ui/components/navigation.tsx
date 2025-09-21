@@ -1,6 +1,6 @@
 "use client";
 
-import type { api } from "@/convex/_generated/api";
+import { api } from "@/convex/_generated/api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { type Preloaded, usePreloadedQuery } from "convex/react";
+import { type Preloaded, usePreloadedQuery, useQuery } from "convex/react";
 import { LogOut, Settings, Slash } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -23,6 +23,7 @@ import DarkIcon from "@/public/assets/icon-dark.png";
 import LightIcon from "@/public/assets/icon-light.png";
 import { dashboardSettingsPath, dashboardPath, signInPath } from "@/lib/paths";
 import { useLogout } from "@/hooks/use-signout";
+import { Id } from "@/convex/_generated/dataModel";
 
 export function Navigation({
   preloadedUser,
@@ -37,6 +38,11 @@ export function Navigation({
   const isSettingsPath = pathname === dashboardSettingsPath();
 
   const user = usePreloadedQuery(preloadedUser);
+
+  const userImage = useQuery(
+    api.files.getUrlById,
+    user?.image ? { id: user.image as Id<"_storage"> } : "skip",
+  );
 
   const { handleLogout } = useLogout();
 
@@ -63,7 +69,11 @@ export function Navigation({
             <Avatar className="h-8 w-8 rounded-full">
               <AvatarImage
                 alt={user.email}
-                src={user.image ?? `https://avatar.vercel.sh/${user.email}`}
+                src={
+                  user.image && userImage
+                    ? userImage
+                    : `https://avatar.vercel.sh/${user.email}`
+                }
               />
               <AvatarFallback className="h-8 w-8 rounded-full">
                 {user.name && user.name.length > 0
@@ -85,7 +95,11 @@ export function Navigation({
                 <Avatar className="h-8 w-8 rounded-full">
                   <AvatarImage
                     alt={user.email}
-                    src={user.image ?? `https://avatar.vercel.sh/${user.email}`}
+                    src={
+                      user.image && userImage
+                        ? userImage
+                        : `https://avatar.vercel.sh/${user.email}`
+                    }
                   />
                   <AvatarFallback className="h-8 w-8 rounded-full">
                     {user.name && user.name.length > 0
