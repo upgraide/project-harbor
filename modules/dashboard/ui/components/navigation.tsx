@@ -39,7 +39,7 @@ export function Navigation({
 
   const user = usePreloadedQuery(preloadedUser);
 
-  const userImage = useQuery(
+  const userImageUrl = useQuery(
     api.files.getUrlById,
     user?.image ? { id: user.image as Id<"_storage"> } : "skip",
   );
@@ -70,8 +70,8 @@ export function Navigation({
               <AvatarImage
                 alt={user.email}
                 src={
-                  user.image && userImage
-                    ? userImage
+                  user.image && userImageUrl
+                    ? userImageUrl
                     : `https://avatar.vercel.sh/${user.email}`
                 }
               />
@@ -96,8 +96,8 @@ export function Navigation({
                   <AvatarImage
                     alt={user.email}
                     src={
-                      user.image && userImage
-                        ? userImage
+                      user.image && userImageUrl
+                        ? userImageUrl
                         : `https://avatar.vercel.sh/${user.email}`
                     }
                   />

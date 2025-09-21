@@ -2,6 +2,7 @@
 
 import { SubmitButton } from "@/components/submit-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { UploadInput } from "@/components/upload-input";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -30,37 +31,50 @@ const UpdateAvatarCard = ({
     return null;
   }
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const userImage = useQuery(
+  const userImageUrl = useQuery(
     api.files.getUrlById,
     user?.image ? { id: user.image as Id<"_storage"> } : "skip",
   );
 
-  const updateUserImage = useMutation(api.user.updateUserImage);
-  const removeUserImage = useMutation(api.user.removeUserImage);
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const deleteFile = useMutation(api.files.deleteFile);
 
   const handleUpdateUserImage = async (uploaded: UploadFileResponse[]) => {
     const oldImageId = user.image;
 
-    await authClient.updateUser({
-      image: (uploaded[0]?.response as { storageId: Id<"_storage"> }).storageId,
-    });
+    toast.promise(
+      authClient.updateUser({
+        image: (uploaded[0]?.response as { storageId: Id<"_storage"> })
+          .storageId,
+      }),
+      {
+        loading: "Updating image...",
+        success: "Image updated successfully",
+        error: "Failed to update image",
+      },
+    );
 
     if (oldImageId) {
       await deleteFile({ id: oldImageId as Id<"_storage"> });
     }
   };
 
-  async function handleRemoveUserImage() {
-    toast.promise(removeUserImage(), {
-      loading: "Removing image...",
-      success: "Image removed successfully",
-      error: "Failed to remove image",
-    });
-  }
+  const handleRemoveUserImage = async () => {
+    const oldImageId = user.image;
+
+    toast.promise(
+      authClient.updateUser({
+        image: null,
+      }),
+      {
+        loading: "Removing image...",
+        success: "Image removed successfully",
+        error: "Failed to remove image",
+      },
+    );
+
+    await deleteFile({ id: oldImageId as Id<"_storage"> });
+  };
 
   return (
     <>
@@ -82,8 +96,8 @@ const UpdateAvatarCard = ({
               <AvatarImage
                 alt={user.email}
                 src={
-                  user.image && userImage
-                    ? userImage
+                  user.image && userImageUrl
+                    ? userImageUrl
                     : `https://avatar.vercel.sh/${user.email}`
                 }
               />
@@ -113,8 +127,7 @@ const UpdateAvatarCard = ({
             {t("avatar.uploadHint")}
           </p>
           {user.image && (
-            <SubmitButton
-              isSubmitting={isSubmitting}
+            <Button
               onClick={() => {
                 handleRemoveUserImage();
               }}
@@ -123,7 +136,7 @@ const UpdateAvatarCard = ({
               variant="secondary"
             >
               {t("avatar.resetButton")}
-            </SubmitButton>
+            </Button>
           )}
         </div>
       </div>
