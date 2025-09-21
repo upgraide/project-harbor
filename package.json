@@ -20,6 +20,7 @@
   "dependencies": {
     "@convex-dev/better-auth": "^0.8.6",
     "@convex-dev/resend": "^0.1.13",
+    "@hookform/resolvers": "^5.2.2",
     "@paper-design/shaders-react": "^0.0.54",
     "@radix-ui/react-label": "^2.1.7",
     "@radix-ui/react-select": "^2.2.6",
@@ -38,8 +39,10 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-email": "^4.2.11",
+    "react-hook-form": "^7.63.0",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

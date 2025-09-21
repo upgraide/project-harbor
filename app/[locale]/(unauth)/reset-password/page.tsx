@@ -7,31 +7,58 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useSearchParams } from "next/navigation";
 import { redirect } from "next/navigation";
 import { useScopedI18n } from "@/locales/client";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { signInPath } from "@/lib/paths";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const t = useScopedI18n("resetPasswordPage");
+
+const formSchema = z.object({
+  password: z.string().min(8, { message: t("schemaMessages.password.min") }),
+  confirmPassword: z
+    .string()
+    .min(8, { message: t("schemaMessages.confirmPassword.min") }),
+});
 
 export default function ResetPassword() {
-  const t = useScopedI18n("resetPasswordPage");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!token) return;
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
+    if (values.password !== values.confirmPassword) {
+      toast.error(t("schemaMessages.confirmPassword.match"));
       return;
     }
 
@@ -46,15 +73,16 @@ export default function ResetPassword() {
         },
         onSuccess: () => {
           setLoading(false);
-          redirect("/");
+          redirect(signInPath());
         },
         onError: (ctx) => {
           setLoading(false);
-          alert(ctx.error.message);
+          console.log(ctx.error.message);
+          toast.error(t("schemaMessages.error.default"));
         },
       },
     );
-  };
+  }
 
   if (!token) {
     return (
@@ -77,60 +105,70 @@ export default function ResetPassword() {
     <div className="min-h-screen w-full flex items-center justify-center p-4">
       <Card className="max-w-md w-full">
         <CardHeader>
-          <CardTitle className="text-lg md:text-xl">Reset Password</CardTitle>
+          <CardTitle className="text-lg md:text-xl">
+            {t("resetPasswordCard.title")}
+          </CardTitle>
           <CardDescription className="text-xs md:text-sm">
-            Enter your new password below
+            {t("resetPasswordCard.description")}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleResetPassword} className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="password">New Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your new password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("schemaMessages.password.label")}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t("schemaMessages.password.placeholder")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t("schemaMessages.password.description")}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm your new password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t("schemaMessages.confirmPassword.label")}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t(
+                          "schemaMessages.confirmPassword.placeholder",
+                        )}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t("schemaMessages.confirmPassword.description")}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : (
-                "Reset Password"
-              )}
-            </Button>
-          </form>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  t("buttons.submit")
+                )}
+              </Button>
+            </form>
+          </Form>
         </CardContent>
-        <CardFooter>
-          <div className="flex justify-center w-full border-t py-4">
-            <p className="text-center text-xs text-neutral-500">
-              Powered by{" "}
-              <a
-                href="https://better-auth.com"
-                className="underline"
-                target="_blank"
-              >
-                <span className="dark:text-orange-200/90">better-auth.</span>
-              </a>
-            </p>
-          </div>
-        </CardFooter>
       </Card>
     </div>
   );

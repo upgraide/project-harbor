@@ -42,5 +42,30 @@ export default {
       description:
         "This password reset link is invalid or has expired. Please request a new one.",
     },
+    resetPasswordCard: {
+      title: "Reset Your Password",
+      description: "Insert your new password below to reset your password",
+    },
+    schemaMessages: {
+      password: {
+        min: "Password must be at least 8 characters",
+        label: "New Password",
+        placeholder: "********",
+        description: "Enter your new password",
+      },
+      confirmPassword: {
+        min: "Confirm password must be at least 8 characters",
+        match: "Passwords do not match",
+        label: "Confirm Password",
+        placeholder: "********",
+        description: "Confirm your new password",
+      },
+      error: {
+        default: "Failed to reset password. Please try again.",
+      },
+    },
+    buttons: {
+      submit: "Reset Your Password",
+    },
   },
 } as const;
