@@ -72,7 +72,6 @@ const UpdateNameCard = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("label")}</FormLabel>
                 <FormControl>
                   <Input
                     placeholder={t("placeholder")}
