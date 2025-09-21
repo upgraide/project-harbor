@@ -69,4 +69,14 @@ export default {
       submit: "Reset Your Password",
     },
   },
+  dashboard: {
+    navigation: {
+      dashboard: "Dashboard",
+      settings: "Settings",
+      theme: "Theme",
+      language: "Language",
+      logout: "Logout",
+      toastLogoutSuccess: "Logged out successfully!",
+    },
+  },
 } as const;

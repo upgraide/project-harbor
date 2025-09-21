@@ -23,7 +23,7 @@ export function Providers({ children, locale }: ProviderProps) {
       >
         <ConvexClientProvider>
           {children}
-          <Toaster />
+          <Toaster richColors />
         </ConvexClientProvider>
       </NextThemesProvider>
     </I18nProviderClient>

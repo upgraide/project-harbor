@@ -72,4 +72,14 @@ export default {
       submit: "Redefinir a sua palavra-passe",
     },
   },
+  dashboard: {
+    navigation: {
+      dashboard: "Painel",
+      settings: "Configurações",
+      theme: "Tema",
+      language: "Idioma",
+      logout: "Sair",
+      toastLogoutSuccess: "Saiu com sucesso!",
+    },
+  },
 } as const;
