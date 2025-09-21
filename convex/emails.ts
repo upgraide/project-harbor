@@ -1,6 +1,6 @@
 import { components } from "./_generated/api";
 import { Resend } from "@convex-dev/resend";
-import { action, internalMutation } from "./_generated/server";
+import { action, ActionCtx, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { render, pretty } from "@react-email/render";
 import { InviteUserEmailEn } from "@/emails/invite-user-en";

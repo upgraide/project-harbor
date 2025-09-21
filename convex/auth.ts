@@ -5,6 +5,8 @@ import { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
 import { betterAuth } from "better-auth";
 import { getStaticAuth } from "@convex-dev/better-auth";
+import { requireActionCtx } from "@convex-dev/better-auth/utils";
+import { api } from "./_generated/api";
 
 const siteUrl = process.env.SITE_URL!;
 
@@ -28,6 +30,17 @@ export const createAuth = (
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
+      sendResetPassword: async ({ user, url }) => {
+        await requireActionCtx(ctx).runAction(
+          api.emails.sendResetPasswordEmail,
+          {
+            toName: user.name,
+            toEmail: user.email,
+            resetPasswordLink: url,
+            locale: "pt",
+          },
+        );
+      },
     },
     plugins: [
       // The Convex plugin is required for Convex compatibility

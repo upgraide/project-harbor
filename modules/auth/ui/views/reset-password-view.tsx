@@ -118,6 +118,7 @@ export const ResetPasswordView = () => {
                     <FormControl>
                       <Input
                         placeholder={t("schemaMessages.password.placeholder")}
+                        type="password"
                         {...field}
                       />
                     </FormControl>
@@ -142,6 +143,7 @@ export const ResetPasswordView = () => {
                         placeholder={t(
                           "schemaMessages.confirmPassword.placeholder",
                         )}
+                        type="password"
                         {...field}
                       />
                     </FormControl>

@@ -27,6 +27,7 @@ export default {
     passwordPlaceholder: "Password",
     toastSuccess: "Signed in successfully! Redirecting to dashboard...",
     toastError: "Failed to sign in. Please try again.",
+    toastInvalidCredentials: "Invalid email or password",
     toastResetPasswordSuccess: "Check your email for the reset password link!",
     toastResetPasswordError:
       "Failed to send reset password link. Please try again.",

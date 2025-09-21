@@ -43,8 +43,11 @@ export const SignInView = () => {
         },
         onError: (ctx) => {
           setLoading(false);
-          console.error(ctx.error.message);
-          toast.error(t("toastError"));
+          if (ctx.error.message.includes("Invalid email or password")) {
+            toast.error(t("toastInvalidCredentials"));
+          } else {
+            toast.error(t("toastError"));
+          }
         },
       },
     );
