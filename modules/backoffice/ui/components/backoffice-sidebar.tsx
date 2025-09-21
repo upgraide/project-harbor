@@ -20,7 +20,6 @@ import NavUserSidebar from "./nav-user";
 import { DynamicImage } from "@/components/dynamic-image";
 import DarkIcon from "@/public/assets/icon-dark.png";
 import LightIcon from "@/public/assets/icon-light.png";
-import { Label } from "@/components/ui/label";
 
 const navigationItems = [
   {
