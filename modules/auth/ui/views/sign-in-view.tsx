@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -110,7 +110,7 @@ export const SignInView = () => {
                 disabled={forgotLoading || !email}
               >
                 {forgotLoading ? (
-                  <Loader2 size={14} className="animate-spin mr-1" />
+                  <Loader size={14} className="animate-spin mr-1" />
                 ) : null}
                 {t("forgotPassword")}
               </Button>
@@ -127,7 +127,7 @@ export const SignInView = () => {
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? (
-              <Loader2 size={14} className="animate-spin mr-1" />
+              <Loader size={14} className="animate-spin mr-1" />
             ) : null}
             {t("buttons.signIn")}
           </Button>
