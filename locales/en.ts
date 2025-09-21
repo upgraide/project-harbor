@@ -36,4 +36,11 @@ export default {
     dark: "Dark",
     system: "System",
   },
+  resetPasswordPage: {
+    invalidLinkCard: {
+      title: "Invalid Link",
+      description:
+        "This password reset link is invalid or has expired. Please request a new one.",
+    },
+  },
 } as const;
