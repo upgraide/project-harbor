@@ -8,6 +8,7 @@ import { Breadcrumb, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { getScopedI18n } from "@/locales/server";
+import { backofficeMergersAndAcquisitionsPath } from "@/lib/paths";
 
 const Page = async () => {
   const t = await getScopedI18n("backoffice.mergersAndAcquisitions.create");
@@ -23,7 +24,7 @@ const Page = async () => {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="/backoffice/mergers-and-acquisitions">
+              <BreadcrumbLink href={backofficeMergersAndAcquisitionsPath()}>
                 {t("breadcrumb.title")}
               </BreadcrumbLink>
             </BreadcrumbItem>
