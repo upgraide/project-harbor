@@ -15,7 +15,6 @@ import { authClient } from "@/lib/auth-client";
 import { useSearchParams } from "next/navigation";
 import { redirect } from "next/navigation";
 import { useScopedI18n } from "@/locales/client";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -29,30 +28,27 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-const t = useScopedI18n("resetPasswordPage");
-
-const formSchema = z.object({
-  password: z.string().min(8, { message: t("schemaMessages.password.min") }),
-  confirmPassword: z
-    .string()
-    .min(8, { message: t("schemaMessages.confirmPassword.min") }),
-});
+import {
+  passwordResetSchema,
+  type PasswordResetSchemaType,
+} from "../schemas/password-reset-schema";
 
 export const ResetPasswordView = () => {
+  const t = useScopedI18n("resetPasswordPage");
+
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<PasswordResetSchemaType>({
+    resolver: zodResolver(passwordResetSchema),
     defaultValues: {
       password: "",
       confirmPassword: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: PasswordResetSchemaType) {
     if (!token) return;
 
     if (values.password !== values.confirmPassword) {
