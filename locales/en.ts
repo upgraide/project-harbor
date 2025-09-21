@@ -77,6 +77,7 @@ export default {
       language: "Language",
       logout: "Logout",
       toastLogoutSuccess: "Logged out successfully!",
+      toastLogoutError: "Failed to log out. Please try again.",
     },
     settings: {
       general: "General",

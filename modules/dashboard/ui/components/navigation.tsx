@@ -7,7 +7,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -23,8 +22,7 @@ import { useScopedI18n } from "@/locales/client";
 import DarkIcon from "@/public/assets/icon-dark.png";
 import LightIcon from "@/public/assets/icon-light.png";
 import { dashboardSettingsPath, dashboardPath, signInPath } from "@/lib/paths";
-import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
+import { useLogout } from "@/hooks/use-signout";
 
 export function Navigation({
   preloadedUser,
@@ -40,11 +38,7 @@ export function Navigation({
 
   const user = usePreloadedQuery(preloadedUser);
 
-  const handleSignOut = async () => {
-    await authClient.signOut();
-    toast.success(t("toastLogoutSuccess"));
-    router.push(signInPath());
-  };
+  const { handleLogout } = useLogout();
 
   if (!user) {
     return null;
@@ -149,7 +143,7 @@ export function Navigation({
               <DropdownMenuItem
                 className="group h-9 w-full cursor-pointer justify-between rounded-md px-2"
                 onClick={() => {
-                  handleSignOut();
+                  handleLogout();
                 }}
               >
                 <span className="text-sm text-primary/60 group-hover:text-primary group-focus:text-primary">
