@@ -120,4 +120,14 @@ export default {
       },
     },
   },
+  backoffice: {
+    sidebar: {
+      navigationItems: {
+        opportunitiesMA: "Opportunities M&A",
+        opportunitiesRealEstate: "Opportunities Real Estate",
+        investors: "Investors",
+        team: "Team",
+      },
+    },
+  },
 } as const;

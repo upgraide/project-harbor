@@ -20,26 +20,30 @@ import { DynamicImage } from "@/components/dynamic-image";
 import DarkIcon from "@/public/assets/icon-dark.png";
 import LightIcon from "@/public/assets/icon-light.png";
 
-const configurationItems = [
+const navigationItems = [
   {
-    title: "Opportunities Mergers and Acquisitions",
+    title: "Opportunities M&A",
     url: "/backoffice/mergers-and-acquisitions",
     icon: BriefcaseIcon,
+    key: "opportunitiesMA",
   },
   {
     title: "Opportunities Real Estate",
     url: "/backoffice/real-estate",
     icon: HouseIcon,
+    key: "opportunitiesRealEstate",
   },
   {
     title: "Investors",
     url: "/backoffice/investors",
     icon: UsersIcon,
+    key: "investors",
   },
   {
     title: "Team",
     url: "/backoffice/team",
     icon: Users2Icon,
+    key: "team",
   },
 ];
 
@@ -96,23 +100,19 @@ export const BackofficeSidebar = ({
           <SidebarGroup>
             <SidebarGroupContent className="px-1.5 md:px-0">
               <SidebarMenu>
-                {configurationItems.map((item) => (
+                {navigationItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
                       isActive={isActive(item.url)}
                       tooltip={{
-                        children: item.title,
+                        children: t(`navigationItems.${item.key}`),
                         hidden: false,
                       }}
                     >
                       <Link href={item.url}>
                         <item.icon className="size-4" />
-                        <span>
-                          {t(
-                            `configuration.configurationItems.${item.title.replace(/ /g, "_").toLowerCase()}`,
-                          )}
-                        </span>
+                        <span>{t(`navigationItems.${item.key}`)}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

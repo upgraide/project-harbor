@@ -116,4 +116,14 @@ export default {
       },
     },
   },
+  backoffice: {
+    sidebar: {
+      navigationItems: {
+        opportunitiesMA: "Opportunidades M&A",
+        opportunitiesRealEstate: "Opportunidades Real Estate",
+        investors: "Investidores",
+        team: "Equipa",
+      },
+    },
+  },
 } as const;

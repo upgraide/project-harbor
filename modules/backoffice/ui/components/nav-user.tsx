@@ -26,7 +26,7 @@ import {
   UserIcon,
 } from "lucide-react";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { ThemeSwitcher } from "@/components/theme-switcher";
+import { ThemeSwitcher, ThemeSwitcherHome } from "@/components/theme-switcher";
 import { useScopedI18n } from "@/locales/client";
 import { useLogout } from "@/hooks/use-signout";
 import { Id } from "@/convex/_generated/dataModel";
@@ -128,7 +128,8 @@ const NavUserSidebar = () => {
                 {t("language")} <LanguageSwitcher />
               </DropdownMenuItem>
               <DropdownMenuItem className="flex items-center justify-between">
-                {t("theme")} <ThemeSwitcher />
+                {t("theme")}
+                {isMobile ? <ThemeSwitcherHome /> : <ThemeSwitcher />}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
