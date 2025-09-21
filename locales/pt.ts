@@ -80,6 +80,7 @@ export default {
       language: "Idioma",
       logout: "Sair",
       toastLogoutSuccess: "Saiu com sucesso!",
+      toastLogoutError: "Falha ao sair. Por favor, tente novamente.",
     },
     settings: {
       general: "Geral",

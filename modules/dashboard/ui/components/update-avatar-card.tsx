@@ -1,6 +1,5 @@
 "use client";
 
-import { SubmitButton } from "@/components/submit-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { UploadInput } from "@/components/upload-input";
@@ -16,7 +15,6 @@ import {
   useQuery,
 } from "convex/react";
 import { UploadIcon } from "lucide-react";
-import { useState } from "react";
 import { toast } from "sonner";
 
 const UpdateAvatarCard = ({
@@ -48,9 +46,9 @@ const UpdateAvatarCard = ({
           .storageId,
       }),
       {
-        loading: "Updating image...",
-        success: "Image updated successfully",
-        error: "Failed to update image",
+        loading: t("uploadToast.loading"),
+        success: t("uploadToast.success"),
+        error: t("uploadToast.error"),
       },
     );
 
@@ -67,9 +65,9 @@ const UpdateAvatarCard = ({
         image: null,
       }),
       {
-        loading: "Removing image...",
-        success: "Image removed successfully",
-        error: "Failed to remove image",
+        loading: t("removeToast.loading"),
+        success: t("removeToast.success"),
+        error: t("removeToast.error"),
       },
     );
 
@@ -81,11 +79,9 @@ const UpdateAvatarCard = ({
       <div className="flex w-full flex-col items-start rounded-lg border border-border bg-card">
         <div className="flex w-full items-start justify-between rounded-lg p-6">
           <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-medium text-primary">
-              {t("avatar.title")}
-            </h2>
+            <h2 className="text-xl font-medium text-primary">{t("title")}</h2>
             <p className="text-sm font-normal text-primary/60">
-              {t("avatar.description")}
+              {t("description")}
             </p>
           </div>
           <label
@@ -124,7 +120,7 @@ const UpdateAvatarCard = ({
         </div>
         <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 dark:bg-card">
           <p className="text-sm font-normal text-primary/60">
-            {t("avatar.uploadHint")}
+            {t("uploadHint")}
           </p>
           {user.image && (
             <Button
@@ -135,7 +131,7 @@ const UpdateAvatarCard = ({
               type="button"
               variant="secondary"
             >
-              {t("avatar.resetButton")}
+              {t("resetButton")}
             </Button>
           )}
         </div>
