@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { getScopedI18n } from "@/locales/server";
 import { backofficeMergersAndAcquisitionsPath } from "@/lib/paths";
+import MergersAndAcquisitionsCreateForm from "@/modules/backoffice/ui/components/mergers-and-acquisitions-create-form";
 
 const Page = async () => {
   const t = await getScopedI18n("backoffice.mergersAndAcquisitions.create");
@@ -35,6 +36,8 @@ const Page = async () => {
           </BreadcrumbList>
         </Breadcrumb>
       </header>
+
+      <MergersAndAcquisitionsCreateForm />
     </SidebarInset>
   );
 };

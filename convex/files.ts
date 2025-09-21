@@ -32,9 +32,7 @@ export const saveStorageId = mutation({
       });
     }
 
-    ctx.db.patch(user._id, {
-      image: args.storageId,
-    });
+    // TODO: Save the storageId to the database
   },
 });
 

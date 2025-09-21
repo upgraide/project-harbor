@@ -20,6 +20,15 @@ const isValidEmail = (email: string): boolean => {
 export const sendTestEmail = internalMutation({
   args: {},
   handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Unauthorized",
+      });
+    }
+
     try {
       await resend.sendEmail(ctx, {
         from: "Harbor Partners <noreply@harborpartners.com>",
@@ -47,6 +56,15 @@ export const sendInviteUserEmail = action({
     locale: v.union(v.literal("en"), v.literal("pt")),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Unauthorized",
+      });
+    }
+
     if (!isValidEmail(args.toEmail)) {
       throw new ConvexError({
         code: "INVALID_ARGUMENT",
@@ -97,6 +115,15 @@ export const sendResetPasswordEmail = action({
     locale: v.union(v.literal("en"), v.literal("pt")),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Unauthorized",
+      });
+    }
+
     if (!isValidEmail(args.toEmail)) {
       throw new ConvexError({
         code: "INVALID_ARGUMENT",

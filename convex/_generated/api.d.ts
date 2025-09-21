@@ -12,7 +12,7 @@ import type * as auth from "../auth.js";
 import type * as emails from "../emails.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
-import type * as user from "../user.js";
+import type * as mergersAndAcquisitions from "../mergersAndAcquisitions.js";
 
 import type {
   ApiFromModules,
@@ -33,7 +33,7 @@ declare const fullApi: ApiFromModules<{
   emails: typeof emails;
   files: typeof files;
   http: typeof http;
-  user: typeof user;
+  mergersAndAcquisitions: typeof mergersAndAcquisitions;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
