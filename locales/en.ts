@@ -78,5 +78,8 @@ export default {
       logout: "Logout",
       toastLogoutSuccess: "Logged out successfully!",
     },
+    settings: {
+      general: "General",
+    },
   },
 } as const;
