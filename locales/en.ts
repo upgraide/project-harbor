@@ -1,3 +1,5 @@
+import { FormDescription } from "@/components/ui/form";
+
 export default {
   ladingPage: {
     title: {
@@ -97,6 +99,19 @@ export default {
           success: "Avatar removed successfully!",
           error: "Failed to remove avatar. Please try again.",
           loading: "Removing avatar...",
+        },
+      },
+      updateNameCard: {
+        title: "Your Name",
+        description: "This is your name. It will be displayed on your profile.",
+        label: "First & Last Name",
+        placeholder: "First and Last name",
+        warning: "Please use 32 characters at maximum.",
+        saveButton: "Save",
+        toast: {
+          success: "Name updated successfully!",
+          error: "Failed to update name. Please try again.",
+          loading: "Updating name...",
         },
       },
     },
