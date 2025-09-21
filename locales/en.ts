@@ -130,5 +130,13 @@ export default {
       },
       searchPlaceholder: "Type to search...",
     },
+    mergersAndAcquisitions: {
+      create: {
+        breadcrumb: {
+          title: "Mergers and Acquisitions",
+          create: "Create",
+        },
+      },
+    },
   },
 } as const;

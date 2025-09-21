@@ -12,7 +12,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { BriefcaseIcon, HouseIcon, Users2Icon, UsersIcon } from "lucide-react";
+import {
+  BriefcaseIcon,
+  HouseIcon,
+  PlusIcon,
+  Users2Icon,
+  UsersIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useScopedI18n } from "@/locales/client";
@@ -20,6 +26,7 @@ import NavUserSidebar from "./nav-user";
 import { DynamicImage } from "@/components/dynamic-image";
 import DarkIcon from "@/public/assets/icon-dark.png";
 import LightIcon from "@/public/assets/icon-light.png";
+import { buttonVariants } from "@/components/ui/button";
 
 const navigationItems = [
   {
@@ -132,8 +139,19 @@ export const BackofficeSidebar = ({
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
             <div className="text-foreground text-base font-medium">
-              {navigationItems.find((item) => item.url === pathname)?.title}
+              {
+                navigationItems.find(
+                  (item) =>
+                    item.url === pathname || item.url === `${pathname}/create`,
+                )?.title
+              }
             </div>
+            <Link
+              href={`${pathname}/create`}
+              className={buttonVariants({ variant: "outline", size: "icon" })}
+            >
+              <PlusIcon className="size-4" />
+            </Link>
           </div>
           <SidebarInput placeholder={t("searchPlaceholder")} />
         </SidebarHeader>
