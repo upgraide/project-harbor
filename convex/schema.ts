@@ -110,6 +110,8 @@ const schema = defineSchema({
     holdPeriod: v.optional(v.union(v.number(), v.null())),
 
     createdBy: v.string(),
+  }).searchIndex("search_name", {
+    searchField: "name",
   }),
 });
 

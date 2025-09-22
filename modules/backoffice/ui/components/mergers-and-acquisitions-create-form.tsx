@@ -752,6 +752,12 @@ const MergersAndAcquisitionsCreateForm = () => {
                         type="number"
                         {...field}
                         value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

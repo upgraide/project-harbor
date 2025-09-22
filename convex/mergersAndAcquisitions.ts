@@ -1,6 +1,9 @@
 import { ConvexError, v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
+import { paginationOptsValidator, PaginationResult } from "convex/server";
+import { Doc } from "./_generated/dataModel";
+import { components } from "./_generated/api";
 
 export const create = mutation({
   args: {
@@ -134,5 +137,69 @@ export const create = mutation({
       ...args,
       createdBy: user._id,
     });
+  },
+});
+
+export const getMany = query({
+  args: {
+    paginationOpts: paginationOptsValidator,
+    name: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Unauthorized",
+      });
+    }
+
+    // TODO: Check if user is admin or team at least
+
+    let opportunities: PaginationResult<Doc<"mergersAndAcquisitions">>;
+
+    if (args.name) {
+      opportunities = await ctx.db
+        .query("mergersAndAcquisitions")
+        .withSearchIndex("search_name", (q) =>
+          q.search("name", args.name ?? ""),
+        )
+        .paginate(args.paginationOpts);
+    } else {
+      opportunities = await ctx.db
+        .query("mergersAndAcquisitions")
+        .order("desc")
+        .paginate(args.paginationOpts);
+    }
+
+    const enrichedOpportunities = await Promise.all(
+      opportunities.page.map(async (opportunity) => {
+        const user = await ctx.runQuery(components.betterAuth.adapter.findOne, {
+          model: "user",
+          where: [
+            { field: "id", operator: "eq", value: opportunity.createdBy },
+          ],
+        });
+        return {
+          ...opportunity,
+          createdBy: opportunity.createdBy
+            ? {
+                _id: opportunity.createdBy,
+                name: user?.name,
+                email: user?.email,
+                avatarURL: user?.image
+                  ? await ctx.storage.getUrl(user.image)
+                  : undefined,
+              }
+            : null,
+        };
+      }),
+    );
+
+    return {
+      ...opportunities,
+      page: enrichedOpportunities,
+    };
   },
 });
