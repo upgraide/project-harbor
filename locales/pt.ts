@@ -73,6 +73,10 @@ export default {
     },
   },
   dashboard: {
+    header: {
+      title: "Painel de Oportunidades",
+      description: "Bem-vindo ao seu painel de oportunidades",
+    },
     navigation: {
       dashboard: "Painel",
       settings: "Configurações",

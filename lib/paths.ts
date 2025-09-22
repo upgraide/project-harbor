@@ -8,6 +8,8 @@ export const forgotPasswordPath = () => `/reset-password`;
 // (Dashboard) - User Facing (Protected) -
 export const dashboardPath = () => `/dashboard`;
 export const dashboardSettingsPath = () => `/dashboard/settings`;
+export const dashboardMergersAndAcquisitionOpportunityPath = (id: string) =>
+  `/dashboard/mergers-and-acquisitions/${id}`;
 
 // (Backoffice) - Team Facing (Protected) -
 export const backofficePath = () => `/backoffice`;
