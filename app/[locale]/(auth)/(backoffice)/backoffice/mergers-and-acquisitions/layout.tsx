@@ -1,12 +1,11 @@
-import { BackofficeSidebar } from "@/modules/backoffice/ui/components/backoffice-sidebar";
-import BackofficeLayout from "@/modules/backoffice/ui/layouts/backoffice-layout";
+import { BackofficeSidebarMergersAndAcquisitions } from "@/modules/backoffice/ui/components/backoffice-sidebar-mergers-and-acquisitions";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <BackofficeLayout>
-      <BackofficeSidebar />
+    <>
+      <BackofficeSidebarMergersAndAcquisitions />
       {children}
-    </BackofficeLayout>
+    </>
   );
 };
 

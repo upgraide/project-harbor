@@ -1,14 +1,6 @@
 "use client";
 
 import {
-  BreadcrumbItem,
-  BreadcrumbPage,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  Breadcrumb,
-  BreadcrumbList,
-} from "@/components/ui/breadcrumb";
-import {
   ChartConfig,
   ChartContainer,
   ChartLegend,
@@ -16,15 +8,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Separator } from "@/components/ui/separator";
-import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { backofficeMergersAndAcquisitionsPath } from "@/lib/paths";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import {
   LoaderIcon,
-  PlusIcon,
   PencilIcon,
   EllipsisVerticalIcon,
   TrashIcon,
@@ -229,13 +217,15 @@ const Page = ({
                   </TableCell>
                   <TableCell className="text-right"></TableCell>
                 </TableRow>
-                <TableRow key={"typeDetails"}>
-                  <TableCell className="px-6 py-4">Type Details</TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.typeDetails ?? "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
+                {opportunity.typeDetails && (
+                  <TableRow key={"typeDetails"}>
+                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.typeDetails}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                )}
                 <TableRow key={"industry"}>
                   <TableCell className="px-6 py-4">Industry</TableCell>
                   <TableCell className="px-6 py-4">
@@ -243,15 +233,17 @@ const Page = ({
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
-                <TableRow key={"industrySubsector"}>
-                  <TableCell className="px-6 py-4">
-                    Industry Subsector
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.industrySubsector ?? "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
+                {opportunity.industrySubsector && (
+                  <TableRow key={"industrySubsector"}>
+                    <TableCell className="px-6 py-4">
+                      Industry Subsector
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.industrySubsector}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                )}
                 <TableRow key={"dimension"}>
                   <TableCell className="px-6 py-4 font-medium bg-muted">
                     Dimension

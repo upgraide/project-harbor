@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import {
   createMergersAndAcquisitionsFormSchema,
   CreateMergersAndAcquisitionsFormSchemaType,
-} from "../schema/create-form-schema";
+} from "../schema/mergers-and-acquisitions-create-form-schema";
 import { Input } from "@/components/ui/input";
 import {
   Card,

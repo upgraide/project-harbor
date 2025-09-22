@@ -65,7 +65,7 @@ const navigationItems = [
   },
 ];
 
-export const BackofficeSidebar = ({
+export const BackofficeSidebarRealEstate = ({
   ...props
 }: React.ComponentProps<typeof Sidebar>) => {
   const t = useScopedI18n("backoffice.sidebar");
