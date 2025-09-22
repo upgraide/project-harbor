@@ -384,15 +384,196 @@ const Page = ({
                   <TableHead className="px-6 py-4">Metric</TableHead>
                   <TableHead className="px-6 py-4">Value</TableHead>
                   <TableHead className="text-right px-6 py-4">
-                    {" "}
                     Actions
                   </TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody></TableBody>
+              <TableBody>
+                <TableRow key={"shareholderStructure"}>
+                  <TableCell className="px-6 py-4">
+                    Shareholder Structure
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.shareholderStructure ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"im"}>
+                  <TableCell className="px-6 py-4">IM</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.im ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"entrepriseValue"}>
+                  <TableCell className="px-6 py-4">Entreprise Value</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.entrepriseValue ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"equityValue"}>
+                  <TableCell className="px-6 py-4">Equity Value</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.equityValue ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"evDashEbitdaEntry"}>
+                  <TableCell className="px-6 py-4">EV/EBITDA Entry</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.evDashEbitdaEntry ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"evDashEbitdaExit"}>
+                  <TableCell className="px-6 py-4">EV/EBITDA Exit</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.evDashEbitdaExit ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"ebitdaMargin"}>
+                  <TableCell className="px-6 py-4">EBITDA Margin</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.ebitdaMargin ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"fcf"}>
+                  <TableCell className="px-6 py-4">FCF</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.fcf ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"netDebtDashEbitda"}>
+                  <TableCell className="px-6 py-4">Net Debt/EBITDA</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.netDebtDashEbitda ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"capexItensity"}>
+                  <TableCell className="px-6 py-4">Capex Intensity</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.capexItensity ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+                <TableRow key={"workingCapitalNeeds"}>
+                  <TableCell className="px-6 py-4">
+                    Working Capital Needs
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.workingCapitalNeeds ?? "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right px-6 py-4"></TableCell>
+                </TableRow>
+              </TableBody>
             </Table>
           </CardContent>
         </Card>
+
+        {opportunity.coInvestment && (
+          <Card>
+            <CardHeader className="border-b flex items-center justify-between">
+              <CardTitle className="text-xl font-semid">
+                Co-Investment Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="px-6 py-4">Metric</TableHead>
+                    <TableHead className="px-6 py-4">Value</TableHead>
+                    <TableHead className="text-right px-6 py-4">
+                      Actions
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow key={"coInvestment"}>
+                    <TableCell className="px-6 py-4">Co-Investment</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.coInvestment ? "Yes" : "No"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"equityContribution"}>
+                    <TableCell className="px-6 py-4">
+                      Equity Contribution
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.equityContribution ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                  <TableRow key={"grossIRR"}>
+                    <TableCell className="px-6 py-4">Gross IRR</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.grossIRR ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                  <TableRow key={"netIRR"}>
+                    <TableCell className="px-6 py-4">Net IRR</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.netIRR ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                  <TableRow key={"moic"}>
+                    <TableCell className="px-6 py-4">MOIC</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.moic ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                  <TableRow key={"cashOnCashReturn"}>
+                    <TableCell className="px-6 py-4">
+                      Cash On Cash Return
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.cashOnCashReturn ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                  <TableRow key={"cashConvertion"}>
+                    <TableCell className="px-6 py-4">Cash Convertion</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.cashConvertion ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                  <TableRow key={"entryMultiple"}>
+                    <TableCell className="px-6 py-4">Entry Multiple</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.entryMultiple ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                  <TableRow key={"exitExpectedMultiple"}>
+                    <TableCell className="px-6 py-4">
+                      Exit Expected Multiple
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.exitExpectedMultiple ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                  <TableRow key={"holdPeriod"}>
+                    <TableCell className="px-6 py-4">Hold Period</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.holdPeriod ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </SidebarInset>
   );
