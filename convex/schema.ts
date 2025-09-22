@@ -71,7 +71,7 @@ const schema = defineSchema({
       v.union(
         v.array(
           v.object({
-            year: v.number(),
+            year: v.string(),
             revenue: v.number(),
             ebitda: v.number(),
           }),

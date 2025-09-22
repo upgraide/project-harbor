@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { backofficeMergersAndAcquisitionsCreatePath } from "@/lib/paths";
 
 const navigationItems = [
   {
@@ -180,7 +181,7 @@ export const BackofficeSidebar = ({
               }
             </div>
             <Link
-              href={`${pathname}/create`}
+              href={backofficeMergersAndAcquisitionsCreatePath()}
               className={buttonVariants({ variant: "outline", size: "icon" })}
             >
               <PlusIcon className="size-4" />

@@ -47,7 +47,7 @@ export const createMergersAndAcquisitionsFormSchema = z.object({
     .optional(),
   graphRows: z
     .array(
-      z.object({ year: z.number(), revenue: z.number(), ebitda: z.number() }),
+      z.object({ year: z.string(), revenue: z.number(), ebitda: z.number() }),
     )
     .optional(),
   salesCAGR: z

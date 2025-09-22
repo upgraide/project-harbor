@@ -3,8 +3,9 @@ import {
   BreadcrumbPage,
   BreadcrumbLink,
   BreadcrumbSeparator,
+  Breadcrumb,
+  BreadcrumbList,
 } from "@/components/ui/breadcrumb";
-import { Breadcrumb, BreadcrumbList } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { getScopedI18n } from "@/locales/server";

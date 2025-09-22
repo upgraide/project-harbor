@@ -75,7 +75,7 @@ export const create = mutation({
       v.union(
         v.array(
           v.object({
-            year: v.number(),
+            year: v.string(),
             revenue: v.number(),
             ebitda: v.number(),
           }),
@@ -155,8 +155,6 @@ export const getMany = query({
       });
     }
 
-    // TODO: Check if user is admin or team at least
-
     let opportunities: PaginationResult<Doc<"mergersAndAcquisitions">>;
 
     if (args.name) {
@@ -201,5 +199,23 @@ export const getMany = query({
       ...opportunities,
       page: enrichedOpportunities,
     };
+  },
+});
+
+export const getById = query({
+  args: {
+    id: v.id("mergersAndAcquisitions"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError({
+        code: "UNAUTHORIZED",
+        message: "Unauthorized",
+      });
+    }
+
+    return await ctx.db.get(args.id);
   },
 });
