@@ -56,6 +56,7 @@ const MergersAndAcquisitionsCreateForm = () => {
       createMergersAndAcquisitions({
         ...values,
         images: undefined,
+        shareholderStructure: undefined,
       }),
       {
         loading: "Creating M&A Opportunity",
@@ -70,7 +71,7 @@ const MergersAndAcquisitionsCreateForm = () => {
 
   return (
     <div className="mx-auto w-full max-w-md md:max-w-3xl">
-      <Card className="mt-12 mx-6">
+      <Card className="my-12 mx-6">
         <CardHeader>
           <CardTitle>Create M&A Opportunity</CardTitle>
           <CardDescription>
@@ -542,6 +543,504 @@ const MergersAndAcquisitionsCreateForm = () => {
                   </FormItem>
                 )}
               />
+
+              {/* TODO: Add the Shareholder Structure field */}
+
+              <FormField
+                control={form.control}
+                name="im"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>IM</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="text"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="entrepriseValue"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Entreprise Value</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="equityValue"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Equity Value</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="evDashEbitdaEntry"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>EV/EBITDA (Entry)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="evDashEbitdaExit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>EV/EBITDA (Exit/Comps)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="ebitdaMargin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>EBITDA Margin</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="fcf"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Free Cash Flow</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="netDebtDashEbitda"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Net Debt/EBITDA</FormLabel>
+
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="capexItensity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Capex Intensity (Capex/EBITDA)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="workingCapitalNeeds"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Working Capital Needs</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="coInvestment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Add Co-Investment Button?</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) =>
+                          field.onChange(value === "true")
+                        }
+                        value={field.value?.toString()}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select an option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="true">Yes</SelectItem>
+                          <SelectItem value="false">No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {form.watch("coInvestment") === true && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="equityContribution"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Equity Contribution (%)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="grossIRR"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Gross IRR</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="netIRR"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Net IRR</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="moic"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          MOIC (Multiple on Investment Capital)
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cashOnCashReturn"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cash-On-Cash Return</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cashConvertion"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cash Convertion (FCF/EBITDA)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="entryMultiple"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Entry Multiple</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="exitExpectedMultiple"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Exit Expected Multiple</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="holdPeriod"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Hold Period (years)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
 
               <SubmitButton
                 isSubmitting={form.formState.isSubmitting}
