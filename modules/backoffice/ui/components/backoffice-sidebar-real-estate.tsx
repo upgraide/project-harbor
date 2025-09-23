@@ -27,7 +27,7 @@ import { DynamicImage } from "@/components/dynamic-image";
 import DarkIcon from "@/public/assets/icon-dark.png";
 import LightIcon from "@/public/assets/icon-light.png";
 import { buttonVariants } from "@/components/ui/button";
-import { usePaginatedQuery } from "convex/react";
+import { usePaginatedQuery, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { RefObject, useState } from "react";
 import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
@@ -36,7 +36,11 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { backofficeRealEstateCreatePath, backofficePath } from "@/lib/paths";
+import {
+  backofficeRealEstateCreatePath,
+  backofficePath,
+  backofficeRealEstatePath,
+} from "@/lib/paths";
 
 const navigationItems = [
   {
@@ -173,12 +177,9 @@ export const BackofficeSidebarRealEstate = ({
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
             <div className="text-foreground text-base font-medium">
-              {
-                navigationItems.find(
-                  (item) =>
-                    item.url === pathname || item.url === `${pathname}/create`,
-                )?.title
-              }
+              {pathname === backofficeRealEstateCreatePath()
+                ? "Create Opportunity"
+                : "Opportunities Real Estate"}
             </div>
             <Link
               href={backofficeRealEstateCreatePath()}
