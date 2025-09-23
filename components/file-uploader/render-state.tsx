@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { CloudUploadIcon } from "lucide-react";
+import { ArrowRightIcon, ImageIcon, CloudUploadIcon } from "lucide-react";
 import { Button } from "../ui/button";
 
 export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
@@ -21,6 +21,23 @@ export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
       </p>
       <Button type="button" className="mt-4">
         Select files
+      </Button>
+    </div>
+  );
+}
+
+export function RenderErrorState() {
+  return (
+    <div className="text-center">
+      <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-destructive/30">
+        <ImageIcon className={cn("size-6 text-destructive")} />
+      </div>
+      <p className="font-semibold text-base">Error loading file</p>
+      <p className="mt-1 text-muted-foreground text-xs ">
+        Something went wrong
+      </p>
+      <Button className="mt-4" type="button">
+        Tentar novamente <ArrowRightIcon className="size-4" />
       </Button>
     </div>
   );

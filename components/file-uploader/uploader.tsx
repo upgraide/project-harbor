@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
+import { FileRejection, useDropzone } from "react-dropzone";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { RenderEmptyState } from "./render-state";
+import { toast } from "sonner";
 
 export const Uploader = () => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -12,7 +13,35 @@ export const Uploader = () => {
     console.log(acceptedFiles);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  function rejectedFiles(fileRejections: FileRejection[]) {
+    if (fileRejections.length) {
+      const tooManyFiles = fileRejections.find(
+        (rejection) => rejection.errors[0].code === "too-many-files",
+      );
+
+      const fileTooLarge = fileRejections.find(
+        (rejection) => rejection.errors[0].code === "file-too-large",
+      );
+
+      if (fileTooLarge) {
+        toast.error("File Size exceeded the limit of 5MB");
+      }
+
+      if (tooManyFiles) {
+        toast.error("You can only upload 20 files");
+      }
+    }
+  }
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "image/*": [] },
+    maxFiles: 20,
+    multiple: true,
+    maxSize: 1024 * 1024 * 5 * 20, // 5MB * 20 files
+    onDropRejected: rejectedFiles,
+  });
+
   return (
     <Card
       {...getRootProps()}
