@@ -165,6 +165,8 @@ const schema = defineSchema({
     gcaAboveGround: v.optional(v.union(v.null(), v.number())),
     gcaBelowGround: v.optional(v.union(v.null(), v.number())),
 
+    images: v.optional(v.union(v.null(), v.array(v.id("_storage")))),
+
     createdBy: v.id("user"),
   }).searchIndex("search_name", {
     searchField: "name",

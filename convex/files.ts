@@ -1,16 +1,18 @@
 import { api } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
+import { authComponent } from "./auth";
 
 export const generateUploadUrl = mutation({
   args: {},
+  returns: v.string(),
   handler: async (ctx) => {
-    const user = await ctx.runQuery(api.auth.getCurrentUser);
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!user) {
+    if (!identity) {
       throw new ConvexError({
         code: "NOT_FOUND",
-        message: "User not found",
+        message: "Identity not found",
       });
     }
 
@@ -18,43 +20,76 @@ export const generateUploadUrl = mutation({
   },
 });
 
-export const saveStorageId = mutation({
+export const uploadImageToOpportunity = mutation({
   args: {
     storageId: v.id("_storage"),
+    opportunityId: v.union(v.id("mergersAndAcquisitions"), v.id("realEstates")),
   },
-  handler: async (ctx) => {
-    const user = await ctx.runQuery(api.auth.getCurrentUser);
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!user) {
+    if (!identity) {
       throw new ConvexError({
         code: "NOT_FOUND",
-        message: "User not found",
+        message: "Identity not found",
       });
     }
 
-    // TODO: Save the storageId to the database
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    await ctx.db.patch(args.opportunityId, {
+      images: [...(opportunity.images || []), args.storageId],
+    });
+
+    return null;
   },
 });
 
-export const saveStorageIds = mutation({
+export const uploadImagesToOpportunity = mutation({
   args: {
     storageIds: v.array(
       v.object({
         storageId: v.id("_storage"),
       }),
     ),
+    opportunityId: v.union(v.id("mergersAndAcquisitions"), v.id("realEstates")),
   },
-  handler: async (ctx) => {
-    const user = await ctx.runQuery(api.auth.getCurrentUser);
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
 
-    if (!user) {
+    if (!identity) {
       throw new ConvexError({
         code: "NOT_FOUND",
-        message: "User not found",
+        message: "Identity not found",
       });
     }
 
-    // TODO: Save the storageIds to the database
+    const opportunity = await ctx.db.get(args.opportunityId);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    await ctx.db.patch(args.opportunityId, {
+      images: [
+        ...(opportunity.images || []),
+        ...args.storageIds.map(({ storageId }) => storageId),
+      ],
+    });
+
+    return null;
   },
 });
 
@@ -63,6 +98,15 @@ export const getUrlById = query({
     id: v.id("_storage"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Identity not found",
+      });
+    }
+
     return await ctx.storage.getUrl(args.id);
   },
 });
@@ -72,6 +116,15 @@ export const deleteFile = mutation({
     id: v.id("_storage"),
   },
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Identity not found",
+      });
+    }
+
     return await ctx.storage.delete(args.id);
   },
 });
