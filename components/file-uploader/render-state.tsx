@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
-import { Button } from "@react-email/components";
 import { CloudUploadIcon } from "lucide-react";
+import { Button } from "../ui/button";
 
 export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
   return (
