@@ -39,7 +39,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   backofficeRealEstateCreatePath,
   backofficePath,
-  backofficeRealEstatePath,
+  backofficeRealEstateOpportunityPath,
 } from "@/lib/paths";
 
 const navigationItems = [
@@ -76,8 +76,8 @@ export const BackofficeSidebarRealEstate = ({
   const pathname = usePathname();
 
   const isActive = (url: string) => {
-    if (url === "/") {
-      return pathname === "/";
+    if (url === backofficePath()) {
+      return pathname === backofficePath();
     }
 
     return pathname.startsWith(url);
@@ -207,18 +207,22 @@ export const BackofficeSidebarRealEstate = ({
                         className={cn(
                           "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
                           pathname ===
-                            `/backoffice/real-estate/${opportunity._id}` &&
-                            "bg-accent text-accent-foreground",
+                            backofficeRealEstateOpportunityPath(
+                              opportunity._id,
+                            ) && "bg-accent text-accent-foreground",
                         )}
-                        href={`/backoffice/real-estate/${opportunity._id}`}
+                        href={backofficeRealEstateOpportunityPath(
+                          opportunity._id,
+                        )}
                         key={opportunity._id}
                       >
                         <div
                           className={cn(
                             "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity",
                             pathname ===
-                              `/backoffice/mergers-and-acquisitions/${opportunity._id}` &&
-                              "opacity-100",
+                              backofficeRealEstateOpportunityPath(
+                                opportunity._id,
+                              ) && "opacity-100",
                           )}
                         />
 

@@ -36,7 +36,11 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { backofficeMergersAndAcquisitionsCreatePath } from "@/lib/paths";
+import {
+  backofficeMergersAndAcquisitionsCreatePath,
+  backofficeMergersAndAcquisitionsOpportunityPath,
+  backofficePath,
+} from "@/lib/paths";
 
 const navigationItems = [
   {
@@ -73,7 +77,7 @@ export const BackofficeSidebarMergersAndAcquisitions = ({
 
   const isActive = (url: string) => {
     if (url === "/") {
-      return pathname === "/";
+      return pathname === backofficePath();
     }
 
     return pathname.startsWith(url);
@@ -117,7 +121,7 @@ export const BackofficeSidebarMergersAndAcquisitions = ({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-                <a href="#">
+                <Link href={backofficePath()}>
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                     <DynamicImage
                       className="size-4"
@@ -132,7 +136,7 @@ export const BackofficeSidebarMergersAndAcquisitions = ({
                     </span>
                     <span className="truncate text-xs">Backoffice</span>
                   </div>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -203,18 +207,22 @@ export const BackofficeSidebarMergersAndAcquisitions = ({
                         className={cn(
                           "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
                           pathname ===
-                            `/backoffice/mergers-and-acquisitions/${opportunity._id}` &&
-                            "bg-accent text-accent-foreground",
+                            backofficeMergersAndAcquisitionsOpportunityPath(
+                              opportunity._id,
+                            ) && "bg-accent text-accent-foreground",
                         )}
-                        href={`/backoffice/mergers-and-acquisitions/${opportunity._id}`}
+                        href={backofficeMergersAndAcquisitionsOpportunityPath(
+                          opportunity._id,
+                        )}
                         key={opportunity._id}
                       >
                         <div
                           className={cn(
                             "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity",
                             pathname ===
-                              `/backoffice/mergers-and-acquisitions/${opportunity._id}` &&
-                              "opacity-100",
+                              backofficeMergersAndAcquisitionsOpportunityPath(
+                                opportunity._id,
+                              ) && "opacity-100",
                           )}
                         />
 
