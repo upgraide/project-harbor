@@ -29,18 +29,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
-import { backofficeMergersAndAcquisitionsPath } from "@/lib/paths";
+import { backofficeRealEstatePath } from "@/lib/paths";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/submit-button";
 import {
   realEstateCreateFormSchema,
   CreateRealEstateFormSchemaType,
 } from "../schema/real-estate-create-form-schema";
+import { UploadFileResponse } from "@xixixao/uploadstuff";
+import { UploadDropzone } from "@xixixao/uploadstuff/react";
 
 const RealEstateCreateForm = () => {
   const router = useRouter();
 
   const createRealEstate = useMutation(api.realEstates.create);
+  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const saveStorageIds = useMutation(api.files.saveStorageIds);
+  const saveAfterUpload = async (uploaded: UploadFileResponse[]) => {
+    await saveStorageIds({
+      storageIds: uploaded.map(({ response }) => ({
+        storageId: (response as any).storageId,
+      })),
+    });
+  };
 
   const form = useForm<CreateRealEstateFormSchemaType>({
     resolver: zodResolver(realEstateCreateFormSchema),
@@ -53,6 +64,7 @@ const RealEstateCreateForm = () => {
     toast.promise(
       createRealEstate({
         ...values,
+        images: [],
       }),
       {
         loading: "Creating Real Estate Opportunity",
@@ -62,7 +74,7 @@ const RealEstateCreateForm = () => {
     );
 
     form.reset();
-    router.push(backofficeMergersAndAcquisitionsPath());
+    router.push(backofficeRealEstatePath());
   };
 
   return (
@@ -94,6 +106,19 @@ const RealEstateCreateForm = () => {
                     <FormMessage />
                   </FormItem>
                 )}
+              />
+
+              <UploadDropzone
+                uploadUrl={generateUploadUrl}
+                fileTypes={{
+                  "image/*": [".png", ".gif", ".jpeg", ".jpg"],
+                }}
+                multiple
+                onUploadComplete={saveAfterUpload}
+                onUploadError={(error: unknown) => {
+                  console.error(error);
+                  toast.error("Failed to upload images");
+                }}
               />
 
               <FormField
@@ -765,7 +790,7 @@ const RealEstateCreateForm = () => {
                 type="submit"
                 className="w-full"
               >
-                Create M&A Opportunity
+                Create Real Estate Opportunity
               </SubmitButton>
             </form>
           </Form>

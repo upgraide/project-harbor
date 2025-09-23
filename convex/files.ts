@@ -20,12 +20,11 @@ export const generateUploadUrl = mutation({
   },
 });
 
-export const uploadImageToOpportunity = mutation({
+export const saveStorageId = mutation({
   args: {
     storageId: v.id("_storage"),
-    opportunityId: v.union(v.id("mergersAndAcquisitions"), v.id("realEstates")),
   },
-  returns: v.null(),
+  returns: v.id("files"),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
@@ -36,33 +35,21 @@ export const uploadImageToOpportunity = mutation({
       });
     }
 
-    const opportunity = await ctx.db.get(args.opportunityId);
-
-    if (!opportunity) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Opportunity not found",
-      });
-    }
-
-    await ctx.db.patch(args.opportunityId, {
-      images: [...(opportunity.images || []), args.storageId],
+    return await ctx.db.insert("files", {
+      storageId: args.storageId,
     });
-
-    return null;
   },
 });
 
-export const uploadImagesToOpportunity = mutation({
+export const saveStorageIds = mutation({
   args: {
     storageIds: v.array(
       v.object({
         storageId: v.id("_storage"),
       }),
     ),
-    opportunityId: v.union(v.id("mergersAndAcquisitions"), v.id("realEstates")),
   },
-  returns: v.null(),
+  returns: v.array(v.id("files")),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
@@ -73,23 +60,16 @@ export const uploadImagesToOpportunity = mutation({
       });
     }
 
-    const opportunity = await ctx.db.get(args.opportunityId);
+    const fileIds = [];
 
-    if (!opportunity) {
-      throw new ConvexError({
-        code: "NOT_FOUND",
-        message: "Opportunity not found",
+    for (const { storageId } of args.storageIds) {
+      const fileId = await ctx.db.insert("files", {
+        storageId,
       });
+      fileIds.push(fileId);
     }
 
-    await ctx.db.patch(args.opportunityId, {
-      images: [
-        ...(opportunity.images || []),
-        ...args.storageIds.map(({ storageId }) => storageId),
-      ],
-    });
-
-    return null;
+    return fileIds;
   },
 });
 
@@ -97,6 +77,7 @@ export const getUrlById = query({
   args: {
     id: v.id("_storage"),
   },
+  returns: v.union(v.string(), v.null()),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
@@ -115,6 +96,7 @@ export const deleteFile = mutation({
   args: {
     id: v.id("_storage"),
   },
+  returns: v.null(),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
@@ -125,6 +107,7 @@ export const deleteFile = mutation({
       });
     }
 
-    return await ctx.storage.delete(args.id);
+    await ctx.storage.delete(args.id);
+    return null;
   },
 });

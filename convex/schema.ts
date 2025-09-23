@@ -109,7 +109,7 @@ const schema = defineSchema({
     exitExpectedMultiple: v.optional(v.union(v.number(), v.null())),
     holdPeriod: v.optional(v.union(v.number(), v.null())),
 
-    createdBy: v.id("user"),
+    createdBy: v.string(),
   }).searchIndex("search_name", {
     searchField: "name",
   }),
@@ -167,9 +167,15 @@ const schema = defineSchema({
 
     images: v.optional(v.union(v.null(), v.array(v.id("_storage")))),
 
-    createdBy: v.id("user"),
+    createdBy: v.string(),
   }).searchIndex("search_name", {
     searchField: "name",
+  }),
+
+  files: defineTable({
+    storageId: v.id("_storage"),
+  }).index("by_storageId", {
+    fields: ["storageId"],
   }),
 });
 

@@ -106,6 +106,7 @@ export const realEstateCreateFormSchema = z.object({
     .number()
     .min(0, { message: "GCA Below Ground must be greater than 0" })
     .optional(),
+  images: z.array(z.string()).optional(),
 });
 
 export type CreateRealEstateFormSchemaType = z.infer<

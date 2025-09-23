@@ -36,6 +36,7 @@ import { toast } from "sonner";
 import { backofficeMergersAndAcquisitionsPath } from "@/lib/paths";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/submit-button";
+import { Uploader } from "@/components/file-uploader/uploader";
 
 const MergersAndAcquisitionsCreateForm = () => {
   const router = useRouter();
@@ -99,7 +100,19 @@ const MergersAndAcquisitionsCreateForm = () => {
                 )}
               />
 
-              {/* TODO: Add the Photos field */}
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Images</FormLabel>
+                    <FormControl>
+                      <Uploader />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}

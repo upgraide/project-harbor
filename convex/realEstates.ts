@@ -55,6 +55,8 @@ export const create = mutation({
     rent: v.optional(v.union(v.null(), v.number())),
     gcaAboveGround: v.optional(v.union(v.null(), v.number())),
     gcaBelowGround: v.optional(v.union(v.null(), v.number())),
+
+    images: v.optional(v.union(v.null(), v.array(v.id("_storage")))),
   },
   returns: v.id("realEstates"),
   handler: async (ctx, args) => {
