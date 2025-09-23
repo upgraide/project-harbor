@@ -36,7 +36,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { backofficeMergersAndAcquisitionsCreatePath } from "@/lib/paths";
+import { backofficeRealEstateCreatePath, backofficePath } from "@/lib/paths";
 
 const navigationItems = [
   {
@@ -82,7 +82,7 @@ export const BackofficeSidebarRealEstate = ({
   const [nameFilter, setNameFilter] = useState("");
 
   const opportunities = usePaginatedQuery(
-    api.mergersAndAcquisitions.getMany,
+    api.realEstates.getMany,
     {
       name: nameFilter === "" ? undefined : nameFilter,
     },
@@ -117,7 +117,7 @@ export const BackofficeSidebarRealEstate = ({
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-                <a href="#">
+                <Link href={backofficePath()}>
                   <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                     <DynamicImage
                       className="size-4"
@@ -132,7 +132,7 @@ export const BackofficeSidebarRealEstate = ({
                     </span>
                     <span className="truncate text-xs">Backoffice</span>
                   </div>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -181,7 +181,7 @@ export const BackofficeSidebarRealEstate = ({
               }
             </div>
             <Link
-              href={backofficeMergersAndAcquisitionsCreatePath()}
+              href={backofficeRealEstateCreatePath()}
               className={buttonVariants({ variant: "outline", size: "icon" })}
             >
               <PlusIcon className="size-4" />
@@ -206,10 +206,10 @@ export const BackofficeSidebarRealEstate = ({
                         className={cn(
                           "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
                           pathname ===
-                            `/backoffice/mergers-and-acquisitions/${opportunity._id}` &&
+                            `/backoffice/real-estate/${opportunity._id}` &&
                             "bg-accent text-accent-foreground",
                         )}
-                        href={`/backoffice/mergers-and-acquisitions/${opportunity._id}`}
+                        href={`/backoffice/real-estate/${opportunity._id}`}
                         key={opportunity._id}
                       >
                         <div

@@ -1,7 +1,5 @@
-import { BackofficeSidebarMergersAndAcquisitions } from "@/modules/backoffice/ui/components/backoffice-sidebar-mergers-and-acquisitions";
-
 const Page = () => {
-  return <></>;
+  return <>Backoffice Landing Page</>;
 };
 
 export default Page;

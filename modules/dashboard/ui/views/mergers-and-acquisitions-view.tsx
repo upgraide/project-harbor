@@ -1,6 +1,5 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
 import { usePaginatedQuery } from "convex/react";

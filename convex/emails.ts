@@ -1,6 +1,6 @@
 import { components } from "./_generated/api";
 import { Resend } from "@convex-dev/resend";
-import { action, ActionCtx, internalMutation } from "./_generated/server";
+import { action, internalMutation } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { render, pretty } from "@react-email/render";
 import { InviteUserEmailEn } from "@/emails/invite-user-en";
@@ -31,7 +31,7 @@ export const sendTestEmail = internalMutation({
 
     try {
       await resend.sendEmail(ctx, {
-        from: "Harbor Partners <noreply@harborpartners.com>",
+        from: "Acme <onboarding@resend.dev>",
         to: "rodrigorafaelsantos7@icloud.com",
         subject: "Test Email - Harbor Partners",
         html: "This is a test email from Harbor Partners",
@@ -56,22 +56,6 @@ export const sendInviteUserEmail = action({
     locale: v.union(v.literal("en"), v.literal("pt")),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Unauthorized",
-      });
-    }
-
-    if (!isValidEmail(args.toEmail)) {
-      throw new ConvexError({
-        code: "INVALID_ARGUMENT",
-        message: "Invalid email format",
-      });
-    }
-
     try {
       const EmailComponent =
         args.locale === "en" ? InviteUserEmailEn : InviteUserEmailPt;
@@ -87,8 +71,8 @@ export const sendInviteUserEmail = action({
       );
 
       await resend.sendEmail(ctx, {
-        from: "Harbor Partners <noreply@harborpartners.com>",
-        to: args.toEmail,
+        from: "Acme <onboarding@resend.dev>",
+        to: "rodrigorafaelsantos7@icloud.com",
         subject:
           args.locale === "en"
             ? "Exclusive Invitation - Access to Harbor Exclusive Investment Opportunities"
@@ -115,15 +99,6 @@ export const sendResetPasswordEmail = action({
     locale: v.union(v.literal("en"), v.literal("pt")),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new ConvexError({
-        code: "UNAUTHORIZED",
-        message: "Unauthorized",
-      });
-    }
-
     if (!isValidEmail(args.toEmail)) {
       throw new ConvexError({
         code: "INVALID_ARGUMENT",
@@ -142,8 +117,8 @@ export const sendResetPasswordEmail = action({
       );
 
       await resend.sendEmail(ctx, {
-        from: "Harbor Partners <noreply@harborpartners.com>",
-        to: args.toEmail,
+        from: "Acme <onboarding@resend.dev>",
+        to: "rodrigorafaelsantos7@icloud.com",
         subject:
           args.locale === "en"
             ? "Password Reset - Harbor Exclusive Investment Opportunities"

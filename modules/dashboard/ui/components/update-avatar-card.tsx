@@ -25,10 +25,6 @@ const UpdateAvatarCard = ({
   const t = useScopedI18n("dashboard.settings.updateAvatarCard");
   const user = usePreloadedQuery(preloadedUser);
 
-  if (!user) {
-    return null;
-  }
-
   const userImageUrl = useQuery(
     api.files.getUrlById,
     user?.image ? { id: user.image as Id<"_storage"> } : "skip",
@@ -36,6 +32,10 @@ const UpdateAvatarCard = ({
 
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const deleteFile = useMutation(api.files.deleteFile);
+
+  if (!user) {
+    return null;
+  }
 
   const handleUpdateUserImage = async (uploaded: UploadFileResponse[]) => {
     const oldImageId = user.image;

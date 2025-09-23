@@ -3,7 +3,6 @@ import { mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
 import { paginationOptsValidator, PaginationResult } from "convex/server";
 import { Doc } from "./_generated/dataModel";
-import { components } from "./_generated/api";
 
 export const create = mutation({
   args: {
@@ -173,17 +172,15 @@ export const getMany = query({
 
     const enrichedOpportunities = await Promise.all(
       opportunities.page.map(async (opportunity) => {
-        const user = await ctx.runQuery(components.betterAuth.adapter.findOne, {
-          model: "user",
-          where: [
-            { field: "id", operator: "eq", value: opportunity.createdBy },
-          ],
-        });
+        const user = await authComponent.getAnyUserById(
+          ctx,
+          opportunity.createdBy,
+        );
         return {
           ...opportunity,
-          createdBy: opportunity.createdBy
+          createdBy: user?._id
             ? {
-                _id: opportunity.createdBy,
+                _id: user?._id,
                 name: user?.name,
                 email: user?.email,
                 avatarURL: user?.image

@@ -29,16 +29,16 @@ const UpdateNameCard = ({
   const t = useScopedI18n("dashboard.settings.updateNameCard");
   const user = usePreloadedQuery(preloadedUser);
 
-  if (!user) {
-    return null;
-  }
-
   const form = useForm<UpdateNameSchemaType>({
     resolver: zodResolver(updateNameSchema),
     defaultValues: {
-      name: user.name,
+      name: user?.name,
     },
   });
+
+  if (!user) {
+    return null;
+  }
 
   const onSubmit = async (values: UpdateNameSchemaType) => {
     toast.promise(

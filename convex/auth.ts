@@ -1,13 +1,13 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { components } from "./_generated/api";
-import { DataModel, Id } from "./_generated/dataModel";
+import { DataModel } from "./_generated/dataModel";
 import { query, QueryCtx } from "./_generated/server";
 import { betterAuth } from "better-auth";
 import { getStaticAuth } from "@convex-dev/better-auth";
 import { requireActionCtx } from "@convex-dev/better-auth/utils";
 import { api } from "./_generated/api";
-import { ConvexError, v } from "convex/values";
+import { ConvexError } from "convex/values";
 
 const siteUrl = process.env.SITE_URL;
 

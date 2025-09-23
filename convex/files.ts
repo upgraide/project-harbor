@@ -22,7 +22,7 @@ export const saveStorageId = mutation({
   args: {
     storageId: v.id("_storage"),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const user = await ctx.runQuery(api.auth.getCurrentUser);
 
     if (!user) {
@@ -44,7 +44,7 @@ export const saveStorageIds = mutation({
       }),
     ),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const user = await ctx.runQuery(api.auth.getCurrentUser);
 
     if (!user) {

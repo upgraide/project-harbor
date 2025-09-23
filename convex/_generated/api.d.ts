@@ -13,6 +13,7 @@ import type * as emails from "../emails.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
 import type * as mergersAndAcquisitions from "../mergersAndAcquisitions.js";
+import type * as realEstates from "../realEstates.js";
 
 import type {
   ApiFromModules,
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   files: typeof files;
   http: typeof http;
   mergersAndAcquisitions: typeof mergersAndAcquisitions;
+  realEstates: typeof realEstates;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

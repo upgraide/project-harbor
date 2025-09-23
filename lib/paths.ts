@@ -17,3 +17,6 @@ export const backofficeMergersAndAcquisitionsPath = () =>
   `/backoffice/mergers-and-acquisitions`;
 export const backofficeMergersAndAcquisitionsCreatePath = () =>
   `/backoffice/mergers-and-acquisitions/create`;
+export const backofficeRealEstatePath = () => `/backoffice/real-estate`;
+export const backofficeRealEstateCreatePath = () =>
+  `/backoffice/real-estate/create`;

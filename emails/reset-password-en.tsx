@@ -62,12 +62,12 @@ export const ResetPasswordEmailEn = ({
               </Button>
             </Section>
             <Text className="text-[14px] text-black leading-[24px]">
-              If you don't want to change your password or didn't request this,
-              just ignore and delete this message.
+              If you don&apos;t want to change your password or didn&apos;t
+              request this, just ignore and delete this message.
             </Text>
             <Text className="text-[14px] text-black leading-[24px]">
-              To keep your account secure, please don't forward this email to
-              anyone.
+              To keep your account secure, please don&apos;t forward this email
+              to anyone.
             </Text>
             <Text className="text-[14px] text-black leading-[24px]">
               <strong>Equipa Harbor Partners</strong>

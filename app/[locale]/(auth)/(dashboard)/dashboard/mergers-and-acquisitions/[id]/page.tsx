@@ -203,10 +203,6 @@ const Page = ({
                 <TableRow>
                   <TableHead className="px-6 py-4">Metric</TableHead>
                   <TableHead className="px-6 py-4">Value</TableHead>
-                  <TableHead className="text-right px-6 py-4">
-                    {" "}
-                    Actions
-                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

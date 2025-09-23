@@ -21,7 +21,7 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { useScopedI18n } from "@/locales/client";
 import DarkIcon from "@/public/assets/icon-dark.png";
 import LightIcon from "@/public/assets/icon-light.png";
-import { dashboardSettingsPath, dashboardPath, signInPath } from "@/lib/paths";
+import { dashboardSettingsPath, dashboardPath } from "@/lib/paths";
 import { useLogout } from "@/hooks/use-signout";
 import { Id } from "@/convex/_generated/dataModel";
 
