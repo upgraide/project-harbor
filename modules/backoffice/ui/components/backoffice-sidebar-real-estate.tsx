@@ -27,7 +27,7 @@ import { DynamicImage } from "@/components/dynamic-image";
 import DarkIcon from "@/public/assets/icon-dark.png";
 import LightIcon from "@/public/assets/icon-light.png";
 import { buttonVariants } from "@/components/ui/button";
-import { usePaginatedQuery, useQuery } from "convex/react";
+import { usePaginatedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { RefObject, useState } from "react";
 import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";

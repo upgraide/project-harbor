@@ -173,12 +173,9 @@ export const BackofficeSidebarMergersAndAcquisitions = ({
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
             <div className="text-foreground text-base font-medium">
-              {
-                navigationItems.find(
-                  (item) =>
-                    item.url === pathname || item.url === `${pathname}/create`,
-                )?.title
-              }
+              {pathname === backofficeMergersAndAcquisitionsCreatePath()
+                ? "Create Opportunity"
+                : "Opportunities M&A"}
             </div>
             <Link
               href={backofficeMergersAndAcquisitionsCreatePath()}
