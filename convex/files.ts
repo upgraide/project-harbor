@@ -1,7 +1,5 @@
-import { api } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
-import { authComponent } from "./auth";
 
 export const generateUploadUrl = mutation({
   args: {},

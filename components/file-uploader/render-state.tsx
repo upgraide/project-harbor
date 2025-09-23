@@ -1,5 +1,12 @@
 import { cn } from "@/lib/utils";
-import { ArrowRightIcon, ImageIcon, CloudUploadIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  ImageIcon,
+  CloudUploadIcon,
+  Loader,
+  TrashIcon,
+  CheckIcon,
+} from "lucide-react";
 import { Button } from "../ui/button";
 
 export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
@@ -39,6 +46,55 @@ export function RenderErrorState() {
       <Button className="mt-4" type="button">
         Tentar novamente <ArrowRightIcon className="size-4" />
       </Button>
+    </div>
+  );
+}
+
+export function RenderUploadedState({
+  isDeleting,
+  handleRemoveFile,
+}: {
+  isDeleting?: boolean;
+  handleRemoveFile?: () => void;
+}) {
+  return (
+    <div>
+      <div className="text-center">
+        <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-green-500/30">
+          <CheckIcon className={cn("size-6 text-green-500")} />
+        </div>
+        <p className="font-semibold text-base">Files Uploaded</p>
+        <p className="mt-1 text-muted-foreground text-xs ">
+          File uploaded with success
+        </p>
+      </div>
+      <Button
+        variant="destructive"
+        size="icon"
+        type="button"
+        disabled={isDeleting}
+        className={cn(
+          "absolute top-4 right-4",
+          isDeleting && "cursor-not-allowed opacity-50",
+        )}
+        onClick={handleRemoveFile}
+      >
+        {isDeleting ? (
+          <Loader className="size-4 animate-spin" />
+        ) : (
+          <TrashIcon className="size-4" />
+        )}
+      </Button>
+    </div>
+  );
+}
+
+export function RenderUploadingState({ progress }: { progress: number }) {
+  return (
+    <div className="flex flex-col items-center justify-center text-center">
+      <p className="text-muted-foreground text-sm">{progress}%</p>
+
+      <p className="mt-2 font-medium text-foreground text-sm">Uploading...</p>
     </div>
   );
 }
