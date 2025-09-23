@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
-import { fetchWithProgress } from "./fetch-with-progress";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface UploaderState {
   id: string | null;
@@ -23,7 +23,7 @@ interface UploaderState {
   progress: number;
   isDeleting: boolean;
   error: boolean;
-  objectUrls?: string[] | null;
+  storageIds?: Id<"_storage">[] | null;
   fileType: "image";
 }
 
@@ -37,7 +37,9 @@ export const Uploader = () => {
     error: false,
     fileType: "image",
   });
+
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
+  const deleteFiles = useMutation(api.files.deleteFiles);
 
   async function uploadFiles(files: File[]) {
     setFilesState((prev) => ({
@@ -62,44 +64,36 @@ export const Uploader = () => {
         return;
       }
 
-      await new Promise<void>((resolve, reject) => {
+      setFilesState((prev) => ({
+        ...prev,
+        uploading: true,
+        progress: 0,
+      }));
+
+      const storageIds: Id<"_storage">[] = [];
+
+      await Promise.all(
         files.map(async (file: File) => {
-          await fetchWithProgress(
-            uploadUrl,
-            {
-              method: "POST",
-              body: file,
-              headers: new Headers({
-                "Content-Type": "application/octet-stream",
-              }),
-            },
-            (event) => {
-              if (event.lengthComputable) {
-                const percentageComplete = (event.loaded / event.total) * 100;
+          const result = await fetch(uploadUrl, {
+            method: "POST",
+            headers: { "Content-Type": file.type },
+            body: file,
+          });
 
-                setFilesState((prev) => ({
-                  ...prev,
-                  progress: Math.round(percentageComplete),
-                }));
-              }
-            },
-            () => {
-              reject(new Error("Failed to upload file"));
-            },
-            () => {
-              setFilesState((prev) => ({
-                ...prev,
-                progress: 100,
-                uploading: false,
-              }));
+          const { storageId } = await result.json();
 
-              toast.success("File Uploaded with sucess");
+          storageIds.push(storageId);
+        }),
+      );
 
-              resolve();
-            },
-          );
-        });
-      });
+      setFilesState((prev) => ({
+        ...prev,
+        storageIds: storageIds,
+        progress: 100,
+        uploading: false,
+      }));
+
+      toast.success("Files uploaded with sucess");
     } catch (error) {
       console.error(error);
       toast.error("Error uploading file");
@@ -115,12 +109,10 @@ export const Uploader = () => {
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
-      const objectUrls = acceptedFiles.map((file) => URL.createObjectURL(file));
       setFilesState({
         files: acceptedFiles,
         uploading: false,
         progress: 0,
-        objectUrls: objectUrls,
         error: false,
         id: uuidv4(),
         isDeleting: false,
@@ -130,6 +122,40 @@ export const Uploader = () => {
       uploadFiles(acceptedFiles);
     }
   }, []);
+
+  async function handleRemoveFile() {
+    if (filesState.isDeleting) return;
+
+    try {
+      setFilesState((prev) => ({
+        ...prev,
+        isDeleting: true,
+      }));
+
+      await deleteFiles({ ids: filesState.storageIds ?? [] });
+
+      setFilesState(() => ({
+        id: null,
+        files: null,
+        uploading: false,
+        progress: 0,
+        error: false,
+        isDeleting: false,
+        fileType: "image",
+      }));
+
+      toast.success("File deleted with sucess");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error deleting file");
+
+      setFilesState((prev) => ({
+        ...prev,
+        isDeleting: false,
+        error: true,
+      }));
+    }
+  }
 
   function rejectedFiles(fileRejections: FileRejection[]) {
     if (fileRejections.length) {
@@ -153,15 +179,20 @@ export const Uploader = () => {
 
   function renderContent() {
     if (filesState.uploading) {
-      return <RenderUploadingState progress={filesState.progress} />;
+      return <RenderUploadingState />;
     }
 
     if (filesState.error) {
       return <RenderErrorState />;
     }
 
-    if (filesState.objectUrls) {
-      return <RenderUploadedState />;
+    if (filesState.storageIds) {
+      return (
+        <RenderUploadedState
+          isDeleting={filesState.isDeleting}
+          handleRemoveFile={handleRemoveFile}
+        />
+      );
     }
 
     return <RenderEmptyState isDragActive={isDragActive} />;
@@ -174,6 +205,8 @@ export const Uploader = () => {
     multiple: true,
     maxSize: 1024 * 1024 * 5 * 20, // 5MB * 20 files
     onDropRejected: rejectedFiles,
+    disabled:
+      filesState.uploading || filesState.isDeleting || !!filesState.storageIds,
   });
 
   return (

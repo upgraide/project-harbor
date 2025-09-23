@@ -54,8 +54,8 @@ export function RenderUploadedState({
   isDeleting,
   handleRemoveFile,
 }: {
-  isDeleting?: boolean;
-  handleRemoveFile?: () => void;
+  isDeleting: boolean;
+  handleRemoveFile: () => void;
 }) {
   return (
     <div>
@@ -74,7 +74,7 @@ export function RenderUploadedState({
         type="button"
         disabled={isDeleting}
         className={cn(
-          "absolute top-4 right-4",
+          "absolute top-4 right-4 z-10",
           isDeleting && "cursor-not-allowed opacity-50",
         )}
         onClick={handleRemoveFile}
@@ -89,11 +89,10 @@ export function RenderUploadedState({
   );
 }
 
-export function RenderUploadingState({ progress }: { progress: number }) {
+export function RenderUploadingState() {
   return (
     <div className="flex flex-col items-center justify-center text-center">
-      <p className="text-muted-foreground text-sm">{progress}%</p>
-
+      <Loader className="size-4 animate-spin" />
       <p className="mt-2 font-medium text-foreground text-sm">Uploading...</p>
     </div>
   );
