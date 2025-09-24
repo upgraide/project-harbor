@@ -173,7 +173,10 @@ export const BackofficeSidebarMergersAndAcquisitions = ({
         </SidebarFooter>
       </Sidebar>
 
-      <Sidebar collapsible="none" className="hidden flex-1 md:flex">
+      <Sidebar
+        collapsible="none"
+        className="hidden flex-1 md:flex overflow-x-hidden"
+      >
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
             <div className="text-foreground text-base font-medium">
@@ -248,16 +251,18 @@ export const BackofficeSidebarMergersAndAcquisitions = ({
 
                         <div className="flex-1">
                           <div className="flex w-full items-center gap-2">
-                            <span className="truncate font-bold">
-                              {opportunity.name}
-                            </span>
+                            <div className="flex w-0 grow items-center gap-1">
+                              <span className="line-clamp-1 font-bold truncate">
+                                {opportunity.name}
+                              </span>
+                            </div>
                             <span className="ml-auto shrink-0 text-muted-foreground text-xs">
                               {formatDistanceToNow(opportunity._creationTime)}
                             </span>
                           </div>
                           <div className="mt-1 flex items-center justify-between gap-2">
                             <div className="flex w-0 grow items-center gap-1">
-                              <span className="line-clamp-1 text-muted-foreground text-xs">
+                              <span className="line-clamp-1 text-muted-foreground text-xs truncate">
                                 {opportunity.description}
                               </span>
                             </div>

@@ -35,6 +35,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 const chartConfig = {
   revenue: {
@@ -79,7 +80,19 @@ const Page = ({
               Opportunity Images
             </CardTitle>
           </CardHeader>
-          <CardContent></CardContent>
+          <CardContent className="grid md:grid-cols-2 gap-2">
+            {opportunity.imagesUrls?.map((imageUrl, index) => (
+              <div key={index}>
+                <Image
+                  src={imageUrl ?? ""}
+                  alt={`Opportunity Image ${index + 1}`}
+                  height={4501}
+                  width={4501}
+                  className="rounded-lg w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </CardContent>
         </Card>
 
         <Card>
@@ -140,61 +153,13 @@ const Page = ({
                 <ChartLegend content={<ChartLegendContent />} />
               </AreaChart>
             </ChartContainer>
-
-            <Card className="mt-4">
-              <CardHeader className="border-b flex items-center justify-between">
-                <CardTitle className="text-xl font-semibold">
-                  Graph Rows
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Year</TableHead>
-                      <TableHead>Revenue</TableHead>
-                      <TableHead>EBITDA</TableHead>
-                      <TableHead className="text-right"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {opportunity.graphRows?.map((row) => (
-                      <TableRow key={row.year}>
-                        <TableCell>{row.year}</TableCell>
-                        <TableCell>{row.revenue}</TableCell>
-                        <TableCell>{row.ebitda}</TableCell>
-                        <TableCell className="text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <EllipsisVerticalIcon className="size-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <DropdownMenuItem>
-                                <PencilIcon className="size-4" />
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive">
-                                <TrashIcon className="size-4 text-destructive" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
             <CardTitle className="text-xl font-semibold">
-              Pre-NDA Information
+              Financial Information
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -250,14 +215,14 @@ const Page = ({
                 <TableRow key={"sales"}>
                   <TableCell className="px-6 py-4">Sales</TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.sales ?? "N/A"}
+                    {opportunity.sales ? `${opportunity.sales}M€` : "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"ebitda"}>
                   <TableCell className="px-6 py-4">EBITDA (Range)</TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.ebitda ?? "N/A"}
+                    {opportunity.ebitda ? `${opportunity.ebitda}M€` : "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -266,14 +231,16 @@ const Page = ({
                     EBITDA (Normalized)
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.ebitdaNormalized ?? "N/A"}
+                    {opportunity.ebitdaNormalized
+                      ? `${opportunity.ebitdaNormalized}M€`
+                      : "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"netDebt"}>
                   <TableCell className="px-6 py-4">Net Debt</TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.netDebt ?? "N/A"}
+                    {opportunity.netDebt ? `${opportunity.netDebt}M€` : "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -287,14 +254,18 @@ const Page = ({
                 <TableRow key={"salesCAGR"}>
                   <TableCell className="px-6 py-4">Sales CAGR</TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.salesCAGR ?? "N/A"}
+                    {opportunity.salesCAGR
+                      ? `${opportunity.salesCAGR}%`
+                      : "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"ebitdaCAGR"}>
                   <TableCell className="px-6 py-4">EBITDA CAGR</TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.ebitdaCAGR ?? "N/A"}
+                    {opportunity.ebitdaCAGR
+                      ? `${opportunity.ebitdaCAGR}%`
+                      : "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -317,7 +288,9 @@ const Page = ({
                     Estimated Asset Value
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.estimatedAssetValue ?? "N/A"}
+                    {opportunity.estimatedAssetValue
+                      ? `${opportunity.estimatedAssetValue}M€`
+                      : "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
