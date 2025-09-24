@@ -126,7 +126,7 @@ const Page = ({
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 4)}
+                  tickFormatter={(value) => value.slice(0, 5)}
                 />
                 <ChartTooltip
                   cursor={false}
@@ -428,7 +428,7 @@ const Page = ({
           </CardHeader>
           <CardContent className="gap-2">
             {opportunity.shareholderStructureUrls?.map((imageUrl, index) => (
-              <div className="w-full">
+              <div className="w-full" key={index}>
                 <Image
                   src={imageUrl ?? ""}
                   alt={`Opportunity Image ${index + 1}`}
