@@ -58,31 +58,40 @@ const Page = ({
 
   return (
     <>
-      <div className="mx-auto md:max-w-screen-md w-full mt-6 mb-6 space-y-6">
+      <div className="mx-auto md:max-w-screen-lg w-full mt-6 mb-6 space-y-6">
         <h1 className="text-2xl md:text-4xl font-bold mt-6">
           {opportunity.name}
         </h1>
 
-        <Card>
-          <CardHeader className="border-b flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold">
-              Opportunity Images
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-2">
-            {opportunity.imagesUrls?.map((imageUrl, index) => (
-              <div key={index}>
-                <Image
-                  src={imageUrl ?? ""}
-                  alt={`Opportunity Image ${index + 1}`}
-                  height={4501}
-                  width={4501}
-                  className="rounded-lg w-full h-full object-cover"
-                />
+        {opportunity.imagesUrls && opportunity.imagesUrls.length > 0 && (
+          <>
+            <div className="w-full">
+              <Image
+                src={opportunity.imagesUrls[3] ?? ""}
+                alt="Opportunity Image 1"
+                height={4501}
+                width={4501}
+                className="rounded-lg w-full h-96 object-cover"
+              />
+            </div>
+
+            {opportunity.imagesUrls.length > 1 && (
+              <div className="grid grid-cols-3 gap-4">
+                {opportunity.imagesUrls.slice(0, 3).map((imageUrl, index) => (
+                  <div key={index + 1}>
+                    <Image
+                      src={imageUrl ?? ""}
+                      alt={`Opportunity Image ${index + 2}`}
+                      height={200}
+                      width={300}
+                      className="rounded-lg w-full h-48 object-cover"
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </CardContent>
-        </Card>
+            )}
+          </>
+        )}
 
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
