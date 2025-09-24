@@ -7,7 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { dashboardMergersAndAcquisitionOpportunityPath } from "@/lib/paths";
+import {
+  dashboardMergersAndAcquisitionOpportunityPath,
+  dashboardRealEstateOpportunityPath,
+} from "@/lib/paths";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
@@ -33,17 +36,15 @@ const RealEstateOpportunityCard = ({
       <CardHeader>
         <CardTitle>{name}</CardTitle>
 
-        {description && description !== name && (
-          <CardDescription>
-            <div className="mt-1 flex items-center justify-between gap-2">
-              <div className="flex w-0 grow items-center gap-1">
-                <span className="line-clamp-3 text-muted-foreground">
-                  {description}
-                </span>
-              </div>
+        <CardDescription>
+          <div className="mt-1 flex items-center justify-between gap-2 min-h-14">
+            <div className="flex w-0 grow items-center gap-1">
+              <span className="line-clamp-3 text-muted-foreground">
+                {description}
+              </span>
             </div>
-          </CardDescription>
-        )}
+          </div>
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -61,7 +62,7 @@ const RealEstateOpportunityCard = ({
 
       <CardFooter>
         <Link
-          href={dashboardMergersAndAcquisitionOpportunityPath(id)}
+          href={dashboardRealEstateOpportunityPath(id)}
           className={cn(buttonVariants({ size: "lg" }), "w-full")}
         >
           View Opportunity

@@ -10,6 +10,8 @@ export const dashboardPath = () => `/dashboard`;
 export const dashboardSettingsPath = () => `/dashboard/settings`;
 export const dashboardMergersAndAcquisitionOpportunityPath = (id: string) =>
   `/dashboard/mergers-and-acquisitions/${id}`;
+export const dashboardRealEstateOpportunityPath = (id: string) =>
+  `/dashboard/real-estate/${id}`;
 
 // (Backoffice) - Team Facing (Protected)
 export const backofficePath = () => `/backoffice`;
