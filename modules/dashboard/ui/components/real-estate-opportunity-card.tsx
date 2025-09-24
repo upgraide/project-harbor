@@ -13,7 +13,7 @@ import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 
-interface MergerAndAcquisitionsOpportunityCardProps {
+interface RealEstateOpportunityCardProps {
   id: string;
   name: string;
   description: string;
@@ -21,33 +21,35 @@ interface MergerAndAcquisitionsOpportunityCardProps {
   createdAt: number;
 }
 
-const MergerAndAcquisitionsOpportunityCard = ({
+const RealEstateOpportunityCard = ({
   id,
   name,
   description,
   image,
   createdAt,
-}: MergerAndAcquisitionsOpportunityCardProps) => {
+}: RealEstateOpportunityCardProps) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle>{name}</CardTitle>
 
-        <CardDescription>
-          <div className="mt-1 flex items-center justify-between gap-2 min-h-14">
-            <div className="flex w-0 grow items-center gap-1">
-              <span className="line-clamp-3 text-muted-foreground">
-                {description}
-              </span>
+        {description && description !== name && (
+          <CardDescription>
+            <div className="mt-1 flex items-center justify-between gap-2">
+              <div className="flex w-0 grow items-center gap-1">
+                <span className="line-clamp-3 text-muted-foreground">
+                  {description}
+                </span>
+              </div>
             </div>
-          </div>
-        </CardDescription>
+          </CardDescription>
+        )}
       </CardHeader>
 
       <CardContent>
         <Image
           src={image}
-          alt={"Opportunity Image"}
+          alt={name}
           width={400}
           height={300}
           className="w-full h-48 object-cover rounded-md"
@@ -69,4 +71,4 @@ const MergerAndAcquisitionsOpportunityCard = ({
   );
 };
 
-export default MergerAndAcquisitionsOpportunityCard;
+export default RealEstateOpportunityCard;

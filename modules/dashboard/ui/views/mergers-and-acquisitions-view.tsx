@@ -45,9 +45,8 @@ const MergersAndAcquisitionsView = () => {
                 key={opportunity._id}
                 description={opportunity.description ?? ""}
                 image={
-                  opportunity.imagesUrls && opportunity.imagesUrls.length > 0
-                    ? (opportunity.imagesUrls[0] ?? "")
-                    : ""
+                  opportunity.imagesUrls?.[0] ??
+                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzZjNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=="
                 }
                 createdAt={opportunity._creationTime}
               />
