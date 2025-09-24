@@ -171,14 +171,16 @@ const Page = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow key={"type"}>
-                  <TableCell className="px-6 py-4">Type</TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.type ?? "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right"></TableCell>
-                </TableRow>
-                {opportunity.typeDetails && (
+                {opportunity.type ? (
+                  <TableRow key={"type"}>
+                    <TableCell className="px-6 py-4">Type</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.type}
+                    </TableCell>
+                    <TableCell className="text-right"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.typeDetails ? (
                   <TableRow key={"typeDetails"}>
                     <TableCell className="px-6 py-4">Type Details</TableCell>
                     <TableCell className="px-6 py-4">
@@ -186,15 +188,17 @@ const Page = ({
                     </TableCell>
                     <TableCell className="text-right px-6 py-4"></TableCell>
                   </TableRow>
-                )}
-                <TableRow key={"industry"}>
-                  <TableCell className="px-6 py-4">Industry</TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.industry ?? "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
-                {opportunity.industrySubsector && (
+                ) : null}
+                {opportunity.industry ? (
+                  <TableRow key={"industry"}>
+                    <TableCell className="px-6 py-4">Industry</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.industry}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.industrySubsector ? (
                   <TableRow key={"industrySubsector"}>
                     <TableCell className="px-6 py-4">
                       Industry Subsector
@@ -204,96 +208,118 @@ const Page = ({
                     </TableCell>
                     <TableCell className="text-right px-6 py-4"></TableCell>
                   </TableRow>
-                )}
-                <TableRow key={"dimension"}>
-                  <TableCell className="px-6 py-4 font-medium bg-muted">
-                    Dimension
-                  </TableCell>
-                  <TableCell className="px-6 py-4 bg-muted"></TableCell>
-                  <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
-                </TableRow>
-                <TableRow key={"sales"}>
-                  <TableCell className="px-6 py-4">Sales</TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.sales ? `${opportunity.sales}M€` : "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
-                <TableRow key={"ebitda"}>
-                  <TableCell className="px-6 py-4">EBITDA (Range)</TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.ebitda ? `${opportunity.ebitda}M€` : "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
-                <TableRow key={"ebitdaNormalized"}>
-                  <TableCell className="px-6 py-4">
-                    EBITDA (Normalized)
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.ebitdaNormalized
-                      ? `${opportunity.ebitdaNormalized}M€`
-                      : "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
-                <TableRow key={"netDebt"}>
-                  <TableCell className="px-6 py-4">Net Debt</TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.netDebt ? `${opportunity.netDebt}M€` : "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
-                <TableRow key={"CAGR"}>
-                  <TableCell className="px-6 py-4 font-medium bg-muted">
-                    CAGR
-                  </TableCell>
-                  <TableCell className="px-6 py-4 bg-muted"></TableCell>
-                  <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
-                </TableRow>
-                <TableRow key={"salesCAGR"}>
-                  <TableCell className="px-6 py-4">Sales CAGR</TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.salesCAGR
-                      ? `${opportunity.salesCAGR}%`
-                      : "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
-                <TableRow key={"ebitdaCAGR"}>
-                  <TableCell className="px-6 py-4">EBITDA CAGR</TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.ebitdaCAGR
-                      ? `${opportunity.ebitdaCAGR}%`
-                      : "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
-                <TableRow key={"Asset"}>
-                  <TableCell className="px-6 py-4 font-medium bg-muted">
-                    Asset
-                  </TableCell>
-                  <TableCell className="px-6 py-4 bg-muted"></TableCell>
-                  <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
-                </TableRow>
-                <TableRow key={"assetIncluded"}>
-                  <TableCell className="px-6 py-4">Asset Included</TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.assetIncluded ? "Yes" : "No"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
-                <TableRow key={"estimatedAssetValue"}>
-                  <TableCell className="px-6 py-4">
-                    Estimated Asset Value
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.estimatedAssetValue
-                      ? `${opportunity.estimatedAssetValue}M€`
-                      : "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
+                ) : null}
+                {opportunity.sales ||
+                opportunity.ebitda ||
+                opportunity.ebitdaNormalized ||
+                opportunity.netDebt ? (
+                  <TableRow key={"dimension"}>
+                    <TableCell className="px-6 py-4 font-medium bg-muted">
+                      Dimension
+                    </TableCell>
+                    <TableCell className="px-6 py-4 bg-muted"></TableCell>
+                    <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.sales ? (
+                  <TableRow key={"sales"}>
+                    <TableCell className="px-6 py-4">Sales</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.sales}M€`}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.ebitda ? (
+                  <TableRow key={"ebitda"}>
+                    <TableCell className="px-6 py-4">EBITDA (Range)</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.ebitda}M€`}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.ebitdaNormalized ? (
+                  <TableRow key={"ebitdaNormalized"}>
+                    <TableCell className="px-6 py-4">
+                      EBITDA (Normalized)
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.ebitdaNormalized}M€`}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.netDebt ? (
+                  <TableRow key={"netDebt"}>
+                    <TableCell className="px-6 py-4">Net Debt</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.netDebt ? `${opportunity.netDebt}M€` : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.salesCAGR || opportunity.ebitdaCAGR ? (
+                  <TableRow key={"CAGR"}>
+                    <TableCell className="px-6 py-4 font-medium bg-muted">
+                      CAGR
+                    </TableCell>
+                    <TableCell className="px-6 py-4 bg-muted"></TableCell>
+                    <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.salesCAGR ? (
+                  <TableRow key={"salesCAGR"}>
+                    <TableCell className="px-6 py-4">Sales CAGR</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.salesCAGR}%`}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.ebitdaCAGR ? (
+                  <TableRow key={"ebitdaCAGR"}>
+                    <TableCell className="px-6 py-4">EBITDA CAGR</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.ebitdaCAGR
+                        ? `${opportunity.ebitdaCAGR}%`
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.assetIncluded ||
+                opportunity.estimatedAssetValue ? (
+                  <TableRow key={"Asset"}>
+                    <TableCell className="px-6 py-4 font-medium bg-muted">
+                      Asset
+                    </TableCell>
+                    <TableCell className="px-6 py-4 bg-muted"></TableCell>
+                    <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.assetIncluded ? (
+                  <TableRow key={"assetIncluded"}>
+                    <TableCell className="px-6 py-4">Asset Included</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.assetIncluded ? "Yes" : "No"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.estimatedAssetValue ? (
+                  <TableRow key={"estimatedAssetValue"}>
+                    <TableCell className="px-6 py-4">
+                      Estimated Asset Value
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.estimatedAssetValue
+                        ? `${opportunity.estimatedAssetValue}M€`
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right px-6 py-4"></TableCell>
+                  </TableRow>
+                ) : null}
               </TableBody>
             </Table>
           </CardContent>
