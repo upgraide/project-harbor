@@ -178,6 +178,23 @@ export const getMany = query({
           ctx,
           opportunity.createdBy,
         );
+
+        const imagesUrls = opportunity.images
+          ? await Promise.all(
+              opportunity.images.map(async (image) => {
+                return await ctx.storage.getUrl(image);
+              }),
+            )
+          : undefined;
+
+        const shareholderStructureUrls = opportunity.shareholderStructure
+          ? await Promise.all(
+              opportunity.shareholderStructure.map(async (image) => {
+                return await ctx.storage.getUrl(image);
+              }),
+            )
+          : undefined;
+
         return {
           ...opportunity,
           createdBy: user?._id
@@ -190,6 +207,8 @@ export const getMany = query({
                   : undefined,
               }
             : null,
+          imagesUrls,
+          shareholderStructureUrls,
         };
       }),
     );
@@ -215,6 +234,47 @@ export const getById = query({
       });
     }
 
-    return await ctx.db.get(args.id);
+    const opportunity = await ctx.db.get(args.id);
+
+    if (!opportunity) {
+      throw new ConvexError({
+        code: "NOT_FOUND",
+        message: "Opportunity not found",
+      });
+    }
+
+    const user = await authComponent.getAnyUserById(ctx, opportunity.createdBy);
+
+    const imagesUrls = opportunity.images
+      ? await Promise.all(
+          opportunity.images.map(async (image) => {
+            return await ctx.storage.getUrl(image);
+          }),
+        )
+      : undefined;
+
+    const shareholderStructureUrls = opportunity.shareholderStructure
+      ? await Promise.all(
+          opportunity.shareholderStructure.map(async (image) => {
+            return await ctx.storage.getUrl(image);
+          }),
+        )
+      : undefined;
+
+    return {
+      ...opportunity,
+      createdBy: user?._id
+        ? {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            avatarURL: user.image
+              ? await ctx.storage.getUrl(user.image)
+              : undefined,
+          }
+        : null,
+      imagesUrls,
+      shareholderStructureUrls,
+    };
   },
 });

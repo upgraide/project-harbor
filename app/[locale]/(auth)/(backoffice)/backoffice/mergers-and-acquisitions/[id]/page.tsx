@@ -47,6 +47,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 const chartConfig = {
   revenue: {
@@ -116,7 +117,19 @@ const Page = ({
               Add Image
             </Button>
           </CardHeader>
-          <CardContent></CardContent>
+          <CardContent className="grid md:grid-cols-2 gap-2">
+            {opportunity.imagesUrls?.map((imageUrl, index) => (
+              <div key={index}>
+                <Image
+                  src={imageUrl ?? ""}
+                  alt={`Opportunity Image ${index + 1}`}
+                  height={4501}
+                  width={4501}
+                  className="rounded-lg w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </CardContent>
         </Card>
 
         <Card>
