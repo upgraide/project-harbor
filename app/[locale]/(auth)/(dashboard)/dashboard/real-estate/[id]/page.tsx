@@ -97,7 +97,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               <TableBody>
                 {opportunity.asset ? (
                   <TableRow key={"asset"}>
-                    <TableCell className="px-6 py-4">Type</TableCell>
+                    <TableCell className="px-6 py-4">Asset</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.asset}
                     </TableCell>
@@ -106,7 +106,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.nRoomsLastYear ? (
                   <TableRow key={"nRoomsLastYear"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">
+                      Number of Rooms Last Year
+                    </TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.nRoomsLastYear}
                     </TableCell>
@@ -115,7 +117,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.noi ? (
                   <TableRow key={"noi"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">NOI</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.noi}
                     </TableCell>
@@ -124,7 +126,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.occupancyLastYear ? (
                   <TableRow key={"occupancyLastYear"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">
+                      Occupancy Last Year
+                    </TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.occupancyLastYear}
                     </TableCell>
@@ -133,7 +137,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.walt ? (
                   <TableRow key={"walt"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">WALT</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.walt}
                     </TableCell>
@@ -142,7 +146,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.nBeds ? (
                   <TableRow key={"nBeds"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Number of Beds</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.nBeds}
                     </TableCell>
@@ -151,7 +155,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.investment ? (
                   <TableRow key={"investment"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Investment</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.investment}
                     </TableCell>
@@ -160,7 +164,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.subRent ? (
                   <TableRow key={"subRent"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Sub Rent</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.subRent}
                     </TableCell>
@@ -169,7 +173,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.rentPerSqm ? (
                   <TableRow key={"rentPerSqm"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Rent Per Sqm</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.rentPerSqm}
                     </TableCell>
@@ -178,7 +182,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.subYield ? (
                   <TableRow key={"subYield"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Sub Yield</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.subYield} %
                     </TableCell>
@@ -186,7 +190,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.capex ? (
                   <TableRow key={"capex"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Capex</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.capex}
                     </TableCell>
@@ -194,7 +198,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.capexPerSqm ? (
                   <TableRow key={"capexPerSqm"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Capex Per Sqm</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.capexPerSqm}
                     </TableCell>
@@ -202,7 +206,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.sale ? (
                   <TableRow key={"sale"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Sale</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.sale}
                     </TableCell>
@@ -210,7 +214,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.salePerSqm ? (
                   <TableRow key={"salePerSqm"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Sale Per Sqm</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.salePerSqm}
                     </TableCell>
@@ -218,7 +222,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.location ? (
                   <TableRow key={"location"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Location</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.location}
                     </TableCell>
@@ -226,7 +230,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.area ? (
                   <TableRow key={"area"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Area</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.area} m²
                     </TableCell>
@@ -234,7 +238,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.value ? (
                   <TableRow key={"value"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Value</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.value} M€
                     </TableCell>
@@ -242,7 +246,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.yield ? (
                   <TableRow key={"yield"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Yield</TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.yield} %
                     </TableCell>
@@ -250,15 +254,17 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.rent ? (
                   <TableRow key={"rent"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">Rent</TableCell>
                     <TableCell className="px-6 py-4">
-                      {opportunity.rent}
+                      {opportunity.rent} M€/year
                     </TableCell>
                   </TableRow>
                 ) : null}
                 {opportunity.gcaAboveGround ? (
                   <TableRow key={"gcaAboveGround"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">
+                      GCA Above Ground
+                    </TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.gcaAboveGround} m²
                     </TableCell>
@@ -266,9 +272,11 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
                 ) : null}
                 {opportunity.gcaBelowGround ? (
                   <TableRow key={"gcaBelowGround"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
                     <TableCell className="px-6 py-4">
-                      {opportunity.gcaBelowGround}
+                      GCA Below Ground
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.gcaBelowGround} m²
                     </TableCell>
                   </TableRow>
                 ) : null}

@@ -119,10 +119,7 @@ export const realEstateCreateFormSchema = z.object({
     .number()
     .min(0, { message: "Break Even Occupancy must be greater than 0" })
     .optional(),
-  vacancyRate: z
-    .number()
-    .min(0, { message: "Vacancy Rate must be greater than 0" })
-    .optional(),
+  vacancyRate: z.number().optional(),
   estimatedRentValue: z
     .number()
     .min(0, { message: "Estimated Rent Value must be greater than 0" })

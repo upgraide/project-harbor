@@ -159,6 +159,15 @@ export const getMany = query({
           ctx,
           opportunity.createdBy,
         );
+
+        const imagesUrls = opportunity.images
+          ? await Promise.all(
+              opportunity.images.map(async (image) => {
+                return await ctx.storage.getUrl(image);
+              }),
+            )
+          : undefined;
+
         return {
           ...opportunity,
           createdBy: user?._id
@@ -171,6 +180,7 @@ export const getMany = query({
                   : undefined,
               }
             : null,
+          imagesUrls,
         };
       }),
     );

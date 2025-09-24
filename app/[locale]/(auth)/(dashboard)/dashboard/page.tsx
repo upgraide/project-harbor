@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getScopedI18n } from "@/locales/server";
 import AllOpportunitiesView from "@/modules/dashboard/ui/views/all-opportunities-view";
 import MergersAndAcquisitionsView from "@/modules/dashboard/ui/views/mergers-and-acquisitions-view";
+import RealEstateView from "@/modules/dashboard/ui/views/real-estate-view";
 
 const Page = async () => {
   const t = await getScopedI18n("dashboard.header");
@@ -39,7 +40,7 @@ const Page = async () => {
                   <MergersAndAcquisitionsView />
                 </TabsContent>
                 <TabsContent value="realEstate">
-                  <h1>Real Estate</h1>
+                  <RealEstateView />
                 </TabsContent>
               </div>
             </div>
