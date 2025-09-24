@@ -11,12 +11,7 @@ import {
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import {
-  LoaderIcon,
-  PencilIcon,
-  EllipsisVerticalIcon,
-  TrashIcon,
-} from "lucide-react";
+import { LoaderIcon } from "lucide-react";
 import { use } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,12 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenuItem,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 
 const chartConfig = {
@@ -324,6 +313,15 @@ const Page = ({
             </Table>
           </CardContent>
         </Card>
+
+        <div className="w-full flex items-center gap-4">
+          <Button size={"lg"}>Interest to Invest</Button>
+          {opportunity.coInvestment === true ? (
+            <Button size={"lg"} variant={"outline"}>
+              Co-Invest
+            </Button>
+          ) : null}
+        </div>
       </div>
     </>
   );
