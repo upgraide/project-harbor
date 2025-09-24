@@ -7,10 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  dashboardMergersAndAcquisitionOpportunityPath,
-  dashboardRealEstateOpportunityPath,
-} from "@/lib/paths";
+import { dashboardRealEstateOpportunityPath } from "@/lib/paths";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";

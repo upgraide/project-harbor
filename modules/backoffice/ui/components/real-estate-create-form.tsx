@@ -36,7 +36,6 @@ import {
   realEstateCreateFormSchema,
   CreateRealEstateFormSchemaType,
 } from "../schema/real-estate-create-form-schema";
-import { UploadDropzone } from "@xixixao/uploadstuff/react";
 import { Uploader } from "@/components/file-uploader/uploader";
 
 const RealEstateCreateForm = () => {

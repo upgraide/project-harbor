@@ -3,7 +3,6 @@
 import { api } from "@/convex/_generated/api";
 import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
 import { usePaginatedQuery } from "convex/react";
-import MergerAndAcquisitionsOpportunityCard from "../components/merger-and-acquisitions-opportunity-card";
 import { LoaderIcon } from "lucide-react";
 import { RefObject } from "react";
 import { InfiniteScrollTrigger } from "@/components/infinite-scroll-trigger";

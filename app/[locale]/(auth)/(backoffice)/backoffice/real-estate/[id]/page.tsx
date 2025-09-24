@@ -10,10 +10,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import {
-  backofficeMergersAndAcquisitionsPath,
-  backofficeRealEstatePath,
-} from "@/lib/paths";
+import { backofficeRealEstatePath } from "@/lib/paths";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";

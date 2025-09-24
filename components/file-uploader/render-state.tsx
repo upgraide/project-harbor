@@ -21,7 +21,7 @@ export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
         />
       </div>
       <p className="font-semibold text-base text-foreground">
-        Drag 'n' drop some files here,
+        Drag &apos;n&apos; drop some files here,
         <span className="cursor-pointer font-bold text-primary">
           or click here to select files
         </span>
