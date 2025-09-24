@@ -64,7 +64,7 @@ export const createMergersAndAcquisitionsFormSchema = z.object({
     .number()
     .min(0, { message: "Estimated Asset Value must be greater than 0" })
     .optional(),
-  shareholderStructure: z.string().optional(),
+  shareholderStructure: z.array(z.custom<Id<"_storage">>()).optional(),
   im: z.string().optional(),
   entrepriseValue: z
     .number()

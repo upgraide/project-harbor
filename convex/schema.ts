@@ -85,7 +85,9 @@ const schema = defineSchema({
     estimatedAssetValue: v.optional(v.union(v.number(), v.null())),
 
     // Post-NDA Fields
-    shareholderStructure: v.optional(v.union(v.null(), v.id("_storage"))),
+    shareholderStructure: v.optional(
+      v.union(v.null(), v.array(v.id("_storage"))),
+    ),
     im: v.optional(v.union(v.null(), v.string())),
     entrepriseValue: v.optional(v.union(v.number(), v.null())),
     equityValue: v.optional(v.union(v.number(), v.null())),

@@ -56,7 +56,6 @@ const MergersAndAcquisitionsCreateForm = () => {
     toast.promise(
       createMergersAndAcquisitions({
         ...values,
-        shareholderStructure: undefined,
       }),
       {
         loading: "Creating M&A Opportunity",
@@ -556,7 +555,19 @@ const MergersAndAcquisitionsCreateForm = () => {
                 )}
               />
 
-              {/* TODO: Add the Shareholder Structure field */}
+              <FormField
+                control={form.control}
+                name="shareholderStructure"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Shareholder Structure</FormLabel>
+                    <FormControl>
+                      <Uploader value={field.value} onChange={field.onChange} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
