@@ -7,7 +7,6 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { authClient } from "@/lib/auth-client";
 import { useScopedI18n } from "@/locales/client";
-import { UploadFileResponse } from "@xixixao/uploadstuff/react";
 import {
   type Preloaded,
   useMutation,
@@ -37,24 +36,30 @@ const UpdateAvatarCard = ({
     return null;
   }
 
-  const handleUpdateUserImage = async (uploaded: UploadFileResponse[]) => {
+  const handleUpdateUserImage = async (uploaded: Id<"_storage">[]) => {
     const oldImageId = user.image;
 
+    if (!uploaded[0]) {
+      toast.error("No file uploaded");
+      return;
+    }
+
     toast.promise(
-      authClient.updateUser({
-        image: (uploaded[0]?.response as { storageId: Id<"_storage"> })
-          .storageId,
-      }),
+      (async () => {
+        await authClient.updateUser({
+          image: uploaded[0],
+        });
+
+        if (oldImageId) {
+          await deleteFile({ id: oldImageId as Id<"_storage"> });
+        }
+      })(),
       {
         loading: t("uploadToast.loading"),
         success: t("uploadToast.success"),
         error: t("uploadToast.error"),
       },
     );
-
-    if (oldImageId) {
-      await deleteFile({ id: oldImageId as Id<"_storage"> });
-    }
   };
 
   const handleRemoveUserImage = async () => {
