@@ -402,15 +402,6 @@ const Page = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow key={"shareholderStructure"}>
-                  <TableCell className="px-6 py-4">
-                    Shareholder Structure
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.shareholderStructure ?? "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
-                </TableRow>
                 <TableRow key={"im"}>
                   <TableCell className="px-6 py-4">IM</TableCell>
                   <TableCell className="px-6 py-4">
@@ -485,6 +476,31 @@ const Page = ({
                 </TableRow>
               </TableBody>
             </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="border-b flex items-center justify-between">
+            <CardTitle className="text-xl font-semibold">
+              Shareholder Structure
+            </CardTitle>
+            <Button variant="outline">
+              <PlusIcon className="size-4" />
+              Add Shareholder Structure
+            </Button>
+          </CardHeader>
+          <CardContent className="grid md:grid-cols-2 gap-2">
+            {opportunity.shareholderStructureUrls?.map((imageUrl, index) => (
+              <div key={index}>
+                <Image
+                  src={imageUrl ?? ""}
+                  alt={`Opportunity Image ${index + 1}`}
+                  height={4501}
+                  width={4501}
+                  className="rounded-lg w-full h-full object-cover"
+                />
+              </div>
+            ))}
           </CardContent>
         </Card>
 
