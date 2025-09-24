@@ -1,11 +1,12 @@
 import { z } from "zod";
+import { Id } from "@/convex/_generated/dataModel";
 
 export const createMergersAndAcquisitionsFormSchema = z.object({
   name: z
     .string()
     .min(3, { message: "Name must be at least 3 characters long" })
     .max(100, { message: "Name must be at most 100 characters long" }),
-  images: z.array(z.string()).optional(),
+  images: z.array(z.custom<Id<"_storage">>()).optional(),
   type: z.enum(["Buy In", "Buy Out", "Buy In/Buy Out"]).optional(),
   typeDetails: z.enum(["Maioritário", "Minoritário", "100%"]).optional(),
   industry: z

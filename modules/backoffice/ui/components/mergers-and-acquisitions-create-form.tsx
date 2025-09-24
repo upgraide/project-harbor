@@ -56,7 +56,6 @@ const MergersAndAcquisitionsCreateForm = () => {
     toast.promise(
       createMergersAndAcquisitions({
         ...values,
-        images: undefined,
         shareholderStructure: undefined,
       }),
       {
@@ -107,7 +106,7 @@ const MergersAndAcquisitionsCreateForm = () => {
                   <FormItem>
                     <FormLabel>Images</FormLabel>
                     <FormControl>
-                      <Uploader />
+                      <Uploader value={field.value} onChange={field.onChange} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

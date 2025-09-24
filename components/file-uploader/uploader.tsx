@@ -27,7 +27,12 @@ interface UploaderState {
   fileType: "image";
 }
 
-export const Uploader = () => {
+interface UploaderProps {
+  value?: Id<"_storage">[];
+  onChange?: (value: Id<"_storage">[]) => void;
+}
+
+export const Uploader = ({ value, onChange }: UploaderProps) => {
   const [filesState, setFilesState] = useState<UploaderState>({
     id: null,
     files: null,
@@ -36,6 +41,7 @@ export const Uploader = () => {
     isDeleting: false,
     error: false,
     fileType: "image",
+    storageIds: value,
   });
 
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
@@ -93,6 +99,8 @@ export const Uploader = () => {
         uploading: false,
       }));
 
+      onChange?.(storageIds);
+
       toast.success("Files uploaded with sucess");
     } catch (error) {
       console.error(error);
@@ -132,7 +140,9 @@ export const Uploader = () => {
         isDeleting: true,
       }));
 
-      await deleteFiles({ ids: filesState.storageIds ?? [] });
+      await deleteFiles({
+        ids: filesState.storageIds ?? [],
+      });
 
       setFilesState(() => ({
         id: null,
@@ -143,6 +153,8 @@ export const Uploader = () => {
         isDeleting: false,
         fileType: "image",
       }));
+
+      onChange?.([]);
 
       toast.success("File deleted with sucess");
     } catch (error) {

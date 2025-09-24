@@ -171,12 +171,6 @@ const schema = defineSchema({
   }).searchIndex("search_name", {
     searchField: "name",
   }),
-
-  files: defineTable({
-    storageId: v.id("_storage"),
-  }).index("by_storageId", {
-    fields: ["storageId"],
-  }),
 });
 
 export default schema;
