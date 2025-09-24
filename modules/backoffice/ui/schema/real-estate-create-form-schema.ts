@@ -1,3 +1,4 @@
+import { Id } from "@/convex/_generated/dataModel";
 import { z } from "zod";
 
 export const realEstateCreateFormSchema = z.object({
@@ -106,7 +107,111 @@ export const realEstateCreateFormSchema = z.object({
     .number()
     .min(0, { message: "GCA Below Ground must be greater than 0" })
     .optional(),
-  images: z.array(z.string()).optional(),
+  license: z.string().optional(),
+  irr: z.number().min(0, { message: "IRR must be greater than 0" }).optional(),
+  coc: z.number().min(0, { message: "COC must be greater than 0" }).optional(),
+  licenseStage: z.string().optional(),
+  holdingPeriod: z
+    .number()
+    .min(0, { message: "Holding Period must be greater than 0" })
+    .optional(),
+  breakEvenOccupancy: z
+    .number()
+    .min(0, { message: "Break Even Occupancy must be greater than 0" })
+    .optional(),
+  vacancyRate: z
+    .number()
+    .min(0, { message: "Vacancy Rate must be greater than 0" })
+    .optional(),
+  estimatedRentValue: z
+    .number()
+    .min(0, { message: "Estimated Rent Value must be greater than 0" })
+    .optional(),
+  occupancyRate: z
+    .number()
+    .min(0, { message: "Occupancy Rate must be greater than 0" })
+    .optional(),
+  moic: z
+    .number()
+    .min(0, { message: "MOIC must be greater than 0" })
+    .optional(),
+  price: z
+    .number()
+    .min(0, { message: "Price must be greater than 0" })
+    .optional(),
+  totalInvestment: z
+    .number()
+    .min(0, { message: "Total Investment must be greater than 0" })
+    .optional(),
+  profitOnCost: z
+    .number()
+    .min(0, { message: "Profit On Cost must be greater than 0" })
+    .optional(),
+  profit: z
+    .number()
+    .min(0, { message: "Profit must be greater than 0" })
+    .optional(),
+  sofCosts: z
+    .number()
+    .min(0, { message: "SOF Costs must be greater than 0" })
+    .optional(),
+  sellPerSqm: z
+    .number()
+    .min(0, { message: "Sell Per Square Meter must be greater than 0" })
+    .optional(),
+  gdv: z.number().min(0, { message: "GDV must be greater than 0" }).optional(),
+  wault: z
+    .number()
+    .min(0, { message: "WALT must be greater than 0" })
+    .optional(),
+  debtServiceCoverageRatio: z
+    .number()
+    .min(0, { message: "Debt Service Coverage Ratio must be greater than 0" })
+    .optional(),
+  expectedExitYield: z
+    .number()
+    .min(0, { message: "Expected Exit Yield must be greater than 0" })
+    .optional(),
+  ltv: z.number().min(0, { message: "LTV must be greater than 0" }).optional(),
+  ltc: z.number().min(0, { message: "LTC must be greater than 0" }).optional(),
+  yieldOnCost: z
+    .number()
+    .min(0, { message: "Yield On Cost must be greater than 0" })
+    .optional(),
+  coInvestment: z.boolean().optional(),
+  gpEquityValue: z
+    .number()
+    .min(0, { message: "GP Equity Value must be greater than 0" })
+    .optional(),
+  gpEquencyPercentage: z
+    .number()
+    .min(0, { message: "GP Equity Percentage must be greater than 0" })
+    .optional(),
+  totalEquityRequired: z
+    .number()
+    .min(0, { message: "Total Equity Required must be greater than 0" })
+    .optional(),
+  sponsorPresentation: z.string().optional(),
+  promoteStructure: z.string().optional(),
+  projectIRR: z
+    .number()
+    .min(0, { message: "Project IRR must be greater than 0" })
+    .optional(),
+  investorIRR: z
+    .number()
+    .min(0, { message: "Investor IRR must be greater than 0" })
+    .optional(),
+  coInvestmentHoldPeriod: z
+    .number()
+    .min(0, { message: "Co-Investment Hold Period must be greater than 0" })
+    .optional(),
+  coInvestmentBreakEvenOccupancy: z
+    .number()
+    .min(0, {
+      message: "Co-Investment Break Even Occupancy must be greater than 0",
+    })
+    .optional(),
+  images: z.array(z.custom<Id<"_storage">>()).optional(),
 });
 
 export type CreateRealEstateFormSchemaType = z.infer<

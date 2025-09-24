@@ -36,22 +36,13 @@ import {
   realEstateCreateFormSchema,
   CreateRealEstateFormSchemaType,
 } from "../schema/real-estate-create-form-schema";
-import { UploadFileResponse } from "@xixixao/uploadstuff";
 import { UploadDropzone } from "@xixixao/uploadstuff/react";
+import { Uploader } from "@/components/file-uploader/uploader";
 
 const RealEstateCreateForm = () => {
   const router = useRouter();
 
   const createRealEstate = useMutation(api.realEstates.create);
-  const generateUploadUrl = useMutation(api.files.generateUploadUrl);
-  const saveStorageIds = useMutation(api.files.saveStorageIds);
-  const saveAfterUpload = async (uploaded: UploadFileResponse[]) => {
-    await saveStorageIds({
-      storageIds: uploaded.map(({ response }) => ({
-        storageId: (response as any).storageId,
-      })),
-    });
-  };
 
   const form = useForm<CreateRealEstateFormSchemaType>({
     resolver: zodResolver(realEstateCreateFormSchema),
@@ -64,7 +55,6 @@ const RealEstateCreateForm = () => {
     toast.promise(
       createRealEstate({
         ...values,
-        images: [],
       }),
       {
         loading: "Creating Real Estate Opportunity",
@@ -106,19 +96,6 @@ const RealEstateCreateForm = () => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
-
-              <UploadDropzone
-                uploadUrl={generateUploadUrl}
-                fileTypes={{
-                  "image/*": [".png", ".gif", ".jpeg", ".jpg"],
-                }}
-                multiple
-                onUploadComplete={saveAfterUpload}
-                onUploadError={(error: unknown) => {
-                  console.error(error);
-                  toast.error("Failed to upload images");
-                }}
               />
 
               <FormField
@@ -783,6 +760,800 @@ const RealEstateCreateForm = () => {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="license"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>License</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="text"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="irr"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>IRR</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="coc"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>COC</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="licenseStage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>License Stage</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="text"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="holdingPeriod"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Holding Period</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="breakEvenOccupancy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Break Even Occupancy</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="vacancyRate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Vacancy Rate</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="estimatedRentValue"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Estimated Rent Value</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="occupancyRate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Occupancy Rate</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="moic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>MOIC</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="totalInvestment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Total Investment</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="profitOnCost"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Profit On Cost</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="profit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Profit</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="sofCosts"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SOF Costs</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="sellPerSqm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sell Per Square Meter</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="gdv"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GDV</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="wault"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>WALT</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="debtServiceCoverageRatio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Debt Service Coverage Ratio</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="expectedExitYield"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expected Exit Yield</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="ltv"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>LTV</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="ltc"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>LTC</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="yieldOnCost"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Yield On Cost</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Insert a value"
+                        type="number"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Images</FormLabel>
+                    <FormControl>
+                      <Uploader value={field.value} onChange={field.onChange} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="coInvestment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Add Co-Investment Button?</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) =>
+                          field.onChange(value === "true")
+                        }
+                        value={field.value?.toString()}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select an option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="true">Yes</SelectItem>
+                          <SelectItem value="false">No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {form.watch("coInvestment") === true && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="gpEquityValue"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>GP Equity Value</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="gpEquencyPercentage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>GP Equity Percentage</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="totalEquityRequired"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Total Equity Required</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="sponsorPresentation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sponsor Presentation</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="promoteStructure"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Promote Structure</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="text"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="projectIRR"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Project IRR</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="investorIRR"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Investor IRR</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="coInvestmentHoldPeriod"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Co-Investment Hold Period</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="coInvestmentBreakEvenOccupancy"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Co-Investment Break Even Occupancy
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Insert a value"
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value === "" ? undefined : Number(value),
+                              );
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
 
               <SubmitButton
                 isSubmitting={form.formState.isSubmitting}
