@@ -37,16 +37,22 @@ const MergersAndAcquisitionsView = () => {
         </div>
       ) : (
         <div className="flex flex-col space-y-6">
-          {opportunities.results.map((opportunity) => (
-            <MergerAndAcquisitionsOpportunityCard
-              id={opportunity._id}
-              name={opportunity.name}
-              key={opportunity._id}
-              description={opportunity.description ?? ""}
-              image={opportunity.images ? "" : (opportunity.images?.[0] ?? "")}
-              createdAt={opportunity._creationTime}
-            />
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {opportunities.results.map((opportunity) => (
+              <MergerAndAcquisitionsOpportunityCard
+                id={opportunity._id}
+                name={opportunity.name}
+                key={opportunity._id}
+                description={opportunity.description ?? ""}
+                image={
+                  opportunity.imagesUrls && opportunity.imagesUrls.length > 0
+                    ? (opportunity.imagesUrls[0] ?? "")
+                    : ""
+                }
+                createdAt={opportunity._creationTime}
+              />
+            ))}
+          </div>
           <InfiniteScrollTrigger
             canLoadMore={canLoadMore}
             isLoadingMore={isLoadingMore}

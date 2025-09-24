@@ -13,8 +13,9 @@ const Page = async () => {
         <div className="z-10 mx-auto flex h-full w-full max-w-screen-xl gap-12">
           <div className="flex w-full flex-col rounded-lg border border-border bg-card">
             <div className="relative mx-auto w-full p-6">
-              <Tabs defaultValue="mergersAndAcquisitions" className="w-full">
-                <TabsList className="grid w-full grid-cols-2  mx-auto mb-8">
+              <Tabs defaultValue="all" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 mx-auto mb-8">
+                  <TabsTrigger value="all">All</TabsTrigger>
                   <TabsTrigger value="mergersAndAcquisitions">
                     M&A Projects
                   </TabsTrigger>

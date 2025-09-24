@@ -32,14 +32,23 @@ const MergerAndAcquisitionsOpportunityCard = ({
     <Card>
       <CardHeader>
         <CardTitle>{name}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+
+        <CardDescription>
+          <div className="mt-1 flex items-center justify-between gap-2">
+            <div className="flex w-0 grow items-center gap-1">
+              <span className="line-clamp-3 text-muted-foreground">
+                {description}
+              </span>
+            </div>
+          </div>
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
-        <Image src={image} alt={name} width={100} height={100} />
-        <span className="ml-auto shrink-0 text-muted-foreground text-xs">
-          Created {formatDistanceToNow(createdAt)}
-        </span>
+        <Image src={image} alt={name} width={4501} height={4501} />
+        <div className="ml-auto shrink-0 text-muted-foreground text-xs mt-2">
+          <span>Created {formatDistanceToNow(createdAt)} ago</span>
+        </div>
       </CardContent>
 
       <CardFooter>
