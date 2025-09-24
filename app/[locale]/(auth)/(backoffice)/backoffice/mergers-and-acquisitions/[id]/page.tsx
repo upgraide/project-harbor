@@ -91,7 +91,7 @@ const Page = ({
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink href={backofficeMergersAndAcquisitionsPath()}>
-                Mergers and Acquisitions
+                Mergers and Acquisitions Opportunities
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
