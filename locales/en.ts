@@ -297,4 +297,9 @@ export default {
       },
     },
   },
+  dashboardCard: {
+    viewOpportunity: "View Opportunity",
+    createdAt: "Created",
+    ago: "ago",
+  },
 } as const;

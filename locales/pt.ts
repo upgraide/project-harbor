@@ -300,4 +300,9 @@ export default {
       },
     },
   },
+  dashboardCard: {
+    viewOpportunity: "Ver Oportunidade",
+    createdAt: "Criado à",
+    ago: "atrás",
+  },
 } as const;
