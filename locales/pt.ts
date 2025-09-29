@@ -79,6 +79,11 @@ export default {
       title: "Painel de Oportunidades",
       description: "Bem-vindo ao seu painel de oportunidades",
     },
+    tabs: {
+      all: "Todos",
+      mergersAndAcquisitions: "M&A",
+      realEstate: "Imobiliário",
+    },
     navigation: {
       dashboard: "Painel",
       settings: "Configurações",

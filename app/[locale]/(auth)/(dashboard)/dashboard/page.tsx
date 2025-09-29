@@ -5,7 +5,7 @@ import MergersAndAcquisitionsView from "@/modules/dashboard/ui/views/mergers-and
 import RealEstateView from "@/modules/dashboard/ui/views/real-estate-view";
 
 const Page = async () => {
-  const t = await getScopedI18n("dashboard.header");
+  const t = await getScopedI18n("dashboard");
 
   return (
     <Tabs defaultValue="all" className="w-full">
@@ -13,19 +13,17 @@ const Page = async () => {
         <header className="z-10 flex w-full flex-col border-b border-border bg-card px-6">
           <div className="mx-auto flex flex-col w-full max-w-screen-xl items-start justify-between py-8">
             <div className="flex flex-col items-start gap-2">
-              <h1 className="text-3xl font-medium text-primary/80">
-                {t("title")}
-              </h1>
-              <p className="text-base font-normal text-primary/60">
-                {t("description")}
-              </p>
+              <h1 className="text-3xl font-medium">{t("header.title")}</h1>
+              <p className="text-base font-normal">{t("header.description")}</p>
             </div>
             <TabsList className="grid grid-cols-3 mb-8 mt-6">
-              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="all">{t("tabs.all")}</TabsTrigger>
               <TabsTrigger value="mergersAndAcquisitions">
-                M&A Projects
+                {t("tabs.mergersAndAcquisitions")}
               </TabsTrigger>
-              <TabsTrigger value="realEstate">Real Estate</TabsTrigger>
+              <TabsTrigger value="realEstate">
+                {t("tabs.realEstate")}
+              </TabsTrigger>
             </TabsList>
           </div>
         </header>

@@ -76,6 +76,11 @@ export default {
       title: "Dashboard",
       description: "Welcome to your dashboard",
     },
+    tabs: {
+      all: "All",
+      mergersAndAcquisitions: "M&A",
+      realEstate: "Real Estate",
+    },
     navigation: {
       dashboard: "Dashboard",
       settings: "Settings",
@@ -295,6 +300,12 @@ export default {
         exitExpectedMultiple: "Exit Expected Multiple",
         holdPeriod: "Hold Period",
       },
+    },
+  },
+  dashboardMergersAndAcquisitionsOpportunityPage: {
+    breadcrumbs: {
+      mergersAndAcquisitionsOpportunities:
+        "Mergers and Acquisitions Opportunities",
     },
   },
 } as const;
