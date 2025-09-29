@@ -50,6 +50,11 @@ import {
 import Image from "next/image";
 import { EditOpportunityDescriptionDialog } from "./_components/edit-opportunity-description-dialog";
 import { AddOpportunityGraphRowDialog } from "./_components/add-opportunity-graph-row-dialog";
+import {
+  EditOpportunityGraphRowDialog,
+  editOpportunityGraphRowSchema,
+} from "./_components/edit-opportunity-graph-row-dialog";
+import z from "zod";
 
 const chartConfig = {
   revenue: {
@@ -72,6 +77,10 @@ const Page = ({
     useState<Doc<"mergersAndAcquisitions"> | null>(null);
   const [addOpportunityGraphRow, setAddOpportunityGraphRow] =
     useState<Doc<"mergersAndAcquisitions"> | null>(null);
+  const [editOpportunityGraphRow, setEditOpportunityGraphRow] =
+    useState<Doc<"mergersAndAcquisitions"> | null>(null);
+  const [editOpportunityGraphRowGraphRow, setEditOpportunityGraphRowGraphRow] =
+    useState<z.infer<typeof editOpportunityGraphRowSchema> | null>(null);
 
   const opportunity = useQuery(api.mergersAndAcquisitions.getById, {
     id,
@@ -251,7 +260,15 @@ const Page = ({
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
-                              <DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setEditOpportunityGraphRowGraphRow(row);
+                                  setEditOpportunityGraphRow({
+                                    ...opportunity,
+                                    createdBy: opportunity.createdBy?._id ?? "",
+                                  });
+                                }}
+                              >
                                 <PencilIcon className="size-4" />
                                 Edit
                               </DropdownMenuItem>
@@ -632,6 +649,12 @@ const Page = ({
       <AddOpportunityGraphRowDialog
         opportunity={addOpportunityGraphRow}
         setOpportunity={setAddOpportunityGraphRow}
+      />
+      <EditOpportunityGraphRowDialog
+        opportunity={editOpportunityGraphRow}
+        graphRow={editOpportunityGraphRowGraphRow}
+        setOpportunity={setEditOpportunityGraphRow}
+        setGraphRow={setEditOpportunityGraphRowGraphRow}
       />
     </SidebarInset>
   );
