@@ -139,4 +139,36 @@ export default {
       },
     },
   },
+  requestAccessPage: {
+    title: "Solicitar acesso",
+    description:
+      "Insira seus detalhes abaixo para solicitar acesso à plataforma",
+    message: {
+      label: "Mensagem",
+      placeholder: "Porque é que está interessado?",
+    },
+    name: {
+      label: "Nome",
+      placeholder: "Insira o seu nome",
+    },
+    email: {
+      label: "Email",
+      placeholder: "exemplo@exemplo.com",
+    },
+    company: {
+      label: "Empresa",
+      placeholder: "Insira o nome da sua empresa",
+    },
+    position: {
+      label: "Cargo",
+      placeholder: "Insira o seu cargo na sua empresa",
+    },
+    phone: {
+      label: "Telefone",
+      placeholder: "Insira o seu número de telefone",
+    },
+    buttons: {
+      submit: "Solicitar acesso",
+    },
+  },
 } as const;

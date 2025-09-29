@@ -137,4 +137,35 @@ export default {
       },
     },
   },
+  requestAccessPage: {
+    title: "Request Access",
+    description: "Insert your details below to request access to the platform",
+    message: {
+      label: "Message",
+      placeholder: "Why are you interested?",
+    },
+    name: {
+      label: "Name",
+      placeholder: "Insert your name",
+    },
+    email: {
+      label: "Email",
+      placeholder: "example@example.com",
+    },
+    company: {
+      label: "Company",
+      placeholder: "Insert your company's name",
+    },
+    position: {
+      label: "Position",
+      placeholder: "Insert your position at this company",
+    },
+    phone: {
+      label: "Phone",
+      placeholder: "Insert your phone number",
+    },
+    buttons: {
+      submit: "Request access",
+    },
+  },
 } as const;

@@ -18,7 +18,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { SubmitButton } from "@/components/submit-button";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
