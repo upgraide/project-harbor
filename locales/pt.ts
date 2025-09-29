@@ -255,5 +255,23 @@ export default {
         estimatedAssetValue: "Valor Estimado do Ativo",
       },
     },
+    limitedPartnerInformationCard: {
+      title: "Informação do Limited Partner",
+      table: {
+        metric: "Métrica",
+        value: "Valor",
+        actions: "Ações",
+        coInvestment: "Co-Investimento",
+        equityContribution: "Equity Contribution",
+        grossIRR: "Gross IRR",
+        netIRR: "Net IRR",
+        moic: "MOIC",
+        cashOnCashReturn: "Cash On Cash Return",
+        cashConvertion: "Cash Convertion",
+        entryMultiple: "Entry Multiple",
+        exitExpectedMultiple: "Exit Expected Multiple",
+        holdPeriod: "Hold Period",
+      },
+    },
   },
 } as const;

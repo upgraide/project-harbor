@@ -601,30 +601,38 @@ const Page = ({
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
             <CardTitle className="text-xl font-semid">
-              Limited partner information
+              {t("limitedPartnerInformationCard.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="px-6 py-4">Metric</TableHead>
-                  <TableHead className="px-6 py-4">Value</TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("limitedPartnerInformationCard.table.metric")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("limitedPartnerInformationCard.table.value")}
+                  </TableHead>
                   <TableHead className="text-right px-6 py-4">
-                    Actions
+                    {t("limitedPartnerInformationCard.table.actions")}
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow key={"coInvestment"}>
-                  <TableCell className="px-6 py-4">Co-Investment</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("limitedPartnerInformationCard.table.coInvestment")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.coInvestment ? "Yes" : "No"}
                   </TableCell>
                 </TableRow>
                 <TableRow key={"equityContribution"}>
                   <TableCell className="px-6 py-4">
-                    Equity Contribution
+                    {t(
+                      "limitedPartnerInformationCard.table.equityContribution",
+                    )}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.equityContribution ?? "N/A"}
@@ -632,21 +640,27 @@ const Page = ({
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"grossIRR"}>
-                  <TableCell className="px-6 py-4">Gross IRR</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("limitedPartnerInformationCard.table.grossIRR")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.grossIRR ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"netIRR"}>
-                  <TableCell className="px-6 py-4">Net IRR</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("limitedPartnerInformationCard.table.netIRR")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.netIRR ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"moic"}>
-                  <TableCell className="px-6 py-4">MOIC</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("limitedPartnerInformationCard.table.moic")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.moic ?? "N/A"}
                   </TableCell>
@@ -654,7 +668,7 @@ const Page = ({
                 </TableRow>
                 <TableRow key={"cashOnCashReturn"}>
                   <TableCell className="px-6 py-4">
-                    Cash On Cash Return
+                    {t("limitedPartnerInformationCard.table.cashOnCashReturn")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.cashOnCashReturn ?? "N/A"}
@@ -662,14 +676,18 @@ const Page = ({
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"cashConvertion"}>
-                  <TableCell className="px-6 py-4">Cash Convertion</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("limitedPartnerInformationCard.table.cashConvertion")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.cashConvertion ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"entryMultiple"}>
-                  <TableCell className="px-6 py-4">Entry Multiple</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("limitedPartnerInformationCard.table.entryMultiple")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.entryMultiple ?? "N/A"}
                   </TableCell>
@@ -677,7 +695,9 @@ const Page = ({
                 </TableRow>
                 <TableRow key={"exitExpectedMultiple"}>
                   <TableCell className="px-6 py-4">
-                    Exit Expected Multiple
+                    {t(
+                      "limitedPartnerInformationCard.table.exitExpectedMultiple",
+                    )}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.exitExpectedMultiple ?? "N/A"}
@@ -685,7 +705,9 @@ const Page = ({
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"holdPeriod"}>
-                  <TableCell className="px-6 py-4">Hold Period</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("limitedPartnerInformationCard.table.holdPeriod")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.holdPeriod ?? "N/A"}
                   </TableCell>

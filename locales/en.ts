@@ -252,5 +252,23 @@ export default {
         estimatedAssetValue: "Estimated Asset Value",
       },
     },
+    limitedPartnerInformationCard: {
+      title: "Limited Partner Information",
+      table: {
+        metric: "Metric",
+        value: "Value",
+        actions: "Actions",
+        coInvestment: "Co-Investment",
+        equityContribution: "Equity Contribution",
+        grossIRR: "Gross IRR",
+        netIRR: "Net IRR",
+        moic: "MOIC",
+        cashOnCashReturn: "Cash On Cash Return",
+        cashConvertion: "Cash Convertion",
+        entryMultiple: "Entry Multiple",
+        exitExpectedMultiple: "Exit Expected Multiple",
+        holdPeriod: "Hold Period",
+      },
+    },
   },
 } as const;
