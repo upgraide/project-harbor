@@ -20,7 +20,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { backofficeMergersAndAcquisitionsPath } from "@/lib/paths";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import {
   LoaderIcon,
@@ -29,7 +29,7 @@ import {
   EllipsisVerticalIcon,
   TrashIcon,
 } from "lucide-react";
-import { use } from "react";
+import { use, useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
@@ -48,6 +48,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { EditOpportunityDescriptionDialog } from "./_components/edit-opportunity-description-dialog";
+import { AddOpportunityGraphRowDialog } from "./_components/add-opportunity-graph-row-dialog";
 
 const chartConfig = {
   revenue: {
@@ -66,6 +68,10 @@ const Page = ({
   params: Promise<{ id: Id<"mergersAndAcquisitions"> }>;
 }) => {
   const { id } = use(params);
+  const [opportunityDescriptionToEdit, setOpportunityDescriptionToEdit] =
+    useState<Doc<"mergersAndAcquisitions"> | null>(null);
+  const [addOpportunityGraphRow, setAddOpportunityGraphRow] =
+    useState<Doc<"mergersAndAcquisitions"> | null>(null);
 
   const opportunity = useQuery(api.mergersAndAcquisitions.getById, {
     id,
@@ -135,7 +141,15 @@ const Page = ({
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
             <CardTitle className="text-xl font-semibold">Description</CardTitle>
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              onClick={() =>
+                setOpportunityDescriptionToEdit({
+                  ...opportunity,
+                  createdBy: opportunity.createdBy?._id ?? "",
+                })
+              }
+            >
               <PencilIcon className="size-4" />
               Edit Description
             </Button>
@@ -200,7 +214,15 @@ const Page = ({
                 <CardTitle className="text-xl font-semibold">
                   Graph Rows
                 </CardTitle>
-                <Button variant="outline">
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setAddOpportunityGraphRow({
+                      ...opportunity,
+                      createdBy: opportunity.createdBy?._id ?? "",
+                    })
+                  }
+                >
                   <PlusIcon className="size-4" />
                   Add Graph Row
                 </Button>
@@ -602,6 +624,15 @@ const Page = ({
           </CardContent>
         </Card>
       </div>
+
+      <EditOpportunityDescriptionDialog
+        opportunity={opportunityDescriptionToEdit}
+        setOpportunity={setOpportunityDescriptionToEdit}
+      />
+      <AddOpportunityGraphRowDialog
+        opportunity={addOpportunityGraphRow}
+        setOpportunity={setAddOpportunityGraphRow}
+      />
     </SidebarInset>
   );
 };
