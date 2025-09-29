@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import logoLight from "@/public/assets/logo-light.png";
-import logoDark from "@/public/assets/logo-dark.png";
 import { DynamicImage } from "@/components/dynamic-image";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { homePath, requestAccessPath } from "@/lib/paths";
@@ -27,8 +25,8 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
       <DynamicImage
         alt="Harbor Partners Logo"
-        lightSrc={logoDark}
-        darkSrc={logoLight}
+        lightSrc="/assets/logo-dark.png"
+        darkSrc="/assets/logo-light.png"
         height={250}
         width={250}
       />

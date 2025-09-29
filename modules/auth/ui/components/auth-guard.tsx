@@ -4,8 +4,6 @@ import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import type { ReactNode } from "react";
 import { DynamicImage } from "@/components/dynamic-image";
 import { SignInView } from "@/modules/auth/ui/views/sign-in-view";
-import DarkLogo from "@/public/assets/logo-dark.png";
-import LightLogo from "@/public/assets/logo-light.png";
 import { AuthLayout } from "@/modules/auth/ui/layouts/auth-layout";
 
 export const AuthGuard = ({ children }: { children: ReactNode }) => {
@@ -16,9 +14,9 @@ export const AuthGuard = ({ children }: { children: ReactNode }) => {
           <DynamicImage
             alt="Logo"
             className="animate-pulse"
-            darkSrc={LightLogo}
+            darkSrc="/assets/logo-light.png"
             height={250}
-            lightSrc={DarkLogo}
+            lightSrc="/assets/logo-dark.png"
             width={250}
           />
         </div>

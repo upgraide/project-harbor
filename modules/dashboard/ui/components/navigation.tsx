@@ -19,8 +19,6 @@ import { DynamicImage } from "@/components/dynamic-image";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { useScopedI18n } from "@/locales/client";
-import DarkIcon from "@/public/assets/icon-dark.png";
-import LightIcon from "@/public/assets/icon-light.png";
 import { dashboardSettingsPath, dashboardPath } from "@/lib/paths";
 import { useLogout } from "@/hooks/use-signout";
 import { Id } from "@/convex/_generated/dataModel";
@@ -58,9 +56,9 @@ export function Navigation({
             <DynamicImage
               alt="Logo"
               className="h-8 w-auto"
-              darkSrc={LightIcon}
+              darkSrc="/assets/icon-light.png"
               height={50}
-              lightSrc={DarkIcon}
+              lightSrc="/assets/icon-dark.png"
               width={50}
             />
           </Link>
