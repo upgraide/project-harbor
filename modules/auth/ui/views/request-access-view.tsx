@@ -7,7 +7,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
 import { useScopedI18n } from "@/locales/client";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,21 +23,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/submit-button";
 
-const requestAccessSchema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
-  email: z.email({ message: "Invalid email" }),
-  company: z.string().min(1, { message: "Company is required" }),
-  phone: z.string().min(1, { message: "Phone is required" }),
-  position: z.string().min(1, { message: "Position is required" }),
-  message: z
-    .string()
-    .min(3, { message: "Message is required" })
-    .max(1000, { message: "Message must be less than 1000 characters" }),
-});
+const createRequestAccessSchema = (t: any) =>
+  z.object({
+    name: z.string().min(1, { message: t("schemaMessages.name.required") }),
+    email: z.string().email({ message: t("schemaMessages.email.invalid") }),
+    company: z
+      .string()
+      .min(1, { message: t("schemaMessages.company.required") }),
+    phone: z
+      .string()
+      .min(9, { message: t("schemaMessages.phone.min") })
+      .max(9, {
+        message: t("schemaMessages.phone.max"),
+      }),
+    position: z
+      .string()
+      .min(1, { message: t("schemaMessages.position.required") }),
+    message: z
+      .string()
+      .min(3, { message: t("schemaMessages.message.min") })
+      .max(1000, { message: t("schemaMessages.message.max") }),
+  });
 
 export const RequestAccessView = () => {
   const t = useScopedI18n("requestAccessPage");
-  const router = useRouter();
+
+  const requestAccessSchema = createRequestAccessSchema(t);
 
   const form = useForm<z.infer<typeof requestAccessSchema>>({
     resolver: zodResolver(requestAccessSchema),

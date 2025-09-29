@@ -169,5 +169,29 @@ export default {
     buttons: {
       submit: "Request access",
     },
+    schemaMessages: {
+      name: {
+        required: "Name is required",
+      },
+      email: {
+        invalid: "Invalid email",
+      },
+      company: {
+        required: "Company is required",
+      },
+      phone: {
+        required: "Phone is required",
+        min: "Phone must be at least 9 digits",
+        max: "Phone must be exactly 9 digits",
+      },
+      position: {
+        required: "Position is required",
+      },
+      message: {
+        required: "Message is required",
+        min: "Message must be at least 3 characters",
+        max: "Message must be less than 1000 characters",
+      },
+    },
   },
 } as const;

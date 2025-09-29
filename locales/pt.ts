@@ -172,5 +172,29 @@ export default {
     buttons: {
       submit: "Solicitar acesso",
     },
+    schemaMessages: {
+      name: {
+        required: "Nome é obrigatório",
+      },
+      email: {
+        invalid: "Email inválido",
+      },
+      company: {
+        required: "Empresa é obrigatória",
+      },
+      phone: {
+        required: "Telefone é obrigatório",
+        min: "Telefone deve ter pelo menos 9 dígitos",
+        max: "Telefone deve ter exatamente 9 dígitos",
+      },
+      position: {
+        required: "Cargo é obrigatório",
+      },
+      message: {
+        required: "Mensagem é obrigatória",
+        min: "Mensagem deve ter pelo menos 3 caracteres",
+        max: "Mensagem deve ter menos de 1000 caracteres",
+      },
+    },
   },
 } as const;
