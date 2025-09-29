@@ -55,6 +55,7 @@ import {
   editOpportunityGraphRowSchema,
 } from "./_components/edit-opportunity-graph-row-dialog";
 import z from "zod";
+import { DeleteOpportunityGraphRowDialog } from "./_components/delete-opportunity-graph-row-dialog";
 
 const chartConfig = {
   revenue: {
@@ -81,6 +82,12 @@ const Page = ({
     useState<Doc<"mergersAndAcquisitions"> | null>(null);
   const [editOpportunityGraphRowGraphRow, setEditOpportunityGraphRowGraphRow] =
     useState<z.infer<typeof editOpportunityGraphRowSchema> | null>(null);
+  const [deleteOpportunityGraphRow, setDeleteOpportunityGraphRow] =
+    useState<Doc<"mergersAndAcquisitions"> | null>(null);
+  const [
+    deleteOpportunityGraphRowGraphRow,
+    setDeleteOpportunityGraphRowGraphRow,
+  ] = useState<z.infer<typeof editOpportunityGraphRowSchema> | null>(null);
 
   const opportunity = useQuery(api.mergersAndAcquisitions.getById, {
     id,
@@ -272,7 +279,16 @@ const Page = ({
                                 <PencilIcon className="size-4" />
                                 Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive">
+                              <DropdownMenuItem
+                                className="text-destructive"
+                                onClick={() => {
+                                  setDeleteOpportunityGraphRowGraphRow(row);
+                                  setDeleteOpportunityGraphRow({
+                                    ...opportunity,
+                                    createdBy: opportunity.createdBy?._id ?? "",
+                                  });
+                                }}
+                              >
                                 <TrashIcon className="size-4 text-destructive" />
                                 Delete
                               </DropdownMenuItem>
@@ -655,6 +671,12 @@ const Page = ({
         graphRow={editOpportunityGraphRowGraphRow}
         setOpportunity={setEditOpportunityGraphRow}
         setGraphRow={setEditOpportunityGraphRowGraphRow}
+      />
+      <DeleteOpportunityGraphRowDialog
+        opportunity={deleteOpportunityGraphRow}
+        graphRow={deleteOpportunityGraphRowGraphRow}
+        setOpportunity={setDeleteOpportunityGraphRow}
+        setGraphRow={setDeleteOpportunityGraphRowGraphRow}
       />
     </SidebarInset>
   );
