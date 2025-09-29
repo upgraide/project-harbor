@@ -26,16 +26,11 @@ import { SubmitButton } from "@/components/submit-button";
 const createRequestAccessSchema = (t: any) =>
   z.object({
     name: z.string().min(1, { message: t("schemaMessages.name.required") }),
-    email: z.string().email({ message: t("schemaMessages.email.invalid") }),
+    email: z.email({ message: t("schemaMessages.email.invalid") }),
     company: z
       .string()
       .min(1, { message: t("schemaMessages.company.required") }),
-    phone: z
-      .string()
-      .min(9, { message: t("schemaMessages.phone.min") })
-      .max(9, {
-        message: t("schemaMessages.phone.max"),
-      }),
+    phone: z.e164({ message: t("schemaMessages.phone.invalid") }),
     position: z
       .string()
       .min(1, { message: t("schemaMessages.position.required") }),
