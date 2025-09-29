@@ -9,7 +9,7 @@ const Page = async () => {
 
   return (
     <Tabs defaultValue="all" className="w-full">
-      <div className="bg-secondary min-h-[calc(100vh-80px)] pb-12">
+      <div className="bg-accent min-h-[calc(100vh-80px)] pb-12">
         <header className="z-10 flex w-full flex-col border-b border-border bg-card px-6">
           <div className="mx-auto flex flex-col w-full max-w-screen-xl items-start justify-between py-8">
             <div className="flex flex-col items-start gap-2">
@@ -29,7 +29,7 @@ const Page = async () => {
             </TabsList>
           </div>
         </header>
-        <div className="flex h-full w-full bg-secondary px-6 py-8">
+        <div className="flex h-full w-full bg-accent px-6 py-8">
           <div className="z-10 mx-auto flex h-full w-full max-w-screen-xl gap-12">
             <div className="flex w-full flex-col rounded-lg border border-border bg-card">
               <div className="relative mx-auto w-full p-6">
