@@ -56,6 +56,7 @@ import {
 } from "./_components/edit-opportunity-graph-row-dialog";
 import z from "zod";
 import { DeleteOpportunityGraphRowDialog } from "./_components/delete-opportunity-graph-row-dialog";
+import { useScopedI18n } from "@/locales/client";
 
 const chartConfig = {
   revenue: {
@@ -74,6 +75,7 @@ const Page = ({
   params: Promise<{ id: Id<"mergersAndAcquisitions"> }>;
 }) => {
   const { id } = use(params);
+  const t = useScopedI18n("backofficeMergersAndAcquisitionsOpportunityPage");
   const [opportunityDescriptionToEdit, setOpportunityDescriptionToEdit] =
     useState<Doc<"mergersAndAcquisitions"> | null>(null);
   const [addOpportunityGraphRow, setAddOpportunityGraphRow] =
@@ -113,7 +115,7 @@ const Page = ({
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink href={backofficeMergersAndAcquisitionsPath()}>
-                Mergers and Acquisitions Opportunities
+                {t("breadcrumbs.mergersAndAcquisitionsOpportunities")}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
@@ -132,11 +134,11 @@ const Page = ({
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
             <CardTitle className="text-xl font-semibold">
-              Opportunity Images
+              {t("imagesCard.title")}
             </CardTitle>
             <Button variant="outline">
               <PlusIcon className="size-4" />
-              Add Image
+              {t("imagesCard.buttons.add")}
             </Button>
           </CardHeader>
           <CardContent className="grid md:grid-cols-2 gap-2">
@@ -156,7 +158,9 @@ const Page = ({
 
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold">Description</CardTitle>
+            <CardTitle className="text-xl font-semibold">
+              {t("descriptionCard.title")}
+            </CardTitle>
             <Button
               variant="outline"
               onClick={() =>
@@ -167,7 +171,7 @@ const Page = ({
               }
             >
               <PencilIcon className="size-4" />
-              Edit Description
+              {t("descriptionCard.buttons.edit")}
             </Button>
           </CardHeader>
           <CardContent>
@@ -180,7 +184,7 @@ const Page = ({
         <Card>
           <CardHeader className="border-b">
             <CardTitle className="text-xl font-semibold">
-              Financial Performance
+              {t("financialPerformanceCard.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -228,7 +232,7 @@ const Page = ({
             <Card className="mt-4">
               <CardHeader className="border-b flex items-center justify-between">
                 <CardTitle className="text-xl font-semibold">
-                  Graph Rows
+                  {t("financialPerformanceCard.graphRowsCard.title")}
                 </CardTitle>
                 <Button
                   variant="outline"
@@ -240,16 +244,26 @@ const Page = ({
                   }
                 >
                   <PlusIcon className="size-4" />
-                  Add Graph Row
+                  {t("financialPerformanceCard.graphRowsCard.buttons.add")}
                 </Button>
               </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Year</TableHead>
-                      <TableHead>Revenue</TableHead>
-                      <TableHead>EBITDA</TableHead>
+                      <TableHead>
+                        {t("financialPerformanceCard.graphRowsCard.table.year")}
+                      </TableHead>
+                      <TableHead>
+                        {t(
+                          "financialPerformanceCard.graphRowsCard.table.revenue",
+                        )}
+                      </TableHead>
+                      <TableHead>
+                        {t(
+                          "financialPerformanceCard.graphRowsCard.table.ebitda",
+                        )}
+                      </TableHead>
                       <TableHead className="text-right"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -277,7 +291,9 @@ const Page = ({
                                 }}
                               >
                                 <PencilIcon className="size-4" />
-                                Edit
+                                {t(
+                                  "financialPerformanceCard.graphRowsCard.table.buttons.edit",
+                                )}
                               </DropdownMenuItem>
                               <DropdownMenuItem
                                 className="text-destructive"
@@ -290,7 +306,9 @@ const Page = ({
                                 }}
                               >
                                 <TrashIcon className="size-4 text-destructive" />
-                                Delete
+                                {t(
+                                  "financialPerformanceCard.graphRowsCard.table.buttons.delete",
+                                )}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>

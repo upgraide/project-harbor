@@ -194,4 +194,40 @@ export default {
       },
     },
   },
+  backofficeMergersAndAcquisitionsOpportunityPage: {
+    breadcrumbs: {
+      mergersAndAcquisitionsOpportunities:
+        "Mergers and Acquisitions Opportunities",
+    },
+    imagesCard: {
+      title: "Images",
+      buttons: {
+        add: "Add Image",
+      },
+    },
+    descriptionCard: {
+      title: "Description",
+      buttons: {
+        edit: "Edit Description",
+      },
+    },
+    financialPerformanceCard: {
+      title: "Financial Performance",
+      graphRowsCard: {
+        title: "Graph Rows",
+        buttons: {
+          add: "Add Graph Row",
+        },
+        table: {
+          year: "Year",
+          revenue: "Revenue",
+          ebitda: "EBITDA",
+          buttons: {
+            edit: "Edit",
+            delete: "Delete",
+          },
+        },
+      },
+    },
+  },
 } as const;
