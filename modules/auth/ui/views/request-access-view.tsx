@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/components/submit-button";
 
-const createRequestAccessSchema = (t: any) =>
+const createRequestAccessSchema = (t: ReturnType<typeof useScopedI18n>) =>
   z.object({
     name: z.string().min(1, { message: t("schemaMessages.name.required") }),
     email: z.email({ message: t("schemaMessages.email.invalid") }),
