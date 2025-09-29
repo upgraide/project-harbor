@@ -325,38 +325,47 @@ const Page = ({
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
             <CardTitle className="text-xl font-semibold">
-              Pre-NDA Information
+              {t("preNDAInformationCard.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="px-6 py-4">Metric</TableHead>
-                  <TableHead className="px-6 py-4">Value</TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("preNDAInformationCard.table.metric")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("preNDAInformationCard.table.value")}
+                  </TableHead>
                   <TableHead className="text-right px-6 py-4">
-                    {" "}
-                    Actions
+                    {t("preNDAInformationCard.table.actions")}
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow key={"type"}>
-                  <TableCell className="px-6 py-4">Type</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("preNDAInformationCard.table.type")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.type ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right"></TableCell>
                 </TableRow>
                 <TableRow key={"typeDetails"}>
-                  <TableCell className="px-6 py-4">Type Details</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("preNDAInformationCard.table.typeDetails")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.typeDetails ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"industry"}>
-                  <TableCell className="px-6 py-4">Industry</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("preNDAInformationCard.table.industry")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.industry ?? "N/A"}
                   </TableCell>
@@ -364,7 +373,7 @@ const Page = ({
                 </TableRow>
                 <TableRow key={"industrySubsector"}>
                   <TableCell className="px-6 py-4">
-                    Industry Subsector
+                    {t("preNDAInformationCard.table.industrySubsector")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.industrySubsector ?? "N/A"}
@@ -373,20 +382,24 @@ const Page = ({
                 </TableRow>
                 <TableRow key={"dimension"}>
                   <TableCell className="px-6 py-4 font-medium bg-muted">
-                    Dimension
+                    {t("preNDAInformationCard.table.dimension")}
                   </TableCell>
                   <TableCell className="px-6 py-4 bg-muted"></TableCell>
                   <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
                 </TableRow>
                 <TableRow key={"sales"}>
-                  <TableCell className="px-6 py-4">Sales</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("preNDAInformationCard.table.sales")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.sales ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"ebitda"}>
-                  <TableCell className="px-6 py-4">EBITDA (Range)</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("preNDAInformationCard.table.ebitda")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.ebitda ?? "N/A"}
                   </TableCell>
@@ -394,7 +407,7 @@ const Page = ({
                 </TableRow>
                 <TableRow key={"ebitdaNormalized"}>
                   <TableCell className="px-6 py-4">
-                    EBITDA (Normalized)
+                    {t("preNDAInformationCard.table.ebitdaNormalized")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.ebitdaNormalized ?? "N/A"}
@@ -402,7 +415,9 @@ const Page = ({
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"netDebt"}>
-                  <TableCell className="px-6 py-4">Net Debt</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("preNDAInformationCard.table.netDebt")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.netDebt ?? "N/A"}
                   </TableCell>
@@ -410,20 +425,24 @@ const Page = ({
                 </TableRow>
                 <TableRow key={"CAGR"}>
                   <TableCell className="px-6 py-4 font-medium bg-muted">
-                    CAGR
+                    {t("preNDAInformationCard.table.cagr")}
                   </TableCell>
                   <TableCell className="px-6 py-4 bg-muted"></TableCell>
                   <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
                 </TableRow>
                 <TableRow key={"salesCAGR"}>
-                  <TableCell className="px-6 py-4">Sales CAGR</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("preNDAInformationCard.table.salesCAGR")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.salesCAGR ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"ebitdaCAGR"}>
-                  <TableCell className="px-6 py-4">EBITDA CAGR</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("preNDAInformationCard.table.ebitdaCAGR")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.ebitdaCAGR ?? "N/A"}
                   </TableCell>
@@ -431,13 +450,15 @@ const Page = ({
                 </TableRow>
                 <TableRow key={"Asset"}>
                   <TableCell className="px-6 py-4 font-medium bg-muted">
-                    Asset
+                    {t("preNDAInformationCard.table.asset")}
                   </TableCell>
                   <TableCell className="px-6 py-4 bg-muted"></TableCell>
                   <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
                 </TableRow>
                 <TableRow key={"assetIncluded"}>
-                  <TableCell className="px-6 py-4">Asset Included</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("preNDAInformationCard.table.assetIncluded")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.assetIncluded ? "Yes" : "No"}
                   </TableCell>
@@ -445,7 +466,7 @@ const Page = ({
                 </TableRow>
                 <TableRow key={"estimatedAssetValue"}>
                   <TableCell className="px-6 py-4">
-                    Estimated Asset Value
+                    {t("preNDAInformationCard.table.estimatedAssetValue")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.estimatedAssetValue ?? "N/A"}
@@ -580,7 +601,7 @@ const Page = ({
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
             <CardTitle className="text-xl font-semid">
-              Co-Investment Information
+              Limited partner information
             </CardTitle>
           </CardHeader>
           <CardContent>
