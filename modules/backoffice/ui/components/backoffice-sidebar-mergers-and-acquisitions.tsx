@@ -24,8 +24,6 @@ import { usePathname } from "next/navigation";
 import { useScopedI18n } from "@/locales/client";
 import NavUserSidebar from "./nav-user";
 import { DynamicImage } from "@/components/dynamic-image";
-import DarkIcon from "@/public/assets/icon-dark.png";
-import LightIcon from "@/public/assets/icon-light.png";
 import { buttonVariants } from "@/components/ui/button";
 import { usePaginatedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -125,8 +123,8 @@ export const BackofficeSidebarMergersAndAcquisitions = ({
                   <div className="bg-sidebar-foreground text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                     <DynamicImage
                       className="size-4"
-                      darkSrc={DarkIcon}
-                      lightSrc={LightIcon}
+                      darkSrc="/assets/icon-dark.png"
+                      lightSrc="/assets/icon-light.png"
                       alt="Harbor Partners Icon"
                     />
                   </div>
