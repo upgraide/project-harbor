@@ -17,9 +17,11 @@ export default {
     description:
       "Insira seu email e palavra-passe abaixo para entrar na sua conta",
     dontHaveAccount: "Não tem uma conta?",
+    alreadyHaveAccount: "Já tem uma conta?",
     buttons: {
       signIn: "Entrar",
       requestAccess: "Solicitar acesso",
+      membershipLogin: "Login de membro",
       back: "Voltar",
     },
     forgotPassword: "Esqueceu-se da palavra-passe?",

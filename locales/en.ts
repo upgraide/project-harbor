@@ -17,10 +17,12 @@ export default {
     description:
       "Insert your email and password below to sign in to your account",
     dontHaveAccount: "Don't have an account?",
+    alreadyHaveAccount: "Already have an account?",
     buttons: {
       signIn: "Sign in",
       requestAccess: "Request access",
       back: "Back",
+      membershipLogin: "Membership login",
     },
     forgotPassword: "Forgot your password?",
     emailPlaceholder: "m@example.com",
