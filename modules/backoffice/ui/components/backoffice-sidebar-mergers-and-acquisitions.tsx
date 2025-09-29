@@ -126,6 +126,8 @@ export const BackofficeSidebarMergersAndAcquisitions = ({
                       darkSrc="/assets/icon-dark.png"
                       lightSrc="/assets/icon-light.png"
                       alt="Harbor Partners Icon"
+                      height={50}
+                      width={50}
                     />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
