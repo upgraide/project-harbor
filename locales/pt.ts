@@ -253,10 +253,36 @@ export default {
         asset: "Ativo",
         assetIncluded: "Ativo Incluído",
         estimatedAssetValue: "Valor Estimado do Ativo",
+        assetIncludedYes: "Sim",
+        assetIncludedNo: "Não",
+      },
+    },
+    postNDAInformationCard: {
+      title: "Informação Pos-NDA",
+      table: {
+        metric: "Métrica",
+        value: "Valor",
+        actions: "Ações",
+        im: "IM",
+        entrepriseValue: "Entreprise Value",
+        equityValue: "Equity Value",
+        evDashEbitdaEntry: "EV/EBITDA Entry",
+        evDashEbitdaExit: "EV/EBITDA Exit",
+        ebitdaMargin: "EBITDA Margin",
+        fcf: "FCF",
+        netDebtDashEbitda: "Net Debt/EBITDA",
+        capexIntensity: "Capex Intensity (Capex/EBITDA)",
+        workingCapitalNeeds: "Working Capital Needs",
+      },
+    },
+    shareholderInformationCard: {
+      title: "Estrutura Acionista",
+      buttons: {
+        add: "Adicionar Estrutura Acionista",
       },
     },
     limitedPartnerInformationCard: {
-      title: "Informação do Limited Partner",
+      title: "Informação Limited Partner",
       table: {
         metric: "Métrica",
         value: "Valor",

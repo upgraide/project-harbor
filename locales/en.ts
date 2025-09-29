@@ -250,6 +250,32 @@ export default {
         asset: "Asset",
         assetIncluded: "Asset Included",
         estimatedAssetValue: "Estimated Asset Value",
+        assetIncludedYes: "Yes",
+        assetIncludedNo: "No",
+      },
+    },
+    shareholderInformationCard: {
+      title: "Shareholder Structure",
+      buttons: {
+        add: "Add Shareholder Structure",
+      },
+    },
+    postNDAInformationCard: {
+      title: "Post-NDA Information",
+      table: {
+        metric: "Metric",
+        value: "Value",
+        actions: "Actions",
+        im: "IM",
+        entrepriseValue: "Entreprise Value",
+        equityValue: "Equity Value",
+        evDashEbitdaEntry: "EV/EBITDA Entry",
+        evDashEbitdaExit: "EV/EBITDA Exit",
+        ebitdaMargin: "EBITDA Margin",
+        fcf: "FCF",
+        netDebtDashEbitda: "Net Debt/EBITDA",
+        capexIntensity: "Capex Intensity (Capex/EBITDA)",
+        workingCapitalNeeds: "Working Capital Needs",
       },
     },
     limitedPartnerInformationCard: {

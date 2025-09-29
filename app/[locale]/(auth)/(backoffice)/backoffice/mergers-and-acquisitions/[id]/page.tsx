@@ -392,7 +392,7 @@ const Page = ({
                     {t("preNDAInformationCard.table.sales")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.sales ?? "N/A"}
+                    €{opportunity.sales ?? "N/A"}M
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -401,7 +401,7 @@ const Page = ({
                     {t("preNDAInformationCard.table.ebitda")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.ebitda ?? "N/A"}
+                    €{opportunity.ebitda ?? "N/A"}M
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -410,7 +410,7 @@ const Page = ({
                     {t("preNDAInformationCard.table.ebitdaNormalized")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.ebitdaNormalized ?? "N/A"}
+                    {opportunity.ebitdaNormalized ?? "N/A"}x
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -419,7 +419,7 @@ const Page = ({
                     {t("preNDAInformationCard.table.netDebt")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.netDebt ?? "N/A"}
+                    €{opportunity.netDebt ?? "N/A"}M
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -435,7 +435,7 @@ const Page = ({
                     {t("preNDAInformationCard.table.salesCAGR")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.salesCAGR ?? "N/A"}
+                    {opportunity.salesCAGR ?? "N/A"}%
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -444,7 +444,7 @@ const Page = ({
                     {t("preNDAInformationCard.table.ebitdaCAGR")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.ebitdaCAGR ?? "N/A"}
+                    {opportunity.ebitdaCAGR ?? "N/A"}%
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -460,7 +460,9 @@ const Page = ({
                     {t("preNDAInformationCard.table.assetIncluded")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.assetIncluded ? "Yes" : "No"}
+                    {opportunity.assetIncluded
+                      ? t("preNDAInformationCard.table.assetIncludedYes")
+                      : t("preNDAInformationCard.table.assetIncludedNo")}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
@@ -481,79 +483,101 @@ const Page = ({
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
             <CardTitle className="text-xl font-semibold">
-              Post-NDA Information
+              {t("postNDAInformationCard.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="px-6 py-4">Metric</TableHead>
-                  <TableHead className="px-6 py-4">Value</TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("postNDAInformationCard.table.metric")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("postNDAInformationCard.table.value")}
+                  </TableHead>
                   <TableHead className="text-right px-6 py-4">
-                    Actions
+                    {t("postNDAInformationCard.table.actions")}
                   </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow key={"im"}>
-                  <TableCell className="px-6 py-4">IM</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDAInformationCard.table.im")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.im ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"entrepriseValue"}>
-                  <TableCell className="px-6 py-4">Entreprise Value</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDAInformationCard.table.entrepriseValue")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.entrepriseValue ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"equityValue"}>
-                  <TableCell className="px-6 py-4">Equity Value</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDAInformationCard.table.equityValue")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.equityValue ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"evDashEbitdaEntry"}>
-                  <TableCell className="px-6 py-4">EV/EBITDA Entry</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDAInformationCard.table.evDashEbitdaEntry")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.evDashEbitdaEntry ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"evDashEbitdaExit"}>
-                  <TableCell className="px-6 py-4">EV/EBITDA Exit</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDAInformationCard.table.evDashEbitdaExit")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.evDashEbitdaExit ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"ebitdaMargin"}>
-                  <TableCell className="px-6 py-4">EBITDA Margin</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDAInformationCard.table.ebitdaMargin")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.ebitdaMargin ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"fcf"}>
-                  <TableCell className="px-6 py-4">FCF</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDAInformationCard.table.fcf")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.fcf ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"netDebtDashEbitda"}>
-                  <TableCell className="px-6 py-4">Net Debt/EBITDA</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDAInformationCard.table.netDebtDashEbitda")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.netDebtDashEbitda ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right px-6 py-4"></TableCell>
                 </TableRow>
                 <TableRow key={"capexItensity"}>
-                  <TableCell className="px-6 py-4">Capex Intensity</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDAInformationCard.table.capexIntensity")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.capexItensity ?? "N/A"}
                   </TableCell>
@@ -561,7 +585,7 @@ const Page = ({
                 </TableRow>
                 <TableRow key={"workingCapitalNeeds"}>
                   <TableCell className="px-6 py-4">
-                    Working Capital Needs
+                    {t("postNDAInformationCard.table.workingCapitalNeeds")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.workingCapitalNeeds ?? "N/A"}
@@ -576,11 +600,11 @@ const Page = ({
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
             <CardTitle className="text-xl font-semibold">
-              Shareholder Structure
+              {t("shareholderInformationCard.title")}
             </CardTitle>
             <Button variant="outline">
               <PlusIcon className="size-4" />
-              Add Shareholder Structure
+              {t("shareholderInformationCard.buttons.add")}
             </Button>
           </CardHeader>
           <CardContent className="grid md:grid-cols-2 gap-2">
