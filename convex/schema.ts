@@ -210,6 +210,21 @@ const schema = defineSchema({
   }).searchIndex("search_name", {
     searchField: "name",
   }),
+
+  requestAccess: defineTable({
+    name: v.string(),
+    email: v.string(),
+    company: v.string(),
+    phone: v.string(),
+    position: v.string(),
+    message: v.string(),
+  })
+    .index("by_email", {
+      fields: ["email"],
+    })
+    .searchIndex("search_email", {
+      searchField: "email",
+    }),
 });
 
 export default schema;

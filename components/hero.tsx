@@ -1,9 +1,9 @@
 "use client";
 
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Lock } from "lucide-react";
+import { Lock, Plus } from "lucide-react";
 import Link from "next/link";
-import { signInPath } from "@/lib/paths";
+import { requestAccessPath, signInPath } from "@/lib/paths";
 import { useScopedI18n } from "@/locales/client";
 
 export const Hero = () => {
@@ -28,11 +28,15 @@ export const Hero = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size={"lg"} variant={"default"}>
-                {t("buttons.requestAccess")}
-              </Button>
               <Link
-                className={buttonVariants({ variant: "outline", size: "lg" })}
+                className={buttonVariants({ variant: "secondary", size: "lg" })}
+                href={requestAccessPath()}
+              >
+                <Plus className="size-4 mr-2" />
+                {t("buttons.requestAccess")}
+              </Link>
+              <Link
+                className={buttonVariants({ variant: "default", size: "lg" })}
                 href={signInPath()}
               >
                 <Lock className="size-4 mr-2" />

@@ -17,10 +17,12 @@ export default {
     description:
       "Insert your email and password below to sign in to your account",
     dontHaveAccount: "Don't have an account?",
+    alreadyHaveAccount: "Already have an account?",
     buttons: {
       signIn: "Sign in",
       requestAccess: "Request access",
       back: "Back",
+      membershipLogin: "Membership login",
     },
     forgotPassword: "Forgot your password?",
     emailPlaceholder: "m@example.com",
@@ -134,6 +136,164 @@ export default {
           title: "Mergers and Acquisitions",
           create: "Create",
         },
+      },
+    },
+  },
+  requestAccessPage: {
+    title: "Request Access",
+    description: "Insert your details below to request access to the platform",
+    message: {
+      label: "Message",
+      placeholder: "Why are you interested?",
+    },
+    name: {
+      label: "Name",
+      placeholder: "Insert your name",
+    },
+    email: {
+      label: "Email",
+      placeholder: "example@example.com",
+    },
+    company: {
+      label: "Company",
+      placeholder: "Insert your company's name",
+    },
+    position: {
+      label: "Position",
+      placeholder: "Insert your position at this company",
+    },
+    phone: {
+      label: "Phone",
+      placeholder: "Insert your phone number",
+    },
+    buttons: {
+      submit: "Request access",
+    },
+    schemaMessages: {
+      name: {
+        required: "Name is required",
+      },
+      email: {
+        invalid: "Invalid email",
+      },
+      company: {
+        required: "Company is required",
+      },
+      phone: {
+        required: "Phone is required",
+        min: "Phone must be at least 9 digits",
+        max: "Phone must be exactly 9 digits",
+      },
+      position: {
+        required: "Position is required",
+      },
+      message: {
+        required: "Message is required",
+        min: "Message must be at least 3 characters",
+        max: "Message must be less than 1000 characters",
+      },
+    },
+  },
+  backofficeMergersAndAcquisitionsOpportunityPage: {
+    breadcrumbs: {
+      mergersAndAcquisitionsOpportunities:
+        "Mergers and Acquisitions Opportunities",
+    },
+    imagesCard: {
+      title: "Images",
+      buttons: {
+        add: "Add Image",
+      },
+    },
+    descriptionCard: {
+      title: "Description",
+      buttons: {
+        edit: "Edit Description",
+      },
+    },
+    financialPerformanceCard: {
+      title: "Financial Performance",
+      graphRowsCard: {
+        title: "Graph Rows",
+        buttons: {
+          add: "Add Graph Row",
+        },
+        table: {
+          year: "Year",
+          revenue: "Revenue",
+          ebitda: "EBITDA",
+          buttons: {
+            edit: "Edit",
+            delete: "Delete",
+          },
+        },
+      },
+    },
+    preNDAInformationCard: {
+      title: "Pre-NDA Information",
+      table: {
+        metric: "Metric",
+        value: "Value",
+        actions: "Actions",
+        type: "Type",
+        typeDetails: "Type Details",
+        industry: "Industry",
+        industrySubsector: "Industry Subsector",
+        dimension: "Dimension",
+        sales: "Sales",
+        ebitda: "EBITDA",
+        ebitdaNormalized: "EBITDA (Normalized)",
+        netDebt: "Net Debt",
+        cagr: "CAGR",
+        salesCAGR: "Sales CAGR",
+        ebitdaCAGR: "EBITDA CAGR",
+        asset: "Asset",
+        assetIncluded: "Asset Included",
+        estimatedAssetValue: "Estimated Asset Value",
+        assetIncludedYes: "Yes",
+        assetIncludedNo: "No",
+      },
+    },
+    shareholderInformationCard: {
+      title: "Shareholder Structure",
+      buttons: {
+        add: "Add Shareholder Structure",
+      },
+    },
+    postNDAInformationCard: {
+      title: "Post-NDA Information",
+      table: {
+        metric: "Metric",
+        value: "Value",
+        actions: "Actions",
+        im: "IM",
+        entrepriseValue: "Entreprise Value",
+        equityValue: "Equity Value",
+        evDashEbitdaEntry: "EV/EBITDA Entry",
+        evDashEbitdaExit: "EV/EBITDA Exit",
+        ebitdaMargin: "EBITDA Margin",
+        fcf: "FCF",
+        netDebtDashEbitda: "Net Debt/EBITDA",
+        capexIntensity: "Capex Intensity (Capex/EBITDA)",
+        workingCapitalNeeds: "Working Capital Needs",
+      },
+    },
+    limitedPartnerInformationCard: {
+      title: "Limited Partner Information",
+      table: {
+        metric: "Metric",
+        value: "Value",
+        actions: "Actions",
+        coInvestment: "Co-Investment",
+        equityContribution: "Equity Contribution",
+        grossIRR: "Gross IRR",
+        netIRR: "Net IRR",
+        moic: "MOIC",
+        cashOnCashReturn: "Cash On Cash Return",
+        cashConvertion: "Cash Convertion",
+        entryMultiple: "Entry Multiple",
+        exitExpectedMultiple: "Exit Expected Multiple",
+        holdPeriod: "Hold Period",
       },
     },
   },
