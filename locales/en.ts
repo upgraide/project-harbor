@@ -313,6 +313,16 @@ export default {
       buyInBuyOut: "Buy In/Buy Out",
       updateButton: "Update Type",
     },
+    deleteOpportunityTypeDialog: {
+      title: "Delete Opportunity Type",
+      description:
+        "Are you sure you want to delete the opportunity type? This action cannot be undone.",
+      toastSuccess: "Opportunity type deleted successfully",
+      toastError: "Failed to delete opportunity type",
+      toastLoading: "Deleting opportunity type",
+      deleteButton: "Delete",
+      cancelButton: "Cancel",
+    },
   },
   dashboardCard: {
     viewOpportunity: "View Opportunity",

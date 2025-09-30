@@ -29,7 +29,7 @@ import {
   EllipsisVerticalIcon,
   TrashIcon,
 } from "lucide-react";
-import { use, useState, useEffect } from "react";
+import { use, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
@@ -58,6 +58,7 @@ import z from "zod";
 import { DeleteOpportunityGraphRowDialog } from "./_components/delete-opportunity-graph-row-dialog";
 import { useScopedI18n } from "@/locales/client";
 import { EditOpportunityTypeDialog } from "./_components/edit-opportunity-type-dialog";
+import { DeleteOpportunityTypeDialog } from "./_components/delete-opportunity-type-dialog";
 
 const chartConfig = {
   revenue: {
@@ -379,7 +380,12 @@ const Page = ({
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-destructive"
-                          onClick={() => {}}
+                          onClick={() => {
+                            setDeleteOpportunityType({
+                              ...opportunity,
+                              createdBy: opportunity.createdBy?._id ?? "",
+                            });
+                          }}
                         >
                           <TrashIcon className="size-4 text-destructive" />
                           {t("preNDAInformationCard.table.buttons.delete")}
@@ -801,6 +807,10 @@ const Page = ({
       <EditOpportunityTypeDialog
         opportunity={editOpportunityType}
         setOpportunity={setEditOpportunityType}
+      />
+      <DeleteOpportunityTypeDialog
+        opportunity={deleteOpportunityType}
+        setOpportunity={setDeleteOpportunityType}
       />
     </SidebarInset>
   );
