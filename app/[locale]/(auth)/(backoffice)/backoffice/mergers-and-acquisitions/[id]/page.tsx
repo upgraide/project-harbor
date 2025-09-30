@@ -57,6 +57,7 @@ import {
 import z from "zod";
 import { DeleteOpportunityGraphRowDialog } from "./_components/delete-opportunity-graph-row-dialog";
 import { useScopedI18n } from "@/locales/client";
+import { EditOpportunityTypeDialog } from "./_components/edit-opportunity-type-dialog";
 
 const chartConfig = {
   revenue: {
@@ -69,6 +70,8 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+type MergersAndAcquisitions = Doc<"mergersAndAcquisitions">;
+
 const Page = ({
   params,
 }: {
@@ -77,19 +80,23 @@ const Page = ({
   const { id } = use(params);
   const t = useScopedI18n("backofficeMergersAndAcquisitionsOpportunityPage");
   const [opportunityDescriptionToEdit, setOpportunityDescriptionToEdit] =
-    useState<Doc<"mergersAndAcquisitions"> | null>(null);
+    useState<MergersAndAcquisitions | null>(null);
   const [addOpportunityGraphRow, setAddOpportunityGraphRow] =
-    useState<Doc<"mergersAndAcquisitions"> | null>(null);
+    useState<MergersAndAcquisitions | null>(null);
   const [editOpportunityGraphRow, setEditOpportunityGraphRow] =
-    useState<Doc<"mergersAndAcquisitions"> | null>(null);
+    useState<MergersAndAcquisitions | null>(null);
   const [editOpportunityGraphRowGraphRow, setEditOpportunityGraphRowGraphRow] =
     useState<z.infer<typeof editOpportunityGraphRowSchema> | null>(null);
   const [deleteOpportunityGraphRow, setDeleteOpportunityGraphRow] =
-    useState<Doc<"mergersAndAcquisitions"> | null>(null);
+    useState<MergersAndAcquisitions | null>(null);
   const [
     deleteOpportunityGraphRowGraphRow,
     setDeleteOpportunityGraphRowGraphRow,
   ] = useState<z.infer<typeof editOpportunityGraphRowSchema> | null>(null);
+  const [editOpportunityType, setEditOpportunityType] =
+    useState<MergersAndAcquisitions | null>(null);
+  const [deleteOpportunityType, setDeleteOpportunityType] =
+    useState<MergersAndAcquisitions | null>(null);
 
   const opportunity = useQuery(api.mergersAndAcquisitions.getById, {
     id,
@@ -351,7 +358,35 @@ const Page = ({
                   <TableCell className="px-6 py-4">
                     {opportunity.type ?? "N/A"}
                   </TableCell>
-                  <TableCell className="text-right"></TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setEditOpportunityType({
+                              ...opportunity,
+                              createdBy: opportunity.createdBy?._id ?? "",
+                            });
+                          }}
+                        >
+                          <PencilIcon className="size-4" />
+                          {t("preNDAInformationCard.table.buttons.edit")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => {}}
+                        >
+                          <TrashIcon className="size-4 text-destructive" />
+                          {t("preNDAInformationCard.table.buttons.delete")}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
                 <TableRow key={"typeDetails"}>
                   <TableCell className="px-6 py-4">
@@ -762,6 +797,10 @@ const Page = ({
         graphRow={deleteOpportunityGraphRowGraphRow}
         setOpportunity={setDeleteOpportunityGraphRow}
         setGraphRow={setDeleteOpportunityGraphRowGraphRow}
+      />
+      <EditOpportunityTypeDialog
+        opportunity={editOpportunityType}
+        setOpportunity={setEditOpportunityType}
       />
     </SidebarInset>
   );

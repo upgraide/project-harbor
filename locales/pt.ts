@@ -235,6 +235,10 @@ export default {
     preNDAInformationCard: {
       title: "Informação Pre-NDA",
       table: {
+        buttons: {
+          edit: "Editar",
+          delete: "Apagar",
+        },
         metric: "Métrica",
         value: "Valor",
         actions: "Ações",
@@ -298,6 +302,10 @@ export default {
         exitExpectedMultiple: "Exit Expected Multiple",
         holdPeriod: "Hold Period",
       },
+    },
+    editOpportunityTypeDialog: {
+      title: "Editar Tipo de Oportunidade",
+      description: "Editar o tipo de oportunidade",
     },
   },
   dashboardCard: {

@@ -232,6 +232,10 @@ export default {
     preNDAInformationCard: {
       title: "Pre-NDA Information",
       table: {
+        buttons: {
+          edit: "Edit",
+          delete: "Delete",
+        },
         metric: "Metric",
         value: "Value",
         actions: "Actions",
@@ -295,6 +299,19 @@ export default {
         exitExpectedMultiple: "Exit Expected Multiple",
         holdPeriod: "Hold Period",
       },
+    },
+    editOpportunityTypeDialog: {
+      title: "Edit Opportunity Type",
+      description: "Edit the opportunity type",
+      toastSuccess: "Opportunity type updated successfully",
+      toastError: "Failed to update opportunity type",
+      toastLoading: "Updating opportunity type",
+      selectPlaceholder: "Select a type",
+      label: "Type",
+      buyIn: "Buy In",
+      buyOut: "Buy Out",
+      buyInBuyOut: "Buy In/Buy Out",
+      updateButton: "Update Type",
     },
   },
   dashboardCard: {
