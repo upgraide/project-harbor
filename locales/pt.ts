@@ -380,6 +380,16 @@ export default {
         },
       },
     },
+    deleteOpportunityIndustryDialog: {
+      title: "Apagar Indústria da Oportunidade",
+      description:
+        "Tem a certeza que deseja apagar a indústria da oportunidade? Esta ação não pode ser desfeita.",
+      toastSuccess: "Indústria da oportunidade apagada com sucesso",
+      toastError: "Falha ao apagar indústria da oportunidade",
+      toastLoading: "A apagar indústria da oportunidade",
+      deleteButton: "Apagar",
+      cancelButton: "Cancelar",
+    },
   },
   dashboardCard: {
     viewOpportunity: "Ver Oportunidade",

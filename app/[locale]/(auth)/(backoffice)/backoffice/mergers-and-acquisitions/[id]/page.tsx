@@ -62,6 +62,7 @@ import { DeleteOpportunityTypeDialog } from "./_components/delete-opportunity-ty
 import { EditOpportunityTypeDetailsDialog } from "./_components/edit-opportunity-type-details";
 import { DeleteOpportunityTypeDetailsDialog } from "./_components/delete-opportunity-type-details-dialog";
 import { EditOpportunityIndustryDialog } from "./_components/edit-opportunity-industry-dialog";
+import { DeleteOpportunityIndustryDialog } from "./_components/delete-opportunity-industry-dialog";
 
 const chartConfig = {
   revenue: {
@@ -906,6 +907,10 @@ const Page = ({
       <EditOpportunityIndustryDialog
         opportunity={editOpportunityIndustry}
         setOpportunity={setEditOpportunityIndustry}
+      />
+      <DeleteOpportunityIndustryDialog
+        opportunity={deleteOpportunityIndustry}
+        setOpportunity={setDeleteOpportunityIndustry}
       />
     </SidebarInset>
   );

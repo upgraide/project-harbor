@@ -377,6 +377,16 @@ export default {
         },
       },
     },
+    deleteOpportunityIndustryDialog: {
+      title: "Delete Opportunity Industry",
+      description:
+        "Are you sure you want to delete the opportunity industry? This action cannot be undone.",
+      toastSuccess: "Opportunity industry deleted successfully",
+      toastError: "Failed to delete opportunity industry",
+      toastLoading: "Deleting opportunity industry",
+      deleteButton: "Delete",
+      cancelButton: "Cancel",
+    },
   },
   dashboardCard: {
     viewOpportunity: "View Opportunity",
