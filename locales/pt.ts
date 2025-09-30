@@ -339,6 +339,16 @@ export default {
       hundredPercent: "100%",
       updateButton: "Atualizar Detalhes do Tipo",
     },
+    deleteOpportunityTypeDetailsDialog: {
+      title: "Apagar Detalhes do Tipo da Oportunidade",
+      description:
+        "Tem a certeza que deseja apagar os detalhes do tipo da oportunidade? Esta ação não pode ser desfeita.",
+      toastSuccess: "Detalhes do tipo da oportunidade apagados com sucesso",
+      toastError: "Falha ao apagar detalhes do tipo da oportunidade",
+      toastLoading: "A apagar detalhes do tipo da oportunidade",
+      deleteButton: "Apagar",
+      cancelButton: "Cancelar",
+    },
   },
   dashboardCard: {
     viewOpportunity: "Ver Oportunidade",

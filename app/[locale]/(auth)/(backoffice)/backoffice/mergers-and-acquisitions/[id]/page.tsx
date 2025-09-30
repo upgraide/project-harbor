@@ -60,6 +60,7 @@ import { useScopedI18n } from "@/locales/client";
 import { EditOpportunityTypeDialog } from "./_components/edit-opportunity-type-dialog";
 import { DeleteOpportunityTypeDialog } from "./_components/delete-opportunity-type-dialog";
 import { EditOpportunityTypeDetailsDialog } from "./_components/edit-opportunity-type-details";
+import { DeleteOpportunityTypeDetailsDialog } from "./_components/delete-opportunity-type-details-dialog";
 
 const chartConfig = {
   revenue: {
@@ -383,18 +384,20 @@ const Page = ({
                           <PencilIcon className="size-4" />
                           {t("preNDAInformationCard.table.buttons.edit")}
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => {
-                            setDeleteOpportunityType({
-                              ...opportunity,
-                              createdBy: opportunity.createdBy?._id ?? "",
-                            });
-                          }}
-                        >
-                          <TrashIcon className="size-4 text-destructive" />
-                          {t("preNDAInformationCard.table.buttons.delete")}
-                        </DropdownMenuItem>
+                        {opportunity.type ? (
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => {
+                              setDeleteOpportunityType({
+                                ...opportunity,
+                                createdBy: opportunity.createdBy?._id ?? "",
+                              });
+                            }}
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                            {t("preNDAInformationCard.table.buttons.delete")}
+                          </DropdownMenuItem>
+                        ) : null}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -425,13 +428,20 @@ const Page = ({
                           <PencilIcon className="size-4" />
                           {t("preNDAInformationCard.table.buttons.edit")}
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => {}}
-                        >
-                          <TrashIcon className="size-4 text-destructive" />
-                          {t("preNDAInformationCard.table.buttons.delete")}
-                        </DropdownMenuItem>
+                        {opportunity.typeDetails ? (
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => {
+                              setDeleteOpportunityTypeDetails({
+                                ...opportunity,
+                                createdBy: opportunity.createdBy?._id ?? "",
+                              });
+                            }}
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                            {t("preNDAInformationCard.table.buttons.delete")}
+                          </DropdownMenuItem>
+                        ) : null}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -848,6 +858,10 @@ const Page = ({
       <EditOpportunityTypeDetailsDialog
         opportunity={editOpportunityTypeDetails}
         setOpportunity={setEditOpportunityTypeDetails}
+      />
+      <DeleteOpportunityTypeDetailsDialog
+        opportunity={deleteOpportunityTypeDetails}
+        setOpportunity={setDeleteOpportunityTypeDetails}
       />
     </SidebarInset>
   );

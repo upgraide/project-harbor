@@ -336,6 +336,16 @@ export default {
       hundredPercent: "100%",
       updateButton: "Update Type Details",
     },
+    deleteOpportunityTypeDetailsDialog: {
+      title: "Delete Opportunity Type Details",
+      description:
+        "Are you sure you want to delete the opportunity type details? This action cannot be undone.",
+      toastSuccess: "Opportunity type details deleted successfully",
+      toastError: "Failed to delete opportunity type details",
+      toastLoading: "Deleting opportunity type details",
+      deleteButton: "Delete",
+      cancelButton: "Cancel",
+    },
   },
   dashboardCard: {
     viewOpportunity: "View Opportunity",
