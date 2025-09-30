@@ -59,6 +59,7 @@ import { DeleteOpportunityGraphRowDialog } from "./_components/delete-opportunit
 import { useScopedI18n } from "@/locales/client";
 import { EditOpportunityTypeDialog } from "./_components/edit-opportunity-type-dialog";
 import { DeleteOpportunityTypeDialog } from "./_components/delete-opportunity-type-dialog";
+import { EditOpportunityTypeDetailsDialog } from "./_components/edit-opportunity-type-details";
 
 const chartConfig = {
   revenue: {
@@ -97,6 +98,10 @@ const Page = ({
   const [editOpportunityType, setEditOpportunityType] =
     useState<MergersAndAcquisitions | null>(null);
   const [deleteOpportunityType, setDeleteOpportunityType] =
+    useState<MergersAndAcquisitions | null>(null);
+  const [editOpportunityTypeDetails, setEditOpportunityTypeDetails] =
+    useState<MergersAndAcquisitions | null>(null);
+  const [deleteOpportunityTypeDetails, setDeleteOpportunityTypeDetails] =
     useState<MergersAndAcquisitions | null>(null);
 
   const opportunity = useQuery(api.mergersAndAcquisitions.getById, {
@@ -401,7 +406,35 @@ const Page = ({
                   <TableCell className="px-6 py-4">
                     {opportunity.typeDetails ?? "N/A"}
                   </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setEditOpportunityTypeDetails({
+                              ...opportunity,
+                              createdBy: opportunity.createdBy?._id ?? "",
+                            });
+                          }}
+                        >
+                          <PencilIcon className="size-4" />
+                          {t("preNDAInformationCard.table.buttons.edit")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => {}}
+                        >
+                          <TrashIcon className="size-4 text-destructive" />
+                          {t("preNDAInformationCard.table.buttons.delete")}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
                 <TableRow key={"industry"}>
                   <TableCell className="px-6 py-4">
@@ -811,6 +844,10 @@ const Page = ({
       <DeleteOpportunityTypeDialog
         opportunity={deleteOpportunityType}
         setOpportunity={setDeleteOpportunityType}
+      />
+      <EditOpportunityTypeDetailsDialog
+        opportunity={editOpportunityTypeDetails}
+        setOpportunity={setEditOpportunityTypeDetails}
       />
     </SidebarInset>
   );
