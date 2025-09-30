@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
+import { useScopedI18n } from "@/locales/client";
 
 const chartConfig = {
   revenue: {
@@ -43,6 +44,7 @@ const Page = ({
   params: Promise<{ id: Id<"mergersAndAcquisitions"> }>;
 }) => {
   const { id } = use(params);
+  const t = useScopedI18n("dashboardMergersAndAcquisitionsOpportunityPage");
 
   const opportunity = useQuery(api.mergersAndAcquisitions.getById, {
     id,
@@ -95,7 +97,9 @@ const Page = ({
 
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold">Description</CardTitle>
+            <CardTitle className="text-xl font-semibold">
+              {t("description")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
@@ -107,7 +111,7 @@ const Page = ({
         <Card>
           <CardHeader className="border-b">
             <CardTitle className="text-xl font-semibold">
-              Financial Performance
+              {t("financialPerformanceCard.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -157,21 +161,27 @@ const Page = ({
         <Card>
           <CardHeader className="border-b flex items-center justify-between">
             <CardTitle className="text-xl font-semibold">
-              Financial Information
+              {t("financialInformationCard.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="px-6 py-4">Metric</TableHead>
-                  <TableHead className="px-6 py-4">Value</TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("financialInformationCard.table.metric")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("financialInformationCard.table.value")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {opportunity.type ? (
                   <TableRow key={"type"}>
-                    <TableCell className="px-6 py-4">Type</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.type")}
+                    </TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.type}
                     </TableCell>
@@ -180,7 +190,9 @@ const Page = ({
                 ) : null}
                 {opportunity.typeDetails ? (
                   <TableRow key={"typeDetails"}>
-                    <TableCell className="px-6 py-4">Type Details</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.typeDetails")}
+                    </TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.typeDetails}
                     </TableCell>
@@ -189,7 +201,9 @@ const Page = ({
                 ) : null}
                 {opportunity.industry ? (
                   <TableRow key={"industry"}>
-                    <TableCell className="px-6 py-4">Industry</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.industry")}
+                    </TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.industry}
                     </TableCell>
@@ -199,7 +213,7 @@ const Page = ({
                 {opportunity.industrySubsector ? (
                   <TableRow key={"industrySubsector"}>
                     <TableCell className="px-6 py-4">
-                      Industry Subsector
+                      {t("financialInformationCard.table.industrySubsector")}
                     </TableCell>
                     <TableCell className="px-6 py-4">
                       {opportunity.industrySubsector}
@@ -213,7 +227,7 @@ const Page = ({
                 opportunity.netDebt ? (
                   <TableRow key={"dimension"}>
                     <TableCell className="px-6 py-4 font-medium bg-muted">
-                      Dimension
+                      {t("financialInformationCard.table.dimension")}
                     </TableCell>
                     <TableCell className="px-6 py-4 bg-muted"></TableCell>
                     <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
@@ -221,18 +235,22 @@ const Page = ({
                 ) : null}
                 {opportunity.sales ? (
                   <TableRow key={"sales"}>
-                    <TableCell className="px-6 py-4">Sales</TableCell>
                     <TableCell className="px-6 py-4">
-                      {`${opportunity.sales}M€`}
+                      {t("financialInformationCard.table.sales")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`€${opportunity.sales}M`}
                     </TableCell>
                     <TableCell className="text-right px-6 py-4"></TableCell>
                   </TableRow>
                 ) : null}
                 {opportunity.ebitda ? (
                   <TableRow key={"ebitda"}>
-                    <TableCell className="px-6 py-4">EBITDA (Range)</TableCell>
                     <TableCell className="px-6 py-4">
-                      {`${opportunity.ebitda}M€`}
+                      {t("financialInformationCard.table.ebitda")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`€${opportunity.ebitda}M`}
                     </TableCell>
                     <TableCell className="text-right px-6 py-4"></TableCell>
                   </TableRow>
@@ -240,19 +258,21 @@ const Page = ({
                 {opportunity.ebitdaNormalized ? (
                   <TableRow key={"ebitdaNormalized"}>
                     <TableCell className="px-6 py-4">
-                      EBITDA (Normalized)
+                      {t("financialInformationCard.table.ebitdaNormalized")}
                     </TableCell>
                     <TableCell className="px-6 py-4">
-                      {`${opportunity.ebitdaNormalized}M€`}
+                      {`${opportunity.ebitdaNormalized}x`}
                     </TableCell>
                     <TableCell className="text-right px-6 py-4"></TableCell>
                   </TableRow>
                 ) : null}
                 {opportunity.netDebt ? (
                   <TableRow key={"netDebt"}>
-                    <TableCell className="px-6 py-4">Net Debt</TableCell>
                     <TableCell className="px-6 py-4">
-                      {opportunity.netDebt ? `${opportunity.netDebt}M€` : "N/A"}
+                      {t("financialInformationCard.table.netDebt")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`€${opportunity.netDebt}M`}
                     </TableCell>
                     <TableCell className="text-right px-6 py-4"></TableCell>
                   </TableRow>
@@ -260,7 +280,7 @@ const Page = ({
                 {opportunity.salesCAGR || opportunity.ebitdaCAGR ? (
                   <TableRow key={"CAGR"}>
                     <TableCell className="px-6 py-4 font-medium bg-muted">
-                      CAGR
+                      {t("financialInformationCard.table.cagr")}
                     </TableCell>
                     <TableCell className="px-6 py-4 bg-muted"></TableCell>
                     <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
@@ -268,7 +288,9 @@ const Page = ({
                 ) : null}
                 {opportunity.salesCAGR ? (
                   <TableRow key={"salesCAGR"}>
-                    <TableCell className="px-6 py-4">Sales CAGR</TableCell>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.salesCAGR")}
+                    </TableCell>
                     <TableCell className="px-6 py-4">
                       {`${opportunity.salesCAGR}%`}
                     </TableCell>
@@ -277,11 +299,11 @@ const Page = ({
                 ) : null}
                 {opportunity.ebitdaCAGR ? (
                   <TableRow key={"ebitdaCAGR"}>
-                    <TableCell className="px-6 py-4">EBITDA CAGR</TableCell>
                     <TableCell className="px-6 py-4">
-                      {opportunity.ebitdaCAGR
-                        ? `${opportunity.ebitdaCAGR}%`
-                        : "N/A"}
+                      {t("financialInformationCard.table.ebitdaCAGR")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.ebitdaCAGR}%`}
                     </TableCell>
                     <TableCell className="text-right px-6 py-4"></TableCell>
                   </TableRow>
@@ -290,7 +312,7 @@ const Page = ({
                 opportunity.estimatedAssetValue ? (
                   <TableRow key={"Asset"}>
                     <TableCell className="px-6 py-4 font-medium bg-muted">
-                      Asset
+                      {t("financialInformationCard.table.asset")}
                     </TableCell>
                     <TableCell className="px-6 py-4 bg-muted"></TableCell>
                     <TableCell className="text-right px-6 py-4 bg-muted"></TableCell>
@@ -298,9 +320,11 @@ const Page = ({
                 ) : null}
                 {opportunity.assetIncluded ? (
                   <TableRow key={"assetIncluded"}>
-                    <TableCell className="px-6 py-4">Asset Included</TableCell>
                     <TableCell className="px-6 py-4">
-                      {opportunity.assetIncluded ? "Yes" : "No"}
+                      {t("financialInformationCard.table.assetIncluded")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.assetIncluded ? t("yes") : t("no")}
                     </TableCell>
                     <TableCell className="text-right px-6 py-4"></TableCell>
                   </TableRow>
@@ -308,12 +332,10 @@ const Page = ({
                 {opportunity.estimatedAssetValue ? (
                   <TableRow key={"estimatedAssetValue"}>
                     <TableCell className="px-6 py-4">
-                      Estimated Asset Value
+                      {t("financialInformationCard.table.estimatedAssetValue")}
                     </TableCell>
                     <TableCell className="px-6 py-4">
-                      {opportunity.estimatedAssetValue
-                        ? `${opportunity.estimatedAssetValue}M€`
-                        : "N/A"}
+                      {`€${opportunity.estimatedAssetValue}M`}
                     </TableCell>
                     <TableCell className="text-right px-6 py-4"></TableCell>
                   </TableRow>

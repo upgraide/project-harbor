@@ -10,6 +10,13 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import {
   Form,
   FormControl,
   FormField,
@@ -18,55 +25,59 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { SubmitButton } from "@/components/submit-button";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect } from "react";
+import { useScopedI18n } from "@/locales/client";
 
-const editOpportunityDescriptionSchema = z.object({
-  description: z.string().min(3).max(1000),
+const editOpportunityTypeDetailsSchema = z.object({
+  typeDetails: z.enum(["Maioritário", "Minoritário", "100%"]).optional(),
 });
 
-function EditOpportunityDescriptionDialog({
+type MergersAndAcquisitions = Doc<"mergersAndAcquisitions"> | null;
+
+function EditOpportunityTypeDetailsDialog({
   opportunity,
   setOpportunity,
 }: {
-  opportunity: Doc<"mergersAndAcquisitions"> | null;
-  setOpportunity: (opportunity: Doc<"mergersAndAcquisitions"> | null) => void;
+  opportunity: MergersAndAcquisitions;
+  setOpportunity: (opportunity: MergersAndAcquisitions) => void;
 }) {
+  const t = useScopedI18n(
+    "backofficeMergersAndAcquisitionsOpportunityPage.editOpportunityTypeDetailsDialog",
+  );
   const updateOpportunity = useMutation(api.mergersAndAcquisitions.update);
 
-  const form = useForm<z.infer<typeof editOpportunityDescriptionSchema>>({
-    resolver: zodResolver(editOpportunityDescriptionSchema),
+  const form = useForm<z.infer<typeof editOpportunityTypeDetailsSchema>>({
+    resolver: zodResolver(editOpportunityTypeDetailsSchema),
     defaultValues: {
-      description: opportunity?.description ?? "",
+      typeDetails: opportunity?.typeDetails ?? undefined,
     },
   });
 
   useEffect(() => {
     if (opportunity) {
       form.reset({
-        description: opportunity.description ?? "",
+        typeDetails: opportunity.typeDetails ?? undefined,
       });
     }
   }, [opportunity, form]);
 
-  const onSubmit = (data: z.infer<typeof editOpportunityDescriptionSchema>) => {
+  const onSubmit = (data: z.infer<typeof editOpportunityTypeDetailsSchema>) => {
     if (!opportunity) {
       return;
     }
     toast.promise(
       updateOpportunity({
         id: opportunity._id,
-        description: data.description,
+        typeDetails: data.typeDetails,
       }),
       {
-        loading: "Updating description",
-        success: "Description updated successfully",
-        error: "Failed to update description",
+        loading: t("toastLoading"),
+        success: t("toastSuccess"),
+        error: t("toastError"),
       },
     );
     setOpportunity(null);
@@ -77,10 +88,8 @@ function EditOpportunityDescriptionDialog({
     <Dialog open={!!opportunity} onOpenChange={() => setOpportunity(null)}>
       <DialogContent className="p-0 overflow-hidden gap-0">
         <DialogHeader className="p-6 bg-sidebar border-b border-foreground/10">
-          <DialogTitle>Edit Opportunity Description</DialogTitle>
-          <DialogDescription>
-            Edit the description of the opportunity.
-          </DialogDescription>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -89,16 +98,30 @@ function EditOpportunityDescriptionDialog({
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="typeDetails"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>{t("label")}</FormLabel>
                       <FormControl>
-                        <Textarea
-                          maxLength={1000}
-                          placeholder="Insert a value"
-                          {...field}
-                        />
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder={t("selectPlaceholder")} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Maioritário">
+                              {t("majoritarian")}
+                            </SelectItem>
+                            <SelectItem value="Minoritário">
+                              {t("minority")}
+                            </SelectItem>
+                            <SelectItem value="100%">
+                              {t("hundredPercent")}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -113,7 +136,7 @@ function EditOpportunityDescriptionDialog({
                 type="submit"
                 className="w-full"
               >
-                Update Description
+                {t("updateButton")}
               </SubmitButton>
             </DialogFooter>
           </form>
@@ -123,4 +146,4 @@ function EditOpportunityDescriptionDialog({
   );
 }
 
-export { EditOpportunityDescriptionDialog };
+export { EditOpportunityTypeDetailsDialog };

@@ -1,3 +1,5 @@
+"use client";
+
 import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -9,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { dashboardRealEstateOpportunityPath } from "@/lib/paths";
 import { cn } from "@/lib/utils";
+import { useScopedI18n } from "@/locales/client";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,6 +31,8 @@ const RealEstateOpportunityCard = ({
   image,
   createdAt,
 }: RealEstateOpportunityCardProps) => {
+  const t = useScopedI18n("dashboardCard");
+
   return (
     <Card>
       <CardHeader>
@@ -53,7 +58,9 @@ const RealEstateOpportunityCard = ({
           className="w-full h-48 object-cover rounded-md"
         />
         <div className="ml-auto shrink-0 text-muted-foreground text-xs mt-2">
-          <span>Created {formatDistanceToNow(createdAt)} ago</span>
+          <span>
+            {t("createdAt")} {formatDistanceToNow(createdAt)} {t("ago")}
+          </span>
         </div>
       </CardContent>
 
@@ -62,7 +69,7 @@ const RealEstateOpportunityCard = ({
           href={dashboardRealEstateOpportunityPath(id)}
           className={cn(buttonVariants({ size: "lg" }), "w-full")}
         >
-          View Opportunity
+          {t("viewOpportunity")}
         </Link>
       </CardFooter>
     </Card>
