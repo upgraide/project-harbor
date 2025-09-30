@@ -92,11 +92,21 @@ function EditOpportunityIndustryDialog({
       return;
     }
 
+    const shouldClearSubsector =
+      data.industry &&
+      !(
+        data.industry === "Services" ||
+        data.industry === "Transformation Industry" ||
+        data.industry === "Trading"
+      );
+
     toast.promise(
       updateOpportunity({
         id: opportunity._id,
         industry: data.industry,
-        industrySubsector: data.industrySubsector ?? undefined,
+        industrySubsector: shouldClearSubsector
+          ? null
+          : (data.industrySubsector ?? null),
       }),
       {
         loading: t("toastLoading"),
@@ -104,6 +114,7 @@ function EditOpportunityIndustryDialog({
         error: t("toastError"),
       },
     );
+
     setOpportunity(null);
     form.reset();
   };
