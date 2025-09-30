@@ -61,6 +61,7 @@ import { EditOpportunityTypeDialog } from "./_components/edit-opportunity-type-d
 import { DeleteOpportunityTypeDialog } from "./_components/delete-opportunity-type-dialog";
 import { EditOpportunityTypeDetailsDialog } from "./_components/edit-opportunity-type-details";
 import { DeleteOpportunityTypeDetailsDialog } from "./_components/delete-opportunity-type-details-dialog";
+import { EditOpportunityIndustryDialog } from "./_components/edit-opportunity-industry-dialog";
 
 const chartConfig = {
   revenue: {
@@ -103,6 +104,10 @@ const Page = ({
   const [editOpportunityTypeDetails, setEditOpportunityTypeDetails] =
     useState<MergersAndAcquisitions | null>(null);
   const [deleteOpportunityTypeDetails, setDeleteOpportunityTypeDetails] =
+    useState<MergersAndAcquisitions | null>(null);
+  const [editOpportunityIndustry, setEditOpportunityIndustry] =
+    useState<MergersAndAcquisitions | null>(null);
+  const [deleteOpportunityIndustry, setDeleteOpportunityIndustry] =
     useState<MergersAndAcquisitions | null>(null);
 
   const opportunity = useQuery(api.mergersAndAcquisitions.getById, {
@@ -453,7 +458,42 @@ const Page = ({
                   <TableCell className="px-6 py-4">
                     {opportunity.industry ?? "N/A"}
                   </TableCell>
-                  <TableCell className="text-right px-6 py-4"></TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setEditOpportunityIndustry({
+                              ...opportunity,
+                              createdBy: opportunity.createdBy?._id ?? "",
+                            });
+                          }}
+                        >
+                          <PencilIcon className="size-4" />
+                          {t("preNDAInformationCard.table.buttons.edit")}
+                        </DropdownMenuItem>
+                        {opportunity.typeDetails ? (
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => {
+                              setDeleteOpportunityIndustry({
+                                ...opportunity,
+                                createdBy: opportunity.createdBy?._id ?? "",
+                              });
+                            }}
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                            {t("preNDAInformationCard.table.buttons.delete")}
+                          </DropdownMenuItem>
+                        ) : null}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
                 <TableRow key={"industrySubsector"}>
                   <TableCell className="px-6 py-4">
@@ -862,6 +902,10 @@ const Page = ({
       <DeleteOpportunityTypeDetailsDialog
         opportunity={deleteOpportunityTypeDetails}
         setOpportunity={setDeleteOpportunityTypeDetails}
+      />
+      <EditOpportunityIndustryDialog
+        opportunity={editOpportunityIndustry}
+        setOpportunity={setEditOpportunityIndustry}
       />
     </SidebarInset>
   );
