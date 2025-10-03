@@ -478,5 +478,8 @@ export default {
         },
       },
     },
+    shareholderInformationCard: {
+      title: "Estrutura Acionista",
+    },
   },
 } as const;

@@ -475,6 +475,9 @@ export default {
         },
       },
     },
+    shareholderInformationCard: {
+      title: "Shareholder Structure",
+    },
   },
   dashboardMergersAndAcquisitionsOpportunityPage: {
     breadcrumbs: {
