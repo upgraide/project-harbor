@@ -71,7 +71,7 @@ const Page = ({
           <div className="w-full">
             <Image
               alt="Opportunity Image 1"
-              className="h-96 w-full rounded-lg object-cover"
+              className="h-96 w-full object-cover"
               height={4501}
               src={opportunity.imagesUrls[3] ?? ""}
               width={4501}
@@ -84,7 +84,7 @@ const Page = ({
                 <div key={index + 1}>
                   <Image
                     alt={`Opportunity Image ${index + 2}`}
-                    className="h-48 w-full rounded-lg object-cover"
+                    className="h-48 w-full object-cover"
                     height={200}
                     src={imageUrl ?? ""}
                     width={300}
@@ -96,8 +96,8 @@ const Page = ({
         </>
       )}
 
-      <Card>
-        <CardHeader className="flex items-center justify-between border-b">
+      <Card className="border-none bg-background shadow-none">
+        <CardHeader className="flex items-center justify-between">
           <CardTitle className="font-semibold text-xl">
             {t("description")}
           </CardTitle>
@@ -109,8 +109,8 @@ const Page = ({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="border-b">
+      <Card className="border-none bg-background shadow-none">
+        <CardHeader>
           <CardTitle className="font-semibold text-xl">
             {t("financialPerformanceCard.title")}
           </CardTitle>
@@ -159,8 +159,8 @@ const Page = ({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="flex items-center justify-between border-b">
+      <Card className="border-none bg-background shadow-none">
+        <CardHeader className="flex items-center justify-between">
           <CardTitle className="font-semibold text-xl">
             {t("financialInformationCard.title")}
           </CardTitle>
@@ -175,6 +175,7 @@ const Page = ({
                 <TableHead className="px-6 py-4">
                   {t("financialInformationCard.table.value")}
                 </TableHead>
+                <TableHead className="px-6 py-4" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -345,8 +346,8 @@ const Page = ({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="flex items-center justify-between border-b">
+      <Card className="border-none bg-background shadow-none">
+        <CardHeader className="flex items-center justify-between">
           <CardTitle className="font-semibold text-xl">
             Further Information
           </CardTitle>
@@ -357,7 +358,7 @@ const Page = ({
               <TableRow>
                 <TableHead className="px-6 py-4">Metric</TableHead>
                 <TableHead className="px-6 py-4">Value</TableHead>
-                <TableHead className="px-6 py-4 text-right">Actions</TableHead>
+                <TableHead className="px-6 py-4" />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -438,7 +439,7 @@ const Page = ({
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-none bg-background shadow-none">
         <CardHeader className="flex items-center justify-between border-b">
           <CardTitle className="font-semibold text-xl">
             Shareholder Structure
@@ -449,7 +450,7 @@ const Page = ({
             <div className="w-full" key={index}>
               <Image
                 alt={`Opportunity Image ${index + 1}`}
-                className="h-96 w-full rounded-lg"
+                className="h-96 w-full"
                 height={4501}
                 src={imageUrl ?? ""}
                 width={4501}
@@ -459,8 +460,8 @@ const Page = ({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader className="flex items-center justify-between border-b">
+      <Card className="border-none bg-background shadow-none">
+        <CardHeader className="flex items-center justify-between">
           <CardTitle className="font-semid text-xl">
             Co-Investment Information
           </CardTitle>
@@ -471,7 +472,7 @@ const Page = ({
               <TableRow>
                 <TableHead className="px-6 py-4">Metric</TableHead>
                 <TableHead className="px-6 py-4">Value</TableHead>
-                <TableHead className="px-6 py-4 text-right">Actions</TableHead>
+                <TableHead className="px-6 py-4" />
               </TableRow>
             </TableHeader>
             <TableBody>
