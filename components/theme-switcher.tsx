@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
 
 export function ThemeSwitcher({ triggerClass }: { triggerClass?: string }) {
+  const t = useScopedI18n("themeSwitcher");
   const { theme: currentTheme, setTheme, themes } = useTheme();
   return (
     <Select
@@ -41,9 +42,7 @@ export function ThemeSwitcher({ triggerClass }: { triggerClass?: string }) {
             return <Monitor className="h-[14px] w-[14px]" />;
           })()}
           {currentTheme && (
-            <span className="font-medium text-xs">
-              {currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)}
-            </span>
+            <span className="font-medium text-xs">{t(currentTheme)}</span>
           )}
         </div>
       </SelectTrigger>
@@ -54,7 +53,7 @@ export function ThemeSwitcher({ triggerClass }: { triggerClass?: string }) {
             key={theme}
             value={theme}
           >
-            {theme && theme.charAt(0).toUpperCase() + theme.slice(1)}
+            {theme && t(theme)}
           </SelectItem>
         ))}
       </SelectContent>
