@@ -80,9 +80,7 @@ export function Navigation({
               </AvatarFallback>
             </Avatar>
 
-            <p className="font-medium text-primary/80 text-sm">
-              {user?.name || user.email}
-            </p>
+            <p className="font-medium text-sm">{user?.name || user.email}</p>
           </div>
         </div>
 
@@ -112,7 +110,7 @@ export function Navigation({
               sideOffset={8}
             >
               <DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
-                <p className="font-medium text-primary/80 text-sm group-hover:text-primary group-focus:text-primary">
+                <p className="font-medium text-sm group-hover:text-primary group-focus:text-primary">
                   {user.name || user.email?.split("@")[0]}
                 </p>
                 <p className="text-primary/60 text-sm">{user.email}</p>
@@ -122,10 +120,10 @@ export function Navigation({
                 className="group h-9 w-full cursor-pointer justify-between rounded-md px-2"
                 onClick={() => router.push(dashboardSettingsPath())}
               >
-                <span className="text-primary/60 text-sm group-hover:text-primary group-focus:text-primary">
+                <span className="text-sm group-hover:text-primary group-focus:text-primary">
                   {t("settings")}
                 </span>
-                <Settings className="h-[18px] w-[18px] stroke-[1.5px] text-primary/60 group-hover:text-primary group-focus:text-primary" />
+                <Settings className="h-[18px] w-[18px] stroke-[1.5px] group-hover:text-primary group-focus:text-primary" />
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -133,7 +131,7 @@ export function Navigation({
                   "group flex h-9 justify-between rounded-md px-2 hover:bg-transparent"
                 )}
               >
-                <span className="w-full text-primary/60 text-sm group-hover:text-primary group-focus:text-primary">
+                <span className="w-full text-sm group-hover:text-primary group-focus:text-primary">
                   {t("theme")}
                 </span>
                 <ThemeSwitcher />
@@ -144,7 +142,7 @@ export function Navigation({
                   "group flex h-9 justify-between rounded-md px-2 hover:bg-transparent"
                 )}
               >
-                <span className="w-full text-primary/60 text-sm group-hover:text-primary group-focus:text-primary">
+                <span className="w-full text-sm group-hover:text-primary group-focus:text-primary">
                   {t("language")}
                 </span>
                 <LanguageSwitcher />
@@ -158,10 +156,10 @@ export function Navigation({
                   handleLogout();
                 }}
               >
-                <span className="text-primary/60 text-sm group-hover:text-primary group-focus:text-primary">
+                <span className="text-sm group-hover:text-primary group-focus:text-primary">
                   {t("logout")}
                 </span>
-                <LogOut className="h-[18px] w-[18px] stroke-[1.5px] text-primary/60 group-hover:text-primary group-focus:text-primary" />
+                <LogOut className="h-[18px] w-[18px] stroke-[1.5px] group-hover:text-primary group-focus:text-primary" />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -177,7 +175,7 @@ export function Navigation({
         >
           <Link
             className={cn(
-              `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`
+              `${buttonVariants({ variant: "ghost", size: "sm" })}`
             )}
             href={dashboardPath()}
           >
@@ -192,7 +190,7 @@ export function Navigation({
         >
           <Link
             className={cn(
-              `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`
+              `${buttonVariants({ variant: "ghost", size: "sm" })}`
             )}
             href={dashboardSettingsPath()}
           >

@@ -22,11 +22,7 @@ export const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
             )}
             href={dashboardSettingsPath()}
           >
-            <span
-              className={cn(
-                `text-primary/80 text-sm ${isSettingsPath && "font-medium text-primary"}`
-              )}
-            >
+            <span className={cn(`text-sm ${isSettingsPath && "font-medium"}`)}>
               {t("general")}
             </span>
           </Link>

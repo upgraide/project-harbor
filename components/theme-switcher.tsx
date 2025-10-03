@@ -25,7 +25,7 @@ export function ThemeSwitcher({ triggerClass }: { triggerClass?: string }) {
     >
       <SelectTrigger
         className={cn(
-          "!px-2 h-6 rounded border-primary/20 bg-secondary hover:border-primary/40",
+          "!px-2 h-6 rounded border-primary/20 hover:border-primary/40",
           triggerClass
         )}
         size="sm"
@@ -50,7 +50,7 @@ export function ThemeSwitcher({ triggerClass }: { triggerClass?: string }) {
       <SelectContent>
         {themes.map((theme) => (
           <SelectItem
-            className={`font-medium text-primary/60 text-sm ${theme === currentTheme && "text-primary"}`}
+            className={`font-medium text-sm ${theme === currentTheme && "text-primary"}`}
             key={theme}
             value={theme}
           >
@@ -71,7 +71,7 @@ export function ThemeSwitcherHome() {
       return (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Sun className="h-4 w-4 text-primary/80 hover:text-primary" />
+            <Sun className="h-4 w-4 hover:text-primary" />
           </TooltipTrigger>
           <TooltipContent>{t("light")}</TooltipContent>
         </Tooltip>
@@ -81,7 +81,7 @@ export function ThemeSwitcherHome() {
       return (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Moon className="h-4 w-4 text-primary/80 hover:text-primary" />
+            <Moon className="h-4 w-4 hover:text-primary" />
           </TooltipTrigger>
           <TooltipContent>{t("dark")}</TooltipContent>
         </Tooltip>
@@ -90,7 +90,7 @@ export function ThemeSwitcherHome() {
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <Monitor className="h-4 w-4 text-primary/80 hover:text-primary" />
+          <Monitor className="h-4 w-4 hover:text-primary" />
         </TooltipTrigger>
         <TooltipContent>{t("system")}</TooltipContent>
       </Tooltip>
