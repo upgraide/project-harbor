@@ -478,6 +478,27 @@ export default {
     shareholderInformationCard: {
       title: "Shareholder Structure",
     },
+    coInvestmentInformationCard: {
+      title: "Limited Partner Information",
+      table: {
+        header: {
+          metric: "Metric",
+          value: "Value",
+        },
+        metrics: {
+          equityContribution: "Equity Contribution (%)",
+          grossIRR: "Gross IRR",
+          netIRR: "Net IRR",
+          moic: "MOIC (Multiple on Invested Capital)",
+          cashOnCashReturn: "Cash-on-Cash Return",
+          cashConvertion: "Cash Conversion (FCF/EBITDA)",
+          entryMultiple: "Entry Multiple",
+          exitExpectedMultiple: "Exit Expected Multiple",
+          holdPeriod: "Hold Period (Years)",
+          years: "Years",
+        },
+      },
+    },
   },
   dashboardMergersAndAcquisitionsOpportunityPage: {
     breadcrumbs: {

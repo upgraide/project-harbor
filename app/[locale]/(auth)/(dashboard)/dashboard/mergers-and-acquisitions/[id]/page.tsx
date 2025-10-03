@@ -585,84 +585,103 @@ const Page = ({
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="font-semid text-xl">
-            Co-Investment Information
+            {t("coInvestmentInformationCard.title")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="px-6 py-4">Metric</TableHead>
-                <TableHead className="px-6 py-4">Value</TableHead>
-                <TableHead className="px-6 py-4" />
+                <TableHead className="px-6 py-4">
+                  {t("coInvestmentInformationCard.table.header.metric")}
+                </TableHead>
+                <TableHead className="px-6 py-4">
+                  {t("coInvestmentInformationCard.table.header.value")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <TableRow key={"equityContribution"}>
-                <TableCell className="px-6 py-4">Equity Contribution</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t(
+                    "coInvestmentInformationCard.table.metrics.equityContribution"
+                  )}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.equityContribution ?? "N/A"}
                 </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"grossIRR"}>
-                <TableCell className="px-6 py-4">Gross IRR</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("coInvestmentInformationCard.table.metrics.grossIRR")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.grossIRR ?? "N/A"}
                 </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"netIRR"}>
-                <TableCell className="px-6 py-4">Net IRR</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("coInvestmentInformationCard.table.metrics.netIRR")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.netIRR ?? "N/A"}
                 </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"moic"}>
-                <TableCell className="px-6 py-4">MOIC</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("coInvestmentInformationCard.table.metrics.moic")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.moic ?? "N/A"}
                 </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"cashOnCashReturn"}>
-                <TableCell className="px-6 py-4">Cash On Cash Return</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t(
+                    "coInvestmentInformationCard.table.metrics.cashOnCashReturn"
+                  )}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.cashOnCashReturn ?? "N/A"}
                 </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"cashConvertion"}>
-                <TableCell className="px-6 py-4">Cash Convertion</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t(
+                    "coInvestmentInformationCard.table.metrics.cashConvertion"
+                  )}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.cashConvertion ?? "N/A"}
                 </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"entryMultiple"}>
-                <TableCell className="px-6 py-4">Entry Multiple</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("coInvestmentInformationCard.table.metrics.entryMultiple")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.entryMultiple ?? "N/A"}
                 </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"exitExpectedMultiple"}>
                 <TableCell className="px-6 py-4">
-                  Exit Expected Multiple
+                  {t(
+                    "coInvestmentInformationCard.table.metrics.exitExpectedMultiple"
+                  )}
                 </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.exitExpectedMultiple ?? "N/A"}
                 </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               {opportunity.holdPeriod ? (
                 <TableRow key={"holdPeriod"}>
-                  <TableCell className="px-6 py-4">Hold Period</TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.holdPeriod} years
+                    {t("coInvestmentInformationCard.table.metrics.holdPeriod")}
                   </TableCell>
-                  <TableCell className="px-6 py-4 text-right" />
+                  <TableCell className="px-6 py-4">
+                    {opportunity.holdPeriod}{" "}
+                    {t("coInvestmentInformationCard.table.values.years")}
+                  </TableCell>
                 </TableRow>
               ) : null}
             </TableBody>

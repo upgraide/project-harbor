@@ -481,5 +481,28 @@ export default {
     shareholderInformationCard: {
       title: "Estrutura Acionista",
     },
+    coInvestmentInformationCard: {
+      title: "Limited Partner Information",
+      table: {
+        header: {
+          metric: "Métrica",
+          value: "Valor",
+        },
+        metrics: {
+          equityContribution: "Contribuição de Capital",
+          grossIRR: "TIR Bruta",
+          netIRR: "TIR Líquida",
+          moic: "MOIC (Múltiplo sobre o Capital Investido)",
+          cashOnCashReturn: "Retorno Cash-on-Cash",
+          cashConvertion: "Conversão de Caixa (FCF/EBITDA)",
+          entryMultiple: "Múltiplo de Entrada",
+          exitExpectedMultiple: "Múltiplo de Saída Esperado",
+          holdPeriod: "Período de Investimento (Anos)",
+        },
+        values: {
+          years: "Anos",
+        },
+      },
+    },
   },
 } as const;
