@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef } from "react";
 
-interface UseInfiniteScrollProps {
+type UseInfiniteScrollProps = {
   status: "CanLoadMore" | "LoadingMore" | "Exhausted" | "LoadingFirstPage";
   loadMore: (numItems: number) => void;
   loadSize?: number;
   observerEnabled?: boolean;
-}
+};
 
 export const useInfiniteScroll = ({
   status,
@@ -23,7 +23,9 @@ export const useInfiniteScroll = ({
 
   useEffect(() => {
     const topElement = topElementRef.current;
-    if (!(topElement && observerEnabled)) return;
+    if (!(topElement && observerEnabled)) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -31,7 +33,7 @@ export const useInfiniteScroll = ({
           handleLoadMore();
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     observer.observe(topElement);

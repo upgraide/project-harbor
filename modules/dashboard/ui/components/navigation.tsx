@@ -1,6 +1,12 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
+import { type Preloaded, usePreloadedQuery, useQuery } from "convex/react";
+import { LogOut, Settings, Slash } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { DynamicImage } from "@/components/dynamic-image";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -10,18 +16,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
-import { type Preloaded, usePreloadedQuery, useQuery } from "convex/react";
-import { LogOut, Settings, Slash } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { DynamicImage } from "@/components/dynamic-image";
-import { LanguageSwitcher } from "@/components/language-switcher";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { useScopedI18n } from "@/locales/client";
-import { dashboardSettingsPath, dashboardPath } from "@/lib/paths";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { useLogout } from "@/hooks/use-signout";
-import { Id } from "@/convex/_generated/dataModel";
+import { dashboardPath, dashboardSettingsPath } from "@/lib/paths";
+import { cn } from "@/lib/utils";
+import { useScopedI18n } from "@/locales/client";
 
 export function Navigation({
   preloadedUser,
@@ -39,7 +39,7 @@ export function Navigation({
 
   const userImageUrl = useQuery(
     api.files.getUrlById,
-    user?.image ? { id: user.image as Id<"_storage"> } : "skip",
+    user?.image ? { id: user.image as Id<"_storage"> } : "skip"
   );
 
   const { handleLogout } = useLogout();
@@ -49,7 +49,7 @@ export function Navigation({
   }
 
   return (
-    <nav className="sticky top-0 z-50 flex w-full flex-col border-b border-border bg-card px-6">
+    <nav className="sticky top-0 z-50 flex w-full flex-col border-border border-b bg-card px-6">
       <div className="mx-auto flex w-full max-w-screen-xl items-center justify-between py-3">
         <div className="flex h-10 items-center gap-2">
           <Link className="flex h-10 items-center gap-1" href={dashboardPath()}>
@@ -62,7 +62,7 @@ export function Navigation({
               width={50}
             />
           </Link>
-          <Slash className="h-6 w-6 -rotate-12 stroke-[1.5px] text-primary/10" />
+          <Slash className="-rotate-12 h-6 w-6 stroke-[1.5px] text-primary/10" />
           <div className="flex items-center gap-2">
             <Avatar className="h-8 w-8 rounded-full">
               <AvatarImage
@@ -80,9 +80,7 @@ export function Navigation({
               </AvatarFallback>
             </Avatar>
 
-            <p className="text-sm font-medium text-primary/80">
-              {user?.name || user.email}
-            </p>
+            <p className="font-medium text-sm">{user?.name || user.email}</p>
           </div>
         </div>
 
@@ -108,32 +106,32 @@ export function Navigation({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-              className="fixed -right-4 min-w-56 bg-card p-2 space-y-2"
+              className="-right-4 fixed min-w-56 space-y-2 bg-card p-2"
               sideOffset={8}
             >
               <DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
-                <p className="text-sm font-medium text-primary/80 group-hover:text-primary group-focus:text-primary">
+                <p className="font-medium text-sm group-hover:text-primary group-focus:text-primary">
                   {user.name || user.email?.split("@")[0]}
                 </p>
-                <p className="text-sm text-primary/60">{user.email}</p>
+                <p className="text-primary/60 text-sm">{user.email}</p>
               </DropdownMenuItem>
 
               <DropdownMenuItem
                 className="group h-9 w-full cursor-pointer justify-between rounded-md px-2"
                 onClick={() => router.push(dashboardSettingsPath())}
               >
-                <span className="text-sm text-primary/60 group-hover:text-primary group-focus:text-primary">
+                <span className="text-sm group-hover:text-primary group-focus:text-primary">
                   {t("settings")}
                 </span>
-                <Settings className="h-[18px] w-[18px] stroke-[1.5px] text-primary/60 group-hover:text-primary group-focus:text-primary" />
+                <Settings className="h-[18px] w-[18px] stroke-[1.5px] group-hover:text-primary group-focus:text-primary" />
               </DropdownMenuItem>
 
               <DropdownMenuItem
                 className={cn(
-                  "group flex h-9 justify-between rounded-md px-2 hover:bg-transparent",
+                  "group flex h-9 justify-between rounded-md px-2 hover:bg-transparent"
                 )}
               >
-                <span className="w-full text-sm text-primary/60 group-hover:text-primary group-focus:text-primary">
+                <span className="w-full text-sm group-hover:text-primary group-focus:text-primary">
                   {t("theme")}
                 </span>
                 <ThemeSwitcher />
@@ -141,10 +139,10 @@ export function Navigation({
 
               <DropdownMenuItem
                 className={cn(
-                  "group flex h-9 justify-between rounded-md px-2 hover:bg-transparent",
+                  "group flex h-9 justify-between rounded-md px-2 hover:bg-transparent"
                 )}
               >
-                <span className="w-full text-sm text-primary/60 group-hover:text-primary group-focus:text-primary">
+                <span className="w-full text-sm group-hover:text-primary group-focus:text-primary">
                   {t("language")}
                 </span>
                 <LanguageSwitcher />
@@ -158,10 +156,10 @@ export function Navigation({
                   handleLogout();
                 }}
               >
-                <span className="text-sm text-primary/60 group-hover:text-primary group-focus:text-primary">
+                <span className="text-sm group-hover:text-primary group-focus:text-primary">
                   {t("logout")}
                 </span>
-                <LogOut className="h-[18px] w-[18px] stroke-[1.5px] text-primary/60 group-hover:text-primary group-focus:text-primary" />
+                <LogOut className="h-[18px] w-[18px] stroke-[1.5px] group-hover:text-primary group-focus:text-primary" />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -172,12 +170,12 @@ export function Navigation({
         <div
           className={cn(
             "flex h-12 items-center border-b-2",
-            isDashboardPath ? "border-primary" : "border-transparent",
+            isDashboardPath ? "border-primary" : "border-transparent"
           )}
         >
           <Link
             className={cn(
-              `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`,
+              `${buttonVariants({ variant: "ghost", size: "sm" })}`
             )}
             href={dashboardPath()}
           >
@@ -187,12 +185,12 @@ export function Navigation({
         <div
           className={cn(
             "flex h-12 items-center border-b-2",
-            isSettingsPath ? "border-primary" : "border-transparent",
+            isSettingsPath ? "border-primary" : "border-transparent"
           )}
         >
           <Link
             className={cn(
-              `${buttonVariants({ variant: "ghost", size: "sm" })} text-primary/80`,
+              `${buttonVariants({ variant: "ghost", size: "sm" })}`
             )}
             href={dashboardSettingsPath()}
           >

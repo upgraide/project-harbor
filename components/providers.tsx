@@ -1,10 +1,10 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
+import type { ReactNode } from "react";
+import { Toaster } from "sonner";
 import { I18nProviderClient } from "@/locales/client";
 import { ConvexClientProvider } from "./convex-client-provider";
-import { Toaster } from "sonner";
 
 type ProviderProps = {
   locale: string;

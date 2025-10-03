@@ -1,3 +1,5 @@
+import { useMutation } from "convex/react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,10 +10,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
-import { Doc } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import type { Doc } from "@/convex/_generated/dataModel";
 
 function DeleteOpportunityGraphRowDialog({
   opportunity,
@@ -23,13 +23,13 @@ function DeleteOpportunityGraphRowDialog({
   graphRow: { year: string; revenue: number; ebitda: number } | null;
   setOpportunity: (opportunity: Doc<"mergersAndAcquisitions"> | null) => void;
   setGraphRow: (
-    graphRow: { year: string; revenue: number; ebitda: number } | null,
+    graphRow: { year: string; revenue: number; ebitda: number } | null
   ) => void;
 }) {
   const updateOpportunity = useMutation(api.mergersAndAcquisitions.update);
 
   const handleDelete = () => {
-    if (!opportunity || !graphRow) {
+    if (!(opportunity && graphRow)) {
       return;
     }
 
@@ -37,14 +37,14 @@ function DeleteOpportunityGraphRowDialog({
       updateOpportunity({
         id: opportunity._id,
         graphRows: (opportunity.graphRows ?? []).filter(
-          (row) => row.year !== graphRow.year,
+          (row) => row.year !== graphRow.year
         ),
       }),
       {
         loading: "Deleting graph row",
         success: "Graph row deleted successfully",
         error: "Failed to delete graph row",
-      },
+      }
     );
     setOpportunity(null);
     setGraphRow(null);
@@ -52,11 +52,11 @@ function DeleteOpportunityGraphRowDialog({
 
   return (
     <AlertDialog
-      open={!!opportunity}
       onOpenChange={() => {
         setOpportunity(null);
         setGraphRow(null);
       }}
+      open={!!opportunity}
     >
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -69,8 +69,8 @@ function DeleteOpportunityGraphRowDialog({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleDelete}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            onClick={handleDelete}
           >
             Delete
           </AlertDialogAction>

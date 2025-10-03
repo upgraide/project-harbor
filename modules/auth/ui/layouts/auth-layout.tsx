@@ -1,46 +1,46 @@
 "use client";
 
+import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { DynamicImage } from "@/components/dynamic-image";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { homePath, requestAccessPath, signInPath } from "@/lib/paths";
 import { ThemeSwitcherHome } from "@/components/theme-switcher";
-import { ArrowLeftIcon } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { homePath, requestAccessPath, signInPath } from "@/lib/paths";
 import { useScopedI18n } from "@/locales/client";
-import { usePathname } from "next/navigation";
 
 export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const t = useScopedI18n("signInPage");
   const pathname = usePathname();
 
   return (
-    <div className="min-h-svh w-full flex flex-col items-center justify-center p-4 space-y-4">
+    <div className="flex min-h-svh w-full flex-col items-center justify-center space-y-4 p-4">
       <div className="absolute top-4 left-4">
         <Link
-          href={homePath()}
           className={buttonVariants({ variant: "outline" })}
+          href={homePath()}
         >
-          <ArrowLeftIcon className="w-4 h-4" />
+          <ArrowLeftIcon className="h-4 w-4" />
           {t("buttons.back")}
         </Link>
       </div>
       <DynamicImage
         alt="Harbor Partners Logo"
-        lightSrc="/assets/logo-dark.png"
         darkSrc="/assets/logo-light.png"
         height={250}
+        lightSrc="/assets/logo-dark.png"
         width={250}
       />
       <div className="w-full max-w-md space-y-4">
         {children}
-        <p className="text-center mt-4 text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="mt-4 text-center text-neutral-600 text-sm dark:text-neutral-400">
           {pathname === requestAccessPath() ? (
             <>
               {t("alreadyHaveAccount")}{" "}
               <Link
-                href={signInPath()}
                 className="text-accent-foreground underline"
+                href={signInPath()}
               >
                 {t("buttons.membershipLogin")}
               </Link>
@@ -49,8 +49,8 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
             <>
               {t("dontHaveAccount")}{" "}
               <Link
-                href={requestAccessPath()}
                 className="text-accent-foreground underline"
+                href={requestAccessPath()}
               >
                 {t("buttons.requestAccess")}
               </Link>
@@ -58,7 +58,7 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           )}
         </p>
       </div>
-      <div className="flex justify-center flex-col items-center gap-4">
+      <div className="flex flex-col items-center justify-center gap-4">
         <LanguageSwitcher />
         <ThemeSwitcherHome />
       </div>

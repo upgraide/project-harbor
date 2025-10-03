@@ -1,8 +1,8 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import type { ImageProps } from "next/image";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface DynamicImageProps extends Omit<ImageProps, "src" | "className"> {
   lightSrc: ImageProps["src"];

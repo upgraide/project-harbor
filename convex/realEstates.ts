@@ -1,8 +1,8 @@
+import { type PaginationResult, paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
+import type { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
-import { paginationOptsValidator, PaginationResult } from "convex/server";
-import { Doc } from "./_generated/dataModel";
 
 export const create = mutation({
   args: {
@@ -20,8 +20,8 @@ export const create = mutation({
         v.literal("Shopping Center"),
         v.literal("Street Retail"),
         v.literal("Student Housing"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     nRoomsLastYear: v.optional(v.union(v.null(), v.number())),
     noi: v.optional(v.union(v.null(), v.number())),
@@ -38,8 +38,8 @@ export const create = mutation({
         v.literal("Value-add"),
         v.literal("Opportunistic"),
         v.literal("Development"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     subRent: v.optional(v.union(v.null(), v.number())),
     rentPerSqm: v.optional(v.union(v.null(), v.number())),
@@ -143,7 +143,7 @@ export const getMany = query({
       opportunities = await ctx.db
         .query("realEstates")
         .withSearchIndex("search_name", (q) =>
-          q.search("name", args.name ?? ""),
+          q.search("name", args.name ?? "")
         )
         .paginate(args.paginationOpts);
     } else {
@@ -157,14 +157,14 @@ export const getMany = query({
       opportunities.page.map(async (opportunity) => {
         const user = await authComponent.getAnyUserById(
           ctx,
-          opportunity.createdBy,
+          opportunity.createdBy
         );
 
         const imagesUrls = opportunity.images
           ? await Promise.all(
-              opportunity.images.map(async (image) => {
-                return await ctx.storage.getUrl(image);
-              }),
+              opportunity.images.map(
+                async (image) => await ctx.storage.getUrl(image)
+              )
             )
           : undefined;
 
@@ -182,7 +182,7 @@ export const getMany = query({
             : null,
           imagesUrls,
         };
-      }),
+      })
     );
 
     return {
@@ -219,9 +219,9 @@ export const getById = query({
 
     const imagesUrls = opportunity.images
       ? await Promise.all(
-          opportunity.images.map(async (image) => {
-            return await ctx.storage.getUrl(image);
-          }),
+          opportunity.images.map(
+            async (image) => await ctx.storage.getUrl(image)
+          )
         )
       : undefined;
 

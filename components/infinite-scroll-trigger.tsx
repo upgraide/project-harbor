@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-interface InfiniteScrollTriggerProps {
+type InfiniteScrollTriggerProps = {
   canLoadMore: boolean;
   isLoadingMore: boolean;
   onLoadMore: () => void;
@@ -9,7 +9,7 @@ interface InfiniteScrollTriggerProps {
   noMoreText?: string;
   className?: string;
   ref?: React.RefObject<HTMLDivElement>;
-}
+};
 
 export const InfiniteScrollTrigger = ({
   canLoadMore,

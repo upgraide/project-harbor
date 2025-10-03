@@ -1,6 +1,14 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
+import {
+  EllipsisVerticalIcon,
+  InboxIcon,
+  LogOutIcon,
+  UserIcon,
+} from "lucide-react";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { ThemeSwitcher, ThemeSwitcherHome } from "@/components/theme-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -18,25 +26,17 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery } from "convex/react";
-import {
-  EllipsisVerticalIcon,
-  InboxIcon,
-  LogOutIcon,
-  UserIcon,
-} from "lucide-react";
-import { LanguageSwitcher } from "@/components/language-switcher";
-import { ThemeSwitcher, ThemeSwitcherHome } from "@/components/theme-switcher";
-import { useScopedI18n } from "@/locales/client";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { useLogout } from "@/hooks/use-signout";
-import { Id } from "@/convex/_generated/dataModel";
+import { useScopedI18n } from "@/locales/client";
 
 const NavUserSidebar = () => {
   const user = useQuery(api.auth.getCurrentUser);
 
   const userImageUrl = useQuery(
     api.files.getUrlById,
-    user?.image ? { id: user.image as Id<"_storage"> } : "skip",
+    user?.image ? { id: user.image as Id<"_storage"> } : "skip"
   );
 
   const { isMobile } = useSidebar();
@@ -73,7 +73,7 @@ const NavUserSidebar = () => {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="text-muted-foreground truncate text-xs">
+                <span className="truncate text-muted-foreground text-xs">
                   {user.email}
                 </span>
               </div>
@@ -105,7 +105,7 @@ const NavUserSidebar = () => {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className="truncate text-muted-foreground text-xs">
                     {user.email}
                   </span>
                 </div>

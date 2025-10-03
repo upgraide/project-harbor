@@ -1,11 +1,20 @@
 import { z } from "zod";
-import { Id } from "@/convex/_generated/dataModel";
+import type { Id } from "@/convex/_generated/dataModel";
+
+const NAME_MIN_LENGTH = 3;
+const NAME_MAX_LENGTH = 100;
+const DESCRIPTION_MIN_LENGTH = 3;
+const DESCRIPTION_MAX_LENGTH = 1000;
 
 export const createMergersAndAcquisitionsFormSchema = z.object({
   name: z
     .string()
-    .min(3, { message: "Name must be at least 3 characters long" })
-    .max(100, { message: "Name must be at most 100 characters long" }),
+    .min(NAME_MIN_LENGTH, {
+      message: `Name must be at least ${NAME_MIN_LENGTH} characters long`,
+    })
+    .max(NAME_MAX_LENGTH, {
+      message: `Name must be at most ${NAME_MAX_LENGTH} characters long`,
+    }),
   images: z.array(z.custom<Id<"_storage">>()).optional(),
   type: z.enum(["Buy In", "Buy Out", "Buy In/Buy Out"]).optional(),
   typeDetails: z.enum(["Maioritário", "Minoritário", "100%"]).optional(),
@@ -43,12 +52,16 @@ export const createMergersAndAcquisitionsFormSchema = z.object({
     .optional(),
   description: z
     .string()
-    .min(3, { message: "Description must be at least 3 characters long" })
-    .max(1000, { message: "Description must be at most 1000 characters long" })
+    .min(DESCRIPTION_MIN_LENGTH, {
+      message: `Description must be at least ${DESCRIPTION_MIN_LENGTH} characters long`,
+    })
+    .max(DESCRIPTION_MAX_LENGTH, {
+      message: `Description must be at most ${DESCRIPTION_MAX_LENGTH} characters long`,
+    })
     .optional(),
   graphRows: z
     .array(
-      z.object({ year: z.string(), revenue: z.number(), ebitda: z.number() }),
+      z.object({ year: z.string(), revenue: z.number(), ebitda: z.number() })
     )
     .optional(),
   salesCAGR: z

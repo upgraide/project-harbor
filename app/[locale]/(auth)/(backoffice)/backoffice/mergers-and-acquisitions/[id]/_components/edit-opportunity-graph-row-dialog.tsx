@@ -1,13 +1,17 @@
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "convex/react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { SubmitButton } from "@/components/submit-button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -17,16 +21,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { SubmitButton } from "@/components/submit-button";
-import { toast } from "sonner";
-import { Doc } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
+import { api } from "@/convex/_generated/api";
+import type { Doc } from "@/convex/_generated/dataModel";
+
+const YEAR_MIN_LENGTH = 4;
 
 export const editOpportunityGraphRowSchema = z.object({
-  year: z.string().min(4, { message: "Year must be 4 digits" }),
+  year: z
+    .string()
+    .min(YEAR_MIN_LENGTH, { message: "Year must be 4 digits long" }),
   revenue: z.number().min(0, { message: "Revenue must be greater than 0" }),
   ebitda: z.number().min(0, { message: "EBITDA must be greater than 0" }),
 });
@@ -41,7 +45,7 @@ function EditOpportunityGraphRowDialog({
   graphRow: z.infer<typeof editOpportunityGraphRowSchema> | null;
   setOpportunity: (opportunity: Doc<"mergersAndAcquisitions"> | null) => void;
   setGraphRow: (
-    graphRow: z.infer<typeof editOpportunityGraphRowSchema> | null,
+    graphRow: z.infer<typeof editOpportunityGraphRowSchema> | null
   ) => void;
 }) {
   const updateOpportunity = useMutation(api.mergersAndAcquisitions.update);
@@ -82,14 +86,14 @@ function EditOpportunityGraphRowDialog({
                 revenue: data.revenue,
                 ebitda: data.ebitda,
               }
-            : row,
+            : row
         ),
       }),
       {
         loading: "Updating graph row",
         success: "Graph row updated successfully",
         error: "Failed to update graph row",
-      },
+      }
     );
     setOpportunity(null);
     setGraphRow(null);
@@ -98,14 +102,14 @@ function EditOpportunityGraphRowDialog({
 
   return (
     <Dialog
-      open={!!opportunity}
       onOpenChange={() => {
         setOpportunity(null);
         setGraphRow(null);
       }}
+      open={!!opportunity}
     >
-      <DialogContent className="p-0 overflow-hidden gap-0">
-        <DialogHeader className="p-6 bg-sidebar border-b border-foreground/10">
+      <DialogContent className="gap-0 overflow-hidden p-0">
+        <DialogHeader className="border-foreground/10 border-b bg-sidebar p-6">
           <DialogTitle>Edit Opportunity Graph Row</DialogTitle>
           <DialogDescription>
             Edit the graph row of the opportunity.
@@ -113,8 +117,8 @@ function EditOpportunityGraphRowDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid gap-4 px-6 py-4 bg-background">
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-4 bg-background px-6 py-4">
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
@@ -144,13 +148,13 @@ function EditOpportunityGraphRowDialog({
                           placeholder="Insert a value"
                           type="number"
                           {...field}
-                          value={field.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
                             field.onChange(
-                              value === "" ? undefined : Number(value),
+                              value === "" ? undefined : Number(value)
                             );
                           }}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -168,13 +172,13 @@ function EditOpportunityGraphRowDialog({
                           placeholder="Insert a value"
                           type="number"
                           {...field}
-                          value={field.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
                             field.onChange(
-                              value === "" ? undefined : Number(value),
+                              value === "" ? undefined : Number(value)
                             );
                           }}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -183,12 +187,12 @@ function EditOpportunityGraphRowDialog({
                 />
               </div>
             </div>
-            <DialogFooter className="px-6 py-4 border-t border-foreground/10 bg-sidebar">
+            <DialogFooter className="border-foreground/10 border-t bg-sidebar px-6 py-4">
               <SubmitButton
+                className="w-full"
                 isSubmitting={form.formState.isSubmitting}
                 size="lg"
                 type="submit"
-                className="w-full"
               >
                 Add Graph Row
               </SubmitButton>

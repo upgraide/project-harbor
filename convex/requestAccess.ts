@@ -10,19 +10,16 @@ export const create = mutation({
     position: v.string(),
     message: v.string(),
   },
-  handler: async (ctx, args) => {
-    return await ctx.db.insert("requestAccess", args);
-  },
+  handler: async (ctx, args) => await ctx.db.insert("requestAccess", args),
 });
 
 export const find = query({
   args: {
     email: v.string(),
   },
-  handler: async (ctx, args) => {
-    return await ctx.db
+  handler: async (ctx, args) =>
+    await ctx.db
       .query("requestAccess")
       .withIndex("by_email", (q) => q.eq("email", args.email))
-      .unique();
-  },
+      .unique(),
 });

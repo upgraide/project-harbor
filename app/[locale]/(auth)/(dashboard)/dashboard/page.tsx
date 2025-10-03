@@ -8,15 +8,15 @@ const Page = async () => {
   const t = await getScopedI18n("dashboard");
 
   return (
-    <Tabs defaultValue="all" className="w-full">
-      <div className="bg-accent min-h-[calc(100vh-80px)] pb-12">
-        <header className="z-10 flex w-full flex-col border-b border-border bg-card px-6">
-          <div className="mx-auto flex flex-col w-full max-w-screen-xl items-start justify-between py-8">
+    <Tabs className="w-full" defaultValue="all">
+      <div className="min-h-[calc(100vh-80px)] bg-accent pb-12">
+        <header className="z-10 flex w-full flex-col border-border border-b bg-card px-6">
+          <div className="mx-auto flex w-full max-w-screen-xl flex-col items-start justify-between py-8">
             <div className="flex flex-col items-start gap-2">
-              <h1 className="text-3xl font-medium">{t("header.title")}</h1>
-              <p className="text-base font-normal">{t("header.description")}</p>
+              <h1 className="font-semibold text-3xl">{t("header.title")}</h1>
+              <p className="font-normal text-base">{t("header.description")}</p>
             </div>
-            <TabsList className="grid grid-cols-3 mb-8 mt-6">
+            <TabsList className="mt-6 mb-8 grid grid-cols-3">
               <TabsTrigger value="all">{t("tabs.all")}</TabsTrigger>
               <TabsTrigger value="mergersAndAcquisitions">
                 {t("tabs.mergersAndAcquisitions")}

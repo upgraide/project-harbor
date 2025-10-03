@@ -1,8 +1,8 @@
+import { type PaginationResult, paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
+import type { Doc } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
 import { authComponent } from "./auth";
-import { paginationOptsValidator, PaginationResult } from "convex/server";
-import { Doc } from "./_generated/dataModel";
 
 export const create = mutation({
   args: {
@@ -13,16 +13,16 @@ export const create = mutation({
         v.literal("Buy In"),
         v.literal("Buy Out"),
         v.literal("Buy In/Buy Out"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     typeDetails: v.optional(
       v.union(
         v.literal("Maioritário"),
         v.literal("Minoritário"),
         v.literal("100%"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     industry: v.optional(
       v.union(
@@ -35,8 +35,8 @@ export const create = mutation({
         v.literal("IT"),
         v.literal("TMT (Technology, Media & Telecom)"),
         v.literal("Transports"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     industrySubsector: v.optional(
       v.union(
@@ -45,8 +45,8 @@ export const create = mutation({
         v.literal("Construction & Materials"),
         v.literal("Food & Beverages"),
         v.literal("Others"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     sales: v.optional(
       v.union(
@@ -55,8 +55,8 @@ export const create = mutation({
         v.literal("10-15"),
         v.literal("20-30"),
         v.literal("30+"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     ebitda: v.optional(
       v.union(
@@ -64,8 +64,8 @@ export const create = mutation({
         v.literal("2-3"),
         v.literal("3-5"),
         v.literal("5+"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     ebitdaNormalized: v.optional(v.union(v.number(), v.null())),
     netDebt: v.optional(v.union(v.number(), v.null())),
@@ -77,10 +77,10 @@ export const create = mutation({
             year: v.string(),
             revenue: v.number(),
             ebitda: v.number(),
-          }),
+          })
         ),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     salesCAGR: v.optional(v.union(v.number(), v.null())),
     ebitdaCAGR: v.optional(v.union(v.number(), v.null())),
@@ -89,7 +89,7 @@ export const create = mutation({
 
     // Post-NDA Fields
     shareholderStructure: v.optional(
-      v.union(v.null(), v.array(v.id("_storage"))),
+      v.union(v.null(), v.array(v.id("_storage")))
     ),
     im: v.optional(v.union(v.null(), v.string())),
     entrepriseValue: v.optional(v.union(v.number(), v.null())),
@@ -162,7 +162,7 @@ export const getMany = query({
       opportunities = await ctx.db
         .query("mergersAndAcquisitions")
         .withSearchIndex("search_name", (q) =>
-          q.search("name", args.name ?? ""),
+          q.search("name", args.name ?? "")
         )
         .paginate(args.paginationOpts);
     } else {
@@ -176,22 +176,22 @@ export const getMany = query({
       opportunities.page.map(async (opportunity) => {
         const user = await authComponent.getAnyUserById(
           ctx,
-          opportunity.createdBy,
+          opportunity.createdBy
         );
 
         const imagesUrls = opportunity.images
           ? await Promise.all(
-              opportunity.images.map(async (image) => {
-                return await ctx.storage.getUrl(image);
-              }),
+              opportunity.images.map(
+                async (image) => await ctx.storage.getUrl(image)
+              )
             )
           : undefined;
 
         const shareholderStructureUrls = opportunity.shareholderStructure
           ? await Promise.all(
-              opportunity.shareholderStructure.map(async (image) => {
-                return await ctx.storage.getUrl(image);
-              }),
+              opportunity.shareholderStructure.map(
+                async (image) => await ctx.storage.getUrl(image)
+              )
             )
           : undefined;
 
@@ -210,7 +210,7 @@ export const getMany = query({
           imagesUrls,
           shareholderStructureUrls,
         };
-      }),
+      })
     );
 
     return {
@@ -247,17 +247,17 @@ export const getById = query({
 
     const imagesUrls = opportunity.images
       ? await Promise.all(
-          opportunity.images.map(async (image) => {
-            return await ctx.storage.getUrl(image);
-          }),
+          opportunity.images.map(
+            async (image) => await ctx.storage.getUrl(image)
+          )
         )
       : undefined;
 
     const shareholderStructureUrls = opportunity.shareholderStructure
       ? await Promise.all(
-          opportunity.shareholderStructure.map(async (image) => {
-            return await ctx.storage.getUrl(image);
-          }),
+          opportunity.shareholderStructure.map(
+            async (image) => await ctx.storage.getUrl(image)
+          )
         )
       : undefined;
 
@@ -289,16 +289,16 @@ export const update = mutation({
         v.literal("Buy In"),
         v.literal("Buy Out"),
         v.literal("Buy In/Buy Out"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     typeDetails: v.optional(
       v.union(
         v.literal("Maioritário"),
         v.literal("Minoritário"),
         v.literal("100%"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     industry: v.optional(
       v.union(
@@ -311,8 +311,8 @@ export const update = mutation({
         v.literal("IT"),
         v.literal("TMT (Technology, Media & Telecom)"),
         v.literal("Transports"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     industrySubsector: v.optional(
       v.union(
@@ -321,8 +321,8 @@ export const update = mutation({
         v.literal("Construction & Materials"),
         v.literal("Food & Beverages"),
         v.literal("Others"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     sales: v.optional(
       v.union(
@@ -331,8 +331,8 @@ export const update = mutation({
         v.literal("10-15"),
         v.literal("20-30"),
         v.literal("30+"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     ebitda: v.optional(
       v.union(
@@ -340,8 +340,8 @@ export const update = mutation({
         v.literal("2-3"),
         v.literal("3-5"),
         v.literal("5+"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     ebitdaNormalized: v.optional(v.union(v.number(), v.null())),
     netDebt: v.optional(v.union(v.number(), v.null())),
@@ -353,10 +353,10 @@ export const update = mutation({
             year: v.string(),
             revenue: v.number(),
             ebitda: v.number(),
-          }),
+          })
         ),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     salesCAGR: v.optional(v.union(v.number(), v.null())),
     ebitdaCAGR: v.optional(v.union(v.number(), v.null())),
@@ -365,7 +365,7 @@ export const update = mutation({
 
     // Post-NDA Fields
     shareholderStructure: v.optional(
-      v.union(v.null(), v.array(v.id("_storage"))),
+      v.union(v.null(), v.array(v.id("_storage")))
     ),
     im: v.optional(v.union(v.null(), v.string())),
     entrepriseValue: v.optional(v.union(v.number(), v.null())),

@@ -12,12 +12,12 @@ import {
   Text,
 } from "@react-email/components";
 
-interface InviteUserEmailEnProps {
+type InviteUserEmailEnProps = {
   toName?: string;
   toEmail?: string;
   toPassword?: string;
   inviteLink?: string;
-}
+};
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -29,7 +29,8 @@ export const InviteUserEmailEn = ({
   toPassword,
   inviteLink,
 }: InviteUserEmailEnProps) => {
-  const previewText = `Convite Exclusivo - Acesso à Harbor Exclusive Investment Opportunities`;
+  const previewText =
+    "Convite Exclusivo - Acesso à Harbor Exclusive Investment Opportunities";
   return (
     <Html>
       <Head />
@@ -39,11 +40,11 @@ export const InviteUserEmailEn = ({
           <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-[#eaeaea] border-solid p-[20px]">
             <Section className="mt-[32px]">
               <Img
-                src={`${baseUrl}/static/harbor-logo.png`}
-                width="200"
-                height="50"
                 alt="Harbor Partners"
                 className="mx-auto my-0"
+                height="50"
+                src={`${baseUrl}/static/harbor-logo.png`}
+                width="200"
               />
             </Section>
             <Heading className="mx-0 my-[30px] p-0 text-center font-normal text-[24px] text-black">
@@ -71,17 +72,17 @@ export const InviteUserEmailEn = ({
               Para aceder à plataforma, basta clicar neste butão e inserir os
               seguintes dados:
             </Text>
-            <Section className="mt-[32px] mb-[32px] text-center border border-dashed bg-gray-100 rounded-md p-4">
-              <Text className="text-[14px] text-black text-left">
+            <Section className="mt-[32px] mb-[32px] rounded-md border border-dashed bg-gray-100 p-4 text-center">
+              <Text className="text-left text-[14px] text-black">
                 <strong>Email:</strong> {toEmail}
               </Text>
-              <Text className="text-[14px] text-black text-left">
+              <Text className="text-left text-[14px] text-black">
                 <strong>Password:</strong> {toPassword}
               </Text>
             </Section>
             <Section className="mt-[32px] mb-[32px] text-center">
               <Button
-                className="rounded bg-[#000000] px-5 py-3 text-center font-semibold text-[12px] text-white no-underline w-[90%]"
+                className="w-[90%] rounded bg-[#000000] px-5 py-3 text-center font-semibold text-[12px] text-white no-underline"
                 href={inviteLink}
               >
                 Aceder à plataforma

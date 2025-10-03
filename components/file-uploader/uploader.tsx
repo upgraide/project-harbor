@@ -1,8 +1,14 @@
+/** biome-ignore-all lint/style/noMagicNumbers: magic numbers */
 "use client";
 
-import React, { useCallback, useState } from "react";
-import { FileRejection, useDropzone } from "react-dropzone";
+import { useMutation } from "convex/react";
+import { useCallback, useState } from "react";
+import { type FileRejection, useDropzone } from "react-dropzone";
+import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
 import { Card, CardContent } from "@/components/ui/card";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import {
   RenderEmptyState,
@@ -10,13 +16,8 @@ import {
   RenderUploadedState,
   RenderUploadingState,
 } from "./render-state";
-import { toast } from "sonner";
-import { v4 as uuidv4 } from "uuid";
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
-import { Id } from "@/convex/_generated/dataModel";
 
-interface UploaderState {
+type UploaderState = {
   id: string | null;
   files: File[] | null;
   uploading: boolean;
@@ -25,12 +26,12 @@ interface UploaderState {
   error: boolean;
   storageIds?: Id<"_storage">[] | null;
   fileType: "image";
-}
+};
 
-interface UploaderProps {
+type UploaderProps = {
   value?: Id<"_storage">[];
   onChange?: (value: Id<"_storage">[]) => void;
-}
+};
 
 export const Uploader = ({ value, onChange }: UploaderProps) => {
   const [filesState, setFilesState] = useState<UploaderState>({
@@ -47,92 +48,99 @@ export const Uploader = ({ value, onChange }: UploaderProps) => {
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const deleteFiles = useMutation(api.files.deleteFiles);
 
-  async function uploadFiles(files: File[]) {
-    setFilesState((prev) => ({
-      ...prev,
-      uploading: true,
-      progress: 0,
-    }));
-
-    try {
-      const uploadUrl = await generateUploadUrl();
-
-      if (!uploadUrl) {
-        toast.error("Failed to generate upload URL");
-
-        setFilesState((prev) => ({
-          ...prev,
-          uploading: false,
-          progress: 0,
-          error: true,
-        }));
-
-        return;
-      }
-
+  const uploadFiles = useCallback(
+    async (files: File[]) => {
       setFilesState((prev) => ({
         ...prev,
         uploading: true,
         progress: 0,
       }));
 
-      const storageIds: Id<"_storage">[] = [];
+      try {
+        const uploadUrl = await generateUploadUrl();
 
-      await Promise.all(
-        files.map(async (file: File) => {
-          const result = await fetch(uploadUrl, {
-            method: "POST",
-            headers: { "Content-Type": file.type },
-            body: file,
-          });
+        if (!uploadUrl) {
+          toast.error("Failed to generate upload URL");
 
-          const { storageId } = await result.json();
+          setFilesState((prev) => ({
+            ...prev,
+            uploading: false,
+            progress: 0,
+            error: true,
+          }));
 
-          storageIds.push(storageId);
-        }),
-      );
+          return;
+        }
 
-      setFilesState((prev) => ({
-        ...prev,
-        storageIds: storageIds,
-        progress: 100,
-        uploading: false,
-      }));
+        setFilesState((prev) => ({
+          ...prev,
+          uploading: true,
+          progress: 0,
+        }));
 
-      onChange?.(storageIds);
+        const storageIds: Id<"_storage">[] = [];
 
-      toast.success("Files uploaded with sucess");
-    } catch (error) {
-      console.error(error);
-      toast.error("Error uploading file");
+        await Promise.all(
+          files.map(async (file: File) => {
+            const result = await fetch(uploadUrl, {
+              method: "POST",
+              headers: { "Content-Type": file.type },
+              body: file,
+            });
 
-      setFilesState((prev) => ({
-        ...prev,
-        error: true,
-        progress: 0,
-        uploading: false,
-      }));
-    }
-  }
+            const { storageId } = await result.json();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
-      setFilesState({
-        files: acceptedFiles,
-        uploading: false,
-        progress: 0,
-        error: false,
-        id: uuidv4(),
-        isDeleting: false,
-        fileType: "image",
-      });
+            storageIds.push(storageId);
+          })
+        );
 
-      uploadFiles(acceptedFiles);
-    }
-  }, []);
+        setFilesState((prev) => ({
+          ...prev,
+          storageIds,
+          progress: 100,
+          uploading: false,
+        }));
+
+        onChange?.(storageIds);
+
+        toast.success("Files uploaded with sucess");
+      } catch (_error) {
+        toast.error("Error uploading file");
+
+        setFilesState((prev) => ({
+          ...prev,
+          error: true,
+          progress: 0,
+          uploading: false,
+        }));
+      }
+    },
+    [generateUploadUrl, onChange]
+  );
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles.length > 0) {
+        setFilesState({
+          files: acceptedFiles,
+          uploading: false,
+          progress: 0,
+          error: false,
+          id: uuidv4(),
+          isDeleting: false,
+          fileType: "image",
+        });
+
+        uploadFiles(acceptedFiles);
+      }
+    },
+    [uploadFiles]
+  );
 
   async function handleRemoveFile() {
-    if (filesState.isDeleting) return;
+    if (filesState.isDeleting) {
+      return;
+    }
 
     try {
       setFilesState((prev) => ({
@@ -157,8 +165,7 @@ export const Uploader = ({ value, onChange }: UploaderProps) => {
       onChange?.([]);
 
       toast.success("File deleted with sucess");
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       toast.error("Error deleting file");
 
       setFilesState((prev) => ({
@@ -172,11 +179,11 @@ export const Uploader = ({ value, onChange }: UploaderProps) => {
   function rejectedFiles(fileRejections: FileRejection[]) {
     if (fileRejections.length) {
       const tooManyFiles = fileRejections.find(
-        (rejection) => rejection.errors[0].code === "too-many-files",
+        (rejection) => rejection.errors[0].code === "too-many-files"
       );
 
       const fileTooLarge = fileRejections.find(
-        (rejection) => rejection.errors[0].code === "file-too-large",
+        (rejection) => rejection.errors[0].code === "file-too-large"
       );
 
       if (fileTooLarge) {
@@ -201,8 +208,8 @@ export const Uploader = ({ value, onChange }: UploaderProps) => {
     if (filesState.storageIds) {
       return (
         <RenderUploadedState
-          isDeleting={filesState.isDeleting}
           handleRemoveFile={handleRemoveFile}
+          isDeleting={filesState.isDeleting}
         />
       );
     }
@@ -225,13 +232,13 @@ export const Uploader = ({ value, onChange }: UploaderProps) => {
     <Card
       {...getRootProps()}
       className={cn(
-        "relative border-2 border-dashed transition-colors duration-200 ease-in-out w-full h-64",
+        "relative h-64 w-full border-2 border-dashed transition-colors duration-200 ease-in-out",
         isDragActive
-          ? "border-primary bg-primary/10 border-solid"
-          : "border-border hover:border-primary",
+          ? "border-primary border-solid bg-primary/10"
+          : "border-border hover:border-primary"
       )}
     >
-      <CardContent className="flex items-center justify-center h-full w-full p-4">
+      <CardContent className="flex h-full w-full items-center justify-center p-4">
         <input {...getInputProps()} />
         {renderContent()}
       </CardContent>

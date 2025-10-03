@@ -1,15 +1,15 @@
 import {
-  BreadcrumbItem,
-  BreadcrumbPage,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
   Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
   BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { getScopedI18n } from "@/locales/server";
 import { backofficeMergersAndAcquisitionsPath } from "@/lib/paths";
+import { getScopedI18n } from "@/locales/server";
 import MergersAndAcquisitionsCreateForm from "@/modules/backoffice/ui/components/mergers-and-acquisitions-create-form";
 
 const Page = async () => {
@@ -17,11 +17,11 @@ const Page = async () => {
 
   return (
     <SidebarInset>
-      <header className="bg-background sticky top-0 flex shrink-0 items-center gap-2 border-b p-4 z-20">
+      <header className="sticky top-0 z-20 flex shrink-0 items-center gap-2 border-b bg-background p-4">
         <SidebarTrigger className="-ml-1" />
         <Separator
-          orientation="vertical"
           className="mr-2 data-[orientation=vertical]:h-4"
+          orientation="vertical"
         />
         <Breadcrumb>
           <BreadcrumbList>

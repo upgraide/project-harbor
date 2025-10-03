@@ -1,24 +1,19 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { redirect, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
-import { useSearchParams } from "next/navigation";
-import { redirect } from "next/navigation";
-import { useScopedI18n } from "@/locales/client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { signInPath } from "@/lib/paths";
 import {
   Form,
   FormControl,
@@ -28,9 +23,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
+import { signInPath } from "@/lib/paths";
+import { useScopedI18n } from "@/locales/client";
 import {
-  passwordResetSchema,
   type PasswordResetSchemaType,
+  passwordResetSchema,
 } from "../schemas/password-reset-schema";
 
 export const ResetPasswordView = () => {
@@ -49,7 +48,9 @@ export const ResetPasswordView = () => {
   });
 
   async function onSubmit(values: PasswordResetSchemaType) {
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     if (values.password !== values.confirmPassword) {
       toast.error(t("schemaMessages.confirmPassword.match"));
@@ -69,19 +70,18 @@ export const ResetPasswordView = () => {
           setLoading(false);
           redirect(signInPath());
         },
-        onError: (ctx) => {
+        onError: (_ctx) => {
           setLoading(false);
-          console.log(ctx.error.message);
           toast.error(t("schemaMessages.error.default"));
         },
-      },
+      }
     );
   }
 
   if (!token) {
     return (
-      <div className=" w-full flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
+      <div className="flex w-full items-center justify-center p-4">
+        <Card className="w-full max-w-md">
           <CardHeader className="space-y-2">
             <CardTitle className="text-lg md:text-xl">
               {t("invalidLinkCard.title")}
@@ -96,8 +96,8 @@ export const ResetPasswordView = () => {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4">
-      <Card className="max-w-md w-full">
+    <div className="flex min-h-screen w-full items-center justify-center p-4">
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-lg md:text-xl">
             {t("resetPasswordCard.title")}
@@ -108,7 +108,7 @@ export const ResetPasswordView = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
                 name="password"
@@ -141,7 +141,7 @@ export const ResetPasswordView = () => {
                     <FormControl>
                       <Input
                         placeholder={t(
-                          "schemaMessages.confirmPassword.placeholder",
+                          "schemaMessages.confirmPassword.placeholder"
                         )}
                         type="password"
                         {...field}
@@ -155,9 +155,9 @@ export const ResetPasswordView = () => {
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button className="w-full" disabled={loading} type="submit">
                 {loading ? (
-                  <Loader2 size={16} className="animate-spin" />
+                  <Loader2 className="animate-spin" size={16} />
                 ) : (
                   t("buttons.submit")
                 )}

@@ -1,11 +1,11 @@
 "use client";
 
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useScopedI18n } from "@/locales/client";
+import { buttonVariants } from "@/components/ui/button";
 import { dashboardSettingsPath } from "@/lib/paths";
+import { cn } from "@/lib/utils";
+import { useScopedI18n } from "@/locales/client";
 
 export const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
   const t = useScopedI18n("dashboard.settings");
@@ -18,15 +18,11 @@ export const SettingsLayout = ({ children }: { children: React.ReactNode }) => {
           <Link
             className={cn(
               `${buttonVariants({ variant: "ghost" })} ${isSettingsPath && "bg-primary/5"}`,
-              "justify-start rounded-md",
+              "justify-start rounded-md"
             )}
             href={dashboardSettingsPath()}
           >
-            <span
-              className={cn(
-                `text-sm text-primary/80 ${isSettingsPath && "font-medium text-primary"}`,
-              )}
-            >
+            <span className={cn(`text-sm ${isSettingsPath && "font-medium"}`)}>
               {t("general")}
             </span>
           </Link>

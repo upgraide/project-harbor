@@ -1,20 +1,20 @@
 "use client";
 
+import { Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { Loader } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import { dashboardPath } from "@/lib/paths";
 import { useScopedI18n } from "@/locales/client";
 
@@ -49,7 +49,7 @@ export const SignInView = () => {
             toast.error(t("toastError"));
           }
         },
-      },
+      }
     );
   };
 
@@ -78,22 +78,22 @@ export const SignInView = () => {
       </CardHeader>
       <CardContent>
         <form
+          className="grid gap-4"
           onSubmit={(e) => {
             e.preventDefault();
             handleSignIn();
           }}
-          className="grid gap-4"
         >
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
-              type="email"
-              placeholder={t("emailPlaceholder")}
-              required
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
+              placeholder={t("emailPlaceholder")}
+              required
+              type="email"
               value={email}
             />
           </div>
@@ -102,32 +102,32 @@ export const SignInView = () => {
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
               <Button
-                variant="link"
-                size="sm"
-                type="button"
-                onClick={handleResetPassword}
                 className="cursor-pointer"
                 disabled={forgotLoading || !email}
+                onClick={handleResetPassword}
+                size="sm"
+                type="button"
+                variant="link"
               >
                 {forgotLoading ? (
-                  <Loader size={14} className="animate-spin mr-1" />
+                  <Loader className="mr-1 animate-spin" size={14} />
                 ) : null}
                 {t("forgotPassword")}
               </Button>
             </div>
             <Input
-              id="password"
-              type="password"
-              placeholder={t("passwordPlaceholder")}
               autoComplete="password"
-              required
-              value={password}
+              id="password"
               onChange={(e) => setPassword(e.target.value)}
+              placeholder={t("passwordPlaceholder")}
+              required
+              type="password"
+              value={password}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button className="w-full" disabled={loading} type="submit">
             {loading ? (
-              <Loader size={14} className="animate-spin mr-1" />
+              <Loader className="mr-1 animate-spin" size={14} />
             ) : null}
             {t("buttons.signIn")}
           </Button>

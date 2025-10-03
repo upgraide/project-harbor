@@ -1,5 +1,19 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "convex/react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Uploader } from "@/components/file-uploader/uploader";
+import { SubmitButton } from "@/components/submit-button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -8,20 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import {
-  createMergersAndAcquisitionsFormSchema,
-  CreateMergersAndAcquisitionsFormSchemaType,
-} from "../schema/mergers-and-acquisitions-create-form-schema";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardTitle,
-  CardDescription,
-  CardHeader,
-  CardContent,
-} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -30,19 +31,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { toast } from "sonner";
 import { backofficeMergersAndAcquisitionsPath } from "@/lib/paths";
-import { useRouter } from "next/navigation";
-import { SubmitButton } from "@/components/submit-button";
-import { Uploader } from "@/components/file-uploader/uploader";
+import {
+  type CreateMergersAndAcquisitionsFormSchemaType,
+  createMergersAndAcquisitionsFormSchema,
+} from "../schema/mergers-and-acquisitions-create-form-schema";
 
 const MergersAndAcquisitionsCreateForm = () => {
   const router = useRouter();
 
   const createMergersAndAcquisitions = useMutation(
-    api.mergersAndAcquisitions.create,
+    api.mergersAndAcquisitions.create
   );
 
   const form = useForm<CreateMergersAndAcquisitionsFormSchemaType>({
@@ -61,7 +61,7 @@ const MergersAndAcquisitionsCreateForm = () => {
         loading: "Creating M&A Opportunity",
         success: "M&A Opportunity created successfully",
         error: "Failed to create M&A Opportunity",
-      },
+      }
     );
 
     form.reset();
@@ -70,7 +70,7 @@ const MergersAndAcquisitionsCreateForm = () => {
 
   return (
     <div className="mx-auto w-full max-w-md md:max-w-3xl">
-      <Card className="my-12 mx-6">
+      <Card className="mx-6 my-12">
         <CardHeader>
           <CardTitle>Create M&A Opportunity</CardTitle>
           <CardDescription>
@@ -79,7 +79,7 @@ const MergersAndAcquisitionsCreateForm = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
                 name="name"
@@ -105,7 +105,7 @@ const MergersAndAcquisitionsCreateForm = () => {
                   <FormItem>
                     <FormLabel>Images</FormLabel>
                     <FormControl>
-                      <Uploader value={field.value} onChange={field.onChange} />
+                      <Uploader onChange={field.onChange} value={field.value} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -132,7 +132,7 @@ const MergersAndAcquisitionsCreateForm = () => {
                               <SelectItem key={type} value={type}>
                                 {type}
                               </SelectItem>
-                            ),
+                            )
                           )}
                         </SelectContent>
                       </Select>
@@ -168,7 +168,7 @@ const MergersAndAcquisitionsCreateForm = () => {
                                 >
                                   {typeDetails}
                                 </SelectItem>
-                              ),
+                              )
                             )}
                           </SelectContent>
                         </Select>
@@ -205,7 +205,7 @@ const MergersAndAcquisitionsCreateForm = () => {
                                 >
                                   {typeDetails}
                                 </SelectItem>
-                              ),
+                              )
                             )}
                           </SelectContent>
                         </Select>
@@ -278,7 +278,7 @@ const MergersAndAcquisitionsCreateForm = () => {
                                 >
                                   {industrySubsector}
                                 </SelectItem>
-                              ),
+                              )
                             )}
                           </SelectContent>
                         </Select>
@@ -347,7 +347,7 @@ const MergersAndAcquisitionsCreateForm = () => {
                               <SelectItem key={sales} value={sales}>
                                 {sales}
                               </SelectItem>
-                            ),
+                            )
                           )}
                         </SelectContent>
                       </Select>
@@ -396,13 +396,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -421,13 +421,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -464,13 +464,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -489,13 +489,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -541,13 +541,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -562,7 +562,7 @@ const MergersAndAcquisitionsCreateForm = () => {
                   <FormItem>
                     <FormLabel>Shareholder Structure</FormLabel>
                     <FormControl>
-                      <Uploader value={field.value} onChange={field.onChange} />
+                      <Uploader onChange={field.onChange} value={field.value} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -598,13 +598,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -623,13 +623,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -648,13 +648,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -673,13 +673,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -698,13 +698,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -723,13 +723,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -749,13 +749,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -774,13 +774,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -799,13 +799,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -853,13 +853,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -878,13 +878,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -903,13 +903,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -930,13 +930,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -955,13 +955,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -980,13 +980,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1005,13 +1005,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1030,13 +1030,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1055,13 +1055,13 @@ const MergersAndAcquisitionsCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1072,10 +1072,10 @@ const MergersAndAcquisitionsCreateForm = () => {
               )}
 
               <SubmitButton
+                className="w-full"
                 isSubmitting={form.formState.isSubmitting}
                 size="lg"
                 type="submit"
-                className="w-full"
               >
                 Create M&A Opportunity
               </SubmitButton>
