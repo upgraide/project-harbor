@@ -230,10 +230,58 @@ const Page = ({
               {opportunity.industry ? (
                 <TableRow key={"industry"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.industry")}
+                    {t("financialInformationCard.table.metrics.industry")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.industry}
+                    {(() => {
+                      if (opportunity.industry === "Services") {
+                        return t(
+                          "financialInformationCard.table.values.services"
+                        );
+                      }
+                      if (opportunity.industry === "Transformation Industry") {
+                        return t(
+                          "financialInformationCard.table.values.transformationindustry"
+                        );
+                      }
+                      if (opportunity.industry === "Trading") {
+                        return t(
+                          "financialInformationCard.table.values.trading"
+                        );
+                      }
+                      if (opportunity.industry === "Energy & Infrastructure") {
+                        return t(
+                          "financialInformationCard.table.values.energyandinfrastructure"
+                        );
+                      }
+                      if (opportunity.industry === "Fitness") {
+                        return t(
+                          "financialInformationCard.table.values.fitness"
+                        );
+                      }
+                      if (
+                        opportunity.industry === "Healthcare & Pharmaceuticals"
+                      ) {
+                        return t(
+                          "financialInformationCard.table.values.healthcareandpharmaceuticals"
+                        );
+                      }
+                      if (opportunity.industry === "IT") {
+                        return t("financialInformationCard.table.values.it");
+                      }
+                      if (
+                        opportunity.industry ===
+                        "TMT (Technology, Media & Telecom)"
+                      ) {
+                        return t("financialInformationCard.table.values.tmt");
+                      }
+                      if (opportunity.industry === "Transports") {
+                        return t(
+                          "financialInformationCard.table.values.transports"
+                        );
+                      }
+                      return opportunity.industry;
+                    })()}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-right" />
                 </TableRow>
