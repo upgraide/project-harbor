@@ -453,6 +453,28 @@ export default {
         },
       },
     },
+    furtherInformationCard: {
+      title: "Further Information",
+      table: {
+        header: {
+          metric: "Metric",
+          value: "Value",
+        },
+        metrics: {
+          im: "IM",
+          entrepriseValue: "Entreprise Value (EV)",
+          equityValue: "Equity Value",
+          evDashEbitdaEntry: "EV/EBITDA (Entry)",
+          evDashEbitdaExit: "EV/EBITDA (Exit/Comps)",
+          ebitdaNormalized: "EBITDA (Normalized)",
+          ebitdaMargin: "EBITDA Margin",
+          freeCashFlow: "Free Cash Flow (FCF)",
+          netDebtDashEbitda: "Net Debt/EBITDA",
+          capexIntensity: "Capex Intensity (Capex/EBITDA)",
+          workingCapitalNeeds: "Working Capital Needs (% Revenue)",
+        },
+      },
+    },
   },
   dashboardMergersAndAcquisitionsOpportunityPage: {
     breadcrumbs: {

@@ -463,77 +463,99 @@ const Page = ({
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="font-semibold text-xl">
-            Further Information
+            {t("furtherInformationCard.title")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="px-6 py-4">Metric</TableHead>
-                <TableHead className="px-6 py-4">Value</TableHead>
+                <TableHead className="px-6 py-4">
+                  {t("furtherInformationCard.table.header.metric")}
+                </TableHead>
+                <TableHead className="px-6 py-4">
+                  {t("furtherInformationCard.table.header.value")}
+                </TableHead>
                 <TableHead className="px-6 py-4" />
               </TableRow>
             </TableHeader>
             <TableBody>
               {opportunity.im ? (
                 <TableRow key={"im"}>
-                  <TableCell className="px-6 py-4">IM</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("furtherInformationCard.table.metrics.im")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">{opportunity.im}</TableCell>
                   <TableCell className="px-6 py-4 text-right" />
                 </TableRow>
               ) : null}
               <TableRow key={"entrepriseValue"}>
-                <TableCell className="px-6 py-4">Entreprise Value</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("furtherInformationCard.table.metrics.entrepriseValue")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.entrepriseValue ?? "N/A"}
                 </TableCell>
                 <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"equityValue"}>
-                <TableCell className="px-6 py-4">Equity Value</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("furtherInformationCard.table.metrics.equityValue")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.equityValue ?? "N/A"}
                 </TableCell>
                 <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"evDashEbitdaEntry"}>
-                <TableCell className="px-6 py-4">EV/EBITDA Entry</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("furtherInformationCard.table.metrics.evDashEbitdaEntry")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.evDashEbitdaEntry ?? "N/A"}
                 </TableCell>
                 <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"evDashEbitdaExit"}>
-                <TableCell className="px-6 py-4">EV/EBITDA Exit</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("furtherInformationCard.table.metrics.evDashEbitdaExit")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.evDashEbitdaExit ?? "N/A"}
                 </TableCell>
                 <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"ebitdaMargin"}>
-                <TableCell className="px-6 py-4">EBITDA Margin</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("furtherInformationCard.table.metrics.ebitdaMargin")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.ebitdaMargin ?? "N/A"}
                 </TableCell>
                 <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"fcf"}>
-                <TableCell className="px-6 py-4">FCF</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("furtherInformationCard.table.metrics.freeCashFlow")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.fcf ?? "N/A"}
                 </TableCell>
                 <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"netDebtDashEbitda"}>
-                <TableCell className="px-6 py-4">Net Debt/EBITDA</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("furtherInformationCard.table.metrics.netDebtDashEbitda")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.netDebtDashEbitda ?? "N/A"}
                 </TableCell>
                 <TableCell className="px-6 py-4 text-right" />
               </TableRow>
               <TableRow key={"capexItensity"}>
-                <TableCell className="px-6 py-4">Capex Intensity</TableCell>
+                <TableCell className="px-6 py-4">
+                  {t("furtherInformationCard.table.metrics.capexIntensity")}
+                </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.capexItensity ?? "N/A"}
                 </TableCell>
@@ -541,7 +563,9 @@ const Page = ({
               </TableRow>
               <TableRow key={"workingCapitalNeeds"}>
                 <TableCell className="px-6 py-4">
-                  Working Capital Needs
+                  {t(
+                    "furtherInformationCard.table.metrics.workingCapitalNeeds"
+                  )}
                 </TableCell>
                 <TableCell className="px-6 py-4">
                   {opportunity.workingCapitalNeeds ?? "N/A"}
