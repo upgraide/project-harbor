@@ -61,7 +61,7 @@ const Page = ({
   }
 
   return (
-    <div className="mx-auto mt-6 mb-6 w-full space-y-6 md:max-w-screen-lg">
+    <div className="mx-auto mt-6 mb-6 w-full space-y-6 md:max-w-7xl">
       <h1 className="mt-6 font-bold text-2xl md:text-4xl">
         {opportunity.name}
       </h1>
