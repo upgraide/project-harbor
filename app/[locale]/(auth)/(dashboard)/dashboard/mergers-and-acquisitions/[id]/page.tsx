@@ -341,7 +341,7 @@ const Page = ({
               opportunity.netDebt ? (
                 <TableRow key={"dimension"}>
                   <TableCell className="bg-muted px-6 py-4 font-medium">
-                    {t("financialInformationCard.table.dimension")}
+                    {t("financialInformationCard.table.metrics.dimension")}
                   </TableCell>
                   <TableCell className="bg-muted px-6 py-4" />
                   <TableCell className="bg-muted px-6 py-4 text-right" />
@@ -350,7 +350,7 @@ const Page = ({
               {opportunity.sales ? (
                 <TableRow key={"sales"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.sales")}
+                    {t("financialInformationCard.table.metrics.sales")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {`€${opportunity.sales}M`}
@@ -361,7 +361,7 @@ const Page = ({
               {opportunity.ebitda ? (
                 <TableRow key={"ebitda"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.ebitda")}
+                    {t("financialInformationCard.table.metrics.ebitda")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {`€${opportunity.ebitda}M`}
@@ -372,7 +372,9 @@ const Page = ({
               {opportunity.ebitdaNormalized ? (
                 <TableRow key={"ebitdaNormalized"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.ebitdaNormalized")}
+                    {t(
+                      "financialInformationCard.table.metrics.ebitdaNormalized"
+                    )}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {`${opportunity.ebitdaNormalized}x`}
@@ -383,7 +385,7 @@ const Page = ({
               {opportunity.netDebt ? (
                 <TableRow key={"netDebt"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.netDebt")}
+                    {t("financialInformationCard.table.metrics.netDebt")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {`€${opportunity.netDebt}M`}
@@ -394,7 +396,7 @@ const Page = ({
               {opportunity.salesCAGR || opportunity.ebitdaCAGR ? (
                 <TableRow key={"CAGR"}>
                   <TableCell className="bg-muted px-6 py-4 font-medium">
-                    {t("financialInformationCard.table.cagr")}
+                    {t("financialInformationCard.table.metrics.cagr")}
                   </TableCell>
                   <TableCell className="bg-muted px-6 py-4" />
                   <TableCell className="bg-muted px-6 py-4 text-right" />
@@ -403,7 +405,7 @@ const Page = ({
               {opportunity.salesCAGR ? (
                 <TableRow key={"salesCAGR"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.salesCAGR")}
+                    {t("financialInformationCard.table.metrics.salesCAGR")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {`${opportunity.salesCAGR}%`}
@@ -414,7 +416,7 @@ const Page = ({
               {opportunity.ebitdaCAGR ? (
                 <TableRow key={"ebitdaCAGR"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.ebitdaCAGR")}
+                    {t("financialInformationCard.table.metrics.ebitdaCAGR")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {`${opportunity.ebitdaCAGR}%`}
