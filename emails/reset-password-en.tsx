@@ -12,10 +12,10 @@ import {
   Text,
 } from "@react-email/components";
 
-interface ResetPasswordEmailEnProps {
+type ResetPasswordEmailEnProps = {
   toName?: string;
   resetPasswordLink?: string;
-}
+};
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -25,7 +25,8 @@ export const ResetPasswordEmailEn = ({
   toName,
   resetPasswordLink,
 }: ResetPasswordEmailEnProps) => {
-  const previewText = `Reset Password - Harbor Exclusive Investment Opportunities`;
+  const previewText =
+    "Reset Password - Harbor Exclusive Investment Opportunities";
   return (
     <Html>
       <Head />
@@ -35,11 +36,11 @@ export const ResetPasswordEmailEn = ({
           <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-[#eaeaea] border-solid p-[20px]">
             <Section className="mt-[32px]">
               <Img
-                src={`${baseUrl}/static/harbor-logo.png`}
-                width="200"
-                height="50"
                 alt="Harbor Partners"
                 className="mx-auto my-0"
+                height="50"
+                src={`${baseUrl}/static/harbor-logo.png`}
+                width="200"
               />
             </Section>
             <Heading className="mx-0 my-[30px] p-0 text-center font-normal text-[24px] text-black">
@@ -55,7 +56,7 @@ export const ResetPasswordEmailEn = ({
             </Text>
             <Section className="mt-[32px] mb-[32px] text-center">
               <Button
-                className="rounded bg-[#000000] px-5 py-3 text-center font-semibold text-[12px] text-white no-underline w-[90%]"
+                className="w-[90%] rounded bg-[#000000] px-5 py-3 text-center font-semibold text-[12px] text-white no-underline"
                 href={resetPasswordLink}
               >
                 Reset Password

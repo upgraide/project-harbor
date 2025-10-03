@@ -1,7 +1,7 @@
+import { paginationOptsValidator } from "convex/server";
 import { ConvexError } from "convex/values";
 import { query } from "./_generated/server";
 import { authComponent } from "./auth";
-import { paginationOptsValidator } from "convex/server";
 
 export const getMany = query({
   args: {
@@ -43,14 +43,14 @@ export const getMany = query({
       allOpportunities.map(async (opportunity) => {
         const user = await authComponent.getAnyUserById(
           ctx,
-          opportunity.createdBy,
+          opportunity.createdBy
         );
 
         const imagesUrls = opportunity.images
           ? await Promise.all(
-              opportunity.images.map(async (image) => {
-                return await ctx.storage.getUrl(image);
-              }),
+              opportunity.images.map(
+                async (image) => await ctx.storage.getUrl(image)
+              )
             )
           : undefined;
 
@@ -58,9 +58,9 @@ export const getMany = query({
           opportunity.type === "mergersAndAcquisitions" &&
           opportunity.shareholderStructure
             ? await Promise.all(
-                opportunity.shareholderStructure.map(async (image) => {
-                  return await ctx.storage.getUrl(image);
-                }),
+                opportunity.shareholderStructure.map(
+                  async (image) => await ctx.storage.getUrl(image)
+                )
               )
             : undefined;
 
@@ -81,7 +81,7 @@ export const getMany = query({
             shareholderStructureUrls,
           }),
         };
-      }),
+      })
     );
 
     return {

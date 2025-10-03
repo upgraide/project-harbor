@@ -1,21 +1,18 @@
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "convex/react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { SubmitButton } from "@/components/submit-button";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -24,12 +21,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { SubmitButton } from "@/components/submit-button";
-import { toast } from "sonner";
-import { Doc } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { api } from "@/convex/_generated/api";
-import { useEffect } from "react";
+import type { Doc } from "@/convex/_generated/dataModel";
 import { useScopedI18n } from "@/locales/client";
 
 const editOpportunityIndustrySchema = z.object({
@@ -67,7 +67,7 @@ function EditOpportunityIndustryDialog({
   setOpportunity: (opportunity: MergersAndAcquisitions) => void;
 }) {
   const t = useScopedI18n(
-    "backofficeMergersAndAcquisitionsOpportunityPage.editOpportunityIndustryDialog",
+    "backofficeMergersAndAcquisitionsOpportunityPage.editOpportunityIndustryDialog"
   );
   const updateOpportunity = useMutation(api.mergersAndAcquisitions.update);
 
@@ -112,7 +112,7 @@ function EditOpportunityIndustryDialog({
         loading: t("toastLoading"),
         success: t("toastSuccess"),
         error: t("toastError"),
-      },
+      }
     );
 
     setOpportunity(null);
@@ -120,16 +120,16 @@ function EditOpportunityIndustryDialog({
   };
 
   return (
-    <Dialog open={!!opportunity} onOpenChange={() => setOpportunity(null)}>
-      <DialogContent className="p-0 overflow-hidden gap-0">
-        <DialogHeader className="p-6 bg-sidebar border-b border-foreground/10">
+    <Dialog onOpenChange={() => setOpportunity(null)} open={!!opportunity}>
+      <DialogContent className="gap-0 overflow-hidden p-0">
+        <DialogHeader className="border-foreground/10 border-b bg-sidebar p-6">
           <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription>{t("description")}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid gap-4 px-6 py-4 bg-background">
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="grid gap-4 bg-background px-6 py-4">
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
@@ -162,7 +162,7 @@ function EditOpportunityIndustryDialog({
                                 "TMT (Technology, Media & Telecom)"
                                   ? t("content.industry.tmt")
                                   : t(
-                                      `content.industry.${industry.toLowerCase().replace("& ", "and").replace(" ", "")}`,
+                                      `content.industry.${industry.toLowerCase().replace("& ", "and").replace(" ", "")}`
                                     )}
                               </SelectItem>
                             ))}
@@ -202,7 +202,7 @@ function EditOpportunityIndustryDialog({
                                     value={industrySubsector}
                                   >
                                     {t(
-                                      `content.industrySubsector.${industrySubsector.toLowerCase().replace("& ", "and").replace(" ", "")}`,
+                                      `content.industrySubsector.${industrySubsector.toLowerCase().replace("& ", "and").replace(" ", "")}`
                                     )}
                                   </SelectItem>
                                 ))}
@@ -246,7 +246,7 @@ function EditOpportunityIndustryDialog({
                                     value={industrySubsector}
                                   >
                                     {t(
-                                      `content.industrySubsector.${industrySubsector.toLowerCase().replace("& ", "and").replace(" ", "")}`,
+                                      `content.industrySubsector.${industrySubsector.toLowerCase().replace("& ", "and").replace(" ", "")}`
                                     )}
                                   </SelectItem>
                                 ))}
@@ -261,12 +261,12 @@ function EditOpportunityIndustryDialog({
                 )}
               </div>
             </div>
-            <DialogFooter className="px-6 py-4 border-t border-foreground/10 bg-sidebar">
+            <DialogFooter className="border-foreground/10 border-t bg-sidebar px-6 py-4">
               <SubmitButton
+                className="w-full"
                 isSubmitting={form.formState.isSubmitting}
                 size="lg"
                 type="submit"
-                className="w-full"
               >
                 {t("updateButton")}
               </SubmitButton>

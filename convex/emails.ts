@@ -1,21 +1,20 @@
-import { components } from "./_generated/api";
 import { Resend } from "@convex-dev/resend";
-import { action, internalMutation } from "./_generated/server";
+import { pretty, render } from "@react-email/render";
 import { ConvexError, v } from "convex/values";
-import { render, pretty } from "@react-email/render";
-import { InviteUserEmailEn } from "@/emails/invite-user-en";
 import React from "react";
+import { InviteUserEmailEn } from "@/emails/invite-user-en";
 import { InviteUserEmailPt } from "@/emails/invite-user-pt";
 import { ResetPasswordEmailEn } from "@/emails/reset-password-en";
+import { components } from "./_generated/api";
+import { action, internalMutation } from "./_generated/server";
 
 export const resend: Resend = new Resend(components.resend, {
   testMode: false,
 });
 
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const isValidEmail = (email: string): boolean => emailRegex.test(email);
 
 export const sendTestEmail = internalMutation({
   args: {},
@@ -36,8 +35,7 @@ export const sendTestEmail = internalMutation({
         subject: "Test Email - Harbor Partners",
         html: "This is a test email from Harbor Partners",
       });
-    } catch (error) {
-      console.error("Failed to send test email:", error);
+    } catch {
       throw new ConvexError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to send test email",
@@ -66,8 +64,8 @@ export const sendInviteUserEmail = action({
             toName: args.toName,
             toPassword: args.toPassword,
             inviteLink: args.inviteLink,
-          }),
-        ),
+          })
+        )
       );
 
       await resend.sendEmail(ctx, {
@@ -77,10 +75,9 @@ export const sendInviteUserEmail = action({
           args.locale === "en"
             ? "Exclusive Invitation - Access to Harbor Exclusive Investment Opportunities"
             : "Convite Exclusivo - Acesso à Harbor Exclusive Investment Opportunities",
-        html: html,
+        html,
       });
-    } catch (error) {
-      console.error("Failed to send invite email:", error);
+    } catch {
       throw new ConvexError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to send invite email",
@@ -112,8 +109,8 @@ export const sendResetPasswordEmail = action({
           React.createElement(ResetPasswordEmailEn, {
             toName: args.toName,
             resetPasswordLink: args.resetPasswordLink,
-          }),
-        ),
+          })
+        )
       );
 
       await resend.sendEmail(ctx, {
@@ -123,10 +120,9 @@ export const sendResetPasswordEmail = action({
           args.locale === "en"
             ? "Password Reset - Harbor Exclusive Investment Opportunities"
             : "Redefinição de palavra-passe - Harbor Exclusive Investment Opportunities",
-        html: html,
+        html,
       });
-    } catch (error) {
-      console.error("Failed to send reset password email:", error);
+    } catch {
       throw new ConvexError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to send reset password email",

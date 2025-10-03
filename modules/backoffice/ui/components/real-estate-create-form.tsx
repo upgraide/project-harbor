@@ -1,5 +1,19 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "convex/react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Uploader } from "@/components/file-uploader/uploader";
+import { SubmitButton } from "@/components/submit-button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -8,16 +22,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardTitle,
-  CardDescription,
-  CardHeader,
-  CardContent,
-} from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -26,17 +31,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { toast } from "sonner";
 import { backofficeRealEstatePath } from "@/lib/paths";
-import { useRouter } from "next/navigation";
-import { SubmitButton } from "@/components/submit-button";
 import {
+  type CreateRealEstateFormSchemaType,
   realEstateCreateFormSchema,
-  CreateRealEstateFormSchemaType,
 } from "../schema/real-estate-create-form-schema";
-import { Uploader } from "@/components/file-uploader/uploader";
 
 const RealEstateCreateForm = () => {
   const router = useRouter();
@@ -59,7 +59,7 @@ const RealEstateCreateForm = () => {
         loading: "Creating Real Estate Opportunity",
         success: "Real Estate Opportunity created successfully",
         error: "Failed to create Real Estate Opportunity",
-      },
+      }
     );
 
     form.reset();
@@ -68,7 +68,7 @@ const RealEstateCreateForm = () => {
 
   return (
     <div className="mx-auto w-full max-w-md md:max-w-3xl">
-      <Card className="my-12 mx-6">
+      <Card className="mx-6 my-12">
         <CardHeader>
           <CardTitle>Create Real Estate Opportunity</CardTitle>
           <CardDescription>
@@ -78,7 +78,7 @@ const RealEstateCreateForm = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
                 control={form.control}
                 name="name"
@@ -167,13 +167,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -192,13 +192,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -217,13 +217,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -245,13 +245,13 @@ const RealEstateCreateForm = () => {
                           placeholder="Insert a value"
                           type="number"
                           {...field}
-                          value={field.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
                             field.onChange(
-                              value === "" ? undefined : Number(value),
+                              value === "" ? undefined : Number(value)
                             );
                           }}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -272,13 +272,13 @@ const RealEstateCreateForm = () => {
                           placeholder="Insert a value"
                           type="number"
                           {...field}
-                          value={field.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
                             field.onChange(
-                              value === "" ? undefined : Number(value),
+                              value === "" ? undefined : Number(value)
                             );
                           }}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -299,13 +299,13 @@ const RealEstateCreateForm = () => {
                           placeholder="Insert a value"
                           type="number"
                           {...field}
-                          value={field.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
                             field.onChange(
-                              value === "" ? undefined : Number(value),
+                              value === "" ? undefined : Number(value)
                             );
                           }}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -326,13 +326,13 @@ const RealEstateCreateForm = () => {
                           placeholder="Insert a value"
                           type="number"
                           {...field}
-                          value={field.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
                             field.onChange(
-                              value === "" ? undefined : Number(value),
+                              value === "" ? undefined : Number(value)
                             );
                           }}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -390,13 +390,13 @@ const RealEstateCreateForm = () => {
                           placeholder="Insert a value"
                           type="number"
                           {...field}
-                          value={field.value || ""}
                           onChange={(e) => {
                             const value = e.target.value;
                             field.onChange(
-                              value === "" ? undefined : Number(value),
+                              value === "" ? undefined : Number(value)
                             );
                           }}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -419,13 +419,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -444,13 +444,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -469,13 +469,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -502,13 +502,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -527,13 +527,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -552,13 +552,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -576,13 +576,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -621,13 +621,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -646,13 +646,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -671,13 +671,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -696,13 +696,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -721,13 +721,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -746,13 +746,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -789,13 +789,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -814,13 +814,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -857,13 +857,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -882,13 +882,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -907,13 +907,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -932,13 +932,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -957,13 +957,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -982,13 +982,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1007,13 +1007,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1032,13 +1032,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1057,13 +1057,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1082,13 +1082,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1107,13 +1107,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1132,13 +1132,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1157,13 +1157,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1182,13 +1182,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1207,13 +1207,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1232,13 +1232,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1257,13 +1257,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1282,13 +1282,13 @@ const RealEstateCreateForm = () => {
                         placeholder="Insert a value"
                         type="number"
                         {...field}
-                        value={field.value || ""}
                         onChange={(e) => {
                           const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            value === "" ? undefined : Number(value)
                           );
                         }}
+                        value={field.value || ""}
                       />
                     </FormControl>
                     <FormMessage />
@@ -1303,7 +1303,7 @@ const RealEstateCreateForm = () => {
                   <FormItem>
                     <FormLabel>Images</FormLabel>
                     <FormControl>
-                      <Uploader value={field.value} onChange={field.onChange} />
+                      <Uploader onChange={field.onChange} value={field.value} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -1350,13 +1350,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1375,13 +1375,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1400,13 +1400,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1461,13 +1461,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1486,13 +1486,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1511,13 +1511,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1538,13 +1538,13 @@ const RealEstateCreateForm = () => {
                             placeholder="Insert a value"
                             type="number"
                             {...field}
-                            value={field.value || ""}
                             onChange={(e) => {
                               const value = e.target.value;
                               field.onChange(
-                                value === "" ? undefined : Number(value),
+                                value === "" ? undefined : Number(value)
                               );
                             }}
+                            value={field.value || ""}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1555,10 +1555,10 @@ const RealEstateCreateForm = () => {
               )}
 
               <SubmitButton
+                className="w-full"
                 isSubmitting={form.formState.isSubmitting}
                 size="lg"
                 type="submit"
-                className="w-full"
               >
                 Create Real Estate Opportunity
               </SubmitButton>

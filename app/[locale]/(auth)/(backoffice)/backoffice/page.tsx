@@ -1,5 +1,3 @@
-const Page = () => {
-  return <>Backoffice Landing Page</>;
-};
+const Page = () => <>Backoffice Landing Page</>;
 
 export default Page;

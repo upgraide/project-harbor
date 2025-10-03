@@ -4,9 +4,9 @@ import { MeshGradient } from "@paper-design/shaders-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 
-interface ShaderBackgroundProps {
+type ShaderBackgroundProps = {
   children: React.ReactNode;
-}
+};
 
 export const ShaderBackground = ({ children }: ShaderBackgroundProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -31,8 +31,8 @@ export const ShaderBackground = ({ children }: ShaderBackgroundProps) => {
   }, []);
 
   return (
-    <div className="min-h-screen relative overflow-hidden" ref={containerRef}>
-      <svg className="absolute inset-0 w-0 h-0">
+    <div className="relative min-h-screen overflow-hidden" ref={containerRef}>
+      <svg className="absolute inset-0 h-0 w-0">
         <title>Filters</title>
         <defs>
           <filter height="200%" width="200%" x="-50%" y="-50%">
@@ -62,12 +62,12 @@ export const ShaderBackground = ({ children }: ShaderBackgroundProps) => {
 
       {/* Background Shaders */}
       <MeshGradient
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 h-full w-full"
         colors={["#11112D", "#3b82f6", "#ffffff", "#1e40af", "#60a5fa"]}
         speed={0.3}
       />
       <MeshGradient
-        className="absolute inset-0 w-full h-full opacity-60"
+        className="absolute inset-0 h-full w-full opacity-60"
         colors={["#11112D", "#ffffff", "#3b82f6", "#11112D"]}
         speed={0.2}
       />

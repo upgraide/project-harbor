@@ -1,5 +1,10 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type Preloaded, usePreloadedQuery } from "convex/react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { SubmitButton } from "@/components/submit-button";
 import {
   Form,
   FormControl,
@@ -7,19 +12,14 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  updateNameSchema,
-  UpdateNameSchemaType,
-} from "../schemas/update-name-schema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useScopedI18n } from "@/locales/client";
 import { Input } from "@/components/ui/input";
-import { SubmitButton } from "@/components/submit-button";
+import type { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
-import { toast } from "sonner";
-import { api } from "@/convex/_generated/api";
-import { type Preloaded, usePreloadedQuery } from "convex/react";
+import { useScopedI18n } from "@/locales/client";
+import {
+  type UpdateNameSchemaType,
+  updateNameSchema,
+} from "../schemas/update-name-schema";
 
 const UpdateNameCard = ({
   preloadedUser,
@@ -40,7 +40,7 @@ const UpdateNameCard = ({
     return null;
   }
 
-  const onSubmit = async (values: UpdateNameSchemaType) => {
+  const onSubmit = (values: UpdateNameSchemaType) => {
     toast.promise(
       authClient.updateUser({
         name: values.name,
@@ -49,7 +49,7 @@ const UpdateNameCard = ({
         loading: t("toast.loading"),
         success: t("toast.success"),
         error: t("toast.error"),
-      },
+      }
     );
   };
 
@@ -61,8 +61,8 @@ const UpdateNameCard = ({
       >
         <div className="flex w-full flex-col gap-4 rounded-lg p-6">
           <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-medium text-primary">{t("title")}</h2>
-            <p className="text-sm font-normal text-primary/60">
+            <h2 className="font-medium text-primary text-xl">{t("title")}</h2>
+            <p className="font-normal text-primary/60 text-sm">
               {t("description")}
             </p>
           </div>
@@ -83,8 +83,8 @@ const UpdateNameCard = ({
             )}
           />
         </div>
-        <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-t border-border bg-secondary px-6 dark:bg-card">
-          <p className="text-sm font-normal text-primary/60">{t("warning")}</p>
+        <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-border border-t bg-secondary px-6 dark:bg-card">
+          <p className="font-normal text-primary/60 text-sm">{t("warning")}</p>
           <SubmitButton
             isSubmitting={form.formState.isSubmitting}
             size="sm"

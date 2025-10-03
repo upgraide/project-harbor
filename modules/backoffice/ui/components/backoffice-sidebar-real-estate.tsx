@@ -1,5 +1,21 @@
 "use client";
 
+import { usePaginatedQuery } from "convex/react";
+import { formatDistanceToNow } from "date-fns";
+import {
+  BriefcaseIcon,
+  HouseIcon,
+  PlusIcon,
+  Users2Icon,
+  UsersIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { type RefObject, useState } from "react";
+import { DynamicImage } from "@/components/dynamic-image";
+import { InfiniteScrollTrigger } from "@/components/infinite-scroll-trigger";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -12,33 +28,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {
-  BriefcaseIcon,
-  HouseIcon,
-  PlusIcon,
-  Users2Icon,
-  UsersIcon,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useScopedI18n } from "@/locales/client";
-import NavUserSidebar from "./nav-user";
-import { DynamicImage } from "@/components/dynamic-image";
-import { buttonVariants } from "@/components/ui/button";
-import { usePaginatedQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { RefObject, useState } from "react";
-import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
-import { InfiniteScrollTrigger } from "@/components/infinite-scroll-trigger";
-import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDistanceToNow } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
 import {
-  backofficeRealEstateCreatePath,
   backofficePath,
+  backofficeRealEstateCreatePath,
   backofficeRealEstateOpportunityPath,
 } from "@/lib/paths";
+import { cn } from "@/lib/utils";
+import { useScopedI18n } from "@/locales/client";
+import NavUserSidebar from "./nav-user";
 
 const navigationItems = [
   {
@@ -90,7 +90,7 @@ export const BackofficeSidebarRealEstate = ({
     },
     {
       initialNumItems: 10,
-    },
+    }
   );
 
   const {
@@ -107,26 +107,26 @@ export const BackofficeSidebarRealEstate = ({
 
   return (
     <Sidebar
-      collapsible="icon"
       className="overflow-hidden *:data-[sidebar=sidebar]:flex-row"
+      collapsible="icon"
       {...props}
     >
       <Sidebar
-        collapsible="none"
         className="w-[calc(var(--sidebar-width-icon)+1px)]! border-r"
+        collapsible="none"
       >
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
+              <SidebarMenuButton asChild className="md:h-8 md:p-0" size="lg">
                 <Link href={backofficePath()}>
-                  <div className="bg-sidebar-foreground text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-foreground text-sidebar-primary-foreground">
                     <DynamicImage
+                      alt="Harbor Partners Icon"
                       className="size-4"
                       darkSrc="/assets/icon-dark.png"
-                      lightSrc="/assets/icon-light.png"
-                      alt="Harbor Partners Icon"
                       height={50}
+                      lightSrc="/assets/icon-light.png"
                       width={50}
                     />
                   </div>
@@ -173,25 +173,25 @@ export const BackofficeSidebarRealEstate = ({
         </SidebarFooter>
       </Sidebar>
 
-      <Sidebar collapsible="none" className="hidden flex-1 md:flex">
+      <Sidebar className="hidden flex-1 md:flex" collapsible="none">
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
-            <div className="text-foreground text-base font-medium">
+            <div className="font-medium text-base text-foreground">
               {pathname === backofficeRealEstateCreatePath()
                 ? "Create Opportunity"
                 : "Opportunities Real Estate"}
             </div>
             <Link
-              href={backofficeRealEstateCreatePath()}
               className={buttonVariants({ variant: "outline", size: "icon" })}
+              href={backofficeRealEstateCreatePath()}
             >
               <PlusIcon className="size-4" />
             </Link>
           </div>
           <SidebarInput
+            onChange={(e) => setNameFilter(e.target.value)}
             placeholder={t("searchPlaceholder")}
             value={nameFilter}
-            onChange={(e) => setNameFilter(e.target.value)}
           />
         </SidebarHeader>
         <SidebarContent>
@@ -201,73 +201,71 @@ export const BackofficeSidebarRealEstate = ({
                 <SkeletonOpportunitiesPanel />
               ) : (
                 <div className="flex w-full flex-1 flex-col text-sm">
-                  {opportunities.results.map((opportunity) => {
-                    return (
-                      <Link
+                  {opportunities.results.map((opportunity) => (
+                    <Link
+                      className={cn(
+                        "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
+                        pathname ===
+                          backofficeRealEstateOpportunityPath(
+                            opportunity._id
+                          ) && "bg-accent text-accent-foreground"
+                      )}
+                      href={backofficeRealEstateOpportunityPath(
+                        opportunity._id
+                      )}
+                      key={opportunity._id}
+                    >
+                      <div
                         className={cn(
-                          "relative flex cursor-pointer items-start gap-3 border-b p-4 py-5 text-sm leading-tight hover:bg-accent hover:text-accent-foreground",
+                          "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity",
                           pathname ===
                             backofficeRealEstateOpportunityPath(
-                              opportunity._id,
-                            ) && "bg-accent text-accent-foreground",
+                              opportunity._id
+                            ) && "opacity-100"
                         )}
-                        href={backofficeRealEstateOpportunityPath(
-                          opportunity._id,
-                        )}
-                        key={opportunity._id}
-                      >
-                        <div
-                          className={cn(
-                            "-translate-y-1/2 absolute top-1/2 left-0 h-[64%] w-1 rounded-r-full bg-neutral-300 opacity-0 transition-opacity",
-                            pathname ===
-                              backofficeRealEstateOpportunityPath(
-                                opportunity._id,
-                              ) && "opacity-100",
-                          )}
+                      />
+
+                      <Avatar className="h-10 w-10 rounded-full">
+                        <AvatarImage
+                          alt={opportunity.createdBy?.email}
+                          src={
+                            opportunity.createdBy?.avatarURL ??
+                            `https://avatar.vercel.sh/${opportunity.createdBy?.email}`
+                          }
                         />
+                        <AvatarFallback className="h-10 w-10 rounded-full">
+                          {opportunity.createdBy?.name &&
+                          opportunity.createdBy?.name.length > 0
+                            ? opportunity.createdBy?.name
+                                .charAt(0)
+                                .toUpperCase()
+                            : opportunity.createdBy?.email
+                                ?.charAt(0)
+                                .toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
 
-                        <Avatar className="h-10 w-10 rounded-full">
-                          <AvatarImage
-                            alt={opportunity.createdBy?.email}
-                            src={
-                              opportunity.createdBy?.avatarURL ??
-                              `https://avatar.vercel.sh/${opportunity.createdBy?.email}`
-                            }
-                          />
-                          <AvatarFallback className="h-10 w-10 rounded-full">
-                            {opportunity.createdBy?.name &&
-                            opportunity.createdBy?.name.length > 0
-                              ? opportunity.createdBy?.name
-                                  .charAt(0)
-                                  .toUpperCase()
-                              : opportunity.createdBy?.email
-                                  ?.charAt(0)
-                                  .toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-
-                        <div className="flex-1">
-                          <div className="flex w-full items-center gap-2">
-                            <div className="flex w-0 grow items-center gap-1">
-                              <span className="line-clamp-1 font-bold truncate">
-                                {opportunity.name}
-                              </span>
-                            </div>
-                            <span className="ml-auto shrink-0 text-muted-foreground text-xs">
-                              {formatDistanceToNow(opportunity._creationTime)}
+                      <div className="flex-1">
+                        <div className="flex w-full items-center gap-2">
+                          <div className="flex w-0 grow items-center gap-1">
+                            <span className="line-clamp-1 truncate font-bold">
+                              {opportunity.name}
                             </span>
                           </div>
-                          <div className="mt-1 flex items-center justify-between gap-2">
-                            <div className="flex w-0 grow items-center gap-1">
-                              <span className="line-clamp-1 text-muted-foreground text-xs truncate">
-                                {opportunity.description}
-                              </span>
-                            </div>
+                          <span className="ml-auto shrink-0 text-muted-foreground text-xs">
+                            {formatDistanceToNow(opportunity._creationTime)}
+                          </span>
+                        </div>
+                        <div className="mt-1 flex items-center justify-between gap-2">
+                          <div className="flex w-0 grow items-center gap-1">
+                            <span className="line-clamp-1 truncate text-muted-foreground text-xs">
+                              {opportunity.description}
+                            </span>
                           </div>
                         </div>
-                      </Link>
-                    );
-                  })}
+                      </div>
+                    </Link>
+                  ))}
                   <InfiniteScrollTrigger
                     canLoadMore={canLoadMore}
                     isLoadingMore={isLoadingMore}
@@ -284,27 +282,25 @@ export const BackofficeSidebarRealEstate = ({
   );
 };
 
-export const SkeletonOpportunitiesPanel = () => {
-  return (
-    <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-auto">
-      <div className="relative flex w-full min-w-0 flex-col p-2">
-        <div className="w-full space-y-2">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div className="flex items-start gap-3 rounded-lg p-4" key={index}>
-              <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
-              <div className="flex-1 min-w-0">
-                <div className="flex w-full items-center gap-2">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="ml-auto h-3 w-12 shrink-0" />
-                </div>
-                <div className="mt-2">
-                  <Skeleton className="h-3 w-full" />
-                </div>
+export const SkeletonOpportunitiesPanel = () => (
+  <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-auto">
+    <div className="relative flex w-full min-w-0 flex-col p-2">
+      <div className="w-full space-y-2">
+        {Array.from({ length: 8 }).map((_, index) => (
+          <div className="flex items-start gap-3 rounded-lg p-4" key={index}>
+            <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
+            <div className="min-w-0 flex-1">
+              <div className="flex w-full items-center gap-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="ml-auto h-3 w-12 shrink-0" />
+              </div>
+              <div className="mt-2">
+                <Skeleton className="h-3 w-full" />
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
-  );
-};
+  </div>
+);

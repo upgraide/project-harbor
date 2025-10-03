@@ -1,7 +1,7 @@
-import { api } from "@/convex/_generated/api";
-import { AuthGuard } from "@/modules/auth/ui/components/auth-guard";
 import { preloadQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 import { getToken } from "@/lib/auth-server";
+import { AuthGuard } from "@/modules/auth/ui/components/auth-guard";
 import { Navigation } from "@/modules/dashboard/ui/components/navigation";
 
 export const DashboardLayout = async ({
@@ -13,7 +13,7 @@ export const DashboardLayout = async ({
   const preloadedUser = await preloadQuery(
     api.auth.getCurrentUser,
     {},
-    { token },
+    { token }
   );
 
   return (

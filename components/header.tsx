@@ -1,25 +1,23 @@
 import Image from "next/image";
 import { LanguageSwitcher } from "./language-switcher";
 
-export const Header = () => {
-  return (
-    <header className="relative z-20 flex items-center justify-between p-6 mx-auto">
-      <Image
-        alt="logo"
-        src="/assets/logo-light.png"
-        height={250}
-        width={250}
-        className="hidden md:block"
-      />
-      <Image
-        alt="logo"
-        src="/assets/logo-light.png"
-        height={125}
-        width={125}
-        className="block md:hidden"
-      />
+export const Header = () => (
+  <header className="relative z-20 mx-auto flex items-center justify-between p-6">
+    <Image
+      alt="logo"
+      className="hidden md:block"
+      height={250}
+      src="/assets/logo-light.png"
+      width={250}
+    />
+    <Image
+      alt="logo"
+      className="block md:hidden"
+      height={125}
+      src="/assets/logo-light.png"
+      width={125}
+    />
 
-      <LanguageSwitcher />
-    </header>
-  );
-};
+    <LanguageSwitcher />
+  </header>
+);

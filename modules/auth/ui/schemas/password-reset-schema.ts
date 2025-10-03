@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noMagicNumbers: magic numbers */
 import { z } from "zod";
 
 export const passwordResetSchema = z.object({

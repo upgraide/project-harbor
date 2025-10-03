@@ -1,5 +1,7 @@
 "use client";
 
+import { useMutation } from "convex/react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,10 +12,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { toast } from "sonner";
-import { Doc } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import type { Doc } from "@/convex/_generated/dataModel";
 import { useScopedI18n } from "@/locales/client";
 
 function DeleteOpportunityTypeDialog({
@@ -24,7 +24,7 @@ function DeleteOpportunityTypeDialog({
   setOpportunity: (opportunity: Doc<"mergersAndAcquisitions"> | null) => void;
 }) {
   const t = useScopedI18n(
-    "backofficeMergersAndAcquisitionsOpportunityPage.deleteOpportunityTypeDialog",
+    "backofficeMergersAndAcquisitionsOpportunityPage.deleteOpportunityTypeDialog"
   );
   const updateOpportunity = useMutation(api.mergersAndAcquisitions.update);
 
@@ -42,7 +42,7 @@ function DeleteOpportunityTypeDialog({
         loading: t("toastLoading"),
         success: t("toastSuccess"),
         error: t("toastError"),
-      },
+      }
     );
 
     setOpportunity(null);
@@ -50,10 +50,10 @@ function DeleteOpportunityTypeDialog({
 
   return (
     <AlertDialog
-      open={!!opportunity}
       onOpenChange={() => {
         setOpportunity(null);
       }}
+      open={!!opportunity}
     >
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -63,8 +63,8 @@ function DeleteOpportunityTypeDialog({
         <AlertDialogFooter>
           <AlertDialogCancel>{t("cancelButton")}</AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleDelete}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            onClick={handleDelete}
           >
             {t("deleteButton")}
           </AlertDialogAction>

@@ -1,12 +1,12 @@
-import { cn } from "@/lib/utils";
 import {
   ArrowRightIcon,
-  ImageIcon,
+  CheckIcon,
   CloudUploadIcon,
+  ImageIcon,
   Loader,
   TrashIcon,
-  CheckIcon,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
@@ -16,7 +16,7 @@ export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
         <CloudUploadIcon
           className={cn(
             "size-6 text-muted-foreground",
-            isDragActive && "text-primary",
+            isDragActive && "text-primary"
           )}
         />
       </div>
@@ -26,7 +26,7 @@ export function RenderEmptyState({ isDragActive }: { isDragActive: boolean }) {
           or click here to select files
         </span>
       </p>
-      <Button type="button" className="mt-4">
+      <Button className="mt-4" type="button">
         Select files
       </Button>
     </div>
@@ -40,9 +40,7 @@ export function RenderErrorState() {
         <ImageIcon className={cn("size-6 text-destructive")} />
       </div>
       <p className="font-semibold text-base">Error loading file</p>
-      <p className="mt-1 text-muted-foreground text-xs ">
-        Something went wrong
-      </p>
+      <p className="mt-1 text-muted-foreground text-xs">Something went wrong</p>
       <Button className="mt-4" type="button">
         Tentar novamente <ArrowRightIcon className="size-4" />
       </Button>
@@ -64,20 +62,20 @@ export function RenderUploadedState({
           <CheckIcon className={cn("size-6 text-green-500")} />
         </div>
         <p className="font-semibold text-base">Files Uploaded</p>
-        <p className="mt-1 text-muted-foreground text-xs ">
+        <p className="mt-1 text-muted-foreground text-xs">
           File uploaded with success
         </p>
       </div>
       <Button
-        variant="destructive"
-        size="icon"
-        type="button"
-        disabled={isDeleting}
         className={cn(
           "absolute top-4 right-4 z-10",
-          isDeleting && "cursor-not-allowed opacity-50",
+          isDeleting && "cursor-not-allowed opacity-50"
         )}
+        disabled={isDeleting}
         onClick={handleRemoveFile}
+        size="icon"
+        type="button"
+        variant="destructive"
       >
         {isDeleting ? (
           <Loader className="size-4 animate-spin" />

@@ -1,8 +1,8 @@
 "use client";
 
-import { Button, buttonVariants } from "@/components/ui/button";
 import { Lock, Plus } from "lucide-react";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { requestAccessPath, signInPath } from "@/lib/paths";
 import { useScopedI18n } from "@/locales/client";
 
@@ -10,10 +10,10 @@ export const Hero = () => {
   const t = useScopedI18n("ladingPage");
   return (
     <main className="absolute inset-0 z-10 flex items-center justify-center">
-      <div className="max-w-7xl mx-auto px-8 w-full">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+      <div className="mx-auto w-full max-w-7xl px-8">
+        <div className="grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
           <div className="text-center md:text-left">
-            <h1 className="text-4xl lg:text-5xl xl:text-6xl text-white font-medium leading-[1.2] ">
+            <h1 className="font-medium text-4xl text-white leading-[1.2] lg:text-5xl xl:text-6xl">
               {t("title.firstRow")}
               <br />
               {t("title.secondRow")}
@@ -22,24 +22,24 @@ export const Hero = () => {
             </h1>
           </div>
 
-          <div className="text-left space-y-8">
-            <p className="text-xl md:text-2xl font-light text-white/80 leading-relaxed max-w-md">
+          <div className="space-y-8 text-left">
+            <p className="max-w-md font-light text-white/80 text-xl leading-relaxed md:text-2xl">
               {t("description")}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row">
               <Link
                 className={buttonVariants({ variant: "secondary", size: "lg" })}
                 href={requestAccessPath()}
               >
-                <Plus className="size-4 mr-2" />
+                <Plus className="mr-2 size-4" />
                 {t("buttons.requestAccess")}
               </Link>
               <Link
                 className={buttonVariants({ variant: "default", size: "lg" })}
                 href={signInPath()}
               >
-                <Lock className="size-4 mr-2" />
+                <Lock className="mr-2 size-4" />
                 {t("buttons.membershipLogin")}
               </Link>
             </div>

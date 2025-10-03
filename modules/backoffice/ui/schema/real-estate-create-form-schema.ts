@@ -1,15 +1,29 @@
-import { Id } from "@/convex/_generated/dataModel";
 import { z } from "zod";
+import type { Id } from "@/convex/_generated/dataModel";
+
+const NAME_MIN_LENGTH = 3;
+const NAME_MAX_LENGTH = 100;
+const DESCRIPTION_MIN_LENGTH = 3;
+const DESCRIPTION_MAX_LENGTH = 1000;
+const LOCATION_MIN_LENGTH = 3;
 
 export const realEstateCreateFormSchema = z.object({
   name: z
     .string()
-    .min(3, { message: "Name must be at least 3 characters long" })
-    .max(100, { message: "Name must be at most 100 characters long" }),
+    .min(NAME_MIN_LENGTH, {
+      message: `Name must be at least ${NAME_MIN_LENGTH} characters long`,
+    })
+    .max(NAME_MAX_LENGTH, {
+      message: `Name must be at most ${NAME_MAX_LENGTH} characters long`,
+    }),
   description: z
     .string()
-    .min(3, { message: "Description must be at least 3 characters long" })
-    .max(1000, { message: "Description must be at most 1000 characters long" })
+    .min(DESCRIPTION_MIN_LENGTH, {
+      message: `Description must be at least ${DESCRIPTION_MIN_LENGTH} characters long`,
+    })
+    .max(DESCRIPTION_MAX_LENGTH, {
+      message: `Description must be at most ${DESCRIPTION_MAX_LENGTH} characters long`,
+    })
     .optional(),
   asset: z
     .enum([
@@ -81,7 +95,9 @@ export const realEstateCreateFormSchema = z.object({
     .optional(),
   location: z
     .string()
-    .min(3, { message: "Location must be at least 3 characters long" })
+    .min(LOCATION_MIN_LENGTH, {
+      message: `Location must be at least ${LOCATION_MIN_LENGTH} characters long`,
+    })
     .optional(),
   area: z
     .number()

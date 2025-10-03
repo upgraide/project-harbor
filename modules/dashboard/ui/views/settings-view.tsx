@@ -1,7 +1,7 @@
-import UpdateAvatarCard from "../components/update-avatar-card";
-import { api } from "@/convex/_generated/api";
 import { preloadQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 import { getToken } from "@/lib/auth-server";
+import UpdateAvatarCard from "../components/update-avatar-card";
 import UpdateNameCard from "../components/update-name-card";
 
 const SettingsView = async () => {
@@ -10,7 +10,7 @@ const SettingsView = async () => {
   const preloadedUser = await preloadQuery(
     api.auth.getCurrentUser,
     {},
-    { token },
+    { token }
   );
 
   return (

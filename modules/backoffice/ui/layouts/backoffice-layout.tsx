@@ -5,20 +5,18 @@ const BackofficeLayout = async ({
   children,
 }: {
   children: React.ReactNode;
-}) => {
-  return (
-    <AuthGuard>
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "350px",
-          } as React.CSSProperties
-        }
-      >
-        {children}
-      </SidebarProvider>
-    </AuthGuard>
-  );
-};
+}) => (
+  <AuthGuard>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "350px",
+        } as React.CSSProperties
+      }
+    >
+      {children}
+    </SidebarProvider>
+  </AuthGuard>
+);
 
 export default BackofficeLayout;

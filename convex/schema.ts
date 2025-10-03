@@ -10,16 +10,16 @@ const schema = defineSchema({
         v.literal("Buy In"),
         v.literal("Buy Out"),
         v.literal("Buy In/Buy Out"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     typeDetails: v.optional(
       v.union(
         v.literal("Maioritário"),
         v.literal("Minoritário"),
         v.literal("100%"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     industry: v.optional(
       v.union(
@@ -32,8 +32,8 @@ const schema = defineSchema({
         v.literal("IT"),
         v.literal("TMT (Technology, Media & Telecom)"),
         v.literal("Transports"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     industrySubsector: v.optional(
       v.union(
@@ -42,8 +42,8 @@ const schema = defineSchema({
         v.literal("Construction & Materials"),
         v.literal("Food & Beverages"),
         v.literal("Others"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     sales: v.optional(
       v.union(
@@ -52,8 +52,8 @@ const schema = defineSchema({
         v.literal("10-15"),
         v.literal("20-30"),
         v.literal("30+"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     ebitda: v.optional(
       v.union(
@@ -61,8 +61,8 @@ const schema = defineSchema({
         v.literal("2-3"),
         v.literal("3-5"),
         v.literal("5+"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     ebitdaNormalized: v.optional(v.union(v.number(), v.null())),
     netDebt: v.optional(v.union(v.number(), v.null())),
@@ -74,10 +74,10 @@ const schema = defineSchema({
             year: v.string(),
             revenue: v.number(),
             ebitda: v.number(),
-          }),
+          })
         ),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     salesCAGR: v.optional(v.union(v.number(), v.null())),
     ebitdaCAGR: v.optional(v.union(v.number(), v.null())),
@@ -86,7 +86,7 @@ const schema = defineSchema({
 
     // Post-NDA Fields
     shareholderStructure: v.optional(
-      v.union(v.null(), v.array(v.id("_storage"))),
+      v.union(v.null(), v.array(v.id("_storage")))
     ),
     im: v.optional(v.union(v.null(), v.string())),
     entrepriseValue: v.optional(v.union(v.number(), v.null())),
@@ -131,8 +131,8 @@ const schema = defineSchema({
         v.literal("Shopping Center"),
         v.literal("Street Retail"),
         v.literal("Student Housing"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     nRoomsLastYear: v.optional(v.union(v.null(), v.number())),
     noi: v.optional(v.union(v.null(), v.number())),
@@ -149,8 +149,8 @@ const schema = defineSchema({
         v.literal("Value-add"),
         v.literal("Opportunistic"),
         v.literal("Development"),
-        v.null(),
-      ),
+        v.null()
+      )
     ),
     subRent: v.optional(v.union(v.null(), v.number())),
     rentPerSqm: v.optional(v.union(v.null(), v.number())),

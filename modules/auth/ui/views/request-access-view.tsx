@@ -1,16 +1,17 @@
+/** biome-ignore-all lint/style/noMagicNumbers: magic numbers */
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { SubmitButton } from "@/components/submit-button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
-import { useScopedI18n } from "@/locales/client";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -19,9 +20,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { SubmitButton } from "@/components/submit-button";
+import { Textarea } from "@/components/ui/textarea";
+import { useScopedI18n } from "@/locales/client";
 
 const createRequestAccessSchema = (t: ReturnType<typeof useScopedI18n>) =>
   z.object({
@@ -57,9 +58,8 @@ export const RequestAccessView = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof requestAccessSchema>) => {
-    console.log(data);
-  };
+  // biome-ignore lint/suspicious/noEmptyBlockStatements: empty block
+  const onSubmit = (_data: z.infer<typeof requestAccessSchema>) => {};
 
   return (
     <Card className="max-w-md">
@@ -71,7 +71,7 @@ export const RequestAccessView = () => {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <div className="grid gap-2">
               <FormField
                 control={form.control}
@@ -187,10 +187,10 @@ export const RequestAccessView = () => {
               />
             </div>
             <SubmitButton
+              className="w-full"
               isSubmitting={form.formState.isSubmitting}
               size="lg"
               type="submit"
-              className="w-full"
             >
               {t("buttons.submit")}
             </SubmitButton>
