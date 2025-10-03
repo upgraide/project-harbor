@@ -289,10 +289,48 @@ const Page = ({
               {opportunity.industrySubsector ? (
                 <TableRow key={"industrySubsector"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.industrySubsector")}
+                    {t(
+                      "financialInformationCard.table.metrics.industrySubsector"
+                    )}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.industrySubsector}
+                    {(() => {
+                      if (
+                        opportunity.industrySubsector === "Business Services"
+                      ) {
+                        return t(
+                          "financialInformationCard.table.values.businessservices"
+                        );
+                      }
+                      if (
+                        opportunity.industrySubsector === "Financial Services"
+                      ) {
+                        return t(
+                          "financialInformationCard.table.values.financialservices"
+                        );
+                      }
+                      if (
+                        opportunity.industrySubsector ===
+                        "Construction & Materials"
+                      ) {
+                        return t(
+                          "financialInformationCard.table.values.constructionandmaterials"
+                        );
+                      }
+                      if (
+                        opportunity.industrySubsector === "Food & Beverages"
+                      ) {
+                        return t(
+                          "financialInformationCard.table.values.foodandbeverages"
+                        );
+                      }
+                      if (opportunity.industrySubsector === "Others") {
+                        return t(
+                          "financialInformationCard.table.values.others"
+                        );
+                      }
+                      return opportunity.industrySubsector;
+                    })()}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-right" />
                 </TableRow>
