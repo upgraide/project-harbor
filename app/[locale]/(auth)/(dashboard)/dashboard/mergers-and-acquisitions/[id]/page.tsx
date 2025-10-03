@@ -208,7 +208,21 @@ const Page = ({
                     {t("financialInformationCard.table.metrics.typeDetails")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.typeDetails}
+                    {(() => {
+                      if (opportunity.typeDetails === "Maioritário") {
+                        return t(
+                          "financialInformationCard.table.values.majority"
+                        );
+                      }
+                      if (opportunity.typeDetails === "Minoritário") {
+                        return t(
+                          "financialInformationCard.table.values.minority"
+                        );
+                      }
+                      return t(
+                        "financialInformationCard.table.values.hundredPercent"
+                      );
+                    })()}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-right" />
                 </TableRow>
