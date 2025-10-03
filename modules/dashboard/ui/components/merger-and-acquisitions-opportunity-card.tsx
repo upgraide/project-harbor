@@ -66,7 +66,10 @@ const MergerAndAcquisitionsOpportunityCard = ({
 
       <CardFooter>
         <Link
-          className={cn(buttonVariants({ size: "lg" }), "w-full")}
+          className={cn(
+            buttonVariants({ size: "lg" }),
+            "w-full bg-accent-foreground hover:bg-accent-foreground/90"
+          )}
           href={dashboardMergersAndAcquisitionOpportunityPath(id)}
         >
           {t("viewOpportunity")}
