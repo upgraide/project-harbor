@@ -504,10 +504,4 @@ export default {
       },
     },
   },
-  dashboardMergersAndAcquisitionsOpportunityPage: {
-    breadcrumbs: {
-      mergersAndAcquisitionsOpportunities:
-        "Mergers and Acquisitions Opportunities",
-    },
-  },
 } as const;
