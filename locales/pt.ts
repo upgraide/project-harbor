@@ -35,6 +35,10 @@ export default {
     toastResetPasswordError:
       "Falha ao enviar link para redefinição de palavra-passe. Por favor, tente novamente!",
   },
+  languageSwitcher: {
+    english: "Inglês",
+    portuguese: "Português",
+  },
   themeSwitcher: {
     light: "Claro",
     dark: "Escuro",

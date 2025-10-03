@@ -7,15 +7,20 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { useChangeLocale, useCurrentLocale } from "@/locales/client";
+import {
+  useChangeLocale,
+  useCurrentLocale,
+  useScopedI18n,
+} from "@/locales/client";
 
 export function LanguageSwitcher() {
+  const t = useScopedI18n("languageSwitcher");
   const changeLocale = useChangeLocale();
   const locale = useCurrentLocale();
 
   const langs = [
-    { text: "English", value: "en" },
-    { text: "Portuguese", value: "pt" },
+    { text: t("english"), value: "en" },
+    { text: t("portuguese"), value: "pt" },
   ];
   const formatLanguage = (lng: string) =>
     langs.find((lang) => lang.value === lng)?.text;

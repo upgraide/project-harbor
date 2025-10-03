@@ -34,6 +34,10 @@ export default {
     toastResetPasswordError:
       "Failed to send reset password link. Please try again.",
   },
+  languageSwitcher: {
+    english: "English",
+    portuguese: "Portuguese",
+  },
   themeSwitcher: {
     light: "Light",
     dark: "Dark",
