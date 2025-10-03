@@ -61,10 +61,8 @@ const UpdateNameCard = ({
       >
         <div className="flex w-full flex-col gap-4 rounded-lg p-6">
           <div className="flex flex-col gap-2">
-            <h2 className="font-medium text-primary text-xl">{t("title")}</h2>
-            <p className="font-normal text-primary/60 text-sm">
-              {t("description")}
-            </p>
+            <h2 className="font-medium text-xl">{t("title")}</h2>
+            <p className="font-normal text-sm">{t("description")}</p>
           </div>
           <FormField
             control={form.control}
@@ -83,8 +81,8 @@ const UpdateNameCard = ({
             )}
           />
         </div>
-        <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-border border-t bg-secondary px-6 dark:bg-card">
-          <p className="font-normal text-primary/60 text-sm">{t("warning")}</p>
+        <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-border border-t bg-secondary px-6">
+          <p className="font-normal text-sm">{t("warning")}</p>
           <SubmitButton
             isSubmitting={form.formState.isSubmitting}
             size="sm"

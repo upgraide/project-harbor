@@ -120,7 +120,7 @@ const UpdateAvatarCard = ({
           type="file"
         />
       </div>
-      <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-border border-t bg-secondary px-6 dark:bg-card">
+      <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-border border-t bg-secondary px-6">
         <p className="font-normal text-sm">{t("uploadHint")}</p>
         {user.image && (
           <Button
