@@ -170,10 +170,10 @@ const Page = ({
             <TableHeader>
               <TableRow>
                 <TableHead className="px-6 py-4">
-                  {t("financialInformationCard.table.metric")}
+                  {t("financialInformationCard.table.header.metric")}
                 </TableHead>
                 <TableHead className="px-6 py-4">
-                  {t("financialInformationCard.table.value")}
+                  {t("financialInformationCard.table.header.value")}
                 </TableHead>
                 <TableHead className="px-6 py-4" />
               </TableRow>
@@ -182,10 +182,22 @@ const Page = ({
               {opportunity.type ? (
                 <TableRow key={"type"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.type")}
+                    {t("financialInformationCard.table.metrics.type")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.type}
+                    {(() => {
+                      if (opportunity.type === "Buy In") {
+                        return t("financialInformationCard.table.values.buyIn");
+                      }
+                      if (opportunity.type === "Buy Out") {
+                        return t(
+                          "financialInformationCard.table.values.buyOut"
+                        );
+                      }
+                      return t(
+                        "financialInformationCard.table.values.buyInBuyOut"
+                      );
+                    })()}
                   </TableCell>
                   <TableCell className="text-right" />
                 </TableRow>
@@ -193,7 +205,7 @@ const Page = ({
               {opportunity.typeDetails ? (
                 <TableRow key={"typeDetails"}>
                   <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.typeDetails")}
+                    {t("financialInformationCard.table.metrics.typeDetails")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.typeDetails}
