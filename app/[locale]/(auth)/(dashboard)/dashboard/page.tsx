@@ -13,8 +13,8 @@ const Page = async () => {
         <header className="z-10 flex w-full flex-col border-border border-b bg-card px-6">
           <div className="mx-auto flex w-full max-w-screen-xl flex-col items-start justify-between py-8">
             <div className="flex flex-col items-start gap-2">
-              <h1 className="font-medium text-3xl">{t("header.title")}</h1>
-              <p className="font-normal text-base">{t("header.description")}</p>
+              <h1 className="font-semibold text-3xl">{t("title")}</h1>
+              <p className="font-normal text-base">{t("description")}</p>
             </div>
             <TabsList className="mt-6 mb-8 grid grid-cols-3">
               <TabsTrigger value="all">All</TabsTrigger>
