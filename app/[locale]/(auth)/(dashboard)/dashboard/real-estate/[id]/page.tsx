@@ -18,9 +18,11 @@ import {
 } from "@/components/ui/table";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useScopedI18n } from "@/locales/client";
 
 const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
   const { id } = use(params);
+  const t = useScopedI18n("dashboardRealEstateOpportunityPage");
 
   const opportunity = useQuery(api.realEstates.getById, {
     id,
@@ -72,7 +74,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
 
       <Card>
         <CardHeader className="flex items-center justify-between border-b">
-          <CardTitle className="font-semibold text-xl">Description</CardTitle>
+          <CardTitle className="font-semibold text-xl">
+            {t("description")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground text-sm">
@@ -84,23 +88,72 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
       <Card>
         <CardHeader className="flex items-center justify-between border-b">
           <CardTitle className="font-semibold text-xl">
-            Financial Information
+            {t("financialInformationCard.title")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="px-6 py-4">Metric</TableHead>
-                <TableHead className="px-6 py-4">Value</TableHead>
+                <TableHead className="px-6 py-4">
+                  {t("financialInformationCard.table.header.metric")}
+                </TableHead>
+                <TableHead className="px-6 py-4">
+                  {t("financialInformationCard.table.header.value")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {opportunity.asset ? (
                 <TableRow key={"asset"}>
-                  <TableCell className="px-6 py-4">Asset</TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.asset}
+                    {t("financialInformationCard.table.metrics.asset")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {(() => {
+                      if (opportunity.asset === "Agnostic") {
+                        return t(
+                          "financialInformationCard.table.values.agnostic"
+                        );
+                      }
+                      if (opportunity.asset === "Hospitality") {
+                        return t(
+                          "financialInformationCard.table.values.hospitality"
+                        );
+                      }
+                      if (opportunity.asset === "Logistics & Industrial") {
+                        return t(
+                          "financialInformationCard.table.values.logisticsIndustrial"
+                        );
+                      }
+                      if (opportunity.asset === "Office") {
+                        return t(
+                          "financialInformationCard.table.values.office"
+                        );
+                      }
+                      if (opportunity.asset === "Residential") {
+                        return t(
+                          "financialInformationCard.table.values.residential"
+                        );
+                      }
+                      if (opportunity.asset === "Senior Living") {
+                        return t(
+                          "financialInformationCard.table.values.seniorLiving"
+                        );
+                      }
+                      if (opportunity.asset === "Shopping Center") {
+                        return t(
+                          "financialInformationCard.table.values.shoppingCenters"
+                        );
+                      }
+                      if (opportunity.asset === "Student Housing") {
+                        return t(
+                          "financialInformationCard.table.values.studentHousing"
+                        );
+                      }
+                      // For "Mixed" and "Street Retail" which should not be translated according to the image
+                      return opportunity.asset;
+                    })()}
                   </TableCell>
                   <TableCell className="text-right" />
                 </TableRow>
@@ -108,7 +161,7 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               {opportunity.nRoomsLastYear ? (
                 <TableRow key={"nRoomsLastYear"}>
                   <TableCell className="px-6 py-4">
-                    Number of Rooms Last Year
+                    {t("financialInformationCard.table.metrics.nRoomsLastYear")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.nRoomsLastYear}
@@ -118,7 +171,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.noi ? (
                 <TableRow key={"noi"}>
-                  <TableCell className="px-6 py-4">NOI</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.noi")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">{opportunity.noi}</TableCell>
                   <TableCell className="px-6 py-4 text-right" />
                 </TableRow>
@@ -126,7 +181,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               {opportunity.occupancyLastYear ? (
                 <TableRow key={"occupancyLastYear"}>
                   <TableCell className="px-6 py-4">
-                    Occupancy Last Year
+                    {t(
+                      "financialInformationCard.table.metrics.occupancyLastYear"
+                    )}
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.occupancyLastYear}
@@ -136,7 +193,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.walt ? (
                 <TableRow key={"walt"}>
-                  <TableCell className="px-6 py-4">WALT</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.walt")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.walt}
                   </TableCell>
@@ -145,7 +204,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.nBeds ? (
                 <TableRow key={"nBeds"}>
-                  <TableCell className="px-6 py-4">Number of Beds</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.nBeds")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.nBeds}
                   </TableCell>
@@ -154,16 +215,58 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.investment ? (
                 <TableRow key={"investment"}>
-                  <TableCell className="px-6 py-4">Investment</TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.investment}
+                    {t("financialInformationCard.table.metrics.investment")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {(() => {
+                      if (opportunity.investment === "Lease and Operation") {
+                        return t(
+                          "financialInformationCard.table.values.leaseAndOperation"
+                        );
+                      }
+                      if (opportunity.investment === "S&L") {
+                        return t("financialInformationCard.table.values.sAndL");
+                      }
+                      if (opportunity.investment === "Core") {
+                        return t("financialInformationCard.table.values.core");
+                      }
+                      if (opportunity.investment === "Fix&Flip") {
+                        return t(
+                          "financialInformationCard.table.values.fixAndFlip"
+                        );
+                      }
+                      if (opportunity.investment === "Refurbishment") {
+                        return t(
+                          "financialInformationCard.table.values.refurbishment"
+                        );
+                      }
+                      if (opportunity.investment === "Value-add") {
+                        return t(
+                          "financialInformationCard.table.values.valueAdd"
+                        );
+                      }
+                      if (opportunity.investment === "Opportunistic") {
+                        return t(
+                          "financialInformationCard.table.values.opportunistic"
+                        );
+                      }
+                      if (opportunity.investment === "Development") {
+                        return t(
+                          "financialInformationCard.table.values.development"
+                        );
+                      }
+                      return opportunity.investment;
+                    })()}
                   </TableCell>
                   <TableCell className="px-6 py-4 text-right" />
                 </TableRow>
               ) : null}
               {opportunity.subRent ? (
                 <TableRow key={"subRent"}>
-                  <TableCell className="px-6 py-4">Sub Rent</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.subRent")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.subRent}
                   </TableCell>
@@ -172,7 +275,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.rentPerSqm ? (
                 <TableRow key={"rentPerSqm"}>
-                  <TableCell className="px-6 py-4">Rent Per Sqm</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.rentPerSqm")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.rentPerSqm}
                   </TableCell>
@@ -181,7 +286,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.subYield ? (
                 <TableRow key={"subYield"}>
-                  <TableCell className="px-6 py-4">Sub Yield</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.subYield")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.subYield} %
                   </TableCell>
@@ -189,7 +296,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.capex ? (
                 <TableRow key={"capex"}>
-                  <TableCell className="px-6 py-4">Capex</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.capex")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.capex}
                   </TableCell>
@@ -197,7 +306,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.capexPerSqm ? (
                 <TableRow key={"capexPerSqm"}>
-                  <TableCell className="px-6 py-4">Capex Per Sqm</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.capexPerSqm")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.capexPerSqm}
                   </TableCell>
@@ -205,7 +316,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.sale ? (
                 <TableRow key={"sale"}>
-                  <TableCell className="px-6 py-4">Sale</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.sale")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.sale}
                   </TableCell>
@@ -213,7 +326,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.salePerSqm ? (
                 <TableRow key={"salePerSqm"}>
-                  <TableCell className="px-6 py-4">Sale Per Sqm</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.salePerSqm")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.salePerSqm}
                   </TableCell>
@@ -221,7 +336,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.location ? (
                 <TableRow key={"location"}>
-                  <TableCell className="px-6 py-4">Location</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.location")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.location}
                   </TableCell>
@@ -229,7 +346,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.area ? (
                 <TableRow key={"area"}>
-                  <TableCell className="px-6 py-4">Area</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.area")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.area} m²
                   </TableCell>
@@ -237,7 +356,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.value ? (
                 <TableRow key={"value"}>
-                  <TableCell className="px-6 py-4">Value</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.value")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.value} M€
                   </TableCell>
@@ -245,7 +366,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.yield ? (
                 <TableRow key={"yield"}>
-                  <TableCell className="px-6 py-4">Yield</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.yield")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.yield} %
                   </TableCell>
@@ -253,7 +376,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.rent ? (
                 <TableRow key={"rent"}>
-                  <TableCell className="px-6 py-4">Rent</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.rent")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.rent} M€/year
                   </TableCell>
@@ -261,7 +386,9 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.gcaAboveGround ? (
                 <TableRow key={"gcaAboveGround"}>
-                  <TableCell className="px-6 py-4">GCA Above Ground</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.gcaAboveGround")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.gcaAboveGround} m²
                   </TableCell>
@@ -269,9 +396,56 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
               ) : null}
               {opportunity.gcaBelowGround ? (
                 <TableRow key={"gcaBelowGround"}>
-                  <TableCell className="px-6 py-4">GCA Below Ground</TableCell>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.gcaBelowGround")}
+                  </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.gcaBelowGround} m²
+                  </TableCell>
+                </TableRow>
+              ) : null}
+              {opportunity.licenseStage ? (
+                <TableRow key={"licenseStage"}>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.licensingStage")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.licenseStage}
+                  </TableCell>
+                </TableRow>
+              ) : null}
+              {opportunity.holdingPeriod ? (
+                <TableRow key={"holdingPeriod"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "financialInformationCard.table.metrics.holdPeriodYears"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.holdingPeriod}{" "}
+                    {t("financialInformationCard.table.metrics.years")}
+                  </TableCell>
+                </TableRow>
+              ) : null}
+              {opportunity.breakEvenOccupancy ? (
+                <TableRow key={"breakEvenOccupancy"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "financialInformationCard.table.metrics.breakEvenOccupancy"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.breakEvenOccupancy}%
+                  </TableCell>
+                </TableRow>
+              ) : null}
+              {opportunity.occupancyRate ? (
+                <TableRow key={"occupancyRate"}>
+                  <TableCell className="px-6 py-4">
+                    {t("financialInformationCard.table.metrics.occupancyRate")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.occupancyRate}%
                   </TableCell>
                 </TableRow>
               ) : null}
@@ -280,11 +454,128 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
         </CardContent>
       </Card>
 
+      {opportunity.coInvestment && (
+        <Card>
+          <CardHeader className="flex items-center justify-between border-b">
+            <CardTitle className="font-semibold text-xl">
+              Co-Investment Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-6 py-4">
+                    {t("financialInformationCard.table.header.metric")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("financialInformationCard.table.header.value")}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {opportunity.gpEquityValue ? (
+                  <TableRow key={"gpEquityValue"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.gpEquity")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.gpEquityValue} M€
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.totalEquityRequired ? (
+                  <TableRow key={"totalEquityRequired"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.metrics.totalEquityRequired"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.totalEquityRequired} M€
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.sponsorPresentation ? (
+                  <TableRow key={"sponsorPresentation"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.metrics.sponsorPresentation"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.sponsorPresentation}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.promoteStructure ? (
+                  <TableRow key={"promoteStructure"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.metrics.promoteStructure"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.promoteStructure}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.projectIRR ? (
+                  <TableRow key={"projectIRR"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.projectIRR")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.projectIRR}%
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.investorIRR ? (
+                  <TableRow key={"investorIRR"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.investorIRR")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.investorIRR}%
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.coInvestmentHoldPeriod ? (
+                  <TableRow key={"coInvestmentHoldPeriod"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.metrics.coInvestmentHoldPeriod"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.coInvestmentHoldPeriod}{" "}
+                      {t("financialInformationCard.table.metrics.years")}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.coInvestmentBreakEvenOccupancy ? (
+                  <TableRow key={"coInvestmentBreakEvenOccupancy"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.metrics.coInvestmentBreakEvenOccupancy"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.coInvestmentBreakEvenOccupancy}%
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="flex w-full items-center gap-4">
-        <Button size={"lg"}>Interest to Invest</Button>
+        <Button size={"lg"}>{t("actionButtons.interestToInvest")}</Button>
         {opportunity.coInvestment === true ? (
           <Button size={"lg"} variant={"outline"}>
-            Co-Invest
+            {t("actionButtons.coInvest")}
           </Button>
         ) : null}
       </div>
