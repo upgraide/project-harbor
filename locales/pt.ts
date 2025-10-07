@@ -508,5 +508,20 @@ export default {
         },
       },
     },
+    notInterestedDialog: {
+      title: "Por que não está interessado?",
+      description:
+        "Por favor, forneça uma breve explicação sobre por que não está interessado nesta oportunidade. Este feedback ajuda-nos a melhorar as nossas ofertas.",
+      placeholder: "Digite o seu motivo aqui...",
+      buttons: {
+        cancel: "Cancelar",
+        submit: "Enviar Feedback",
+      },
+    },
+    actionButtons: {
+      interestToInvest: "Interesse em Investir",
+      coInvest: "Co-Investir",
+      notInterested: "Não Interessado",
+    },
   },
 } as const;

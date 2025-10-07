@@ -5,7 +5,7 @@
 import { useQuery } from "convex/react";
 import { LoaderIcon } from "lucide-react";
 import Image from "next/image";
-import { use } from "react";
+import { use, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +18,15 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -25,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useScopedI18n } from "@/locales/client";
@@ -47,6 +57,8 @@ const Page = ({
 }) => {
   const { id } = use(params);
   const t = useScopedI18n("dashboardMergersAndAcquisitionsOpportunityPage");
+  const [notInterestedReason, setNotInterestedReason] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const opportunity = useQuery(api.mergersAndAcquisitions.getById, {
     id,
@@ -690,12 +702,59 @@ const Page = ({
       </Card>
 
       <div className="flex w-full items-center gap-4">
-        <Button size={"lg"}>Interest to Invest</Button>
+        <Button size={"lg"}>{t("actionButtons.interestToInvest")}</Button>
         {opportunity.coInvestment === true ? (
           <Button size={"lg"} variant={"outline"}>
-            Co-Invest
+            {t("actionButtons.coInvest")}
           </Button>
         ) : null}
+        <Dialog onOpenChange={setIsDialogOpen} open={isDialogOpen}>
+          <DialogTrigger asChild>
+            <Button size={"lg"} variant={"destructive"}>
+              {t("actionButtons.notInterested")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>{t("notInterestedDialog.title")}</DialogTitle>
+              <DialogDescription>
+                {t("notInterestedDialog.description")}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <Textarea
+                className="min-h-[100px]"
+                id="reason"
+                onChange={(e) => setNotInterestedReason(e.target.value)}
+                placeholder={t("notInterestedDialog.placeholder")}
+                value={notInterestedReason}
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                onClick={() => {
+                  setIsDialogOpen(false);
+                  setNotInterestedReason("");
+                }}
+                variant="outline"
+              >
+                {t("notInterestedDialog.buttons.cancel")}
+              </Button>
+              <Button
+                disabled={!notInterestedReason.trim()}
+                onClick={() => {
+                  // Here you would typically send the reason to your backend
+                  // For now, just close the dialog and reset the form
+                  setIsDialogOpen(false);
+                  setNotInterestedReason("");
+                }}
+                variant="destructive"
+              >
+                {t("notInterestedDialog.buttons.submit")}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

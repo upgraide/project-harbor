@@ -503,5 +503,20 @@ export default {
         },
       },
     },
+    notInterestedDialog: {
+      title: "Why are you not interested?",
+      description:
+        "Please provide a brief explanation for why you are not interested in this opportunity. This feedback helps us improve our offerings.",
+      placeholder: "Enter your reason here...",
+      buttons: {
+        cancel: "Cancel",
+        submit: "Submit Feedback",
+      },
+    },
+    actionButtons: {
+      interestToInvest: "Interest to Invest",
+      coInvest: "Co-Invest",
+      notInterested: "Not Interested",
+    },
   },
 } as const;
