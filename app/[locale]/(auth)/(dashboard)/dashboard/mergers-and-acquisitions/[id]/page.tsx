@@ -427,8 +427,8 @@ const Page = ({
                 accessibilityLayer
                 data={opportunity.graphRows ?? []}
                 margin={{
-                  left: 12,
-                  right: 12,
+                  left: 50,
+                  right: 50,
                 }}
               >
                 <CartesianGrid vertical={false} />
