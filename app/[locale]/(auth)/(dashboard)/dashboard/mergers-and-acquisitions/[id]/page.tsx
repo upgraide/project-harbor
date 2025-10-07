@@ -108,353 +108,363 @@ const Page = ({
         </>
       )}
 
-      <Card className="border-none bg-background shadow-none">
+      <Card className="mx-4 bg-background shadow-none">
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="font-semibold text-xl">
             {t("description")}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-balance text-muted-foreground text-sm">
             {opportunity.description}
           </p>
         </CardContent>
       </Card>
 
-      <Card className="border-none bg-background shadow-none">
-        <CardHeader>
-          <CardTitle className="font-semibold text-xl">
-            {t("financialPerformanceCard.title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig}>
-            <AreaChart
-              accessibilityLayer
-              data={opportunity.graphRows ?? []}
-              margin={{
-                left: 12,
-                right: 12,
-              }}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                axisLine={false}
-                dataKey="year"
-                tickFormatter={(value) => value.slice(0, 5)}
-                tickLine={false}
-                tickMargin={8}
-              />
-              <ChartTooltip
-                content={<ChartTooltipContent indicator="line" />}
-                cursor={false}
-              />
-              <Area
-                dataKey="revenue"
-                fill="var(--color-revenue)"
-                fillOpacity={0.4}
-                stackId="a"
-                stroke="var(--color-revenue)"
-                type="natural"
-              />
-              <Area
-                dataKey="ebitda"
-                fill="var(--color-ebitda)"
-                fillOpacity={0.4}
-                stackId="a"
-                stroke="var(--color-ebitda)"
-                type="natural"
-              />
-              <ChartLegend content={<ChartLegendContent />} />
-            </AreaChart>
-          </ChartContainer>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 items-center gap-4 align-middle md:grid-cols-2">
+        <Card className="border-none bg-background shadow-none">
+          <CardHeader className="flex items-center justify-between">
+            <CardTitle className="font-semibold text-xl">
+              {t("financialInformationCard.title")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-6 py-4">
+                    {t("financialInformationCard.table.header.metric")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("financialInformationCard.table.header.value")}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {opportunity.type ? (
+                  <TableRow key={"type"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.type")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {(() => {
+                        if (opportunity.type === "Buy In") {
+                          return t(
+                            "financialInformationCard.table.values.buyIn"
+                          );
+                        }
+                        if (opportunity.type === "Buy Out") {
+                          return t(
+                            "financialInformationCard.table.values.buyOut"
+                          );
+                        }
+                        return t(
+                          "financialInformationCard.table.values.buyInBuyOut"
+                        );
+                      })()}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.typeDetails ? (
+                  <TableRow key={"typeDetails"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.typeDetails")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {(() => {
+                        if (opportunity.typeDetails === "Maioritário") {
+                          return t(
+                            "financialInformationCard.table.values.majority"
+                          );
+                        }
+                        if (opportunity.typeDetails === "Minoritário") {
+                          return t(
+                            "financialInformationCard.table.values.minority"
+                          );
+                        }
+                        return t(
+                          "financialInformationCard.table.values.hundredPercent"
+                        );
+                      })()}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.industry ? (
+                  <TableRow key={"industry"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.industry")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {(() => {
+                        if (opportunity.industry === "Services") {
+                          return t(
+                            "financialInformationCard.table.values.services"
+                          );
+                        }
+                        if (
+                          opportunity.industry === "Transformation Industry"
+                        ) {
+                          return t(
+                            "financialInformationCard.table.values.transformationindustry"
+                          );
+                        }
+                        if (opportunity.industry === "Trading") {
+                          return t(
+                            "financialInformationCard.table.values.trading"
+                          );
+                        }
+                        if (
+                          opportunity.industry === "Energy & Infrastructure"
+                        ) {
+                          return t(
+                            "financialInformationCard.table.values.energyandinfrastructure"
+                          );
+                        }
+                        if (opportunity.industry === "Fitness") {
+                          return t(
+                            "financialInformationCard.table.values.fitness"
+                          );
+                        }
+                        if (
+                          opportunity.industry ===
+                          "Healthcare & Pharmaceuticals"
+                        ) {
+                          return t(
+                            "financialInformationCard.table.values.healthcareandpharmaceuticals"
+                          );
+                        }
+                        if (opportunity.industry === "IT") {
+                          return t("financialInformationCard.table.values.it");
+                        }
+                        if (
+                          opportunity.industry ===
+                          "TMT (Technology, Media & Telecom)"
+                        ) {
+                          return t("financialInformationCard.table.values.tmt");
+                        }
+                        if (opportunity.industry === "Transports") {
+                          return t(
+                            "financialInformationCard.table.values.transports"
+                          );
+                        }
+                        return opportunity.industry;
+                      })()}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.industrySubsector ? (
+                  <TableRow key={"industrySubsector"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.metrics.industrySubsector"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {(() => {
+                        if (
+                          opportunity.industrySubsector === "Business Services"
+                        ) {
+                          return t(
+                            "financialInformationCard.table.values.businessservices"
+                          );
+                        }
+                        if (
+                          opportunity.industrySubsector === "Financial Services"
+                        ) {
+                          return t(
+                            "financialInformationCard.table.values.financialservices"
+                          );
+                        }
+                        if (
+                          opportunity.industrySubsector ===
+                          "Construction & Materials"
+                        ) {
+                          return t(
+                            "financialInformationCard.table.values.constructionandmaterials"
+                          );
+                        }
+                        if (
+                          opportunity.industrySubsector === "Food & Beverages"
+                        ) {
+                          return t(
+                            "financialInformationCard.table.values.foodandbeverages"
+                          );
+                        }
+                        if (opportunity.industrySubsector === "Others") {
+                          return t(
+                            "financialInformationCard.table.values.others"
+                          );
+                        }
+                        return opportunity.industrySubsector;
+                      })()}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.sales ||
+                opportunity.ebitda ||
+                opportunity.ebitdaNormalized ||
+                opportunity.netDebt ? (
+                  <TableRow key={"dimension"}>
+                    <TableCell className="bg-muted px-6 py-4 font-medium">
+                      {t("financialInformationCard.table.metrics.dimension")}
+                    </TableCell>
+                    <TableCell className="bg-muted px-6 py-4" />
+                  </TableRow>
+                ) : null}
+                {opportunity.sales ? (
+                  <TableRow key={"sales"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.sales")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`€${opportunity.sales}M`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.ebitda ? (
+                  <TableRow key={"ebitda"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.ebitda")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`€${opportunity.ebitda}M`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.ebitdaNormalized ? (
+                  <TableRow key={"ebitdaNormalized"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.metrics.ebitdaNormalized"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.ebitdaNormalized}x`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.netDebt ? (
+                  <TableRow key={"netDebt"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.netDebt")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`€${opportunity.netDebt}M`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.salesCAGR || opportunity.ebitdaCAGR ? (
+                  <TableRow key={"CAGR"}>
+                    <TableCell className="bg-muted px-6 py-4 font-medium">
+                      {t("financialInformationCard.table.metrics.cagr")}
+                    </TableCell>
+                    <TableCell className="bg-muted px-6 py-4" />
+                  </TableRow>
+                ) : null}
+                {opportunity.salesCAGR ? (
+                  <TableRow key={"salesCAGR"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.salesCAGR")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.salesCAGR}%`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.ebitdaCAGR ? (
+                  <TableRow key={"ebitdaCAGR"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.metrics.ebitdaCAGR")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.ebitdaCAGR}%`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.assetIncluded ||
+                opportunity.estimatedAssetValue ? (
+                  <TableRow key={"Asset"}>
+                    <TableCell className="bg-muted px-6 py-4 font-medium">
+                      {t("financialInformationCard.table.asset")}
+                    </TableCell>
+                    <TableCell className="bg-muted px-6 py-4" />
+                  </TableRow>
+                ) : null}
+                {opportunity.assetIncluded ? (
+                  <TableRow key={"assetIncluded"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.assetIncluded")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.assetIncluded ? t("yes") : t("no")}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.estimatedAssetValue ? (
+                  <TableRow key={"estimatedAssetValue"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.estimatedAssetValue")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`€${opportunity.estimatedAssetValue}M`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-      <Card className="border-none bg-background shadow-none">
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle className="font-semibold text-xl">
-            {t("financialInformationCard.title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="px-6 py-4">
-                  {t("financialInformationCard.table.header.metric")}
-                </TableHead>
-                <TableHead className="px-6 py-4">
-                  {t("financialInformationCard.table.header.value")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {opportunity.type ? (
-                <TableRow key={"type"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.metrics.type")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {(() => {
-                      if (opportunity.type === "Buy In") {
-                        return t("financialInformationCard.table.values.buyIn");
-                      }
-                      if (opportunity.type === "Buy Out") {
-                        return t(
-                          "financialInformationCard.table.values.buyOut"
-                        );
-                      }
-                      return t(
-                        "financialInformationCard.table.values.buyInBuyOut"
-                      );
-                    })()}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.typeDetails ? (
-                <TableRow key={"typeDetails"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.metrics.typeDetails")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {(() => {
-                      if (opportunity.typeDetails === "Maioritário") {
-                        return t(
-                          "financialInformationCard.table.values.majority"
-                        );
-                      }
-                      if (opportunity.typeDetails === "Minoritário") {
-                        return t(
-                          "financialInformationCard.table.values.minority"
-                        );
-                      }
-                      return t(
-                        "financialInformationCard.table.values.hundredPercent"
-                      );
-                    })()}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.industry ? (
-                <TableRow key={"industry"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.metrics.industry")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {(() => {
-                      if (opportunity.industry === "Services") {
-                        return t(
-                          "financialInformationCard.table.values.services"
-                        );
-                      }
-                      if (opportunity.industry === "Transformation Industry") {
-                        return t(
-                          "financialInformationCard.table.values.transformationindustry"
-                        );
-                      }
-                      if (opportunity.industry === "Trading") {
-                        return t(
-                          "financialInformationCard.table.values.trading"
-                        );
-                      }
-                      if (opportunity.industry === "Energy & Infrastructure") {
-                        return t(
-                          "financialInformationCard.table.values.energyandinfrastructure"
-                        );
-                      }
-                      if (opportunity.industry === "Fitness") {
-                        return t(
-                          "financialInformationCard.table.values.fitness"
-                        );
-                      }
-                      if (
-                        opportunity.industry === "Healthcare & Pharmaceuticals"
-                      ) {
-                        return t(
-                          "financialInformationCard.table.values.healthcareandpharmaceuticals"
-                        );
-                      }
-                      if (opportunity.industry === "IT") {
-                        return t("financialInformationCard.table.values.it");
-                      }
-                      if (
-                        opportunity.industry ===
-                        "TMT (Technology, Media & Telecom)"
-                      ) {
-                        return t("financialInformationCard.table.values.tmt");
-                      }
-                      if (opportunity.industry === "Transports") {
-                        return t(
-                          "financialInformationCard.table.values.transports"
-                        );
-                      }
-                      return opportunity.industry;
-                    })()}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.industrySubsector ? (
-                <TableRow key={"industrySubsector"}>
-                  <TableCell className="px-6 py-4">
-                    {t(
-                      "financialInformationCard.table.metrics.industrySubsector"
-                    )}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {(() => {
-                      if (
-                        opportunity.industrySubsector === "Business Services"
-                      ) {
-                        return t(
-                          "financialInformationCard.table.values.businessservices"
-                        );
-                      }
-                      if (
-                        opportunity.industrySubsector === "Financial Services"
-                      ) {
-                        return t(
-                          "financialInformationCard.table.values.financialservices"
-                        );
-                      }
-                      if (
-                        opportunity.industrySubsector ===
-                        "Construction & Materials"
-                      ) {
-                        return t(
-                          "financialInformationCard.table.values.constructionandmaterials"
-                        );
-                      }
-                      if (
-                        opportunity.industrySubsector === "Food & Beverages"
-                      ) {
-                        return t(
-                          "financialInformationCard.table.values.foodandbeverages"
-                        );
-                      }
-                      if (opportunity.industrySubsector === "Others") {
-                        return t(
-                          "financialInformationCard.table.values.others"
-                        );
-                      }
-                      return opportunity.industrySubsector;
-                    })()}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.sales ||
-              opportunity.ebitda ||
-              opportunity.ebitdaNormalized ||
-              opportunity.netDebt ? (
-                <TableRow key={"dimension"}>
-                  <TableCell className="bg-muted px-6 py-4 font-medium">
-                    {t("financialInformationCard.table.metrics.dimension")}
-                  </TableCell>
-                  <TableCell className="bg-muted px-6 py-4" />
-                </TableRow>
-              ) : null}
-              {opportunity.sales ? (
-                <TableRow key={"sales"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.metrics.sales")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {`€${opportunity.sales}M`}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.ebitda ? (
-                <TableRow key={"ebitda"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.metrics.ebitda")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {`€${opportunity.ebitda}M`}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.ebitdaNormalized ? (
-                <TableRow key={"ebitdaNormalized"}>
-                  <TableCell className="px-6 py-4">
-                    {t(
-                      "financialInformationCard.table.metrics.ebitdaNormalized"
-                    )}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {`${opportunity.ebitdaNormalized}x`}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.netDebt ? (
-                <TableRow key={"netDebt"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.metrics.netDebt")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {`€${opportunity.netDebt}M`}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.salesCAGR || opportunity.ebitdaCAGR ? (
-                <TableRow key={"CAGR"}>
-                  <TableCell className="bg-muted px-6 py-4 font-medium">
-                    {t("financialInformationCard.table.metrics.cagr")}
-                  </TableCell>
-                  <TableCell className="bg-muted px-6 py-4" />
-                </TableRow>
-              ) : null}
-              {opportunity.salesCAGR ? (
-                <TableRow key={"salesCAGR"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.metrics.salesCAGR")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {`${opportunity.salesCAGR}%`}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.ebitdaCAGR ? (
-                <TableRow key={"ebitdaCAGR"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.metrics.ebitdaCAGR")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {`${opportunity.ebitdaCAGR}%`}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.assetIncluded || opportunity.estimatedAssetValue ? (
-                <TableRow key={"Asset"}>
-                  <TableCell className="bg-muted px-6 py-4 font-medium">
-                    {t("financialInformationCard.table.asset")}
-                  </TableCell>
-                  <TableCell className="bg-muted px-6 py-4" />
-                </TableRow>
-              ) : null}
-              {opportunity.assetIncluded ? (
-                <TableRow key={"assetIncluded"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.assetIncluded")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.assetIncluded ? t("yes") : t("no")}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-              {opportunity.estimatedAssetValue ? (
-                <TableRow key={"estimatedAssetValue"}>
-                  <TableCell className="px-6 py-4">
-                    {t("financialInformationCard.table.estimatedAssetValue")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {`€${opportunity.estimatedAssetValue}M`}
-                  </TableCell>
-                </TableRow>
-              ) : null}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        <Card className="border-none bg-background shadow-none">
+          <CardHeader>
+            <CardTitle className="font-semibold text-xl">
+              {t("financialPerformanceCard.title")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig}>
+              <AreaChart
+                accessibilityLayer
+                data={opportunity.graphRows ?? []}
+                margin={{
+                  left: 12,
+                  right: 12,
+                }}
+              >
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  axisLine={false}
+                  dataKey="year"
+                  tickFormatter={(value) => value.slice(0, 5)}
+                  tickLine={false}
+                  tickMargin={8}
+                />
+                <ChartTooltip
+                  content={<ChartTooltipContent indicator="line" />}
+                  cursor={false}
+                />
+                <Area
+                  dataKey="revenue"
+                  fill="var(--color-revenue)"
+                  fillOpacity={0.4}
+                  stackId="a"
+                  stroke="var(--color-revenue)"
+                  type="natural"
+                />
+                <Area
+                  dataKey="ebitda"
+                  fill="var(--color-ebitda)"
+                  fillOpacity={0.4}
+                  stackId="a"
+                  stroke="var(--color-ebitda)"
+                  type="natural"
+                />
+                <ChartLegend content={<ChartLegendContent />} />
+              </AreaChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="flex items-center justify-between">
@@ -573,135 +583,141 @@ const Page = ({
         </CardContent>
       </Card>
 
-      <Card className="border-none bg-background shadow-none">
-        <CardHeader className="flex items-center justify-between border-b">
-          <CardTitle className="font-semibold text-xl">
-            {t("shareholderInformationCard.title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="gap-2">
-          {opportunity.shareholderStructureUrls?.map((imageUrl, index) => (
-            <div className="w-full" key={index}>
-              <Image
-                alt={`Opportunity Image ${index + 1}`}
-                className="h-96 w-full"
-                height={4501}
-                src={imageUrl ?? ""}
-                width={4501}
-              />
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card className="border-none bg-background shadow-none">
-        <CardHeader className="flex items-center justify-between">
-          <CardTitle className="font-semid text-xl">
-            {t("coInvestmentInformationCard.title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="px-6 py-4">
-                  {t("coInvestmentInformationCard.table.header.metric")}
-                </TableHead>
-                <TableHead className="px-6 py-4">
-                  {t("coInvestmentInformationCard.table.header.value")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow key={"equityContribution"}>
-                <TableCell className="px-6 py-4">
-                  {t(
-                    "coInvestmentInformationCard.table.metrics.equityContribution"
-                  )}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.equityContribution ?? "N/A"}
-                </TableCell>
-              </TableRow>
-              <TableRow key={"grossIRR"}>
-                <TableCell className="px-6 py-4">
-                  {t("coInvestmentInformationCard.table.metrics.grossIRR")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.grossIRR ?? "N/A"}
-                </TableCell>
-              </TableRow>
-              <TableRow key={"netIRR"}>
-                <TableCell className="px-6 py-4">
-                  {t("coInvestmentInformationCard.table.metrics.netIRR")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.netIRR ?? "N/A"}
-                </TableCell>
-              </TableRow>
-              <TableRow key={"moic"}>
-                <TableCell className="px-6 py-4">
-                  {t("coInvestmentInformationCard.table.metrics.moic")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.moic ?? "N/A"}
-                </TableCell>
-              </TableRow>
-              <TableRow key={"cashOnCashReturn"}>
-                <TableCell className="px-6 py-4">
-                  {t(
-                    "coInvestmentInformationCard.table.metrics.cashOnCashReturn"
-                  )}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.cashOnCashReturn ?? "N/A"}
-                </TableCell>
-              </TableRow>
-              <TableRow key={"cashConvertion"}>
-                <TableCell className="px-6 py-4">
-                  {t(
-                    "coInvestmentInformationCard.table.metrics.cashConvertion"
-                  )}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.cashConvertion ?? "N/A"}
-                </TableCell>
-              </TableRow>
-              <TableRow key={"entryMultiple"}>
-                <TableCell className="px-6 py-4">
-                  {t("coInvestmentInformationCard.table.metrics.entryMultiple")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.entryMultiple ?? "N/A"}
-                </TableCell>
-              </TableRow>
-              <TableRow key={"exitExpectedMultiple"}>
-                <TableCell className="px-6 py-4">
-                  {t(
-                    "coInvestmentInformationCard.table.metrics.exitExpectedMultiple"
-                  )}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.exitExpectedMultiple ?? "N/A"}
-                </TableCell>
-              </TableRow>
-              {opportunity.holdPeriod ? (
-                <TableRow key={"holdPeriod"}>
+      <div className="grid grid-cols-1 items-center gap-4 align-middle md:grid-cols-2">
+        <Card className="border-none bg-background shadow-none">
+          <CardHeader className="flex items-center justify-between">
+            <CardTitle className="font-semid text-xl">
+              {t("coInvestmentInformationCard.title")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="px-6 py-4">
+                    {t("coInvestmentInformationCard.table.header.metric")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("coInvestmentInformationCard.table.header.value")}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow key={"equityContribution"}>
                   <TableCell className="px-6 py-4">
-                    {t("coInvestmentInformationCard.table.metrics.holdPeriod")}
+                    {t(
+                      "coInvestmentInformationCard.table.metrics.equityContribution"
+                    )}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.holdPeriod}{" "}
-                    {t("coInvestmentInformationCard.table.values.years")}
+                    {opportunity.equityContribution ?? "N/A"}
                   </TableCell>
                 </TableRow>
-              ) : null}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                <TableRow key={"grossIRR"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentInformationCard.table.metrics.grossIRR")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.grossIRR ?? "N/A"}
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"netIRR"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentInformationCard.table.metrics.netIRR")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.netIRR ?? "N/A"}
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"moic"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentInformationCard.table.metrics.moic")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.moic ?? "N/A"}
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"cashOnCashReturn"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "coInvestmentInformationCard.table.metrics.cashOnCashReturn"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.cashOnCashReturn ?? "N/A"}
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"cashConvertion"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "coInvestmentInformationCard.table.metrics.cashConvertion"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.cashConvertion ?? "N/A"}
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"entryMultiple"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "coInvestmentInformationCard.table.metrics.entryMultiple"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.entryMultiple ?? "N/A"}
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"exitExpectedMultiple"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "coInvestmentInformationCard.table.metrics.exitExpectedMultiple"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.exitExpectedMultiple ?? "N/A"}
+                  </TableCell>
+                </TableRow>
+                {opportunity.holdPeriod ? (
+                  <TableRow key={"holdPeriod"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "coInvestmentInformationCard.table.metrics.holdPeriod"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.holdPeriod}{" "}
+                      {t("coInvestmentInformationCard.table.metrics.years")}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-      <div className="flex w-full items-center gap-4">
+        <Card className="border-none bg-background shadow-none">
+          <CardHeader className="flex items-center justify-between">
+            <CardTitle className="font-semibold text-xl">
+              {t("shareholderInformationCard.title")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="gap-2">
+            {opportunity.shareholderStructureUrls?.map((imageUrl, index) => (
+              <div className="w-full" key={index}>
+                <Image
+                  alt={`Opportunity Image ${index + 1}`}
+                  className="h-96 w-full"
+                  height={4501}
+                  src={imageUrl ?? ""}
+                  width={4501}
+                />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
         <Button size={"lg"}>{t("actionButtons.interestToInvest")}</Button>
         {opportunity.coInvestment === true ? (
           <Button size={"lg"} variant={"outline"}>
