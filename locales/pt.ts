@@ -85,7 +85,7 @@ export default {
     },
     tabs: {
       all: "Todos",
-      mergersAndAcquisitions: "M&A",
+      mergersAndAcquisitions: "Fusões e Aquisições",
       realEstate: "Imobiliário",
     },
     navigation: {
@@ -144,7 +144,7 @@ export default {
     mergersAndAcquisitions: {
       create: {
         breadcrumb: {
-          title: "Mergers and Acquisitions",
+          title: "Fusões e Aquisições",
           create: "Criar",
         },
       },
@@ -502,8 +502,6 @@ export default {
           entryMultiple: "Múltiplo de Entrada",
           exitExpectedMultiple: "Múltiplo de Saída Esperado",
           holdPeriod: "Período de Investimento (Anos)",
-        },
-        values: {
           years: "Anos",
         },
       },

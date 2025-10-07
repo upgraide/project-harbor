@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
+import { enUS, ptBR } from "date-fns/locale";
 import Image from "next/image";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { dashboardMergersAndAcquisitionOpportunityPath } from "@/lib/paths";
 import { cn } from "@/lib/utils";
-import { useScopedI18n } from "@/locales/client";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 type MergerAndAcquisitionsOpportunityCardProps = {
   id: string;
@@ -32,6 +33,9 @@ const MergerAndAcquisitionsOpportunityCard = ({
   createdAt,
 }: MergerAndAcquisitionsOpportunityCardProps) => {
   const t = useScopedI18n("dashboardCard");
+  const locale = useCurrentLocale();
+
+  const dateLocale = locale === "pt" ? ptBR : enUS;
 
   return (
     <Card>
@@ -59,7 +63,8 @@ const MergerAndAcquisitionsOpportunityCard = ({
         />
         <div className="mt-2 ml-auto shrink-0 text-muted-foreground text-xs">
           <span>
-            {t("createdAt")} {formatDistanceToNow(createdAt)} {t("ago")}
+            {t("createdAt")}{" "}
+            {formatDistanceToNow(createdAt, { locale: dateLocale })} {t("ago")}
           </span>
         </div>
       </CardContent>
