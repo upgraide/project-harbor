@@ -466,6 +466,17 @@ const Page = ({
         </Card>
       </div>
 
+      {opportunity.preNDANotes ? (
+        <Card className="border-none bg-background shadow-none">
+          <CardHeader className="flex items-center justify-between">
+            <CardTitle className="font-semibold text-xl">
+              Notas sobre o projeto
+            </CardTitle>
+          </CardHeader>
+          <CardContent>{opportunity.preNDANotes}</CardContent>
+        </Card>
+      ) : null}
+
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="font-semibold text-xl">

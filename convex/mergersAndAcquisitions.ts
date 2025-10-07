@@ -86,6 +86,7 @@ export const create = mutation({
     ebitdaCAGR: v.optional(v.union(v.number(), v.null())),
     assetIncluded: v.optional(v.union(v.boolean(), v.null())),
     estimatedAssetValue: v.optional(v.union(v.number(), v.null())),
+    preNDANotes: v.optional(v.union(v.null(), v.string())),
 
     // Post-NDA Fields
     shareholderStructure: v.optional(
@@ -101,6 +102,7 @@ export const create = mutation({
     netDebtDashEbitda: v.optional(v.union(v.number(), v.null())),
     capexItensity: v.optional(v.union(v.number(), v.null())),
     workingCapitalNeeds: v.optional(v.union(v.number(), v.null())),
+    postNDANotes: v.optional(v.union(v.null(), v.string())),
 
     // Co-Investment Fields
     coInvestment: v.optional(v.union(v.boolean(), v.null())),
@@ -362,6 +364,7 @@ export const update = mutation({
     ebitdaCAGR: v.optional(v.union(v.number(), v.null())),
     assetIncluded: v.optional(v.union(v.boolean(), v.null())),
     estimatedAssetValue: v.optional(v.union(v.number(), v.null())),
+    preNDANotes: v.optional(v.union(v.null(), v.string())),
 
     // Post-NDA Fields
     shareholderStructure: v.optional(
@@ -377,6 +380,7 @@ export const update = mutation({
     netDebtDashEbitda: v.optional(v.union(v.number(), v.null())),
     capexItensity: v.optional(v.union(v.number(), v.null())),
     workingCapitalNeeds: v.optional(v.union(v.number(), v.null())),
+    postNDANotes: v.optional(v.union(v.null(), v.string())),
 
     // Co-Investment Fields
     coInvestment: v.optional(v.union(v.boolean(), v.null())),

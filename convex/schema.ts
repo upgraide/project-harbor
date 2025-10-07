@@ -83,6 +83,7 @@ const schema = defineSchema({
     ebitdaCAGR: v.optional(v.union(v.number(), v.null())),
     assetIncluded: v.optional(v.union(v.boolean(), v.null())),
     estimatedAssetValue: v.optional(v.union(v.number(), v.null())),
+    preNDANotes: v.optional(v.union(v.null(), v.string())),
 
     // Post-NDA Fields
     shareholderStructure: v.optional(
@@ -98,6 +99,7 @@ const schema = defineSchema({
     netDebtDashEbitda: v.optional(v.union(v.number(), v.null())),
     capexItensity: v.optional(v.union(v.number(), v.null())),
     workingCapitalNeeds: v.optional(v.union(v.number(), v.null())),
+    postNDANotes: v.optional(v.union(v.null(), v.string())),
 
     // Co-Investment Fields
     coInvestment: v.optional(v.union(v.boolean(), v.null())),

@@ -59,6 +59,24 @@ export const createMergersAndAcquisitionsFormSchema = z.object({
       message: `Description must be at most ${DESCRIPTION_MAX_LENGTH} characters long`,
     })
     .optional(),
+  preNDANotes: z
+    .string()
+    .min(DESCRIPTION_MIN_LENGTH, {
+      message: `Pre NDA Notes must be at least ${DESCRIPTION_MIN_LENGTH} characters long`,
+    })
+    .max(DESCRIPTION_MAX_LENGTH, {
+      message: `Pre NDA Notes must be at most ${DESCRIPTION_MAX_LENGTH} characters long`,
+    })
+    .optional(),
+  postNDANotes: z
+    .string()
+    .min(DESCRIPTION_MIN_LENGTH, {
+      message: `Post NDA Notes must be at least ${DESCRIPTION_MIN_LENGTH} characters long`,
+    })
+    .max(DESCRIPTION_MAX_LENGTH, {
+      message: `Post NDA Notes must be at most ${DESCRIPTION_MAX_LENGTH} characters long`,
+    })
+    .optional(),
   graphRows: z
     .array(
       z.object({ year: z.string(), revenue: z.number(), ebitda: z.number() })

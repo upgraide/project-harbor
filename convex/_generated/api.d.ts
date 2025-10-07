@@ -15,6 +15,7 @@ import type * as http from "../http.js";
 import type * as mergersAndAcquisitions from "../mergersAndAcquisitions.js";
 import type * as opportunities from "../opportunities.js";
 import type * as realEstates from "../realEstates.js";
+import type * as requestAccess from "../requestAccess.js";
 
 import type {
   ApiFromModules,
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   mergersAndAcquisitions: typeof mergersAndAcquisitions;
   opportunities: typeof opportunities;
   realEstates: typeof realEstates;
+  requestAccess: typeof requestAccess;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

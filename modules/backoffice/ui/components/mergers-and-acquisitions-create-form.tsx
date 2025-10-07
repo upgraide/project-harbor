@@ -455,6 +455,42 @@ const MergersAndAcquisitionsCreateForm = () => {
 
               <FormField
                 control={form.control}
+                name="preNDANotes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Pre NDA Notes</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        maxLength={1000}
+                        placeholder="Insert pre-NDA notes"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="postNDANotes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Post NDA Notes</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        maxLength={1000}
+                        placeholder="Insert post-NDA notes"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="salesCAGR"
                 render={({ field }) => (
                   <FormItem>
