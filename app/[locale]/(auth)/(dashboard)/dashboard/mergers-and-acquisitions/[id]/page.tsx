@@ -48,15 +48,15 @@ import { useScopedI18n } from "@/locales/client";
 
 const chartConfig = {
   revenue: {
-    label: "Revenue",
+    label: "Revenue (k€)",
     color: "#113152",
   },
   ebitda: {
-    label: "EBITDA",
+    label: "EBITDA (M€)",
     color: "#4F565A",
   },
   ebitdaMargin: {
-    label: "EBITDA Margin",
+    label: "EBITDA Margin (%)",
     color: "#9C3E11",
   },
 } satisfies ChartConfig;
@@ -443,7 +443,7 @@ const Page = ({
                   top: 20,
                 }}
               >
-                <CartesianGrid vertical={false} />
+                <CartesianGrid horizontal={false} vertical={false} />
                 <XAxis
                   axisLine={false}
                   dataKey="year"
