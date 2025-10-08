@@ -254,16 +254,9 @@ const Page = ({
                   yAxisId="right"
                 />
                 <YAxis
-                  domain={[
-                    (dataMax: number) => {
-                      const padding = dataMax * 0.3;
-                      return Math.ceil(dataMax + padding);
-                    },
-                    0,
-                  ]}
+                  domain={[-750, 100]}
                   hide={true}
                   orientation="right"
-                  reversed={true}
                   stroke="#9C3E11"
                   yAxisId="margin"
                 />
