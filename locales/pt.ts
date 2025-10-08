@@ -481,6 +481,9 @@ export default {
           capexIntensity: "Intensidade de Investimento em Capital",
           workingCapitalNeeds: "Necessidades de Fundo de Maneio",
         },
+        values: {
+          freeCashFlow: "M/ano",
+        },
       },
     },
     shareholderInformationCard: {

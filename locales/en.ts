@@ -478,6 +478,9 @@ export default {
           capexIntensity: "Capex Intensity (Capex/EBITDA)",
           workingCapitalNeeds: "Working Capital Needs (% Revenue)",
         },
+        values: {
+          freeCashFlow: "M/year",
+        },
       },
     },
     shareholderInformationCard: {

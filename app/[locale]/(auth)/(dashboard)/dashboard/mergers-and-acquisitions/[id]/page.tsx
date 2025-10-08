@@ -5,6 +5,7 @@
 import { useQuery } from "convex/react";
 import { LoaderIcon } from "lucide-react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { use, useState } from "react";
 import {
   Bar,
@@ -46,21 +47,6 @@ import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useScopedI18n } from "@/locales/client";
 
-const chartConfig = {
-  revenue: {
-    label: "Revenue (M€)",
-    color: "#113152",
-  },
-  ebitda: {
-    label: "EBITDA (M€)",
-    color: "#4F565A",
-  },
-  ebitdaMargin: {
-    label: "EBITDA Margin (%)",
-    color: "#9C3E11",
-  },
-} satisfies ChartConfig;
-
 const Page = ({
   params,
 }: {
@@ -68,8 +54,24 @@ const Page = ({
 }) => {
   const { id } = use(params);
   const t = useScopedI18n("dashboardMergersAndAcquisitionsOpportunityPage");
+  const { theme } = useTheme();
   const [notInterestedReason, setNotInterestedReason] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const chartConfig = {
+    revenue: {
+      label: "Revenue (M€)",
+      color: "#113152",
+    },
+    ebitda: {
+      label: "EBITDA (M€)",
+      color: "#4F565A",
+    },
+    ebitdaMargin: {
+      label: "EBITDA Margin (%)",
+      color: theme === "dark" ? "#ffffff" : "#9C3E11",
+    },
+  } satisfies ChartConfig;
 
   const opportunity = useQuery(api.mergersAndAcquisitions.getById, {
     id,
@@ -478,12 +480,12 @@ const Page = ({
                 />
                 <Bar
                   dataKey="revenue"
-                  fill="#113152"
+                  fill={theme === "dark" ? "#679A85" : "#113152"}
                   label={{
                     position: "top",
                     fontSize: 12,
                     fontWeight: 600,
-                    fill: "#000000",
+                    fill: theme === "dark" ? "#ffffff" : "#000000",
                     formatter: (value: number) => value.toFixed(2),
                   }}
                   radius={[4, 4, 0, 0]}
@@ -497,7 +499,7 @@ const Page = ({
                     fontSize: 12,
                     formatter: (value: number) => value.toFixed(2),
                   }}
-                  stroke="#AEAEAE"
+                  stroke={theme === "dark" ? "#BECED7" : "#AEAEAE"}
                   strokeWidth={2}
                   type="monotone"
                   yAxisId="right"
@@ -511,6 +513,7 @@ const Page = ({
                     fontSize: 12,
                     fontWeight: 600,
                     offset: 10,
+                    fill: theme === "dark" ? "#ffffff" : "#000000",
                   }}
                   stroke="#9C3E11"
                   strokeWidth={0}
@@ -523,17 +526,6 @@ const Page = ({
           </CardContent>
         </Card>
       </div>
-
-      {opportunity.preNDANotes ? (
-        <Card className="border-none bg-background shadow-none">
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle className="font-semibold text-xl">
-              Notas sobre o projeto
-            </CardTitle>
-          </CardHeader>
-          <CardContent>{opportunity.preNDANotes}</CardContent>
-        </Card>
-      ) : null}
 
       <Card className="border-none bg-background shadow-none">
         <CardHeader className="flex items-center justify-between">
@@ -564,89 +556,111 @@ const Page = ({
                   <TableCell className="px-6 py-4 text-right" />
                 </TableRow>
               ) : null}
-              <TableRow key={"entrepriseValue"}>
-                <TableCell className="px-6 py-4">
-                  {t("furtherInformationCard.table.metrics.entrepriseValue")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.entrepriseValue ?? "N/A"}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
-              </TableRow>
-              <TableRow key={"equityValue"}>
-                <TableCell className="px-6 py-4">
-                  {t("furtherInformationCard.table.metrics.equityValue")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.equityValue ?? "N/A"}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
-              </TableRow>
-              <TableRow key={"evDashEbitdaEntry"}>
-                <TableCell className="px-6 py-4">
-                  {t("furtherInformationCard.table.metrics.evDashEbitdaEntry")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.evDashEbitdaEntry ?? "N/A"}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
-              </TableRow>
-              <TableRow key={"evDashEbitdaExit"}>
-                <TableCell className="px-6 py-4">
-                  {t("furtherInformationCard.table.metrics.evDashEbitdaExit")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.evDashEbitdaExit ?? "N/A"}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
-              </TableRow>
-              <TableRow key={"ebitdaMargin"}>
-                <TableCell className="px-6 py-4">
-                  {t("furtherInformationCard.table.metrics.ebitdaMargin")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.ebitdaMargin ?? "N/A"}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
-              </TableRow>
-              <TableRow key={"fcf"}>
-                <TableCell className="px-6 py-4">
-                  {t("furtherInformationCard.table.metrics.freeCashFlow")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.fcf ?? "N/A"}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
-              </TableRow>
-              <TableRow key={"netDebtDashEbitda"}>
-                <TableCell className="px-6 py-4">
-                  {t("furtherInformationCard.table.metrics.netDebtDashEbitda")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.netDebtDashEbitda ?? "N/A"}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
-              </TableRow>
-              <TableRow key={"capexItensity"}>
-                <TableCell className="px-6 py-4">
-                  {t("furtherInformationCard.table.metrics.capexIntensity")}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.capexItensity ?? "N/A"}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
-              </TableRow>
-              <TableRow key={"workingCapitalNeeds"}>
-                <TableCell className="px-6 py-4">
-                  {t(
-                    "furtherInformationCard.table.metrics.workingCapitalNeeds"
-                  )}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  {opportunity.workingCapitalNeeds ?? "N/A"}
-                </TableCell>
-                <TableCell className="px-6 py-4 text-right" />
-              </TableRow>
+              {opportunity.entrepriseValue ? (
+                <TableRow key={"entrepriseValue"}>
+                  <TableCell className="px-6 py-4">
+                    {t("furtherInformationCard.table.metrics.entrepriseValue")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {`€${opportunity.entrepriseValue}M`}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right" />
+                </TableRow>
+              ) : null}
+              {opportunity.equityValue ? (
+                <TableRow key={"equityValue"}>
+                  <TableCell className="px-6 py-4">
+                    {t("furtherInformationCard.table.metrics.equityValue")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {`€${opportunity.equityValue}M`}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right" />
+                </TableRow>
+              ) : null}
+              {opportunity.evDashEbitdaEntry ? (
+                <TableRow key={"evDashEbitdaEntry"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "furtherInformationCard.table.metrics.evDashEbitdaEntry"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {`${opportunity.evDashEbitdaEntry}x`}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right" />
+                </TableRow>
+              ) : null}
+              {opportunity.evDashEbitdaExit ? (
+                <TableRow key={"evDashEbitdaExit"}>
+                  <TableCell className="px-6 py-4">
+                    {t("furtherInformationCard.table.metrics.evDashEbitdaExit")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {`${opportunity.evDashEbitdaExit}x`}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right" />
+                </TableRow>
+              ) : null}
+              {opportunity.ebitdaMargin ? (
+                <TableRow key={"ebitdaMargin"}>
+                  <TableCell className="px-6 py-4">
+                    {t("furtherInformationCard.table.metrics.ebitdaMargin")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {`${opportunity.ebitdaMargin}%`}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right" />
+                </TableRow>
+              ) : null}
+              {opportunity.fcf ? (
+                <TableRow key={"fcf"}>
+                  <TableCell className="px-6 py-4">
+                    {t("furtherInformationCard.table.metrics.freeCashFlow")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {`€${opportunity.fcf}${t("furtherInformationCard.table.values.freeCashFlow")}`}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right" />
+                </TableRow>
+              ) : null}
+              {opportunity.netDebtDashEbitda ? (
+                <TableRow key={"netDebtDashEbitda"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "furtherInformationCard.table.metrics.netDebtDashEbitda"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {`${opportunity.netDebtDashEbitda}x`}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right" />
+                </TableRow>
+              ) : null}
+              {opportunity.capexItensity ? (
+                <TableRow key={"capexItensity"}>
+                  <TableCell className="px-6 py-4">
+                    {t("furtherInformationCard.table.metrics.capexIntensity")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {`${opportunity.capexItensity}%`}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right" />
+                </TableRow>
+              ) : null}
+              {opportunity.workingCapitalNeeds ? (
+                <TableRow key={"workingCapitalNeeds"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "furtherInformationCard.table.metrics.workingCapitalNeeds"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {`${opportunity.workingCapitalNeeds}%`}
+                  </TableCell>
+                  <TableCell className="px-6 py-4 text-right" />
+                </TableRow>
+              ) : null}
             </TableBody>
           </Table>
         </CardContent>
@@ -672,80 +686,96 @@ const Page = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow key={"equityContribution"}>
-                  <TableCell className="px-6 py-4">
-                    {t(
-                      "coInvestmentInformationCard.table.metrics.equityContribution"
-                    )}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.equityContribution ?? "N/A"}
-                  </TableCell>
-                </TableRow>
-                <TableRow key={"grossIRR"}>
-                  <TableCell className="px-6 py-4">
-                    {t("coInvestmentInformationCard.table.metrics.grossIRR")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.grossIRR ?? "N/A"}
-                  </TableCell>
-                </TableRow>
-                <TableRow key={"netIRR"}>
-                  <TableCell className="px-6 py-4">
-                    {t("coInvestmentInformationCard.table.metrics.netIRR")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.netIRR ?? "N/A"}
-                  </TableCell>
-                </TableRow>
-                <TableRow key={"moic"}>
-                  <TableCell className="px-6 py-4">
-                    {t("coInvestmentInformationCard.table.metrics.moic")}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.moic ?? "N/A"}
-                  </TableCell>
-                </TableRow>
-                <TableRow key={"cashOnCashReturn"}>
-                  <TableCell className="px-6 py-4">
-                    {t(
-                      "coInvestmentInformationCard.table.metrics.cashOnCashReturn"
-                    )}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.cashOnCashReturn ?? "N/A"}
-                  </TableCell>
-                </TableRow>
-                <TableRow key={"cashConvertion"}>
-                  <TableCell className="px-6 py-4">
-                    {t(
-                      "coInvestmentInformationCard.table.metrics.cashConvertion"
-                    )}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.cashConvertion ?? "N/A"}
-                  </TableCell>
-                </TableRow>
-                <TableRow key={"entryMultiple"}>
-                  <TableCell className="px-6 py-4">
-                    {t(
-                      "coInvestmentInformationCard.table.metrics.entryMultiple"
-                    )}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.entryMultiple ?? "N/A"}
-                  </TableCell>
-                </TableRow>
-                <TableRow key={"exitExpectedMultiple"}>
-                  <TableCell className="px-6 py-4">
-                    {t(
-                      "coInvestmentInformationCard.table.metrics.exitExpectedMultiple"
-                    )}
-                  </TableCell>
-                  <TableCell className="px-6 py-4">
-                    {opportunity.exitExpectedMultiple ?? "N/A"}
-                  </TableCell>
-                </TableRow>
+                {opportunity.equityContribution ? (
+                  <TableRow key={"equityContribution"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "coInvestmentInformationCard.table.metrics.equityContribution"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.equityContribution}%`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.grossIRR ? (
+                  <TableRow key={"grossIRR"}>
+                    <TableCell className="px-6 py-4">
+                      {t("coInvestmentInformationCard.table.metrics.grossIRR")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.grossIRR}%`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.netIRR ? (
+                  <TableRow key={"netIRR"}>
+                    <TableCell className="px-6 py-4">
+                      {t("coInvestmentInformationCard.table.metrics.netIRR")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.netIRR}%`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.moic ? (
+                  <TableRow key={"moic"}>
+                    <TableCell className="px-6 py-4">
+                      {t("coInvestmentInformationCard.table.metrics.moic")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.moic}x`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.cashOnCashReturn ? (
+                  <TableRow key={"cashOnCashReturn"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "coInvestmentInformationCard.table.metrics.cashOnCashReturn"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.cashOnCashReturn}%`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.cashConvertion ? (
+                  <TableRow key={"cashConvertion"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "coInvestmentInformationCard.table.metrics.cashConvertion"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.cashConvertion}%`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.entryMultiple ? (
+                  <TableRow key={"entryMultiple"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "coInvestmentInformationCard.table.metrics.entryMultiple"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.entryMultiple}x`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+                {opportunity.exitExpectedMultiple ? (
+                  <TableRow key={"exitExpectedMultiple"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "coInvestmentInformationCard.table.metrics.exitExpectedMultiple"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {`${opportunity.exitExpectedMultiple}x`}
+                    </TableCell>
+                  </TableRow>
+                ) : null}
                 {opportunity.holdPeriod ? (
                   <TableRow key={"holdPeriod"}>
                     <TableCell className="px-6 py-4">
@@ -785,6 +815,17 @@ const Page = ({
           </CardContent>
         </Card>
       </div>
+
+      {opportunity.preNDANotes ? (
+        <Card className="border-none bg-background shadow-none">
+          <CardHeader className="flex items-center justify-between">
+            <CardTitle className="font-semibold text-xl">
+              Notas sobre o projeto
+            </CardTitle>
+          </CardHeader>
+          <CardContent>{opportunity.preNDANotes}</CardContent>
+        </Card>
+      ) : null}
 
       <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
         <Button size={"lg"}>{t("actionButtons.interestToInvest")}</Button>
