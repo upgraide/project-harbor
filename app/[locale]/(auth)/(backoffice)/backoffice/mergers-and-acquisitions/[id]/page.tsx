@@ -75,7 +75,7 @@ import { EditOpportunityTypeDialog } from "./_components/edit-opportunity-type-d
 
 const chartConfig = {
   revenue: {
-    label: "Revenue (k€)",
+    label: "Revenue (M€)",
     color: "#113152",
   },
   ebitda: {
