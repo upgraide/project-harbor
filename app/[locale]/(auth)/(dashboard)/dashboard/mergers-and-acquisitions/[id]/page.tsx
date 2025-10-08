@@ -6,7 +6,7 @@ import { useQuery } from "convex/react";
 import { LoaderIcon } from "lucide-react";
 import Image from "next/image";
 import { use, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, CartesianGrid, ComposedChart, Line, XAxis } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -423,12 +423,13 @@ const Page = ({
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig}>
-              <AreaChart
+              <ComposedChart
                 accessibilityLayer
                 data={opportunity.graphRows ?? []}
                 margin={{
                   left: 50,
                   right: 50,
+                  top: 20,
                 }}
               >
                 <CartesianGrid vertical={false} />
@@ -443,24 +444,19 @@ const Page = ({
                   content={<ChartTooltipContent indicator="line" />}
                   cursor={false}
                 />
-                <Area
+                <Bar
                   dataKey="revenue"
                   fill="var(--color-revenue)"
-                  fillOpacity={0.4}
-                  stackId="a"
-                  stroke="var(--color-revenue)"
-                  type="natural"
+                  radius={[4, 4, 0, 0]}
                 />
-                <Area
+                <Line
                   dataKey="ebitda"
-                  fill="var(--color-ebitda)"
-                  fillOpacity={0.4}
-                  stackId="a"
                   stroke="var(--color-ebitda)"
-                  type="natural"
+                  strokeWidth={2}
+                  type="monotone"
                 />
                 <ChartLegend content={<ChartLegendContent />} />
-              </AreaChart>
+              </ComposedChart>
             </ChartContainer>
           </CardContent>
         </Card>
