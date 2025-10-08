@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: 26 */
+/** biome-ignore-all lint/style/noMagicNumbers: Chart configuration requires magic numbers for domain calculations */
 "use client";
 
 import { useQuery } from "convex/react";
@@ -11,7 +12,14 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { use, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import {
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Line,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type z from "zod";
 import {
   Breadcrumb,
@@ -65,16 +73,18 @@ import { EditOpportunityIndustryDialog } from "./_components/edit-opportunity-in
 import { EditOpportunityTypeDetailsDialog } from "./_components/edit-opportunity-type-details";
 import { EditOpportunityTypeDialog } from "./_components/edit-opportunity-type-dialog";
 
-const YEAR_LENGTH = 4;
-
 const chartConfig = {
   revenue: {
-    label: "Revenue",
-    color: "var(--chart-1)",
+    label: "Revenue (k€)",
+    color: "#113152",
   },
   ebitda: {
-    label: "EBITDA",
-    color: "var(--chart-2)",
+    label: "EBITDA (M€)",
+    color: "#4F565A",
+  },
+  ebitdaMargin: {
+    label: "EBITDA Margin (%)",
+    color: "#9C3E11",
   },
 } satisfies ChartConfig;
 
@@ -212,44 +222,85 @@ const Page = ({
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig}>
-              <AreaChart
+              <ComposedChart
                 accessibilityLayer
                 data={opportunity.graphRows ?? []}
                 margin={{
-                  left: 12,
-                  right: 12,
+                  left: 50,
+                  right: 50,
+                  top: 20,
                 }}
               >
-                <CartesianGrid vertical={false} />
+                <CartesianGrid horizontal={false} vertical={false} />
                 <XAxis
                   axisLine={false}
                   dataKey="year"
-                  tickFormatter={(value) => value.slice(0, YEAR_LENGTH)}
+                  tickFormatter={(value) => value.slice(0, 5)}
                   tickLine={false}
                   tickMargin={8}
+                />
+                <YAxis
+                  domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.3)]}
+                  hide={true}
+                  stroke="#113152"
+                  yAxisId="left"
+                />
+                <YAxis
+                  domain={[0, 30]}
+                  hide={true}
+                  orientation="right"
+                  stroke="#679A85"
+                  tickFormatter={(value) => `${value}M`}
+                  yAxisId="right"
+                />
+                <YAxis
+                  domain={[
+                    (dataMax: number) => {
+                      const padding = dataMax * 0.3;
+                      return Math.ceil(dataMax + padding);
+                    },
+                    0,
+                  ]}
+                  hide={true}
+                  orientation="right"
+                  reversed={true}
+                  stroke="#9C3E11"
+                  yAxisId="margin"
                 />
                 <ChartTooltip
                   content={<ChartTooltipContent indicator="line" />}
                   cursor={false}
                 />
-                <Area
+                <Bar
                   dataKey="revenue"
-                  fill="var(--color-revenue)"
-                  fillOpacity={0.4}
-                  stackId="a"
-                  stroke="var(--color-revenue)"
-                  type="natural"
+                  fill="#113152"
+                  label={{ position: "top", fontSize: 12 }}
+                  radius={[4, 4, 0, 0]}
+                  yAxisId="left"
                 />
-                <Area
+                <Line
                   dataKey="ebitda"
-                  fill="var(--color-ebitda)"
-                  fillOpacity={0.4}
-                  stackId="a"
-                  stroke="var(--color-ebitda)"
-                  type="natural"
+                  dot={false}
+                  stroke="#AEAEAE"
+                  strokeWidth={2}
+                  type="monotone"
+                  yAxisId="right"
+                />
+                <Line
+                  dataKey="ebitdaMargin"
+                  dot={{ fill: "#9C3E11", r: 4 }}
+                  label={{
+                    position: "top",
+                    formatter: (value: number) => `${value}%`,
+                    fontSize: 12,
+                  }}
+                  stroke="#9C3E11"
+                  strokeWidth={0}
+                  type="monotone"
+                  yAxisId="margin"
                 />
                 <ChartLegend content={<ChartLegendContent />} />
-              </AreaChart>
+              </ComposedChart>
             </ChartContainer>
 
             <Card className="mt-4">

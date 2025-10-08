@@ -466,7 +466,7 @@ const Page = ({
                   yAxisId="right"
                 />
                 <YAxis
-                  domain={[(dataMax: number) => -Math.ceil(dataMax * 1.3), 0]}
+                  domain={[-750, 100]}
                   hide={true}
                   orientation="right"
                   stroke="#9C3E11"
