@@ -231,6 +231,7 @@ export default {
           year: "Year",
           revenue: "Revenue",
           ebitda: "EBITDA",
+          ebitdaMargin: "EBITDA Margin",
           buttons: {
             edit: "Edit",
             delete: "Delete",

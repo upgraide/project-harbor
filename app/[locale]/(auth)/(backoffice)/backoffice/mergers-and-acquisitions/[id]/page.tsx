@@ -235,7 +235,7 @@ const Page = ({
                 <XAxis
                   axisLine={false}
                   dataKey="year"
-                  tickFormatter={(value) => value.slice(0, 5)}
+                  tickFormatter={(value) => `${value.slice(0, 5)}H`}
                   tickLine={false}
                   tickMargin={8}
                 />
@@ -267,13 +267,22 @@ const Page = ({
                 <Bar
                   dataKey="revenue"
                   fill="#113152"
-                  label={{ position: "top", fontSize: 12 }}
+                  label={{
+                    position: "top",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    fill: "#000000",
+                  }}
                   radius={[4, 4, 0, 0]}
                   yAxisId="left"
                 />
                 <Line
                   dataKey="ebitda"
                   dot={false}
+                  label={{
+                    position: "top",
+                    fontSize: 12,
+                  }}
                   stroke="#AEAEAE"
                   strokeWidth={2}
                   type="monotone"
@@ -281,11 +290,13 @@ const Page = ({
                 />
                 <Line
                   dataKey="ebitdaMargin"
-                  dot={{ fill: "#9C3E11", r: 4 }}
+                  dot={{ fill: "#9C3E11", r: 6 }}
                   label={{
                     position: "top",
                     formatter: (value: number) => `${value}%`,
                     fontSize: 12,
+                    fontWeight: 600,
+                    offset: 10,
                   }}
                   stroke="#9C3E11"
                   strokeWidth={0}
@@ -329,6 +340,11 @@ const Page = ({
                       <TableHead>
                         {t(
                           "financialPerformanceCard.graphRowsCard.table.ebitda"
+                        )}
+                      </TableHead>
+                      <TableHead>
+                        {t(
+                          "financialPerformanceCard.graphRowsCard.table.ebitdaMargin"
                         )}
                       </TableHead>
                       <TableHead className="text-right" />
