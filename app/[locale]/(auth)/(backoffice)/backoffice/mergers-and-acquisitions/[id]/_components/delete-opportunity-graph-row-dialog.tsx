@@ -20,10 +20,20 @@ function DeleteOpportunityGraphRowDialog({
   setGraphRow,
 }: {
   opportunity: Doc<"mergersAndAcquisitions"> | null;
-  graphRow: { year: string; revenue: number; ebitda: number } | null;
+  graphRow: {
+    year: string;
+    revenue: number;
+    ebitda: number;
+    ebitdaMargin: number;
+  } | null;
   setOpportunity: (opportunity: Doc<"mergersAndAcquisitions"> | null) => void;
   setGraphRow: (
-    graphRow: { year: string; revenue: number; ebitda: number } | null
+    graphRow: {
+      year: string;
+      revenue: number;
+      ebitda: number;
+      ebitdaMargin: number;
+    } | null
   ) => void;
 }) {
   const updateOpportunity = useMutation(api.mergersAndAcquisitions.update);

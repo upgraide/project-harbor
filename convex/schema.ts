@@ -74,6 +74,7 @@ const schema = defineSchema({
             year: v.string(),
             revenue: v.number(),
             ebitda: v.number(),
+            ebitdaMargin: v.number(),
           })
         ),
         v.null()

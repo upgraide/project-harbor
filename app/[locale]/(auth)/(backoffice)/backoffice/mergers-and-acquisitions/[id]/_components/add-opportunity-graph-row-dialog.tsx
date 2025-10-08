@@ -28,8 +28,9 @@ const YEAR_MIN_LENGTH = 4;
 
 const addOpportunityGraphRowSchema = z.object({
   year: z.string().min(YEAR_MIN_LENGTH, { message: "Year must be 4 digits" }),
-  revenue: z.number().min(0, { message: "Revenue must be greater than 0" }),
-  ebitda: z.number().min(0, { message: "EBITDA must be greater than 0" }),
+  revenue: z.number(),
+  ebitda: z.number(),
+  ebitdaMargin: z.number(),
 });
 
 function AddOpportunityGraphRowDialog({
@@ -59,6 +60,7 @@ function AddOpportunityGraphRowDialog({
             year: data.year,
             revenue: data.revenue,
             ebitda: data.ebitda,
+            ebitdaMargin: data.ebitdaMargin,
           },
         ],
       }),
@@ -133,6 +135,30 @@ function AddOpportunityGraphRowDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>EBITDA</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Insert a value"
+                          type="number"
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(
+                              value === "" ? undefined : Number(value)
+                            );
+                          }}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="ebitdaMargin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>EBITDA Margin</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Insert a value"

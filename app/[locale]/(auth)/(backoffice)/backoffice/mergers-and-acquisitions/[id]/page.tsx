@@ -296,6 +296,7 @@ const Page = ({
                         <TableCell>{row.year}</TableCell>
                         <TableCell>{row.revenue}</TableCell>
                         <TableCell>{row.ebitda}</TableCell>
+                        <TableCell>{row.ebitdaMargin}</TableCell>
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>

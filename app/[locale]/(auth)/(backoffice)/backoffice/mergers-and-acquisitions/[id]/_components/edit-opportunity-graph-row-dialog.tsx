@@ -31,8 +31,9 @@ export const editOpportunityGraphRowSchema = z.object({
   year: z
     .string()
     .min(YEAR_MIN_LENGTH, { message: "Year must be 4 digits long" }),
-  revenue: z.number().min(0, { message: "Revenue must be greater than 0" }),
-  ebitda: z.number().min(0, { message: "EBITDA must be greater than 0" }),
+  revenue: z.number(),
+  ebitda: z.number(),
+  ebitdaMargin: z.number(),
 });
 
 function EditOpportunityGraphRowDialog({
@@ -56,6 +57,7 @@ function EditOpportunityGraphRowDialog({
       year: "",
       revenue: 0,
       ebitda: 0,
+      ebitdaMargin: 0,
     },
   });
 
@@ -65,6 +67,7 @@ function EditOpportunityGraphRowDialog({
         year: graphRow.year,
         revenue: graphRow.revenue,
         ebitda: graphRow.ebitda,
+        ebitdaMargin: graphRow.ebitdaMargin,
       });
     }
   }, [graphRow, form]);
@@ -85,6 +88,7 @@ function EditOpportunityGraphRowDialog({
                 year: data.year,
                 revenue: data.revenue,
                 ebitda: data.ebitda,
+                ebitdaMargin: data.ebitdaMargin,
               }
             : row
         ),
@@ -167,6 +171,30 @@ function EditOpportunityGraphRowDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>EBITDA</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Insert a value"
+                          type="number"
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(
+                              value === "" ? undefined : Number(value)
+                            );
+                          }}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="ebitdaMargin"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>EBITDA Margin</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Insert a value"

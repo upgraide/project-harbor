@@ -77,6 +77,7 @@ export const create = mutation({
             year: v.string(),
             revenue: v.number(),
             ebitda: v.number(),
+            ebitdaMargin: v.number(),
           })
         ),
         v.null()
@@ -355,6 +356,7 @@ export const update = mutation({
             year: v.string(),
             revenue: v.number(),
             ebitda: v.number(),
+            ebitdaMargin: v.number(),
           })
         ),
         v.null()
