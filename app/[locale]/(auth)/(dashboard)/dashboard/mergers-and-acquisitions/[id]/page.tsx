@@ -48,7 +48,7 @@ import { useScopedI18n } from "@/locales/client";
 
 const chartConfig = {
   revenue: {
-    label: "Revenue (k€)",
+    label: "Revenue (M€)",
     color: "#113152",
   },
   ebitda: {
