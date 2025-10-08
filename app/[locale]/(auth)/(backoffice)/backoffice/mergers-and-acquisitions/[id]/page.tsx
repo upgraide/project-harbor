@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: <explanation> */
+/** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: 26 */
 "use client";
 
 import { useQuery } from "convex/react";

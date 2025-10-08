@@ -49,11 +49,15 @@ import { useScopedI18n } from "@/locales/client";
 const chartConfig = {
   revenue: {
     label: "Revenue",
-    color: "var(--chart-1)",
+    color: "#113152",
   },
   ebitda: {
     label: "EBITDA",
-    color: "var(--chart-2)",
+    color: "#4F565A",
+  },
+  ebitdaMargin: {
+    label: "EBITDA Margin",
+    color: "#9C3E11",
   },
 } satisfies ChartConfig;
 
@@ -448,18 +452,25 @@ const Page = ({
                   tickMargin={8}
                 />
                 <YAxis
-                  domain={[0, "auto"]}
+                  domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.3)]}
                   hide={true}
-                  stroke="var(--color-revenue)"
+                  stroke="#113152"
                   yAxisId="left"
                 />
                 <YAxis
                   domain={[0, 30]}
                   hide={true}
                   orientation="right"
-                  stroke="var(--color-ebitda)"
+                  stroke="#679A85"
                   tickFormatter={(value) => `${value}M`}
                   yAxisId="right"
+                />
+                <YAxis
+                  domain={[(dataMax: number) => -Math.ceil(dataMax * 1.3), 0]}
+                  hide={true}
+                  orientation="right"
+                  stroke="#9C3E11"
+                  yAxisId="margin"
                 />
                 <ChartTooltip
                   content={<ChartTooltipContent indicator="line" />}
@@ -467,7 +478,7 @@ const Page = ({
                 />
                 <Bar
                   dataKey="revenue"
-                  fill="var(--color-revenue)"
+                  fill="#113152"
                   label={{ position: "top", fontSize: 12 }}
                   radius={[4, 4, 0, 0]}
                   yAxisId="left"
@@ -475,10 +486,23 @@ const Page = ({
                 <Line
                   dataKey="ebitda"
                   dot={false}
-                  stroke="var(--color-ebitda)"
+                  stroke="#AEAEAE"
                   strokeWidth={2}
                   type="monotone"
                   yAxisId="right"
+                />
+                <Line
+                  dataKey="ebitdaMargin"
+                  dot={{ fill: "#9C3E11", r: 4 }}
+                  label={{
+                    position: "top",
+                    formatter: (value: number) => `${value}%`,
+                    fontSize: 12,
+                  }}
+                  stroke="#9C3E11"
+                  strokeWidth={0}
+                  type="monotone"
+                  yAxisId="margin"
                 />
                 <ChartLegend content={<ChartLegendContent />} />
               </ComposedChart>
