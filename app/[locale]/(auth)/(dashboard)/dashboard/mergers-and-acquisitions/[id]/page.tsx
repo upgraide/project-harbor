@@ -484,6 +484,7 @@ const Page = ({
                     fontSize: 12,
                     fontWeight: 600,
                     fill: "#000000",
+                    formatter: (value: number) => value.toFixed(2),
                   }}
                   radius={[4, 4, 0, 0]}
                   yAxisId="left"
@@ -494,6 +495,7 @@ const Page = ({
                   label={{
                     position: "top",
                     fontSize: 12,
+                    formatter: (value: number) => value.toFixed(2),
                   }}
                   stroke="#AEAEAE"
                   strokeWidth={2}
