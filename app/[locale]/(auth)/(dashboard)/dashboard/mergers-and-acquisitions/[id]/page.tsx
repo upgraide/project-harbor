@@ -6,7 +6,14 @@ import { useQuery } from "convex/react";
 import { LoaderIcon } from "lucide-react";
 import Image from "next/image";
 import { use, useState } from "react";
-import { Bar, CartesianGrid, ComposedChart, Line, XAxis } from "recharts";
+import {
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Line,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -440,6 +447,20 @@ const Page = ({
                   tickLine={false}
                   tickMargin={8}
                 />
+                <YAxis
+                  domain={[0, "auto"]}
+                  hide={true}
+                  stroke="var(--color-revenue)"
+                  yAxisId="left"
+                />
+                <YAxis
+                  domain={[0, 30]}
+                  hide={true}
+                  orientation="right"
+                  stroke="var(--color-ebitda)"
+                  tickFormatter={(value) => `${value}M`}
+                  yAxisId="right"
+                />
                 <ChartTooltip
                   content={<ChartTooltipContent indicator="line" />}
                   cursor={false}
@@ -447,13 +468,17 @@ const Page = ({
                 <Bar
                   dataKey="revenue"
                   fill="var(--color-revenue)"
+                  label={{ position: "top", fontSize: 12 }}
                   radius={[4, 4, 0, 0]}
+                  yAxisId="left"
                 />
                 <Line
                   dataKey="ebitda"
+                  dot={false}
                   stroke="var(--color-ebitda)"
                   strokeWidth={2}
                   type="monotone"
+                  yAxisId="right"
                 />
                 <ChartLegend content={<ChartLegendContent />} />
               </ComposedChart>
