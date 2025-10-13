@@ -1,16 +1,9 @@
+import languageSwitcher from "./language-switcher/pt";
+import index from "./pages/index/pt";
+import themeSwitcher from "./theme-switcher/pt";
+
 export default {
-  hello: "Olá",
-  "hello.world": "Olá mundo!",
-  welcome: "Olá {name}!",
-
-  languageSwitcher: {
-    english: "Inglês",
-    portuguese: "Português",
-  },
-
-  themeSwitcher: {
-    light: "Claro",
-    dark: "Escuro",
-    system: "Sistema",
-  },
+  index,
+  languageSwitcher,
+  themeSwitcher,
 } as const;
