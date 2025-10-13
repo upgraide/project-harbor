@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { I18nProviderClient } from "@/locales/client";
-import { Spinner } from "./ui/spinner";
+import { LanguageProvider } from "./language/language-provider";
+import { ThemeProvider } from "./theme/theme-provider";
 
 type ProviderProps = {
   locale: string;
@@ -9,14 +9,15 @@ type ProviderProps = {
 
 export function Providers({ children, locale }: ProviderProps) {
   return (
-    <I18nProviderClient fallback={<LocationFallback />} locale={locale}>
-      {children}
-    </I18nProviderClient>
+    <LanguageProvider locale={locale}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        disableTransitionOnChange
+        enableSystem
+      >
+        {children}
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }
-
-const LocationFallback = () => (
-  <div className="flex h-screen flex-1 items-center justify-center">
-    <Spinner />
-  </div>
-);

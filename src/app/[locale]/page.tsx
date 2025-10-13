@@ -1,3 +1,8 @@
+import { LanguageSwitcher } from "@/components/language/language-switcher";
+import {
+  ThemeSwitcher,
+  ThemeSwitcherHome,
+} from "@/components/theme/theme-switcher";
 import { getI18n, getScopedI18n } from "../../locales/server";
 
 export default async function Page() {
@@ -14,6 +19,10 @@ export default async function Page() {
 
       <p>{t("welcome", { name: "John" })}</p>
       <p>{t("welcome", { name: <strong>John</strong> })}</p>
+
+      <LanguageSwitcher />
+      <ThemeSwitcher />
+      <ThemeSwitcherHome />
     </div>
   );
 }
