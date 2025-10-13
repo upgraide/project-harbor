@@ -86,7 +86,7 @@ const Page = ({
   }
 
   return (
-    <div className="mx-auto mt-6 mb-6 w-full space-y-6 md:max-w-7xl">
+    <div className="mx-auto mt-6 mb-6 w-full space-y-6 px-4 md:max-w-7xl">
       <h1 className="mt-6 font-bold text-2xl md:text-4xl">
         {opportunity.name}
       </h1>
@@ -96,7 +96,7 @@ const Page = ({
           <div className="w-full">
             <Image
               alt="Opportunity Image 1"
-              className="h-96 w-full object-cover"
+              className="h-64 w-full object-cover md:h-96"
               height={4501}
               src={opportunity.imagesUrls[3] ?? ""}
               width={4501}
@@ -104,12 +104,12 @@ const Page = ({
           </div>
 
           {opportunity.imagesUrls.length > 1 && (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="flex flex-col gap-4 md:grid md:grid-cols-3">
               {opportunity.imagesUrls.slice(0, 3).map((imageUrl, index) => (
                 <div key={index + 1}>
                   <Image
                     alt={`Opportunity Image ${index + 2}`}
-                    className="h-48 w-full object-cover"
+                    className="h-48 w-full object-cover md:h-48"
                     height={200}
                     src={imageUrl ?? ""}
                     width={300}
@@ -121,7 +121,7 @@ const Page = ({
         </>
       )}
 
-      <Card className="mx-4 bg-background shadow-none">
+      <Card className="bg-background shadow-none">
         <CardHeader className="flex items-center justify-between">
           <CardTitle className="font-semibold text-xl">
             {t("description")}
@@ -143,7 +143,7 @@ const Page = ({
           </CardHeader>
           <CardContent>
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-muted">
                 <TableRow>
                   <TableHead className="px-6 py-4">
                     {t("financialInformationCard.table.header.metric")}
@@ -535,7 +535,7 @@ const Page = ({
         </CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-muted">
               <TableRow>
                 <TableHead className="px-6 py-4">
                   {t("furtherInformationCard.table.header.metric")}
@@ -675,7 +675,7 @@ const Page = ({
           </CardHeader>
           <CardContent>
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-muted">
                 <TableRow>
                   <TableHead className="px-6 py-4">
                     {t("coInvestmentInformationCard.table.header.metric")}

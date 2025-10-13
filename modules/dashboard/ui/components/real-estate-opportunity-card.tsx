@@ -44,10 +44,12 @@ const RealEstateOpportunityCard = ({
 
         <CardDescription>
           <div className="mt-1 flex min-h-14 items-center justify-between gap-2">
-            <div className="flex w-0 grow items-center gap-1">
-              <span className="line-clamp-3 text-muted-foreground">
-                {description}
-              </span>
+            <div className="flex w-0 grow flex-col gap-2">
+              {description && (
+                <span className="line-clamp-2 text-muted-foreground">
+                  {description}
+                </span>
+              )}
             </div>
           </div>
         </CardDescription>
@@ -55,7 +57,7 @@ const RealEstateOpportunityCard = ({
 
       <CardContent>
         <Image
-          alt={name}
+          alt={"Opportunity Image"}
           className="h-48 w-full rounded-md object-cover"
           height={300}
           src={image}
