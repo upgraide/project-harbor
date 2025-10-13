@@ -12,8 +12,7 @@
       "!node_modules",
       "!.next",
       "!dist",
-      "!build",
-      "!convex/_generated"
+      "!build"
     ]
   },
   "formatter": {
@@ -26,14 +25,7 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noUnknownAtRules": "off",
-        "noArrayIndexKey": "off"
-      },
-      "performance": {
-        "noNamespaceImport": "off"
-      },
-      "style": {
-        "useFilenamingConvention": "off"
+        "noUnknownAtRules": "off"
       }
     },
     "domains": {
@@ -48,5 +40,7 @@
       }
     }
   },
-  "extends": ["ultracite"]
+  "extends": [
+    "ultracite"
+  ]
 }
