@@ -3,7 +3,7 @@ import {
   ThemeSwitcher,
   ThemeSwitcherHome,
 } from "@/components/theme/theme-switcher";
-import { getI18n, getScopedI18n } from "../../locales/server";
+import { getI18n, getScopedI18n } from "@/locales/server";
 
 export default async function Page() {
   const t = await getI18n();

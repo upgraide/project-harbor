@@ -1,5 +1,5 @@
+import { LocationFallback } from "@/components/language/language-provider-fallback";
 import { I18nProviderClient } from "@/locales/client";
-import { LocationFallback } from "./language-provider-fallback";
 
 function LanguageProvider({
   children,
