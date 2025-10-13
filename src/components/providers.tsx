@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { LanguageProvider } from "./language/language-provider";
-import { ThemeProvider } from "./theme/theme-provider";
+import { LanguageProvider } from "@/components/language/language-provider";
+import { ThemeProvider } from "@/components/theme/theme-provider";
+import { TRPCReactProvider } from "@/trpc/client";
 
 type ProviderProps = {
   locale: string;
@@ -16,7 +17,7 @@ export function Providers({ children, locale }: ProviderProps) {
         disableTransitionOnChange
         enableSystem
       >
-        {children}
+        <TRPCReactProvider>{children}</TRPCReactProvider>
       </ThemeProvider>
     </LanguageProvider>
   );
