@@ -6,6 +6,7 @@ import { useQuery } from "convex/react";
 import { LoaderIcon } from "lucide-react";
 import Image from "next/image";
 import { use } from "react";
+import { LocationMap } from "@/components/location-map";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -84,6 +85,22 @@ const Page = ({ params }: { params: Promise<{ id: Id<"realEstates"> }> }) => {
           </p>
         </CardContent>
       </Card>
+
+      {opportunity.location && (
+        <Card>
+          <CardHeader className="flex items-center justify-between border-b">
+            <CardTitle className="font-semibold text-xl">
+              {t("financialInformationCard.table.metrics.location")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <LocationMap
+              className="h-96 w-full"
+              location={opportunity.location}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="flex items-center justify-between border-b">
