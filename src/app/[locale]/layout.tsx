@@ -1,11 +1,8 @@
-/** biome-ignore-all lint/a11y/useHtmlLang: false positive */
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
-import { notFound } from "next/navigation";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { Providers } from "@/components/providers";
 import { siteConfig } from "@/config/site";
-import { routing } from "@/i18n/routing";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,27 +34,21 @@ export const metadata: Metadata = {
   robots: siteConfig.robots,
 };
 
-type RootLayoutProps = {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-};
-
 export default async function RootLayout({
   children,
   params,
-}: RootLayoutProps) {
+}: Readonly<{
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}>) {
   const { locale } = await params;
-
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <Providers locale={locale}>{children}</Providers>
       </body>
     </html>
   );
