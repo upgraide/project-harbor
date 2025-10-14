@@ -1,6 +1,6 @@
 export default {
   title: "Bem-vindo de volta!",
-  description: "Por favor, insira seu email e password para fazer login.",
+  description: "Insira o seu email e password para fazer login.",
   emailPlaceholder: "m@exemplo.com",
   submit: "Entrar",
   dontHaveAccount: "Não tem uma conta?",
