@@ -1,13 +1,20 @@
+import { inngest } from "@/inngest/client";
 import prisma from "@/lib/db";
 import { createTRPCRouter, protectedProcedure } from "../init";
 
 export const appRouter = createTRPCRouter({
-  getUsers: protectedProcedure.query(({ ctx }) => {
-    prisma.user.findMany({
-      where: {
-        id: ctx.auth.user.id,
+  getOpportunities: protectedProcedure.query(async () =>
+    prisma.opportunity.findMany({})
+  ),
+  createOpportunity: protectedProcedure.mutation(async () => {
+    await inngest.send({
+      name: "test/hello.world",
+      data: {
+        email: "email@example.com",
       },
     });
+
+    return { success: true, message: "Opportunity queued" };
   }),
 });
 
