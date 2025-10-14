@@ -2,7 +2,7 @@ import { Lock, Plus } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { getScopedI18n } from "@/locales/server";
-import { requestAccessPath, signInPath } from "@/paths";
+import { loginPath, requestAccessPath } from "@/paths";
 
 const Hero = async () => {
   const t = await getScopedI18n("index");
@@ -35,7 +35,7 @@ const Hero = async () => {
               </Link>
               <Link
                 className={buttonVariants({ variant: "default", size: "lg" })}
-                href={signInPath()}
+                href={loginPath()}
               >
                 <Lock className="mr-2 size-4" />
                 {t("buttons.membershipLogin")}

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { LanguageProvider } from "@/components/language/language-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { TRPCReactProvider } from "@/trpc/client";
 
 type ProviderProps = {
@@ -17,7 +18,10 @@ export function Providers({ children, locale }: ProviderProps) {
         disableTransitionOnChange
         enableSystem
       >
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+        <TRPCReactProvider>
+          {children}
+          <Toaster richColors />
+        </TRPCReactProvider>
       </ThemeProvider>
     </LanguageProvider>
   );
