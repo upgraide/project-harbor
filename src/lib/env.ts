@@ -14,7 +14,12 @@ export const env = createEnv({
    * Specify your server-side environment variables schema here.
    * This way you can ensure the app isn't built with invalid env vars.
    */
-  server: {},
+  server: {
+    DATABASE_URL: z.url(),
+    BETTER_AUTH_SECRET: z.string().min(1),
+    BETTER_AUTH_URL: z.url(),
+    GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1),
+  },
 
   /**
    * Specify your client-side environment variables schema here.
