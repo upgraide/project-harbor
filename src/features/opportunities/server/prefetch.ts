@@ -8,3 +8,9 @@ type Input = inferInput<typeof trpc.opportunities.getMany>;
  */
 export const prefetchOpportunities = (params: Input) =>
   prefetch(trpc.opportunities.getMany.queryOptions(params));
+
+/**
+ * Prefetch an Opportunity
+ */
+export const prefetchOpportunity = (id: string) =>
+  prefetch(trpc.opportunities.getOne.queryOptions({ id }));

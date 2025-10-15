@@ -1,20 +1,25 @@
 "use client";
 
+import { formatDistanceToNow } from "date-fns";
+import { WorkflowIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   EmptyView,
   EntityContainer,
   EntityHeader,
+  EntityItem,
   EntityList,
   EntityPagination,
   EntitySearch,
   ErrorView,
   LoadingView,
 } from "@/components/entity-components";
+import type { Opportunity } from "@/generated/prisma";
 import { useEntitySearch } from "../hooks/use-entity-search";
 import {
   useCreateOpportunity,
+  useDeleteOpportunity,
   useSuspenseOpportunities,
 } from "../hooks/use-opportunities";
 import { useOpportunitiesParams } from "../hooks/use-opportunities-params";
@@ -42,7 +47,7 @@ export const OpportunitiesList = () => {
       emptyView={<OpportunitiesEmpty />}
       getKey={(opportunity) => opportunity.id}
       items={opportunities.data.items}
-      renderItem={(item) => <p>{item.name}</p>}
+      renderItem={(item) => <OpportunityItem data={item} />}
     />
   );
 };
@@ -128,6 +133,35 @@ export const OpportunitiesEmpty = () => {
     <EmptyView
       message="No opportunities found. Get Started by creating an opportunity."
       onNew={handleCreate}
+    />
+  );
+};
+
+export const OpportunityItem = ({ data }: { data: Opportunity }) => {
+  const removeOpportunity = useDeleteOpportunity();
+
+  const handleRemove = () => {
+    removeOpportunity.mutate({ id: data.id });
+  };
+
+  return (
+    <EntityItem
+      href={`/backoffice/m&a/${data.id}`}
+      image={
+        <div className="flex size-8 items-center justify-center">
+          <WorkflowIcon className="size-5 text-muted-foreground" />
+        </div>
+      }
+      isRemoving={removeOpportunity.isPending}
+      onRemove={handleRemove}
+      subtitle={
+        <>
+          Updated {formatDistanceToNow(data.updatedAt, { addSuffix: true })}{" "}
+          &bull; Created{" "}
+          {formatDistanceToNow(data.createdAt, { addSuffix: true })}
+        </>
+      }
+      title={data.name}
     />
   );
 };

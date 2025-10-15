@@ -38,3 +38,22 @@ export const useCreateOpportunity = () => {
     })
   );
 };
+
+/**
+ * Hook to delete an opportunity
+ */
+export const useDeleteOpportunity = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.opportunities.remove.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} deleted`);
+        queryClient.invalidateQueries(
+          trpc.opportunities.getMany.queryOptions({})
+        );
+      },
+    })
+  );
+};
