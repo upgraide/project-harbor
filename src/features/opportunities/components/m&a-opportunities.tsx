@@ -1,9 +1,9 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { WorkflowIcon } from "lucide-react";
+import { pt } from "date-fns/locale";
+import { BriefcaseBusinessIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import {
   EmptyView,
   EntityContainer,
@@ -16,16 +16,20 @@ import {
   LoadingView,
 } from "@/components/entity-components";
 import type { Opportunity } from "@/generated/prisma";
-import { backofficeMergeAndAcquisitionOpportunityPath } from "@/paths";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
+import {
+  backofficeMergeAndAcquisitionOpportunityCreatePath,
+  backofficeMergeAndAcquisitionOpportunityPath,
+} from "@/paths";
 import { useEntitySearch } from "../hooks/use-entity-search";
 import {
-  useCreateOpportunity,
   useDeleteOpportunity,
   useSuspenseOpportunities,
 } from "../hooks/use-m&a-opportunities";
 import { useOpportunitiesParams } from "../hooks/use-opportunities-params";
 
 export const OpportunitiesSearch = () => {
+  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
   const [params, setParams] = useOpportunitiesParams();
   const { searchValue, onSearchChange } = useEntitySearch({
     params,
@@ -34,7 +38,7 @@ export const OpportunitiesSearch = () => {
   return (
     <EntitySearch
       onChange={onSearchChange}
-      placeholder="Search opportunities"
+      placeholder={t("searchPlaceholder")}
       value={searchValue}
     />
   );
@@ -54,28 +58,15 @@ export const OpportunitiesList = () => {
 };
 
 export const OpportunitiesHeader = ({ disabled }: { disabled?: boolean }) => {
-  const createOpportunity = useCreateOpportunity();
-  const router = useRouter();
-
-  const handleCreate = () => {
-    createOpportunity.mutate(undefined, {
-      onSuccess: (data) => {
-        router.push(backofficeMergeAndAcquisitionOpportunityPath(data.id));
-      },
-      onError: (error) => {
-        toast.error(`Failed to create opportunity: ${error.message}`);
-      },
-    });
-  };
+  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
 
   return (
     <EntityHeader
-      description="Create and manage m&a opportunities"
+      description={t("description")}
       disabled={disabled}
-      isCreating={false}
-      newButtonLabel="New Opportunity"
-      onNew={handleCreate}
-      title="M&A Opportunities"
+      newButtonHref={backofficeMergeAndAcquisitionOpportunityCreatePath()}
+      newButtonLabel={t("newButtonLabel")}
+      title={t("title")}
     />
   );
 };
@@ -107,38 +98,30 @@ export const OpportunitiesContainer = ({
   </EntityContainer>
 );
 
-export const OpportunitiesLoading = () => (
-  <LoadingView message="Loading opportunities..." />
-);
+export const OpportunitiesLoading = () => {
+  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
+  return <LoadingView message={t("loadingMessage")} />;
+};
 
-export const OpportunitiesError = () => (
-  <ErrorView message="Error loading opportunities..." />
-);
+export const OpportunitiesError = () => {
+  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
+  return <ErrorView message={t("errorMessage")} />;
+};
 
 export const OpportunitiesEmpty = () => {
-  const createOpportunity = useCreateOpportunity();
+  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
   const router = useRouter();
 
   const handleCreate = () => {
-    createOpportunity.mutate(undefined, {
-      onSuccess: (data) => {
-        router.push(backofficeMergeAndAcquisitionOpportunityPath(data.id));
-      },
-      onError: (error) => {
-        toast.error(`Failed to create opportunity: ${error.message}`);
-      },
-    });
+    router.push(backofficeMergeAndAcquisitionOpportunityCreatePath());
   };
 
-  return (
-    <EmptyView
-      message="No opportunities found. Get Started by creating an opportunity."
-      onNew={handleCreate}
-    />
-  );
+  return <EmptyView message={t("emptyMessage")} onNew={handleCreate} />;
 };
 
 export const OpportunityItem = ({ data }: { data: Opportunity }) => {
+  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
+  const locale = useCurrentLocale();
   const removeOpportunity = useDeleteOpportunity();
 
   const handleRemove = () => {
@@ -150,16 +133,23 @@ export const OpportunityItem = ({ data }: { data: Opportunity }) => {
       href={backofficeMergeAndAcquisitionOpportunityPath(data.id)}
       image={
         <div className="flex size-8 items-center justify-center">
-          <WorkflowIcon className="size-5 text-muted-foreground" />
+          <BriefcaseBusinessIcon className="size-5 text-muted-foreground" />
         </div>
       }
       isRemoving={removeOpportunity.isPending}
       onRemove={handleRemove}
       subtitle={
         <>
-          Updated {formatDistanceToNow(data.updatedAt, { addSuffix: true })}{" "}
-          &bull; Created{" "}
-          {formatDistanceToNow(data.createdAt, { addSuffix: true })}
+          {t("updatedAt")}{" "}
+          {formatDistanceToNow(data.updatedAt, {
+            addSuffix: true,
+            locale: locale === "pt" ? pt : undefined,
+          })}{" "}
+          &bull; {t("createdAt")}{" "}
+          {formatDistanceToNow(data.createdAt, {
+            addSuffix: true,
+            locale: locale === "pt" ? pt : undefined,
+          })}
         </>
       }
       title={data.name}

@@ -11,6 +11,8 @@ export const backofficeRealEstatePath = () => "/backoffice/real-estate";
 
 export const backofficeMergeAndAcquisitionOpportunityPath = (id: string) =>
   `/backoffice/m&a/${id}`;
+export const backofficeMergeAndAcquisitionOpportunityCreatePath = () =>
+  "/backoffice/m&a/create";
 
 export const backofficeRealEstateOpportunityPath = (id: string) =>
   `/backoffice/real-estate/${id}`;
