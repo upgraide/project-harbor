@@ -6,9 +6,9 @@ import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 const SLUG_WORDS = 3;
 
-export const opportunitiesRouter = createTRPCRouter({
+export const mergerAndAcquisitionRouter = createTRPCRouter({
   create: protectedProcedure.mutation(({ ctx }) =>
-    prisma.opportunity.create({
+    prisma.mergerAndAcquisition.create({
       data: {
         userId: ctx.auth.user.id,
         name: generateSlug(SLUG_WORDS),
@@ -18,14 +18,14 @@ export const opportunitiesRouter = createTRPCRouter({
   remove: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
-      prisma.opportunity.delete({
+      prisma.mergerAndAcquisition.delete({
         where: { id: input.id },
       })
     ),
   updateName: protectedProcedure
     .input(z.object({ id: z.string(), name: z.string().min(1) }))
     .mutation(({ input }) =>
-      prisma.opportunity.update({
+      prisma.mergerAndAcquisition.update({
         where: { id: input.id },
         data: { name: input.name },
       })
@@ -33,7 +33,7 @@ export const opportunitiesRouter = createTRPCRouter({
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input }) =>
-      prisma.opportunity.findUniqueOrThrow({
+      prisma.mergerAndAcquisition.findUniqueOrThrow({
         where: { id: input.id },
       })
     ),
@@ -53,7 +53,7 @@ export const opportunitiesRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { page, pageSize, search } = input;
       const [items, totalCount] = await Promise.all([
-        prisma.opportunity.findMany({
+        prisma.mergerAndAcquisition.findMany({
           skip: (page - 1) * pageSize,
           take: pageSize,
           where: {
@@ -63,7 +63,7 @@ export const opportunitiesRouter = createTRPCRouter({
             updatedAt: "desc",
           },
         }),
-        prisma.opportunity.count({
+        prisma.mergerAndAcquisition.count({
           where: {
             name: { contains: search, mode: "insensitive" },
           },

@@ -1,7 +1,7 @@
 "use client";
 
 import { ErrorView, LoadingView } from "@/components/entity-components";
-import { useSuspenseOpportunity } from "@/features/opportunities/hooks/use-opportunities";
+import { useSuspenseOpportunity } from "@/features/opportunities/hooks/use-m&a-opportunities";
 
 export const EditorLoading = () => (
   <LoadingView message="Loading opportunity..." />

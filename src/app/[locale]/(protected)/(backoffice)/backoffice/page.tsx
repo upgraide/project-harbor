@@ -6,7 +6,7 @@ import {
   OpportunitiesError,
   OpportunitiesList,
   OpportunitiesLoading,
-} from "@/features/opportunities/components/opportunities";
+} from "@/features/opportunities/components/m&a-opportunities";
 import { opportunityParamsLoader } from "@/features/opportunities/server/params-loader";
 import { prefetchOpportunities } from "@/features/opportunities/server/prefetch";
 import { requireAuth } from "@/lib/auth-utils";

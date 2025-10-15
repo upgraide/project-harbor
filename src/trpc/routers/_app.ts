@@ -1,8 +1,8 @@
-import { opportunitiesRouter } from "@/features/opportunities/server/route";
+import { mergerAndAcquisitionRouter } from "@/features/opportunities/server/route";
 import { createTRPCRouter } from "../init";
 
 export const appRouter = createTRPCRouter({
-  opportunities: opportunitiesRouter,
+  mergerAndAcquisition: mergerAndAcquisitionRouter,
 });
 
 // export type definition of API

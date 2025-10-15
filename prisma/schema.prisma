@@ -83,3 +83,116 @@ model Opportunity {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model MergerAndAcquisition {
+  id        String   @id @default(cuid())
+  name      String
+
+  // Basic fields
+  images    String[] // Array of image URLs/paths
+  
+  // Type and details
+  type      Type?
+  typeDetails TypeDetails?
+  
+  // Industry classification
+  industry  Industry?
+  industrySubsector IndustrySubsector?
+  
+  // Financial metrics
+  sales     SalesRange?
+  ebitda    EbitdaRange?
+  ebitdaNormalized Float?
+  netDebt   Float?
+  description String?
+  
+  // Graph data (stored as JSON)
+  graphRows Json[] // Array of { year: string, revenue: number, ebitda: number, ebitdaMargin: number }
+  
+  // Growth metrics
+  salesCAGR Float?
+  ebitdaCAGR Float?
+  
+  // Asset information
+  assetIncluded Boolean?
+  estimatedAssetValue Float?
+  preNDANotes String?
+  
+  // Post-NDA Fields
+  shareholderStructure String[] // Array of file paths/URLs
+  im String?
+  entrepriseValue Float?
+  equityValue Float?
+  evDashEbitdaEntry Float?
+  evDashEbitdaExit Float?
+  ebitdaMargin Float?
+  fcf Float?
+  netDebtDashEbitda Float?
+  capexItensity Float?
+  workingCapitalNeeds Float?
+  postNDANotes String?
+  
+  // Co-Investment Fields
+  coInvestment Boolean?
+  equityContribution Float?
+  grossIRR Float?
+  netIRR Float?
+  moic Float?
+  cashOnCashReturn Float?
+  cashConvertion Float?
+  entryMultiple Float?
+  exitExpectedMultiple Float?
+  holdPeriod Float?
+
+  userId    String   // Who created the Merger and Acquisition
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Enums for type safety
+enum Type {
+  BUY_IN
+  BUY_OUT
+  BUY_IN_BUY_OUT
+}
+
+enum TypeDetails {
+  MAIORITARIO
+  MINORITARIO
+  FULL_OWNERSHIP
+}
+
+enum Industry {
+  SERVICES
+  TRANSFORMATION_INDUSTRY
+  TRADING
+  ENERGY_INFRASTRUCTURE
+  FITNESS
+  HEALTHCARE_PHARMACEUTICALS
+  IT
+  TMT
+  TRANSPORTS
+}
+
+enum IndustrySubsector {
+  BUSINESS_SERVICES
+  FINANCIAL_SERVICES
+  CONSTRUCTION_MATERIALS
+  FOOD_BEVERAGES
+  OTHERS
+}
+
+enum SalesRange {
+  RANGE_0_5
+  RANGE_5_10
+  RANGE_10_15
+  RANGE_20_30
+  RANGE_30_PLUS
+}
+
+enum EbitdaRange {
+  RANGE_1_2
+  RANGE_2_3
+  RANGE_3_5
+  RANGE_5_PLUS
+}

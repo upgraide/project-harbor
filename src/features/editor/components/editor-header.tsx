@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import {
   useSuspenseOpportunity,
   useUpdateOpportunityName,
-} from "@/features/opportunities/hooks/use-opportunities";
+} from "@/features/opportunities/hooks/use-m&a-opportunities";
 import { backofficeMergeAndAcquisitionPath } from "@/paths";
 
 export const EditorBreadcrumbs = ({

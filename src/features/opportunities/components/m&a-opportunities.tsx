@@ -16,12 +16,13 @@ import {
   LoadingView,
 } from "@/components/entity-components";
 import type { Opportunity } from "@/generated/prisma";
+import { backofficeMergeAndAcquisitionOpportunityPath } from "@/paths";
 import { useEntitySearch } from "../hooks/use-entity-search";
 import {
   useCreateOpportunity,
   useDeleteOpportunity,
   useSuspenseOpportunities,
-} from "../hooks/use-opportunities";
+} from "../hooks/use-m&a-opportunities";
 import { useOpportunitiesParams } from "../hooks/use-opportunities-params";
 
 export const OpportunitiesSearch = () => {
@@ -59,7 +60,7 @@ export const OpportunitiesHeader = ({ disabled }: { disabled?: boolean }) => {
   const handleCreate = () => {
     createOpportunity.mutate(undefined, {
       onSuccess: (data) => {
-        router.push(`/backoffice/m&a/${data.id}`);
+        router.push(backofficeMergeAndAcquisitionOpportunityPath(data.id));
       },
       onError: (error) => {
         toast.error(`Failed to create opportunity: ${error.message}`);
@@ -69,12 +70,12 @@ export const OpportunitiesHeader = ({ disabled }: { disabled?: boolean }) => {
 
   return (
     <EntityHeader
-      description="Create and manage your opportunities"
+      description="Create and manage m&a opportunities"
       disabled={disabled}
       isCreating={false}
       newButtonLabel="New Opportunity"
       onNew={handleCreate}
-      title="Opportunities"
+      title="M&A Opportunities"
     />
   );
 };
@@ -121,7 +122,7 @@ export const OpportunitiesEmpty = () => {
   const handleCreate = () => {
     createOpportunity.mutate(undefined, {
       onSuccess: (data) => {
-        router.push(`/backoffice/m&a/${data.id}`);
+        router.push(backofficeMergeAndAcquisitionOpportunityPath(data.id));
       },
       onError: (error) => {
         toast.error(`Failed to create opportunity: ${error.message}`);
@@ -146,7 +147,7 @@ export const OpportunityItem = ({ data }: { data: Opportunity }) => {
 
   return (
     <EntityItem
-      href={`/backoffice/m&a/${data.id}`}
+      href={backofficeMergeAndAcquisitionOpportunityPath(data.id)}
       image={
         <div className="flex size-8 items-center justify-center">
           <WorkflowIcon className="size-5 text-muted-foreground" />

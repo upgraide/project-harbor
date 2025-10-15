@@ -14,7 +14,9 @@ export const useSuspenseOpportunities = () => {
   const trpc = useTRPC();
   const [params] = useOpportunitiesParams();
 
-  return useSuspenseQuery(trpc.opportunities.getMany.queryOptions(params));
+  return useSuspenseQuery(
+    trpc.mergerAndAcquisition.getMany.queryOptions(params)
+  );
 };
 
 /**
@@ -25,11 +27,11 @@ export const useCreateOpportunity = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    trpc.opportunities.create.mutationOptions({
+    trpc.mergerAndAcquisition.create.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Opportunity ${data.name} created`);
         queryClient.invalidateQueries(
-          trpc.opportunities.getMany.queryOptions({})
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
         );
       },
       onError: (error) => {
@@ -47,11 +49,11 @@ export const useDeleteOpportunity = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    trpc.opportunities.remove.mutationOptions({
+    trpc.mergerAndAcquisition.remove.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Opportunity ${data.name} deleted`);
         queryClient.invalidateQueries(
-          trpc.opportunities.getMany.queryOptions({})
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
         );
       },
     })
@@ -64,7 +66,9 @@ export const useDeleteOpportunity = () => {
 export const useSuspenseOpportunity = (id: string) => {
   const trpc = useTRPC();
 
-  return useSuspenseQuery(trpc.opportunities.getOne.queryOptions({ id }));
+  return useSuspenseQuery(
+    trpc.mergerAndAcquisition.getOne.queryOptions({ id })
+  );
 };
 
 /**
@@ -75,14 +79,14 @@ export const useUpdateOpportunityName = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    trpc.opportunities.updateName.mutationOptions({
+    trpc.mergerAndAcquisition.updateName.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Opportunity ${data.name} updated`);
         queryClient.invalidateQueries(
-          trpc.opportunities.getMany.queryOptions({})
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
         );
         queryClient.invalidateQueries(
-          trpc.opportunities.getOne.queryOptions({ id: data.id })
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
         );
       },
       onError: (error) => {
