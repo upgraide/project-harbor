@@ -57,3 +57,39 @@ export const useDeleteOpportunity = () => {
     })
   );
 };
+
+/**
+ * hook to fetch an opportunity using suspense
+ */
+export const useSuspenseOpportunity = (id: string) => {
+  const trpc = useTRPC();
+
+  return useSuspenseQuery(trpc.opportunities.getOne.queryOptions({ id }));
+};
+
+/**
+ * Hook to update an opportunity name
+ */
+export const useUpdateOpportunityName = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.opportunities.updateName.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.opportunities.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.opportunities.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to update the name of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};

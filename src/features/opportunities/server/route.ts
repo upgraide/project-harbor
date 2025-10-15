@@ -33,10 +33,11 @@ export const opportunitiesRouter = createTRPCRouter({
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input }) =>
-      prisma.opportunity.findUnique({
+      prisma.opportunity.findUniqueOrThrow({
         where: { id: input.id },
       })
     ),
+
   getMany: protectedProcedure
     .input(
       z.object({
