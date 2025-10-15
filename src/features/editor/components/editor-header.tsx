@@ -14,27 +14,31 @@ import {
   useSuspenseOpportunity,
   useUpdateOpportunityName,
 } from "@/features/opportunities/hooks/use-m&a-opportunities";
+import { useScopedI18n } from "@/locales/client";
 import { backofficeMergeAndAcquisitionPath } from "@/paths";
 
 export const EditorBreadcrumbs = ({
   opportunityId,
 }: {
   opportunityId: string;
-}) => (
-  <Breadcrumb>
-    <BreadcrumbList>
-      <BreadcrumbItem>
-        <BreadcrumbLink asChild>
-          <Link href={backofficeMergeAndAcquisitionPath()}>
-            M&A Opportunities
-          </Link>
-        </BreadcrumbLink>
-      </BreadcrumbItem>
-      <BreadcrumbSeparator />
-      <EditorNameInput opportunityId={opportunityId} />
-    </BreadcrumbList>
-  </Breadcrumb>
-);
+}) => {
+  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink asChild>
+            <Link href={backofficeMergeAndAcquisitionPath()}>
+              {t("breadcrumb")}
+            </Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <EditorNameInput opportunityId={opportunityId} />
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+};
 
 export const EditorNameInput = ({
   opportunityId,
