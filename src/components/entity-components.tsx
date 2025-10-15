@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useScopedI18n } from "@/locales/client";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
 import {
@@ -133,31 +134,34 @@ export const EntityPagination = ({
   totalPages,
   onPageChange,
   disabled,
-}: EntityPaginationProps) => (
-  <div className="flex w-full items-center justify-between gap-x-2">
-    <div className="flex-1 text-muted-foreground text-sm">
-      {`Page ${page} of ${totalPages || 1}`}
+}: EntityPaginationProps) => {
+  const t = useScopedI18n("backoffice.entityComponents");
+  return (
+    <div className="flex w-full items-center justify-between gap-x-2">
+      <div className="flex-1 text-muted-foreground text-sm">
+        {`${t("page")} ${page} ${t("of")} ${totalPages || 1}`}
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          disabled={disabled || page === 1}
+          onClick={() => onPageChange(Math.max(1, page - 1))}
+          size="sm"
+          variant="outline"
+        >
+          {t("previous")}
+        </Button>
+        <Button
+          disabled={disabled || page === totalPages || totalPages === 0}
+          onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+          size="sm"
+          variant="outline"
+        >
+          {t("next")}
+        </Button>
+      </div>
     </div>
-    <div className="flex items-center justify-end space-x-2 py-4">
-      <Button
-        disabled={disabled || page === 1}
-        onClick={() => onPageChange(Math.max(1, page - 1))}
-        size="sm"
-        variant="outline"
-      >
-        Previous
-      </Button>
-      <Button
-        disabled={disabled || page === totalPages || totalPages === 0}
-        onClick={() => onPageChange(Math.min(totalPages, page + 1))}
-        size="sm"
-        variant="outline"
-      >
-        Next
-      </Button>
-    </div>
-  </div>
-);
+  );
+};
 
 type StateViewProps = {
   message?: string;
@@ -263,6 +267,7 @@ export const EntityItem = ({
   isRemoving,
   className,
 }: EntityItemProps) => {
+  const t = useScopedI18n("backoffice.entityComponents");
   const handleRemove = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -316,7 +321,7 @@ export const EntityItem = ({
                   >
                     <DropdownMenuItem onClick={handleRemove}>
                       <TrashIcon className="size-4" />
-                      Delete
+                      {t("delete")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

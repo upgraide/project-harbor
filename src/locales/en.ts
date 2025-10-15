@@ -1,5 +1,6 @@
 import loginForm from "./auth/login-form/en";
 import requestAccessForm from "./auth/request-access-form/en";
+import entityComponents from "./backoffice/entity-components/en";
 import mergersAndAcquisitionOpportunites from "./backoffice/mergers-and-acquisition-opportunites/en";
 import sidebar from "./backoffice/sidebar/en";
 import languageSwitcher from "./language-switcher/en";
@@ -17,5 +18,6 @@ export default {
   backoffice: {
     sidebar,
     mergersAndAcquisitionOpportunites,
+    entityComponents,
   },
 } as const;
