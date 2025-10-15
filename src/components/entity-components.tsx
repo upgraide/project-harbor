@@ -1,7 +1,22 @@
-import { PlusIcon, SearchIcon } from "lucide-react";
+import {
+  AlertTriangleIcon,
+  PackageOpenIcon,
+  PlusIcon,
+  SearchIcon,
+} from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "./ui/empty";
 import { Input } from "./ui/input";
+import { Spinner } from "./ui/spinner";
 
 type EntityHeaderProps = {
   title: string;
@@ -134,3 +149,86 @@ export const EntityPagination = ({
     </div>
   </div>
 );
+
+type StateViewProps = {
+  message?: string;
+};
+
+export const LoadingView = ({ message }: StateViewProps) => (
+  <div className="flex h-full flex-1 flex-col items-center justify-center gap-y-4">
+    <Spinner className="size-6 text-primary" />
+    {!!message && <p className="text-muted-foreground text-sm">{message}</p>}
+  </div>
+);
+
+export const ErrorView = ({ message }: StateViewProps) => (
+  <div className="flex h-full flex-1 flex-col items-center justify-center gap-y-4">
+    <AlertTriangleIcon className="size-6 text-primary" />
+    {!!message && <p className="text-muted-foreground text-sm">{message}</p>}
+  </div>
+);
+
+type EmptyViewProps = StateViewProps & {
+  title?: string;
+  newButtonLabel?: string;
+  onNew?: () => void;
+};
+
+export const EmptyView = ({
+  message,
+  onNew,
+  title,
+  newButtonLabel,
+}: EmptyViewProps) => (
+  <Empty className="border border-dashed bg-accent">
+    <EmptyHeader>
+      <EmptyMedia variant="icon">
+        <PackageOpenIcon />
+      </EmptyMedia>
+    </EmptyHeader>
+    <EmptyTitle>{title || "No items"}</EmptyTitle>
+    {!!message && <EmptyDescription>{message}</EmptyDescription>}
+    {!!onNew && (
+      <EmptyContent>
+        <Button onClick={onNew}>
+          <PlusIcon className="size-4" />
+          {newButtonLabel || "Add new"}
+        </Button>
+      </EmptyContent>
+    )}
+  </Empty>
+);
+
+type EntityListProps<T> = {
+  items: T[];
+  renderItem: (item: T, index: number) => React.ReactNode;
+  getKey?: (item: T, index: number) => string | number;
+  emptyView?: React.ReactNode;
+  className?: string;
+};
+
+export function EntityList<T>({
+  items,
+  renderItem,
+  getKey,
+  emptyView,
+  className,
+}: EntityListProps<T>) {
+  if (items.length === 0 && emptyView) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <div className="mx-auto max-w-sm">{emptyView}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("flex flex-col gap-y-4", className)}>
+      {items.map((item, index) => (
+        <div key={getKey ? getKey(item, index) : index}>
+          {renderItem(item, index)}
+        </div>
+      ))}
+    </div>
+  );
+}

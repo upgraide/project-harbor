@@ -1,10 +1,11 @@
 import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { Spinner } from "@/components/ui/spinner";
 import {
   OpportunitiesContainer,
+  OpportunitiesError,
   OpportunitiesList,
+  OpportunitiesLoading,
 } from "@/features/opportunities/components/opportunities";
 import { opportunityParamsLoader } from "@/features/opportunities/server/params-loader";
 import { prefetchOpportunities } from "@/features/opportunities/server/prefetch";
@@ -24,8 +25,8 @@ const Page = async ({ searchParams }: Props) => {
   return (
     <OpportunitiesContainer>
       <HydrateClient>
-        <ErrorBoundary fallback={<p>Error!</p>}>
-          <Suspense fallback={<Spinner />}>
+        <ErrorBoundary fallback={<OpportunitiesError />}>
+          <Suspense fallback={<OpportunitiesLoading />}>
             <OpportunitiesList />
           </Suspense>
         </ErrorBoundary>

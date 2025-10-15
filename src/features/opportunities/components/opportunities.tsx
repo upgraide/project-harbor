@@ -3,10 +3,14 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
+  EmptyView,
   EntityContainer,
   EntityHeader,
+  EntityList,
   EntityPagination,
   EntitySearch,
+  ErrorView,
+  LoadingView,
 } from "@/components/entity-components";
 import { useEntitySearch } from "../hooks/use-entity-search";
 import {
@@ -33,7 +37,14 @@ export const OpportunitiesSearch = () => {
 export const OpportunitiesList = () => {
   const opportunities = useSuspenseOpportunities();
 
-  return <p>{JSON.stringify(opportunities.data, null, 2)}</p>;
+  return (
+    <EntityList
+      emptyView={<OpportunitiesEmpty />}
+      getKey={(opportunity) => opportunity.id}
+      items={opportunities.data.items}
+      renderItem={(item) => <p>{item.name}</p>}
+    />
+  );
 };
 
 export const OpportunitiesHeader = ({ disabled }: { disabled?: boolean }) => {
@@ -89,3 +100,34 @@ export const OpportunitiesContainer = ({
     {children}
   </EntityContainer>
 );
+
+export const OpportunitiesLoading = () => (
+  <LoadingView message="Loading opportunities..." />
+);
+
+export const OpportunitiesError = () => (
+  <ErrorView message="Error loading opportunities..." />
+);
+
+export const OpportunitiesEmpty = () => {
+  const createOpportunity = useCreateOpportunity();
+  const router = useRouter();
+
+  const handleCreate = () => {
+    createOpportunity.mutate(undefined, {
+      onSuccess: (data) => {
+        router.push(`/backoffice/m&a/${data.id}`);
+      },
+      onError: (error) => {
+        toast.error(`Failed to create opportunity: ${error.message}`);
+      },
+    });
+  };
+
+  return (
+    <EmptyView
+      message="No opportunities found. Get Started by creating an opportunity."
+      onNew={handleCreate}
+    />
+  );
+};
