@@ -1,3 +1,4 @@
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactNode } from "react";
 import { LanguageProvider } from "@/components/language/language-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
@@ -19,8 +20,10 @@ export function Providers({ children, locale }: ProviderProps) {
         enableSystem
       >
         <TRPCReactProvider>
-          {children}
-          <Toaster richColors />
+          <NuqsAdapter>
+            {children}
+            <Toaster richColors />
+          </NuqsAdapter>
         </TRPCReactProvider>
       </ThemeProvider>
     </LanguageProvider>

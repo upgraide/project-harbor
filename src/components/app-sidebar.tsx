@@ -30,8 +30,8 @@ import {
   useSidebar,
 } from "./ui/sidebar";
 
-const LOGO_EXPANDED_SIZE = 200;
-const LOGO_COLLAPSED_SIZE = 32;
+const LOGO_EXPANDED_SIZE = 175;
+const LOGO_COLLAPSED_SIZE = 64;
 
 const createMenuItems = (t: ReturnType<typeof useScopedI18n>) => [
   {
@@ -66,7 +66,10 @@ export const AppSidebar = () => {
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild className="h-10 gap-x-4 px-4">
+          <SidebarMenuButton
+            asChild
+            className="flex h-10 items-center justify-center gap-x-4 px-4"
+          >
             <Link href={backofficePath()} prefetch>
               <DynamicImage
                 alt="Harbor"
