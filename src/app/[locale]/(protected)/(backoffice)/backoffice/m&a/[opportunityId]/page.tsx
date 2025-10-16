@@ -4,8 +4,8 @@ import {
   Editor,
   EditorError,
   EditorLoading,
-} from "@/features/editor/components/editor";
-import { EditorHeader } from "@/features/editor/components/editor-header";
+} from "@/features/editor/components/m&a-editor";
+import { EditorHeader } from "@/features/editor/components/m&a-editor-header";
 import { prefetchOpportunity } from "@/features/opportunities/server/prefetch";
 import { requireAuth } from "@/lib/auth-utils";
 import { HydrateClient } from "@/trpc/server";
