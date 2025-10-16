@@ -98,10 +98,7 @@ export const OpportunitiesContainer = ({
   </EntityContainer>
 );
 
-export const OpportunitiesLoading = () => {
-  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
-  return <LoadingView message={t("loadingMessage")} />;
-};
+export const OpportunitiesLoading = () => <LoadingView />;
 
 export const OpportunitiesError = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");

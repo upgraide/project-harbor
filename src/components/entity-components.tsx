@@ -169,7 +169,7 @@ type StateViewProps = {
 
 export const LoadingView = ({ message }: StateViewProps) => (
   <div className="flex h-full flex-1 flex-col items-center justify-center gap-y-4">
-    <Spinner className="size-6 text-primary" />
+    <Spinner className="size-6" />
     {!!message && <p className="text-muted-foreground text-sm">{message}</p>}
   </div>
 );
