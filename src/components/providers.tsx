@@ -12,20 +12,20 @@ type ProviderProps = {
 
 export function Providers({ children, locale }: ProviderProps) {
   return (
-    <LanguageProvider locale={locale}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        disableTransitionOnChange
-        enableSystem
-      >
-        <TRPCReactProvider>
-          <NuqsAdapter>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      disableTransitionOnChange
+      enableSystem
+    >
+      <TRPCReactProvider>
+        <NuqsAdapter>
+          <LanguageProvider locale={locale}>
             {children}
             <Toaster richColors />
-          </NuqsAdapter>
-        </TRPCReactProvider>
-      </ThemeProvider>
-    </LanguageProvider>
+          </LanguageProvider>
+        </NuqsAdapter>
+      </TRPCReactProvider>
+    </ThemeProvider>
   );
 }
