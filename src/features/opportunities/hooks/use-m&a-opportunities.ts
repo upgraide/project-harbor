@@ -97,3 +97,30 @@ export const useUpdateOpportunityName = () => {
     })
   );
 };
+
+/**
+ * Hook to update an opportunity description
+ */
+export const useUpdateOpportunityDescription = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateDescription.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to update the description of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};

@@ -30,6 +30,14 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { name: input.name },
       })
     ),
+  updateDescription: protectedProcedure
+    .input(z.object({ id: z.string(), description: z.string().min(1) }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { description: input.description },
+      })
+    ),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input }) =>

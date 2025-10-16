@@ -1,7 +1,25 @@
 "use client";
 
+import { EditIcon } from "lucide-react";
+import { useState } from "react";
 import { ErrorView, LoadingView } from "@/components/entity-components";
-import { useSuspenseOpportunity } from "@/features/opportunities/hooks/use-m&a-opportunities";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  useSuspenseOpportunity,
+  useUpdateOpportunityDescription,
+} from "@/features/opportunities/hooks/use-m&a-opportunities";
 import { useScopedI18n } from "@/locales/client";
 
 export const EditorLoading = () => {
@@ -16,6 +34,151 @@ export const EditorError = () => {
 
 export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
+  const updateDescription = useUpdateOpportunityDescription();
 
-  return <p>{JSON.stringify(opportunity, null, 2)}</p>;
+  return (
+    <>
+      <p>{JSON.stringify(opportunity, null, 2)}</p>
+      <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-lg">
+        <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
+
+        <section>
+          <Card className="border-none shadow-none">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="font-bold text-lg">Description</CardTitle>
+              <EditorEditButton
+                currentValue={opportunity.description || ""}
+                fieldName="description"
+                inputType="textarea"
+                onSaveAction={async (value) => {
+                  await updateDescription.mutateAsync({
+                    id: opportunityId,
+                    description: value,
+                  });
+                }}
+                title="Edit Description"
+              />
+            </CardHeader>
+            <CardContent>
+              <p className="text-balance text-base text-muted-foreground">
+                {opportunity.description}
+              </p>
+            </CardContent>
+          </Card>
+        </section>
+      </main>
+    </>
+  );
+};
+
+type EditorEditButtonInputType = "text" | "textarea";
+
+type EditorEditButtonProps = {
+  fieldName: string;
+  title: string;
+  cancelButtonText?: string;
+  saveButtonText?: string;
+  currentValue: string;
+  onSaveAction: (value: string) => void | Promise<void>;
+  inputType?: EditorEditButtonInputType;
+  placeholder?: string;
+  minHeight?: string;
+};
+
+export const EditorEditButton = ({
+  fieldName,
+  title,
+  currentValue,
+  onSaveAction,
+  cancelButtonText = "Cancel",
+  saveButtonText = "Save",
+  inputType = "text",
+  placeholder,
+  minHeight = "min-h-32",
+}: EditorEditButtonProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [editedValue, setEditedValue] = useState(currentValue);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await onSaveAction(editedValue);
+      setIsOpen(false);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditedValue(currentValue);
+    setIsOpen(false);
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      setEditedValue(currentValue);
+    }
+  };
+
+  return (
+    <Dialog onOpenChange={handleOpenChange} open={isOpen}>
+      <DialogTrigger asChild>
+        <Button
+          aria-label={`Edit ${fieldName}`}
+          size="icon"
+          title={`Edit ${fieldName}`}
+          variant="outline"
+        >
+          <EditIcon aria-hidden="true" className="size-4" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          {inputType === "textarea" ? (
+            <Textarea
+              aria-label={fieldName}
+              className={minHeight}
+              disabled={isSaving}
+              onChange={(e) => setEditedValue(e.target.value)}
+              placeholder={placeholder}
+              value={editedValue}
+            />
+          ) : (
+            <Input
+              aria-label={fieldName}
+              disabled={isSaving}
+              onChange={(e) => setEditedValue(e.target.value)}
+              placeholder={placeholder}
+              value={editedValue}
+            />
+          )}
+        </div>
+        <DialogFooter className="gap-2">
+          <Button
+            disabled={isSaving}
+            onClick={handleCancel}
+            type="button"
+            variant="outline"
+          >
+            {cancelButtonText || "Cancel"}
+          </Button>
+          <Button disabled={isSaving} onClick={handleSave} type="button">
+            {isSaving ? (
+              <>
+                <Spinner className="mr-2" />
+                Saving...
+              </>
+            ) : (
+              saveButtonText
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
 };
