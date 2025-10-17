@@ -103,6 +103,15 @@ export default {
           prefix: "€",
           units: "M",
         },
+        CAGRs: {
+          label: "CAGRs",
+        },
+        salesCAGR: {
+          label: "Sales CAGR",
+          placeholder: "Enter the Sales CAGR value (example: 22)",
+          description: "Enter the Sales CAGR value of the opportunity",
+          units: "%",
+        },
       },
     },
   },

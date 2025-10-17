@@ -14,6 +14,9 @@ import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 const SLUG_WORDS = 3;
 
+const SALES_CAGR_MIN = 0;
+const SALES_CAGR_MAX = 100;
+
 export const mergerAndAcquisitionRouter = createTRPCRouter({
   create: protectedProcedure.mutation(({ ctx }) =>
     prisma.mergerAndAcquisition.create({
@@ -174,6 +177,30 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
       prisma.mergerAndAcquisition.update({
         where: { id: input.id },
         data: { netDebt: null },
+      })
+    ),
+  updateSalesCAGR: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        salesCAGR: z
+          .number()
+          .min(SALES_CAGR_MIN)
+          .max(SALES_CAGR_MAX, "Sales CAGR must be between 0 and 100"),
+      })
+    )
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { salesCAGR: input.salesCAGR },
+      })
+    ),
+  removeSalesCAGR: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { salesCAGR: null },
       })
     ),
   getOne: protectedProcedure

@@ -116,6 +116,7 @@ model MergerAndAcquisition {
   // Asset information
   assetIncluded Boolean?
   estimatedAssetValue Float?
+  
   preNDANotes String?
   
   // Post-NDA Fields

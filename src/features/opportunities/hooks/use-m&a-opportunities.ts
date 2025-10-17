@@ -536,3 +536,47 @@ export const useRemoveOpportunityNetDebt = () => {
     })
   );
 };
+
+/**
+ * Hook to update an opportunity sales cagr
+ */
+export const useUpdateOpportunitySalesCAGR = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateSalesCAGR.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove an opportunity sales cagr
+ */
+export const useRemoveOpportunitySalesCAGR = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeSalesCAGR.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+    })
+  );
+};

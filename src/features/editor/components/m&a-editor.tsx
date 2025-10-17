@@ -45,6 +45,7 @@ import {
   useRemoveOpportunityIndustrySubsector,
   useRemoveOpportunityNetDebt,
   useRemoveOpportunitySales,
+  useRemoveOpportunitySalesCAGR,
   useRemoveOpportunityType,
   useRemoveOpportunityTypeDetails,
   useSuspenseOpportunity,
@@ -55,6 +56,7 @@ import {
   useUpdateOpportunityIndustrySubsector,
   useUpdateOpportunityNetDebt,
   useUpdateOpportunitySales,
+  useUpdateOpportunitySalesCAGR,
   useUpdateOpportunityType,
   useUpdateOpportunityTypeDetails,
 } from "@/features/opportunities/hooks/use-m&a-opportunities";
@@ -93,6 +95,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateEbitda = useUpdateOpportunityEbitda();
   const updateEbitdaNormalized = useUpdateOpportunityEbitdaNormalized();
   const updateNetDebt = useUpdateOpportunityNetDebt();
+  const updateSalesCAGR = useUpdateOpportunitySalesCAGR();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -103,6 +106,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeEbitda = useRemoveOpportunityEbitda();
   const removeEbitdaNormalized = useRemoveOpportunityEbitdaNormalized();
   const removeNetDebt = useRemoveOpportunityNetDebt();
+  const removeSalesCAGR = useRemoveOpportunitySalesCAGR();
 
   return (
     <>
@@ -868,6 +872,80 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               disabled={opportunity.netDebt === null}
                               onClick={async () => {
                                 await removeNetDebt.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"CAGRs"}>
+                    <TableCell className="bg-muted px-6 py-4 font-medium">
+                      {t("financialInformationCard.table.body.CAGRs.label")}
+                    </TableCell>
+                    <TableCell className="bg-muted px-6 py-4" />
+                    <TableCell className="bg-muted px-6 py-4" />
+                  </TableRow>
+                  <TableRow key={"salesCAGR"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.body.salesCAGR.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.salesCAGR != null
+                        ? opportunity.salesCAGR +
+                          t(
+                            "financialInformationCard.table.body.salesCAGR.units"
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={
+                                opportunity.salesCAGR?.toString() || ""
+                              }
+                              description={t(
+                                "financialInformationCard.table.body.salesCAGR.description"
+                              )}
+                              fieldName="salesCAGR"
+                              inputType="number"
+                              onSaveAction={async (value) => {
+                                await updateSalesCAGR.mutateAsync({
+                                  id: opportunityId,
+                                  salesCAGR: Number.parseFloat(value),
+                                });
+                              }}
+                              placeholder={t(
+                                "financialInformationCard.table.body.salesCAGR.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.salesCAGR.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={opportunity.salesCAGR === null}
+                              onClick={async () => {
+                                await removeSalesCAGR.mutateAsync({
                                   id: opportunityId,
                                 });
                               }}
