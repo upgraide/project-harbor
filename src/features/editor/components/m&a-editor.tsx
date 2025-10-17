@@ -33,6 +33,7 @@ export const EditorError = () => {
 };
 
 export const Editor = ({ opportunityId }: { opportunityId: string }) => {
+  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
   const updateDescription = useUpdateOpportunityDescription();
 
@@ -43,10 +44,13 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
         <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
 
         <section>
-          <Card className="border-none shadow-none">
+          <Card className="border-none bg-transparent shadow-none">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="font-bold text-lg">Description</CardTitle>
+              <CardTitle className="font-bold text-lg">
+                {t("description")}
+              </CardTitle>
               <EditorEditButton
+                cancelButtonText={t("cancelButtonText")}
                 currentValue={opportunity.description || ""}
                 fieldName="description"
                 inputType="textarea"
@@ -56,11 +60,12 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     description: value,
                   });
                 }}
-                title="Edit Description"
+                saveButtonText={t("saveButtonText")}
+                title={t("editDescription")}
               />
             </CardHeader>
             <CardContent>
-              <p className="text-balance text-base text-muted-foreground">
+              <p className="text-balance text-base">
                 {opportunity.description}
               </p>
             </CardContent>
@@ -125,12 +130,7 @@ export const EditorEditButton = ({
   return (
     <Dialog onOpenChange={handleOpenChange} open={isOpen}>
       <DialogTrigger asChild>
-        <Button
-          aria-label={`Edit ${fieldName}`}
-          size="icon"
-          title={`Edit ${fieldName}`}
-          variant="outline"
-        >
+        <Button aria-label={title} size="icon" title={title} variant="outline">
           <EditIcon aria-hidden="true" className="size-4" />
         </Button>
       </DialogTrigger>
@@ -165,17 +165,14 @@ export const EditorEditButton = ({
             type="button"
             variant="outline"
           >
-            {cancelButtonText || "Cancel"}
+            {cancelButtonText}
           </Button>
-          <Button disabled={isSaving} onClick={handleSave} type="button">
-            {isSaving ? (
-              <>
-                <Spinner className="mr-2" />
-                Saving...
-              </>
-            ) : (
-              saveButtonText
-            )}
+          <Button
+            disabled={isSaving || editedValue === currentValue}
+            onClick={handleSave}
+            type="button"
+          >
+            {isSaving ? <Spinner className="mr-2" /> : saveButtonText}
           </Button>
         </DialogFooter>
       </DialogContent>
