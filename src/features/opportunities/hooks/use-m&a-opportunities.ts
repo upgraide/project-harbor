@@ -712,3 +712,30 @@ export const useRemoveOpportunityEstimatedAssetValue = () => {
     })
   );
 };
+
+/**
+ * Hook to update graph rows
+ */
+export const useUpdateGraphRows = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateGraphRows.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to update the graph rows of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};

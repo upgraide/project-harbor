@@ -138,4 +138,30 @@ export default {
       },
     },
   },
+  graphCard: {
+    title: "Dados do Gráfico",
+    addRowButtonText: "Adicionar Linha",
+    table: {
+      header: {
+        year: "Ano",
+        revenue: "Vendas (M€)",
+        ebitda: "EBITDA (M€)",
+        ebitdaMargin: "Margem EBITDA (%)",
+        actions: "Ações",
+      },
+    },
+    noDataMessage:
+      "Não há dados no gráfico ainda. Clique em 'Adicionar Linha' para começar.",
+    openMenuText: "Abrir menu",
+    editButtonText: "Editar",
+    editGraphRowTitle: "Editar Linha do Gráfico",
+    cancelButtonText: "Cancelar",
+    saveButtonText: "Guardar",
+    year: "Ano",
+    revenue: "Vendas (M€)",
+    ebitda: "EBITDA (M€)",
+    ebitdaMargin: "Margem EBITDA (%)",
+    actions: "Ações",
+    deleteButtonText: "Eliminar",
+  },
 } as const;

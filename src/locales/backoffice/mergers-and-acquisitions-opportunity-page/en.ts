@@ -8,7 +8,7 @@ export default {
   editDescription: "Edit description",
   editButtonText: "Edit",
   financialInformationCard: {
-    title: "Financial Information",
+    title: "Financial Information (Pre-NDA)",
     table: {
       header: {
         metric: "Metric",
@@ -138,5 +138,29 @@ export default {
         },
       },
     },
+  },
+  graphCard: {
+    title: "Gráfico",
+    addRowButtonText: "Add Row",
+    table: {
+      header: {
+        year: "Year",
+        revenue: "Revenue (M€)",
+        ebitda: "EBITDA (M€)",
+        ebitdaMargin: "EBITDA Margin (%)",
+        actions: "Actions",
+      },
+    },
+    noDataMessage: "No graph data yet. Click 'Add Row' to get started.",
+    openMenuText: "Open menu",
+    editButtonText: "Edit",
+    editGraphRowTitle: "Edit Graph Row",
+    cancelButtonText: "Cancel",
+    saveButtonText: "Save",
+    year: "Year",
+    revenue: "Revenue (M€)",
+    ebitda: "EBITDA (M€)",
+    ebitdaMargin: "EBITDA Margin (%)",
+    actions: "Actions",
   },
 } as const;
