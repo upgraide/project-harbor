@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  useRemoveOpportunityEbitda,
   useRemoveOpportunityIndustry,
   useRemoveOpportunityIndustrySubsector,
   useRemoveOpportunitySales,
@@ -46,6 +47,7 @@ import {
   useRemoveOpportunityTypeDetails,
   useSuspenseOpportunity,
   useUpdateOpportunityDescription,
+  useUpdateOpportunityEbitda,
   useUpdateOpportunityIndustry,
   useUpdateOpportunityIndustrySubsector,
   useUpdateOpportunitySales,
@@ -53,6 +55,7 @@ import {
   useUpdateOpportunityTypeDetails,
 } from "@/features/opportunities/hooks/use-m&a-opportunities";
 import {
+  EbitdaRange,
   Industry,
   IndustrySubsector,
   SalesRange,
@@ -82,6 +85,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateIndustry = useUpdateOpportunityIndustry();
   const updateIndustrySubsector = useUpdateOpportunityIndustrySubsector();
   const updateSales = useUpdateOpportunitySales();
+  const updateEbitda = useUpdateOpportunityEbitda();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -89,6 +93,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeIndustry = useRemoveOpportunityIndustry();
   const removeIndustrySubsector = useRemoveOpportunityIndustrySubsector();
   const removeSales = useRemoveOpportunitySales();
+  const removeEbitda = useRemoveOpportunityEbitda();
+
   return (
     <>
       <p>{JSON.stringify(opportunity, null, 2)}</p>
@@ -536,6 +542,13 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
+                  <TableRow key={"dimension"}>
+                    <TableCell className="bg-muted px-6 py-4 font-medium">
+                      {t("financialInformationCard.table.body.dimension.label")}
+                    </TableCell>
+                    <TableCell className="bg-muted px-6 py-4" />
+                    <TableCell className="bg-muted px-6 py-4" />
+                  </TableRow>
                   <TableRow key={"sales"}>
                     <TableCell className="px-6 py-4">
                       {t("financialInformationCard.table.body.sales.label")}
@@ -619,6 +632,96 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               disabled={opportunity.sales === null}
                               onClick={async () => {
                                 await removeSales.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"ebitda"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.body.ebitda.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.ebitda
+                        ? t(
+                            `financialInformationCard.table.body.ebitda.values.${opportunity.ebitda}`
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={opportunity.ebitda ?? ""}
+                              description={t(
+                                "financialInformationCard.table.body.ebitda.description"
+                              )}
+                              fieldName="ebitda"
+                              inputType="select"
+                              onSaveAction={async (value) => {
+                                await updateEbitda.mutateAsync({
+                                  id: opportunityId,
+                                  ebitda: value as EbitdaRange,
+                                });
+                              }}
+                              options={[
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.ebitda.values.RANGE_1_2"
+                                  ),
+                                  value: EbitdaRange.RANGE_1_2,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.ebitda.values.RANGE_2_3"
+                                  ),
+                                  value: EbitdaRange.RANGE_2_3,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.ebitda.values.RANGE_3_5"
+                                  ),
+                                  value: EbitdaRange.RANGE_3_5,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.ebitda.values.RANGE_5_PLUS"
+                                  ),
+                                  value: EbitdaRange.RANGE_5_PLUS,
+                                },
+                              ]}
+                              placeholder={t(
+                                "financialInformationCard.table.body.ebitda.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.ebitda.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={opportunity.ebitda === null}
+                              onClick={async () => {
+                                await removeEbitda.mutateAsync({
                                   id: opportunityId,
                                 });
                               }}

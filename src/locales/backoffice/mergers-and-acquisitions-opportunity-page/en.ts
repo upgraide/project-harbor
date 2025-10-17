@@ -76,6 +76,20 @@ export default {
           },
           description: "Select the sales range of the opportunity",
         },
+        ebitda: {
+          label: "EBITDA",
+          placeholder: "Select the ebitda of the opportunity",
+          values: {
+            RANGE_1_2: "€1-2M",
+            RANGE_2_3: "€2-3M",
+            RANGE_3_5: "€3-5M",
+            RANGE_5_PLUS: "€5M+",
+          },
+          description: "Select the ebitda range of the opportunity",
+        },
+        dimension: {
+          label: "Dimension",
+        },
       },
     },
   },

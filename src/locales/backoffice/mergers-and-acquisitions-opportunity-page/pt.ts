@@ -53,8 +53,8 @@ export default {
           description: "Selecione a indústria da oportunidade",
         },
         industrySubsector: {
-          label: "Subsetor Industrial",
-          placeholder: "Selecione o subsetor industrial da oportunidade",
+          label: "Subsetor da Indústria",
+          placeholder: "Selecione o subsector da indústria da oportunidade",
           values: {
             BUSINESS_SERVICES: "Serviços Empresariais",
             FINANCIAL_SERVICES: "Serviços Financeiros",
@@ -62,7 +62,7 @@ export default {
             FOOD_BEVERAGES: "Alimentos e Bebidas",
             OTHERS: "Outros",
           },
-          description: "Selecione o subsetor industrial da oportunidade",
+          description: "Selecione o subsector da indústria da oportunidade",
         },
         sales: {
           label: "Vendas",
@@ -75,6 +75,20 @@ export default {
             RANGE_30_PLUS: "€30+M",
           },
           description: "Selecione o range de vendas da oportunidade",
+        },
+        ebitda: {
+          label: "EBITDA",
+          placeholder: "Selecione o range de ebitda da oportunidade",
+          values: {
+            RANGE_1_2: "€1-2M",
+            RANGE_2_3: "€2-3M",
+            RANGE_3_5: "€3-5M",
+            RANGE_5_PLUS: "€5M+",
+          },
+          description: "Selecione o range de ebitda da oportunidade",
+        },
+        dimension: {
+          label: "Dimensão",
         },
       },
     },

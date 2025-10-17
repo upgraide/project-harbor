@@ -2,6 +2,7 @@ import { generateSlug } from "random-word-slugs";
 import z from "zod";
 import { PAGINATION } from "@/config/constants";
 import {
+  EbitdaRange,
   Industry,
   IndustrySubsector,
   SalesRange,
@@ -125,6 +126,22 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
       prisma.mergerAndAcquisition.update({
         where: { id: input.id },
         data: { sales: null },
+      })
+    ),
+  updateEbitda: protectedProcedure
+    .input(z.object({ id: z.string(), ebitda: z.enum(EbitdaRange) }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { ebitda: input.ebitda },
+      })
+    ),
+  removeEbitda: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { ebitda: null },
       })
     ),
   getOne: protectedProcedure
