@@ -4,6 +4,7 @@ import { PAGINATION } from "@/config/constants";
 import {
   Industry,
   IndustrySubsector,
+  SalesRange,
   Type,
   TypeDetails,
 } from "@/generated/prisma";
@@ -108,6 +109,22 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
       prisma.mergerAndAcquisition.update({
         where: { id: input.id },
         data: { industrySubsector: null },
+      })
+    ),
+  updateSales: protectedProcedure
+    .input(z.object({ id: z.string(), sales: z.enum(SalesRange) }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { sales: input.sales },
+      })
+    ),
+  removeSales: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { sales: null },
       })
     ),
   getOne: protectedProcedure

@@ -64,6 +64,18 @@ export default {
           },
           description: "Selecione o subsetor industrial da oportunidade",
         },
+        sales: {
+          label: "Vendas",
+          placeholder: "Selecione o range de vendas da oportunidade",
+          values: {
+            RANGE_0_5: "€0-5M",
+            RANGE_5_10: "€5-10M",
+            RANGE_10_15: "€10-15M",
+            RANGE_20_30: "€20-30M",
+            RANGE_30_PLUS: "€30+M",
+          },
+          description: "Selecione o range de vendas da oportunidade",
+        },
       },
     },
   },

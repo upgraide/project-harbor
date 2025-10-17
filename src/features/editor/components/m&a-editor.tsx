@@ -41,18 +41,21 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   useRemoveOpportunityIndustry,
   useRemoveOpportunityIndustrySubsector,
+  useRemoveOpportunitySales,
   useRemoveOpportunityType,
   useRemoveOpportunityTypeDetails,
   useSuspenseOpportunity,
   useUpdateOpportunityDescription,
   useUpdateOpportunityIndustry,
   useUpdateOpportunityIndustrySubsector,
+  useUpdateOpportunitySales,
   useUpdateOpportunityType,
   useUpdateOpportunityTypeDetails,
 } from "@/features/opportunities/hooks/use-m&a-opportunities";
 import {
   Industry,
   IndustrySubsector,
+  SalesRange,
   Type,
   TypeDetails,
 } from "@/generated/prisma";
@@ -78,13 +81,14 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateTypeDetails = useUpdateOpportunityTypeDetails();
   const updateIndustry = useUpdateOpportunityIndustry();
   const updateIndustrySubsector = useUpdateOpportunityIndustrySubsector();
+  const updateSales = useUpdateOpportunitySales();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
   const removeTypeDetails = useRemoveOpportunityTypeDetails();
   const removeIndustry = useRemoveOpportunityIndustry();
   const removeIndustrySubsector = useRemoveOpportunityIndustrySubsector();
-
+  const removeSales = useRemoveOpportunitySales();
   return (
     <>
       <p>{JSON.stringify(opportunity, null, 2)}</p>
@@ -519,6 +523,102 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               disabled={opportunity.industrySubsector === null}
                               onClick={async () => {
                                 await removeIndustrySubsector.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"sales"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.body.sales.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.sales
+                        ? t(
+                            `financialInformationCard.table.body.sales.values.${opportunity.sales}`
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={opportunity.sales ?? ""}
+                              description={t(
+                                "financialInformationCard.table.body.sales.description"
+                              )}
+                              fieldName="sales"
+                              inputType="select"
+                              onSaveAction={async (value) => {
+                                await updateSales.mutateAsync({
+                                  id: opportunityId,
+                                  sales: value as SalesRange,
+                                });
+                              }}
+                              options={[
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.sales.values.RANGE_0_5"
+                                  ),
+                                  value: SalesRange.RANGE_0_5,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.sales.values.RANGE_5_10"
+                                  ),
+                                  value: SalesRange.RANGE_5_10,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.sales.values.RANGE_10_15"
+                                  ),
+                                  value: SalesRange.RANGE_10_15,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.sales.values.RANGE_20_30"
+                                  ),
+                                  value: SalesRange.RANGE_20_30,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.sales.values.RANGE_30_PLUS"
+                                  ),
+                                  value: SalesRange.RANGE_30_PLUS,
+                                },
+                              ]}
+                              placeholder={t(
+                                "financialInformationCard.table.body.sales.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.sales.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={opportunity.sales === null}
+                              onClick={async () => {
+                                await removeSales.mutateAsync({
                                   id: opportunityId,
                                 });
                               }}
