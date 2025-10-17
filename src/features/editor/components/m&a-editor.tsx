@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNestedTernary: This is a complex component */
 "use client";
 
 import { EditIcon, EllipsisVerticalIcon, TrashIcon } from "lucide-react";
@@ -39,9 +40,11 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  useRemoveOpportunityAssetIncluded,
   useRemoveOpportunityEbitda,
   useRemoveOpportunityEbitdaCAGR,
   useRemoveOpportunityEbitdaNormalized,
+  useRemoveOpportunityEstimatedAssetValue,
   useRemoveOpportunityIndustry,
   useRemoveOpportunityIndustrySubsector,
   useRemoveOpportunityNetDebt,
@@ -50,10 +53,12 @@ import {
   useRemoveOpportunityType,
   useRemoveOpportunityTypeDetails,
   useSuspenseOpportunity,
+  useUpdateOpportunityAssetIncluded,
   useUpdateOpportunityDescription,
   useUpdateOpportunityEbitda,
   useUpdateOpportunityEbitdaCAGR,
   useUpdateOpportunityEbitdaNormalized,
+  useUpdateOpportunityEstimatedAssetValue,
   useUpdateOpportunityIndustry,
   useUpdateOpportunityIndustrySubsector,
   useUpdateOpportunityNetDebt,
@@ -99,6 +104,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateNetDebt = useUpdateOpportunityNetDebt();
   const updateSalesCAGR = useUpdateOpportunitySalesCAGR();
   const updateEbitdaCAGR = useUpdateOpportunityEbitdaCAGR();
+  const updateAssetIncluded = useUpdateOpportunityAssetIncluded();
+  const updateEstimatedAssetValue = useUpdateOpportunityEstimatedAssetValue();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -111,6 +118,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeNetDebt = useRemoveOpportunityNetDebt();
   const removeSalesCAGR = useRemoveOpportunitySalesCAGR();
   const removeEbitdaCAGR = useRemoveOpportunityEbitdaCAGR();
+  const removeAssetIncluded = useRemoveOpportunityAssetIncluded();
+  const removeEstimatedAssetValue = useRemoveOpportunityEstimatedAssetValue();
 
   return (
     <>
@@ -1019,6 +1028,174 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               disabled={opportunity.ebitdaCAGR === null}
                               onClick={async () => {
                                 await removeEbitdaCAGR.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"asset"}>
+                    <TableCell className="bg-muted px-6 py-4 font-medium">
+                      {t("financialInformationCard.table.body.asset.label")}
+                    </TableCell>
+                    <TableCell className="bg-muted px-6 py-4" />
+                    <TableCell className="bg-muted px-6 py-4" />
+                  </TableRow>
+                  <TableRow key={"assetIncluded"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.body.assetIncluded.label"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.assetIncluded != null
+                        ? opportunity.assetIncluded
+                          ? t(
+                              "financialInformationCard.table.body.assetIncluded.yes"
+                            )
+                          : t(
+                              "financialInformationCard.table.body.assetIncluded.no"
+                            )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={
+                                opportunity.assetIncluded?.toString() || ""
+                              }
+                              description={t(
+                                "financialInformationCard.table.body.assetIncluded.description"
+                              )}
+                              fieldName="assetIncluded"
+                              inputType="select"
+                              onSaveAction={async (value) => {
+                                await updateAssetIncluded.mutateAsync({
+                                  id: opportunityId,
+                                  assetIncluded: value === "true",
+                                });
+                              }}
+                              options={[
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.assetIncluded.yes"
+                                  ),
+                                  value: "true",
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.assetIncluded.no"
+                                  ),
+                                  value: "false",
+                                },
+                              ]}
+                              placeholder={t(
+                                "financialInformationCard.table.body.assetIncluded.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.assetIncluded.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={opportunity.assetIncluded === null}
+                              onClick={async () => {
+                                await removeAssetIncluded.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"estimatedAssetValue"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.body.estimatedAssetValue.label"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.estimatedAssetValue != null
+                        ? t(
+                            "financialInformationCard.table.body.estimatedAssetValue.prefix"
+                          ) +
+                          opportunity.estimatedAssetValue +
+                          t(
+                            "financialInformationCard.table.body.estimatedAssetValue.units"
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={
+                                opportunity.estimatedAssetValue?.toString() ||
+                                ""
+                              }
+                              description={t(
+                                "financialInformationCard.table.body.estimatedAssetValue.description"
+                              )}
+                              fieldName="estimatedAssetValue"
+                              inputType="number"
+                              onSaveAction={async (value) => {
+                                await updateEstimatedAssetValue.mutateAsync({
+                                  id: opportunityId,
+                                  estimatedAssetValue: Number.parseFloat(value),
+                                });
+                              }}
+                              placeholder={t(
+                                "financialInformationCard.table.body.estimatedAssetValue.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.estimatedAssetValue.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={
+                                opportunity.estimatedAssetValue === null
+                              }
+                              onClick={async () => {
+                                await removeEstimatedAssetValue.mutateAsync({
                                   id: opportunityId,
                                 });
                               }}

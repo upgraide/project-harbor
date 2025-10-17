@@ -118,6 +118,24 @@ export default {
           description: "Enter the EBITDA CAGR value of the opportunity",
           units: "%",
         },
+        asset: {
+          label: "Asset",
+        },
+        assetIncluded: {
+          label: "Asset Included",
+          yes: "Yes",
+          no: "No",
+          description: "Select if the asset is included in the opportunity",
+          placeholder: "Select if the asset is included",
+        },
+        estimatedAssetValue: {
+          label: "Estimated Asset Value",
+          placeholder: "Enter the Estimated Asset Value value (example: 3.2)",
+          description:
+            "Enter the Estimated Asset Value value of the opportunity",
+          prefix: "€",
+          units: "M",
+        },
       },
     },
   },
