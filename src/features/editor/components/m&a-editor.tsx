@@ -40,16 +40,20 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   useRemoveOpportunityEbitda,
+  useRemoveOpportunityEbitdaNormalized,
   useRemoveOpportunityIndustry,
   useRemoveOpportunityIndustrySubsector,
+  useRemoveOpportunityNetDebt,
   useRemoveOpportunitySales,
   useRemoveOpportunityType,
   useRemoveOpportunityTypeDetails,
   useSuspenseOpportunity,
   useUpdateOpportunityDescription,
   useUpdateOpportunityEbitda,
+  useUpdateOpportunityEbitdaNormalized,
   useUpdateOpportunityIndustry,
   useUpdateOpportunityIndustrySubsector,
+  useUpdateOpportunityNetDebt,
   useUpdateOpportunitySales,
   useUpdateOpportunityType,
   useUpdateOpportunityTypeDetails,
@@ -74,6 +78,7 @@ export const EditorError = () => {
   return <ErrorView message={t("errorMessage")} />;
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component
 export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
@@ -86,6 +91,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateIndustrySubsector = useUpdateOpportunityIndustrySubsector();
   const updateSales = useUpdateOpportunitySales();
   const updateEbitda = useUpdateOpportunityEbitda();
+  const updateEbitdaNormalized = useUpdateOpportunityEbitdaNormalized();
+  const updateNetDebt = useUpdateOpportunityNetDebt();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -94,6 +101,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeIndustrySubsector = useRemoveOpportunityIndustrySubsector();
   const removeSales = useRemoveOpportunitySales();
   const removeEbitda = useRemoveOpportunityEbitda();
+  const removeEbitdaNormalized = useRemoveOpportunityEbitdaNormalized();
+  const removeNetDebt = useRemoveOpportunityNetDebt();
 
   return (
     <>
@@ -735,6 +744,143 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
+                  <TableRow key={"ebitdaNormalized"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.body.ebitdaNormalized.label"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.ebitdaNormalized != null
+                        ? opportunity.ebitdaNormalized +
+                          t(
+                            "financialInformationCard.table.body.ebitdaNormalized.units"
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={
+                                opportunity.ebitdaNormalized?.toString() || ""
+                              }
+                              description={t(
+                                "financialInformationCard.table.body.ebitdaNormalized.description"
+                              )}
+                              fieldName="ebitdaNormalized"
+                              inputType="number"
+                              onSaveAction={async (value) => {
+                                await updateEbitdaNormalized.mutateAsync({
+                                  id: opportunityId,
+                                  ebitdaNormalized: Number.parseFloat(value),
+                                });
+                              }}
+                              placeholder={t(
+                                "financialInformationCard.table.body.ebitdaNormalized.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.ebitdaNormalized.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={opportunity.ebitdaNormalized === null}
+                              onClick={async () => {
+                                await removeEbitdaNormalized.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"netDebt"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.body.netDebt.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.netDebt != null
+                        ? t(
+                            "financialInformationCard.table.body.netDebt.prefix"
+                          ) +
+                          opportunity.netDebt +
+                          t("financialInformationCard.table.body.netDebt.units")
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={
+                                opportunity.netDebt?.toString() || ""
+                              }
+                              description={t(
+                                "financialInformationCard.table.body.netDebt.description"
+                              )}
+                              fieldName="netDebt"
+                              inputType="number"
+                              onSaveAction={async (value) => {
+                                await updateNetDebt.mutateAsync({
+                                  id: opportunityId,
+                                  netDebt: Number.parseFloat(value),
+                                });
+                              }}
+                              placeholder={t(
+                                "financialInformationCard.table.body.netDebt.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.netDebt.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={opportunity.netDebt === null}
+                              onClick={async () => {
+                                await removeNetDebt.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </CardContent>
@@ -758,7 +904,7 @@ type EditorEditButtonProps = {
   saveButtonText?: string;
   currentValue: string;
   onSaveAction: (value: string) => void | Promise<void>;
-  inputType?: EditorEditButtonInputType | "select";
+  inputType?: EditorEditButtonInputType | "select" | "number" | "numberInput";
   placeholder?: string;
   description?: string;
   minHeight?: string;
@@ -835,6 +981,20 @@ export const EditorEditButton = ({
             ))}
           </SelectContent>
         </Select>
+      );
+    }
+
+    if (inputType === "number" || inputType === "numberInput") {
+      return (
+        <Input
+          aria-label={fieldName}
+          disabled={isSaving}
+          onChange={(e) => setEditedValue(e.target.value)}
+          placeholder={placeholder}
+          step="0.01"
+          type="number"
+          value={editedValue}
+        />
       );
     }
 

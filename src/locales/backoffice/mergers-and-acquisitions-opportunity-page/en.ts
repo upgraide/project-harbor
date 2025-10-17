@@ -87,8 +87,21 @@ export default {
           },
           description: "Select the ebitda range of the opportunity",
         },
+        ebitdaNormalized: {
+          label: "EBITDA (Normalized)",
+          placeholder: "Enter the EBITDA (Normalized) value (example: 1.5)",
+          description: "Enter the EBITDA (Normalized) value of the opportunity",
+          units: "x",
+        },
         dimension: {
           label: "Dimension",
+        },
+        netDebt: {
+          label: "Net Debt",
+          placeholder: "Enter the Net Debt value (example: 3.2)",
+          description: "Enter the Net Debt value of the opportunity",
+          prefix: "€",
+          units: "M",
         },
       },
     },

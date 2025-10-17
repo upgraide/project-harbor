@@ -87,6 +87,7 @@ model Opportunity {
 model MergerAndAcquisition {
   id        String   @id @default(cuid())
   name      String
+  description String?
 
   // Basic fields
   images    String[] // Array of image URLs/paths
@@ -104,8 +105,7 @@ model MergerAndAcquisition {
   ebitda    EbitdaRange?
   ebitdaNormalized Float?
   netDebt   Float?
-  description String?
-  
+
   // Graph data (stored as JSON)
   graphRows Json[] // Array of { year: string, revenue: number, ebitda: number, ebitdaMargin: number }
   

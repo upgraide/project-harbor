@@ -64,6 +64,9 @@ export default {
           },
           description: "Selecione o subsector da indústria da oportunidade",
         },
+        dimension: {
+          label: "Dimensão",
+        },
         sales: {
           label: "Vendas",
           placeholder: "Selecione o range de vendas da oportunidade",
@@ -87,8 +90,18 @@ export default {
           },
           description: "Selecione o range de ebitda da oportunidade",
         },
-        dimension: {
-          label: "Dimensão",
+        ebitdaNormalized: {
+          label: "EBITDA (Ajustado)",
+          placeholder: "Insira o valor de EBITDA (Ajustado)",
+          description: "Insira o valor de EBITDA (Ajustado) da oportunidade",
+          units: "x",
+        },
+        netDebt: {
+          label: "Net Debt",
+          placeholder: "Insira o valor da Net Debt (exemplo: 3.2)",
+          description: "Insira o valor da Net Debt da oportunidade",
+          prefix: "€",
+          units: "M",
         },
       },
     },
