@@ -580,3 +580,47 @@ export const useRemoveOpportunitySalesCAGR = () => {
     })
   );
 };
+
+/**
+ * Hook to update an opportunity ebitda cagr
+ */
+export const useUpdateOpportunityEbitdaCAGR = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateEbitdaCAGR.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove an opportunity ebitda cagr
+ */
+export const useRemoveOpportunityEbitdaCAGR = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeEbitdaCAGR.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+    })
+  );
+};

@@ -112,6 +112,12 @@ export default {
           description: "Enter the Sales CAGR value of the opportunity",
           units: "%",
         },
+        ebitdaCAGR: {
+          label: "EBITDA CAGR",
+          placeholder: "Enter the EBITDA CAGR value (example: 22)",
+          description: "Enter the EBITDA CAGR value of the opportunity",
+          units: "%",
+        },
       },
     },
   },

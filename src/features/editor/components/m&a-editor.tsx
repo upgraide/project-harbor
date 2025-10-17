@@ -40,6 +40,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   useRemoveOpportunityEbitda,
+  useRemoveOpportunityEbitdaCAGR,
   useRemoveOpportunityEbitdaNormalized,
   useRemoveOpportunityIndustry,
   useRemoveOpportunityIndustrySubsector,
@@ -51,6 +52,7 @@ import {
   useSuspenseOpportunity,
   useUpdateOpportunityDescription,
   useUpdateOpportunityEbitda,
+  useUpdateOpportunityEbitdaCAGR,
   useUpdateOpportunityEbitdaNormalized,
   useUpdateOpportunityIndustry,
   useUpdateOpportunityIndustrySubsector,
@@ -96,6 +98,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateEbitdaNormalized = useUpdateOpportunityEbitdaNormalized();
   const updateNetDebt = useUpdateOpportunityNetDebt();
   const updateSalesCAGR = useUpdateOpportunitySalesCAGR();
+  const updateEbitdaCAGR = useUpdateOpportunityEbitdaCAGR();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -107,6 +110,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeEbitdaNormalized = useRemoveOpportunityEbitdaNormalized();
   const removeNetDebt = useRemoveOpportunityNetDebt();
   const removeSalesCAGR = useRemoveOpportunitySalesCAGR();
+  const removeEbitdaCAGR = useRemoveOpportunityEbitdaCAGR();
 
   return (
     <>
@@ -946,6 +950,75 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               disabled={opportunity.salesCAGR === null}
                               onClick={async () => {
                                 await removeSalesCAGR.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"ebitdaCAGR"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.body.ebitdaCAGR.label"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.ebitdaCAGR != null
+                        ? opportunity.ebitdaCAGR +
+                          t(
+                            "financialInformationCard.table.body.ebitdaCAGR.units"
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={
+                                opportunity.ebitdaCAGR?.toString() || ""
+                              }
+                              description={t(
+                                "financialInformationCard.table.body.ebitdaCAGR.description"
+                              )}
+                              fieldName="ebitdaCAGR"
+                              inputType="number"
+                              onSaveAction={async (value) => {
+                                await updateEbitdaCAGR.mutateAsync({
+                                  id: opportunityId,
+                                  ebitdaCAGR: Number.parseFloat(value),
+                                });
+                              }}
+                              placeholder={t(
+                                "financialInformationCard.table.body.ebitdaCAGR.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.ebitdaCAGR.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={opportunity.ebitdaCAGR === null}
+                              onClick={async () => {
+                                await removeEbitdaCAGR.mutateAsync({
                                   id: opportunityId,
                                 });
                               }}
