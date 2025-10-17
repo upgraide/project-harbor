@@ -1,7 +1,12 @@
 import { generateSlug } from "random-word-slugs";
 import z from "zod";
 import { PAGINATION } from "@/config/constants";
-import { Type, TypeDetails } from "@/generated/prisma";
+import {
+  Industry,
+  IndustrySubsector,
+  Type,
+  TypeDetails,
+} from "@/generated/prisma";
 import prisma from "@/lib/db";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
@@ -69,6 +74,40 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
       prisma.mergerAndAcquisition.update({
         where: { id: input.id },
         data: { typeDetails: null },
+      })
+    ),
+  updateIndustry: protectedProcedure
+    .input(z.object({ id: z.string(), industry: z.enum(Industry) }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { industry: input.industry },
+      })
+    ),
+  removeIndustry: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { industry: null },
+      })
+    ),
+  updateIndustrySubsector: protectedProcedure
+    .input(
+      z.object({ id: z.string(), industrySubsector: z.enum(IndustrySubsector) })
+    )
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { industrySubsector: input.industrySubsector },
+      })
+    ),
+  removeIndustrySubsector: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { industrySubsector: null },
       })
     ),
   getOne: protectedProcedure

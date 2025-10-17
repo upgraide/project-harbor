@@ -232,3 +232,111 @@ export const useRemoveOpportunityTypeDetails = () => {
     })
   );
 };
+
+/**
+ * Hook to update an opportunity industry
+ */
+export const useUpdateOpportunityIndustry = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateIndustry.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to update the industry of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove an opportunity industry
+ */
+export const useRemoveOpportunityIndustry = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeIndustry.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to remove the industry of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+/**
+ * Hook to update an opportunity industry subsector
+ */
+export const useUpdateOpportunityIndustrySubsector = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateIndustrySubsector.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to update the industry subsector of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove an opportunity industry subsector
+ */
+export const useRemoveOpportunityIndustrySubsector = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeIndustrySubsector.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to remove the industry subsector of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};

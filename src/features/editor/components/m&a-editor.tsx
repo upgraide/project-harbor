@@ -39,14 +39,23 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  useRemoveOpportunityIndustry,
+  useRemoveOpportunityIndustrySubsector,
   useRemoveOpportunityType,
   useRemoveOpportunityTypeDetails,
   useSuspenseOpportunity,
   useUpdateOpportunityDescription,
+  useUpdateOpportunityIndustry,
+  useUpdateOpportunityIndustrySubsector,
   useUpdateOpportunityType,
   useUpdateOpportunityTypeDetails,
 } from "@/features/opportunities/hooks/use-m&a-opportunities";
-import { Type, TypeDetails } from "@/generated/prisma";
+import {
+  Industry,
+  IndustrySubsector,
+  Type,
+  TypeDetails,
+} from "@/generated/prisma";
 import { useScopedI18n } from "@/locales/client";
 
 export const EditorLoading = () => {
@@ -62,12 +71,20 @@ export const EditorError = () => {
 export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
+
+  // Update operations
   const updateDescription = useUpdateOpportunityDescription();
   const updateType = useUpdateOpportunityType();
   const updateTypeDetails = useUpdateOpportunityTypeDetails();
+  const updateIndustry = useUpdateOpportunityIndustry();
+  const updateIndustrySubsector = useUpdateOpportunityIndustrySubsector();
 
+  // Remove operations
   const removeType = useRemoveOpportunityType();
   const removeTypeDetails = useRemoveOpportunityTypeDetails();
+  const removeIndustry = useRemoveOpportunityIndustry();
+  const removeIndustrySubsector = useRemoveOpportunityIndustrySubsector();
+
   return (
     <>
       <p>{JSON.stringify(opportunity, null, 2)}</p>
@@ -283,6 +300,225 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               disabled={opportunity.typeDetails === null}
                               onClick={async () => {
                                 await removeTypeDetails.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"industry"}>
+                    <TableCell className="px-6 py-4">
+                      {t("financialInformationCard.table.body.industry.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.industry
+                        ? t(
+                            `financialInformationCard.table.body.industry.values.${opportunity.industry}`
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={opportunity.industry ?? ""}
+                              description={t(
+                                "financialInformationCard.table.body.industry.description"
+                              )}
+                              fieldName="industry"
+                              inputType="select"
+                              onSaveAction={async (value) => {
+                                await updateIndustry.mutateAsync({
+                                  id: opportunityId,
+                                  industry: value as Industry,
+                                });
+                              }}
+                              options={[
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industry.values.SERVICES"
+                                  ),
+                                  value: Industry.SERVICES,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industry.values.TRANSFORMATION_INDUSTRY"
+                                  ),
+                                  value: TypeDetails.MINORITARIO,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industry.values.TRADING"
+                                  ),
+                                  value: Industry.TRADING,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industry.values.ENERGY_INFRASTRUCTURE"
+                                  ),
+                                  value: Industry.ENERGY_INFRASTRUCTURE,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industry.values.FITNESS"
+                                  ),
+                                  value: Industry.FITNESS,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industry.values.HEALTHCARE_PHARMACEUTICALS"
+                                  ),
+                                  value: Industry.HEALTHCARE_PHARMACEUTICALS,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industry.values.IT"
+                                  ),
+                                  value: Industry.IT,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industry.values.TMT"
+                                  ),
+                                  value: Industry.TMT,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industry.values.TRANSPORTS"
+                                  ),
+                                  value: Industry.TRANSPORTS,
+                                },
+                              ]}
+                              placeholder={t(
+                                "financialInformationCard.table.body.industry.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.industry.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={opportunity.industry === null}
+                              onClick={async () => {
+                                await removeIndustry.mutateAsync({
+                                  id: opportunityId,
+                                });
+                              }}
+                              size="icon"
+                              variant="destructive"
+                            >
+                              <TrashIcon className="size-4 text-destructive" />
+                            </Button>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key={"industrySubsector"}>
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "financialInformationCard.table.body.industrySubsector.label"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.industrySubsector
+                        ? t(
+                            `financialInformationCard.table.body.industrySubsector.values.${opportunity.industrySubsector}`
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="outline">
+                            <EllipsisVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                          align="end"
+                          className="w-12 min-w-10 space-y-1"
+                        >
+                          <DropdownMenuItem asChild>
+                            <EditorEditButton
+                              cancelButtonText={t("cancelButtonText")}
+                              currentValue={opportunity.industrySubsector ?? ""}
+                              description={t(
+                                "financialInformationCard.table.body.industrySubsector.description"
+                              )}
+                              fieldName="industrySubsector"
+                              inputType="select"
+                              onSaveAction={async (value) => {
+                                await updateIndustrySubsector.mutateAsync({
+                                  id: opportunityId,
+                                  industrySubsector: value as IndustrySubsector,
+                                });
+                              }}
+                              options={[
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industrySubsector.values.BUSINESS_SERVICES"
+                                  ),
+                                  value: IndustrySubsector.BUSINESS_SERVICES,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industrySubsector.values.FINANCIAL_SERVICES"
+                                  ),
+                                  value: IndustrySubsector.FINANCIAL_SERVICES,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industrySubsector.values.CONSTRUCTION_MATERIALS"
+                                  ),
+                                  value:
+                                    IndustrySubsector.CONSTRUCTION_MATERIALS,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industrySubsector.values.FOOD_BEVERAGES"
+                                  ),
+                                  value: IndustrySubsector.FOOD_BEVERAGES,
+                                },
+                                {
+                                  label: t(
+                                    "financialInformationCard.table.body.industrySubsector.values.OTHERS"
+                                  ),
+                                  value: IndustrySubsector.OTHERS,
+                                },
+                              ]}
+                              placeholder={t(
+                                "financialInformationCard.table.body.industrySubsector.placeholder"
+                              )}
+                              saveButtonText={t("saveButtonText")}
+                              title={t(
+                                "financialInformationCard.table.body.industrySubsector.label"
+                              )}
+                            />
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Button
+                              disabled={opportunity.industrySubsector === null}
+                              onClick={async () => {
+                                await removeIndustrySubsector.mutateAsync({
                                   id: opportunityId,
                                 });
                               }}
