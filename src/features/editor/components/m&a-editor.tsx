@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { Table, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import {
   useSuspenseOpportunity,
@@ -40,7 +41,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   return (
     <>
       <p>{JSON.stringify(opportunity, null, 2)}</p>
-      <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-lg">
+      <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
         <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
 
         <section>
@@ -68,6 +69,30 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
               <p className="text-balance text-base">
                 {opportunity.description}
               </p>
+            </CardContent>
+          </Card>
+        </section>
+
+        <section>
+          <Card className="border-none bg-transparent shadow-none">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="font-bold text-lg">
+                {t("financialInformationCard.title")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader className="bg-muted">
+                  <TableRow>
+                    <TableHead className="px-6 py-4">
+                      {t("financialInformationCard.table.header.metric")}
+                    </TableHead>
+                    <TableHead className="px-6 py-4">
+                      {t("financialInformationCard.table.header.value")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+              </Table>
             </CardContent>
           </Card>
         </section>

@@ -6,4 +6,13 @@ export default {
   cancelButtonText: "Cancelar",
   description: "Descrição",
   editDescription: "Editar descrição",
+  financialInformationCard: {
+    title: "Informação Financeira",
+    table: {
+      header: {
+        metric: "Métrica",
+        value: "Valor",
+      },
+    },
+  },
 } as const;
