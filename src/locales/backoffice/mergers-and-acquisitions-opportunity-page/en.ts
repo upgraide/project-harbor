@@ -162,5 +162,6 @@ export default {
     ebitda: "EBITDA (M€)",
     ebitdaMargin: "EBITDA Margin (%)",
     actions: "Actions",
+    deleteButtonText: "Delete",
   },
 } as const;
