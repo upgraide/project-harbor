@@ -10,6 +10,7 @@ import {
   TypeDetails,
 } from "@/generated/prisma";
 import prisma from "@/lib/db";
+import { deleteFromUploadthing } from "@/lib/uploadthing-server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 const SLUG_WORDS = 3;
@@ -279,6 +280,42 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { graphRows: input.graphRows },
       })
     ),
+  updateImages: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        images: z.array(z.string()),
+      })
+    )
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { images: input.images },
+      })
+    ),
+  removeImage: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        imageUrl: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await deleteFromUploadthing(input.imageUrl);
+      return prisma.mergerAndAcquisition
+        .findUniqueOrThrow({
+          where: { id: input.id },
+        })
+        .then((opportunity) => {
+          const updatedImages = (opportunity.images || []).filter(
+            (img) => img !== input.imageUrl
+          );
+          return prisma.mergerAndAcquisition.update({
+            where: { id: input.id },
+            data: { images: updatedImages },
+          });
+        });
+    }),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input }) =>

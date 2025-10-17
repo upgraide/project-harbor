@@ -164,4 +164,10 @@ export default {
     actions: "Ações",
     deleteButtonText: "Eliminar",
   },
+  imagesCard: {
+    title: "Imagens",
+    uploadSuccess: "Imagens carregadas com sucesso",
+    noImages: "Nenhuma imagem carregada ainda",
+    maxImagesError: "Não é possível exceder 10 imagens no total",
+  },
 } as const;

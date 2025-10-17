@@ -164,4 +164,10 @@ export default {
     actions: "Actions",
     deleteButtonText: "Delete",
   },
+  imagesCard: {
+    title: "Images",
+    uploadSuccess: "Images uploaded successfully",
+    noImages: "No images uploaded yet",
+    maxImagesError: "Cannot exceed 10 images total",
+  },
 } as const;

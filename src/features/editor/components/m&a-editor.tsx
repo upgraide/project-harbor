@@ -2,7 +2,8 @@
 /** biome-ignore-all lint/style/noMagicNumbers: Ignored */
 "use client";
 
-import { EditIcon, EllipsisVerticalIcon, TrashIcon } from "lucide-react";
+import { EditIcon, EllipsisVerticalIcon, TrashIcon, XIcon } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import {
   Bar,
@@ -12,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { toast } from "sonner";
 import { ErrorView, LoadingView } from "@/components/entity-components";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,6 +64,7 @@ import {
   useRemoveOpportunityEbitdaCAGR,
   useRemoveOpportunityEbitdaNormalized,
   useRemoveOpportunityEstimatedAssetValue,
+  useRemoveOpportunityImage,
   useRemoveOpportunityIndustry,
   useRemoveOpportunityIndustrySubsector,
   useRemoveOpportunityNetDebt,
@@ -77,6 +80,7 @@ import {
   useUpdateOpportunityEbitdaCAGR,
   useUpdateOpportunityEbitdaNormalized,
   useUpdateOpportunityEstimatedAssetValue,
+  useUpdateOpportunityImages,
   useUpdateOpportunityIndustry,
   useUpdateOpportunityIndustrySubsector,
   useUpdateOpportunityNetDebt,
@@ -93,6 +97,7 @@ import {
   Type,
   TypeDetails,
 } from "@/generated/prisma";
+import { cn, UploadButton } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
 
 const chartConfig = (t: ReturnType<typeof useScopedI18n>) =>
@@ -141,6 +146,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateAssetIncluded = useUpdateOpportunityAssetIncluded();
   const updateEstimatedAssetValue = useUpdateOpportunityEstimatedAssetValue();
   const updateGraphRows = useUpdateGraphRows();
+  const updateImages = useUpdateOpportunityImages();
+  const removeImage = useRemoveOpportunityImage();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -159,6 +166,104 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
       <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
+
+      <section>
+        <Card className="border-none bg-transparent shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="font-bold text-lg">
+              {t("imagesCard.title")}
+            </CardTitle>
+            <UploadButton
+              endpoint="imageUploader"
+              onClientUploadComplete={async (res) => {
+                const imageUrls = res.map((file) => file.url);
+                const currentImages = opportunity.images || [];
+                const totalImages = currentImages.length + imageUrls.length;
+
+                // Validate we don't exceed 10 images total
+                if (totalImages > 10) {
+                  toast.error("Cannot exceed 10 images total");
+                  return;
+                }
+
+                await updateImages.mutateAsync({
+                  id: opportunityId,
+                  images: [...currentImages, ...imageUrls],
+                });
+                toast.success(t("imagesCard.uploadSuccess"));
+              }}
+              onUploadError={(error: Error) => {
+                toast.error(error.message);
+              }}
+            />
+          </CardHeader>
+          <CardContent>
+            {opportunity.images && opportunity.images.length > 0 ? (
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {opportunity.images.map((imageUrl) => (
+                  <div
+                    className="group relative aspect-square overflow-hidden rounded-lg bg-muted"
+                    key={imageUrl}
+                  >
+                    <Image
+                      alt="Opportunity image"
+                      className="object-cover"
+                      fill
+                      src={imageUrl}
+                    />
+                    <button
+                      className={cn(
+                        "absolute inset-0",
+                        "flex items-center justify-center",
+                        "bg-black/50",
+                        "opacity-0 group-hover:opacity-100",
+                        "disabled:opacity-100",
+                        "transition-opacity"
+                      )}
+                      disabled={removeImage.isPending}
+                      onClick={() => {
+                        removeImage.mutateAsync({
+                          id: opportunityId,
+                          imageUrl,
+                        });
+                      }}
+                      title="Delete image"
+                      type="button"
+                    >
+                      {removeImage.isPending ? (
+                        <div
+                          className={cn(
+                            "size-6",
+                            "rounded-full",
+                            "border-2 border-white border-t-transparent",
+                            "animate-spin"
+                          )}
+                        />
+                      ) : (
+                        <XIcon className="size-6 text-white" />
+                      )}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div
+                className={cn(
+                  "border border-dashed",
+                  "rounded-lg",
+                  "flex flex-col items-center justify-center",
+                  "py-12",
+                  "border-muted-foreground/50"
+                )}
+              >
+                <p className="text-balance text-muted-foreground text-sm">
+                  {t("imagesCard.noImages")}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </section>
 
       <section>
         <Card className="border-none bg-transparent shadow-none">
