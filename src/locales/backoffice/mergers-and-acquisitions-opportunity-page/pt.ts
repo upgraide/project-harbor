@@ -8,7 +8,7 @@ export default {
   editDescription: "Editar descrição",
   editButtonText: "Editar",
   financialInformationCard: {
-    title: "Informação Financeira",
+    title: "Informação Financeira (Pre-NDA)",
     table: {
       header: {
         metric: "Métrica",
