@@ -140,7 +140,7 @@ export default {
     },
   },
   graphCard: {
-    title: "Gráfico",
+    title: "Graph Data",
     addRowButtonText: "Add Row",
     table: {
       header: {
