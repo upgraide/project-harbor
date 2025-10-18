@@ -791,3 +791,55 @@ export const useRemoveOpportunityImage = () => {
     })
   );
 };
+
+/**
+ * Hook to update an opportunity im
+ */
+export const useUpdateOpportunityIm = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateIm.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to update the images of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove an opportunity im from opportunity
+ */
+export const useRemoveOpportunityIm = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeIm.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to remove the image from the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};

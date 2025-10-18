@@ -170,4 +170,14 @@ export default {
     noImages: "Nenhuma imagem carregada ainda",
     maxImagesError: "Não é possível exceder 10 imagens no total",
   },
+  postNDACard: {
+    title: "Informação Pós-NDA",
+    table: {
+      header: {
+        metric: "Métrica",
+        value: "Valor",
+        actions: "Ações",
+      },
+    },
+  },
 } as const;

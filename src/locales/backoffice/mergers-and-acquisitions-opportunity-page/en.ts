@@ -170,4 +170,23 @@ export default {
     noImages: "No images uploaded yet",
     maxImagesError: "Cannot exceed 10 images total",
   },
+  postNDACard: {
+    title: "Post-NDA Information",
+    table: {
+      header: {
+        metric: "Metric",
+        value: "Value",
+        actions: "Actions",
+      },
+      body: {
+        im: {
+          label: "IM",
+          description: "Enter the IM of the opportunity",
+          placeholder: "Enter the IM value ",
+          value: "Value",
+          actions: "Actions",
+        },
+      },
+    },
+  },
 } as const;

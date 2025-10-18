@@ -64,6 +64,7 @@ import {
   useRemoveOpportunityEbitdaCAGR,
   useRemoveOpportunityEbitdaNormalized,
   useRemoveOpportunityEstimatedAssetValue,
+  useRemoveOpportunityIm,
   useRemoveOpportunityImage,
   useRemoveOpportunityIndustry,
   useRemoveOpportunityIndustrySubsector,
@@ -80,6 +81,7 @@ import {
   useUpdateOpportunityEbitdaCAGR,
   useUpdateOpportunityEbitdaNormalized,
   useUpdateOpportunityEstimatedAssetValue,
+  useUpdateOpportunityIm,
   useUpdateOpportunityImages,
   useUpdateOpportunityIndustry,
   useUpdateOpportunityIndustrySubsector,
@@ -148,7 +150,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateEstimatedAssetValue = useUpdateOpportunityEstimatedAssetValue();
   const updateGraphRows = useUpdateGraphRows();
   const updateImages = useUpdateOpportunityImages();
-  const removeImage = useRemoveOpportunityImage();
+  const updateIm = useUpdateOpportunityIm();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -163,6 +165,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeEbitdaCAGR = useRemoveOpportunityEbitdaCAGR();
   const removeAssetIncluded = useRemoveOpportunityAssetIncluded();
   const removeEstimatedAssetValue = useRemoveOpportunityEstimatedAssetValue();
+  const removeImage = useRemoveOpportunityImage();
+  const removeIm = useRemoveOpportunityIm();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -1525,6 +1529,93 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                 {t("graphCard.noDataMessage")}
               </div>
             )}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section>
+        <Card className="border-none bg-transparent shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="font-bold text-lg">
+              {t("postNDACard.title")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader className="bg-muted">
+                <TableRow>
+                  <TableHead className="px-6 py-4">
+                    {t("postNDACard.table.header.metric")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("postNDACard.table.header.value")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4 text-right">
+                    {t("postNDACard.table.header.actions")}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow key={"ebitdaNormalized"}>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDACard.table.body.im.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.im != null ? opportunity.im : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={opportunity.im?.toString() || ""}
+                            description={t(
+                              "postNDACard.table.body.im.description"
+                            )}
+                            fieldName="im"
+                            inputType="text"
+                            onSaveAction={async (value) => {
+                              await updateIm.mutateAsync({
+                                id: opportunityId,
+                                im: value,
+                              });
+                            }}
+                            placeholder={t(
+                              "postNDACard.table.body.im.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t("postNDACard.table.body.im.label")}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.im === null}
+                            onClick={async () => {
+                              await removeIm.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </section>
