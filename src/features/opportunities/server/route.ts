@@ -9,6 +9,7 @@ import {
   Type,
   TypeDetails,
 } from "@/generated/prisma";
+import { inngest } from "@/inngest/client";
 import prisma from "@/lib/db";
 import { deleteFromUploadthing } from "@/lib/uploadthing-server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
@@ -44,12 +45,24 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
     ),
   updateDescription: protectedProcedure
     .input(z.object({ id: z.string(), description: z.string().min(1) }))
-    .mutation(({ input }) =>
-      prisma.mergerAndAcquisition.update({
+    .mutation(async ({ input }) => {
+      // Update the description in the database
+      const updated = await prisma.mergerAndAcquisition.update({
         where: { id: input.id },
         data: { description: input.description },
-      })
-    ),
+      });
+
+      // Trigger async translation to English via Inngest
+      await inngest.send({
+        name: "opportunity/translate-description",
+        data: {
+          opportunityId: input.id,
+          description: input.description,
+        },
+      });
+
+      return updated;
+    }),
   updateType: protectedProcedure
     .input(z.object({ id: z.string(), type: z.enum(Type) }))
     .mutation(({ input }) =>

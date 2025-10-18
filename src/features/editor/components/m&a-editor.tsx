@@ -98,7 +98,7 @@ import {
   TypeDetails,
 } from "@/generated/prisma";
 import { cn, UploadButton } from "@/lib/utils";
-import { useScopedI18n } from "@/locales/client";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 const chartConfig = (t: ReturnType<typeof useScopedI18n>) =>
   ({
@@ -129,6 +129,7 @@ export const EditorError = () => {
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component
 export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
+  const locale = useCurrentLocale();
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
 
   // Update operations
@@ -287,7 +288,11 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             />
           </CardHeader>
           <CardContent>
-            <p className="text-balance text-base">{opportunity.description}</p>
+            <p className="text-balance text-base">
+              {locale === "en"
+                ? opportunity.englishDescription
+                : opportunity.description}
+            </p>
           </CardContent>
         </Card>
       </section>
