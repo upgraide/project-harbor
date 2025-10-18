@@ -178,6 +178,13 @@ export default {
         value: "Valor",
         actions: "Ações",
       },
+      body: {
+        im: {
+          label: "IM",
+          description: "Insira o valor do IM da oportunidade",
+          placeholder: "Insira o valor do IM (exemplo: 3.2)",
+        },
+      },
     },
   },
 } as const;

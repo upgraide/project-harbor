@@ -183,8 +183,6 @@ export default {
           label: "IM",
           description: "Enter the IM of the opportunity",
           placeholder: "Enter the IM value ",
-          value: "Value",
-          actions: "Actions",
         },
       },
     },
