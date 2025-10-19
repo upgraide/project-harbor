@@ -62,6 +62,7 @@ import {
   useRemoveOpportunityAssetIncluded,
   useRemoveOpportunityEbitda,
   useRemoveOpportunityEbitdaCAGR,
+  useRemoveOpportunityEbitdaMargin,
   useRemoveOpportunityEbitdaNormalized,
   useRemoveOpportunityEnterpriseValue,
   useRemoveOpportunityEquityValue,
@@ -84,6 +85,7 @@ import {
   useUpdateOpportunityDescription,
   useUpdateOpportunityEbitda,
   useUpdateOpportunityEbitdaCAGR,
+  useUpdateOpportunityEbitdaMargin,
   useUpdateOpportunityEbitdaNormalized,
   useUpdateOpportunityEnterpriseValue,
   useUpdateOpportunityEquityValue,
@@ -166,6 +168,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateShareholderStructure = useUpdateOpportunityShareholderStructure();
   const updateEvDashEbitdaEntry = useUpdateOpportunityEvDashEbitdaEntry();
   const updateEvDashEbitdaExit = useUpdateOpportunityEvDashEbitdaExit();
+  const updateEbitdaMargin = useUpdateOpportunityEbitdaMargin();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -188,6 +191,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
     useRemoveOpportunityShareholderStructureImage();
   const removeEvDashEbitdaEntry = useRemoveOpportunityEvDashEbitdaEntry();
   const removeEvDashEbitdaExit = useRemoveOpportunityEvDashEbitdaExit();
+  const removeEbitdaMargin = useRemoveOpportunityEbitdaMargin();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -1983,6 +1987,71 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.evDashEbitdaExit === null}
                             onClick={async () => {
                               await removeEvDashEbitdaExit.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"ebitdaMargin"}>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDACard.table.body.ebitdaMargin.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.ebitdaMargin != null
+                      ? opportunity.ebitdaMargin +
+                        t("postNDACard.table.body.ebitdaMargin.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.ebitdaMargin?.toString() || ""
+                            }
+                            description={t(
+                              "postNDACard.table.body.ebitdaMargin.description"
+                            )}
+                            fieldName="ebitdaMargin"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateEbitdaMargin.mutateAsync({
+                                id: opportunityId,
+                                ebitdaMargin: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "postNDACard.table.body.ebitdaMargin.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "postNDACard.table.body.ebitdaMargin.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.ebitdaMargin === null}
+                            onClick={async () => {
+                              await removeEbitdaMargin.mutateAsync({
                                 id: opportunityId,
                               });
                             }}

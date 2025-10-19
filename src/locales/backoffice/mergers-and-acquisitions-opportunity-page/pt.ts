@@ -210,6 +210,12 @@ export default {
           description: "Insira o Múltiplo EBITDA Comparáveis da oportunidade",
           units: "x",
         },
+        ebitdaMargin: {
+          label: "EBITDA Margin (%)",
+          placeholder: "Insira a EBITDA Margin (exemplo: 25.5)",
+          description: "Insira a EBITDA Margin da oportunidade",
+          units: "%",
+        },
       },
     },
   },

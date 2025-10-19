@@ -213,6 +213,12 @@ export default {
             "Enter the EV/EBITDA (Exit/Comps) multiple of the opportunity",
           units: "x",
         },
+        ebitdaMargin: {
+          label: "EBITDA Margin (%)",
+          placeholder: "Enter the EBITDA Margin (example: 25.5)",
+          description: "Enter the EBITDA Margin of the opportunity",
+          units: "%",
+        },
       },
     },
   },
