@@ -505,6 +505,22 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { coInvestment: null },
       })
     ),
+  updateEquityContribution: protectedProcedure
+    .input(z.object({ id: z.string(), equityContribution: z.number() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { equityContribution: input.equityContribution },
+      })
+    ),
+  removeEquityContribution: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { equityContribution: null },
+      })
+    ),
   updateShareholderStructure: protectedProcedure
     .input(
       z.object({

@@ -270,6 +270,12 @@ export default {
           description: "Selecione se há co-investimento nesta oportunidade",
           placeholder: "Selecione o status de co-investimento",
         },
+        equityContribution: {
+          label: "Contribuição de Capital",
+          placeholder: "Insira a Contribuição de Capital (exemplo: 25)",
+          description: "Insira a Contribuição de Capital da oportunidade",
+          units: "%",
+        },
       },
     },
   },

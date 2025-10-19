@@ -67,6 +67,7 @@ import {
   useRemoveOpportunityEbitdaMargin,
   useRemoveOpportunityEbitdaNormalized,
   useRemoveOpportunityEnterpriseValue,
+  useRemoveOpportunityEquityContribution,
   useRemoveOpportunityEquityValue,
   useRemoveOpportunityEstimatedAssetValue,
   useRemoveOpportunityEvDashEbitdaEntry,
@@ -95,6 +96,7 @@ import {
   useUpdateOpportunityEbitdaMargin,
   useUpdateOpportunityEbitdaNormalized,
   useUpdateOpportunityEnterpriseValue,
+  useUpdateOpportunityEquityContribution,
   useUpdateOpportunityEquityValue,
   useUpdateOpportunityEstimatedAssetValue,
   useUpdateOpportunityEvDashEbitdaEntry,
@@ -184,6 +186,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateCapexItensity = useUpdateOpportunityCapexItensity();
   const updateWorkingCapitalNeeds = useUpdateOpportunityWorkingCapitalNeeds();
   const updateCoInvestment = useUpdateOpportunityCoInvestment();
+  const updateEquityContribution = useUpdateOpportunityEquityContribution();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -212,6 +215,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeCapexItensity = useRemoveOpportunityCapexItensity();
   const removeWorkingCapitalNeeds = useRemoveOpportunityWorkingCapitalNeeds();
   const removeCoInvestment = useRemoveOpportunityCoInvestment();
+  const removeEquityContribution = useRemoveOpportunityEquityContribution();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -2438,6 +2442,73 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.coInvestment === null}
                             onClick={async () => {
                               await removeCoInvestment.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"equityContribution"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentCard.table.body.equityContribution.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.equityContribution != null
+                      ? opportunity.equityContribution +
+                        t(
+                          "coInvestmentCard.table.body.equityContribution.units"
+                        )
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.equityContribution?.toString() || ""
+                            }
+                            description={t(
+                              "coInvestmentCard.table.body.equityContribution.description"
+                            )}
+                            fieldName="equityContribution"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateEquityContribution.mutateAsync({
+                                id: opportunityId,
+                                equityContribution: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.equityContribution.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "coInvestmentCard.table.body.equityContribution.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.equityContribution === null}
+                            onClick={async () => {
+                              await removeEquityContribution.mutateAsync({
                                 id: opportunityId,
                               });
                             }}

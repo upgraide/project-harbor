@@ -268,6 +268,12 @@ export default {
           description: "Select if there is co-investment in this opportunity",
           placeholder: "Select co-investment status",
         },
+        equityContribution: {
+          label: "Equity Contribution",
+          placeholder: "Enter the Equity Contribution (example: 25)",
+          description: "Enter the Equity Contribution of the opportunity",
+          units: "%",
+        },
       },
     },
   },
