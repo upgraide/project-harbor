@@ -184,6 +184,13 @@ export default {
           description: "Insira o valor do IM da oportunidade",
           placeholder: "Insira o valor do IM (exemplo: 3.2)",
         },
+        enterpriseValue: {
+          label: "Valor da Empresa",
+          placeholder: "Insira o Valor da Empresa (exemplo: 50)",
+          description: "Insira o Valor da Empresa da oportunidade",
+          prefix: "€",
+          units: "M",
+        },
       },
     },
   },

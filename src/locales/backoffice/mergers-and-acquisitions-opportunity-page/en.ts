@@ -171,7 +171,7 @@ export default {
     maxImagesError: "Cannot exceed 10 images total",
   },
   postNDACard: {
-    title: "Post-NDA Information",
+    title: "Further Information (Post-NDA)",
     table: {
       header: {
         metric: "Metric",
@@ -183,6 +183,13 @@ export default {
           label: "IM",
           description: "Enter the IM of the opportunity",
           placeholder: "Enter the IM value ",
+        },
+        enterpriseValue: {
+          label: "Enterprise Value (EV)",
+          placeholder: "Enter the Enterprise Value (example: 50)",
+          description: "Enter the Enterprise Value of the opportunity",
+          prefix: "€",
+          units: "M",
         },
       },
     },

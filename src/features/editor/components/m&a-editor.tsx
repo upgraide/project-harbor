@@ -63,6 +63,7 @@ import {
   useRemoveOpportunityEbitda,
   useRemoveOpportunityEbitdaCAGR,
   useRemoveOpportunityEbitdaNormalized,
+  useRemoveOpportunityEnterpriseValue,
   useRemoveOpportunityEstimatedAssetValue,
   useRemoveOpportunityIm,
   useRemoveOpportunityImage,
@@ -81,6 +82,7 @@ import {
   useUpdateOpportunityEbitda,
   useUpdateOpportunityEbitdaCAGR,
   useUpdateOpportunityEbitdaNormalized,
+  useUpdateOpportunityEnterpriseValue,
   useUpdateOpportunityEstimatedAssetValue,
   useUpdateOpportunityIm,
   useUpdateOpportunityImages,
@@ -153,6 +155,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateGraphRows = useUpdateGraphRows();
   const updateImages = useUpdateOpportunityImages();
   const updateIm = useUpdateOpportunityIm();
+  const updateEnterpriseValue = useUpdateOpportunityEnterpriseValue();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -169,6 +172,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeEstimatedAssetValue = useRemoveOpportunityEstimatedAssetValue();
   const removeImage = useRemoveOpportunityImage();
   const removeIm = useRemoveOpportunityIm();
+  const removeEnterpriseValue = useRemoveOpportunityEnterpriseValue();
   const updateShareholderStructure = useUpdateOpportunityShareholderStructure();
   const removeShareholderStructure =
     useRemoveOpportunityShareholderStructureImage();
@@ -1705,6 +1709,72 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.im === null}
                             onClick={async () => {
                               await removeIm.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"enterpriseValue"}>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDACard.table.body.enterpriseValue.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.entrepriseValue != null
+                      ? t("postNDACard.table.body.enterpriseValue.prefix") +
+                        opportunity.entrepriseValue +
+                        t("postNDACard.table.body.enterpriseValue.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.entrepriseValue?.toString() || ""
+                            }
+                            description={t(
+                              "postNDACard.table.body.enterpriseValue.description"
+                            )}
+                            fieldName="entrepriseValue"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateEnterpriseValue.mutateAsync({
+                                id: opportunityId,
+                                entrepriseValue: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "postNDACard.table.body.enterpriseValue.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "postNDACard.table.body.enterpriseValue.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.entrepriseValue === null}
+                            onClick={async () => {
+                              await removeEnterpriseValue.mutateAsync({
                                 id: opportunityId,
                               });
                             }}
