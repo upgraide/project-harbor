@@ -1133,6 +1133,54 @@ export const useRemoveOpportunityFcf = () => {
 };
 
 /**
+ * Hook to update opportunity netDebtDashEbitda
+ */
+export const useUpdateOpportunityNetDebtDashEbitda = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateNetDebtDashEbitda.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update Net Debt/EBITDA: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove opportunity netDebtDashEbitda
+ */
+export const useRemoveOpportunityNetDebtDashEbitda = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeNetDebtDashEbitda.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove Net Debt/EBITDA: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
  * Hook to update opportunity shareholder structure images
  */
 export const useUpdateOpportunityShareholderStructure = () => {

@@ -222,6 +222,14 @@ export default {
           description: "Insira o Cash Flows Descontados da oportunidade",
           units: "M€",
         },
+        netDebtDashEbitda: {
+          label: "EBITDA por Dívida Financeira Líquida (x)",
+          placeholder:
+            "Insira o EBITDA por Dívida Financeira Líquida (x) (exemplo: 3.5)",
+          description:
+            "Insira o EBITDA por Dívida Financeira Líquida (x) da oportunidade",
+          units: "x",
+        },
       },
     },
   },

@@ -226,6 +226,12 @@ export default {
           prefix: "€",
           units: "M",
         },
+        netDebtDashEbitda: {
+          label: "Net Debt/EBITDA",
+          placeholder: "Enter the Net Debt/EBITDA multiple (example: 3.5)",
+          description: "Enter the Net Debt/EBITDA multiple of the opportunity",
+          units: "x",
+        },
       },
     },
   },

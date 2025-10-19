@@ -75,6 +75,7 @@ import {
   useRemoveOpportunityIndustry,
   useRemoveOpportunityIndustrySubsector,
   useRemoveOpportunityNetDebt,
+  useRemoveOpportunityNetDebtDashEbitda,
   useRemoveOpportunitySales,
   useRemoveOpportunitySalesCAGR,
   useRemoveOpportunityShareholderStructureImage,
@@ -99,6 +100,7 @@ import {
   useUpdateOpportunityIndustry,
   useUpdateOpportunityIndustrySubsector,
   useUpdateOpportunityNetDebt,
+  useUpdateOpportunityNetDebtDashEbitda,
   useUpdateOpportunitySales,
   useUpdateOpportunitySalesCAGR,
   useUpdateOpportunityShareholderStructure,
@@ -172,6 +174,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateEvDashEbitdaExit = useUpdateOpportunityEvDashEbitdaExit();
   const updateEbitdaMargin = useUpdateOpportunityEbitdaMargin();
   const updateFcf = useUpdateOpportunityFcf();
+  const updateNetDebtDashEbitda = useUpdateOpportunityNetDebtDashEbitda();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -196,6 +199,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeEvDashEbitdaExit = useRemoveOpportunityEvDashEbitdaExit();
   const removeEbitdaMargin = useRemoveOpportunityEbitdaMargin();
   const removeFcf = useRemoveOpportunityFcf();
+  const removeNetDebtDashEbitda = useRemoveOpportunityNetDebtDashEbitda();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -2118,6 +2122,71 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.fcf === null}
                             onClick={async () => {
                               await removeFcf.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"netDebtDashEbitda"}>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDACard.table.body.netDebtDashEbitda.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.netDebtDashEbitda != null
+                      ? opportunity.netDebtDashEbitda +
+                        t("postNDACard.table.body.netDebtDashEbitda.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.netDebtDashEbitda?.toString() || ""
+                            }
+                            description={t(
+                              "postNDACard.table.body.netDebtDashEbitda.description"
+                            )}
+                            fieldName="netDebtDashEbitda"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateNetDebtDashEbitda.mutateAsync({
+                                id: opportunityId,
+                                netDebtDashEbitda: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "postNDACard.table.body.netDebtDashEbitda.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "postNDACard.table.body.netDebtDashEbitda.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.netDebtDashEbitda === null}
+                            onClick={async () => {
+                              await removeNetDebtDashEbitda.mutateAsync({
                                 id: opportunityId,
                               });
                             }}
