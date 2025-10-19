@@ -136,9 +136,9 @@ export const Creator = () => {
     },
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (values: FormValues) => {
     try {
-      const newOpportunity = await createOpportunity.mutateAsync();
+      const newOpportunity = await createOpportunity.mutateAsync(values);
 
       toast.success("Opportunity created successfully!");
       router.push(
@@ -154,10 +154,7 @@ export const Creator = () => {
       <h1 className="font-bold text-2xl md:text-4xl">{t("title")}</h1>
 
       <Form {...form}>
-        <form
-          className="space-y-6"
-          onSubmit={form.handleSubmit(() => handleSubmit())}
-        >
+        <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
           {/* Basic Information Card */}
           <section>
             <Card className="border-none bg-transparent shadow-none">

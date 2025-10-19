@@ -44,8 +44,8 @@ export const translateDescription = inngest.createFunction(
         {
           model: google("gemini-2.5-flash"),
           system:
-            "You are a professional translator specializing in business and finance terminology. Translate the provided Portuguese text to English with formal business language suitable for M&A contexts.",
-          prompt: `Translate the following Portuguese description to English:\n\n${description}`,
+            "You are a professional translator specializing in business and finance terminology. Your task is to provide a SINGLE, OBJECTIVE translation of Portuguese business text to English with formal business language suitable for M&A contexts. Do NOT provide multiple options, alternatives, or variations. Provide ONLY the direct translation without any explanations, notes, or alternative phrasings.",
+          prompt: `Translate the following Portuguese description to English. Provide ONLY the translation itself, nothing else:\n\n${description}`,
           experimental_telemetry: {
             isEnabled: true,
             recordInputs: true,

@@ -1,4 +1,3 @@
-import { generateSlug } from "random-word-slugs";
 import z from "zod";
 import { PAGINATION } from "@/config/constants";
 import {
@@ -14,20 +13,115 @@ import prisma from "@/lib/db";
 import { deleteFromUploadthing } from "@/lib/uploadthing-server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
-const SLUG_WORDS = 3;
-
 const CAGR_MIN = 0;
 const CAGR_MAX = 100;
 
+// Helper function to parse optional float values
+const parseOptionalFloat = (value?: string): number | null =>
+  value ? Number.parseFloat(value) : null;
+
 export const mergerAndAcquisitionRouter = createTRPCRouter({
-  create: protectedProcedure.mutation(({ ctx }) =>
-    prisma.mergerAndAcquisition.create({
-      data: {
+  create: protectedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1),
+        description: z.string().optional(),
+        type: z.enum(Type).optional(),
+        typeDetails: z.enum(TypeDetails).optional(),
+        industry: z.enum(Industry).optional(),
+        industrySubsector: z.enum(IndustrySubsector).optional(),
+        sales: z.enum(SalesRange).optional(),
+        ebitda: z.enum(EbitdaRange).optional(),
+        ebitdaNormalized: z.string().optional(),
+        netDebt: z.string().optional(),
+        salesCAGR: z.string().optional(),
+        ebitdaCAGR: z.string().optional(),
+        assetIncluded: z.enum(["yes", "no"]).optional(),
+        estimatedAssetValue: z.string().optional(),
+        preNDANotes: z.string().optional(),
+        im: z.string().optional(),
+        entrepriseValue: z.string().optional(),
+        equityValue: z.string().optional(),
+        evDashEbitdaEntry: z.string().optional(),
+        evDashEbitdaExit: z.string().optional(),
+        ebitdaMargin: z.string().optional(),
+        fcf: z.string().optional(),
+        netDebtDashEbitda: z.string().optional(),
+        capexItensity: z.string().optional(),
+        workingCapitalNeeds: z.string().optional(),
+        postNDANotes: z.string().optional(),
+        coInvestment: z.enum(["yes", "no"]).optional(),
+        equityContribution: z.string().optional(),
+        grossIRR: z.string().optional(),
+        netIRR: z.string().optional(),
+        moic: z.string().optional(),
+        cashOnCashReturn: z.string().optional(),
+        cashConvertion: z.string().optional(),
+        entryMultiple: z.string().optional(),
+        exitExpectedMultiple: z.string().optional(),
+        holdPeriod: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Convert string numbers to floats where needed
+      const data = {
         userId: ctx.auth.user.id,
-        name: generateSlug(SLUG_WORDS),
-      },
-    })
-  ),
+        name: input.name,
+        description: input.description,
+        type: input.type,
+        typeDetails: input.typeDetails,
+        industry: input.industry,
+        industrySubsector: input.industrySubsector,
+        sales: input.sales,
+        ebitda: input.ebitda,
+        ebitdaNormalized: parseOptionalFloat(input.ebitdaNormalized),
+        netDebt: parseOptionalFloat(input.netDebt),
+        salesCAGR: parseOptionalFloat(input.salesCAGR),
+        ebitdaCAGR: parseOptionalFloat(input.ebitdaCAGR),
+        assetIncluded: input.assetIncluded === "yes",
+        estimatedAssetValue: parseOptionalFloat(input.estimatedAssetValue),
+        preNDANotes: input.preNDANotes,
+        im: input.im,
+        entrepriseValue: parseOptionalFloat(input.entrepriseValue),
+        equityValue: parseOptionalFloat(input.equityValue),
+        evDashEbitdaEntry: parseOptionalFloat(input.evDashEbitdaEntry),
+        evDashEbitdaExit: parseOptionalFloat(input.evDashEbitdaExit),
+        ebitdaMargin: parseOptionalFloat(input.ebitdaMargin),
+        fcf: parseOptionalFloat(input.fcf),
+        netDebtDashEbitda: parseOptionalFloat(input.netDebtDashEbitda),
+        capexItensity: parseOptionalFloat(input.capexItensity),
+        workingCapitalNeeds: parseOptionalFloat(input.workingCapitalNeeds),
+        postNDANotes: input.postNDANotes,
+        coInvestment: input.coInvestment === "yes",
+        equityContribution: parseOptionalFloat(input.equityContribution),
+        grossIRR: parseOptionalFloat(input.grossIRR),
+        netIRR: parseOptionalFloat(input.netIRR),
+        moic: parseOptionalFloat(input.moic),
+        cashOnCashReturn: parseOptionalFloat(input.cashOnCashReturn),
+        cashConvertion: parseOptionalFloat(input.cashConvertion),
+        entryMultiple: parseOptionalFloat(input.entryMultiple),
+        exitExpectedMultiple: parseOptionalFloat(input.exitExpectedMultiple),
+        holdPeriod: parseOptionalFloat(input.holdPeriod),
+      };
+
+      // Create the opportunity
+      const created = await prisma.mergerAndAcquisition.create({
+        data,
+      });
+
+      // Trigger translation if description is provided
+      if (input.description) {
+        await inngest.send({
+          name: "opportunity/translate-description",
+          data: {
+            opportunityId: created.id,
+            description: input.description,
+          },
+        });
+      }
+
+      return created;
+    }),
   remove: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
