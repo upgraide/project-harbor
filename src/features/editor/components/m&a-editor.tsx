@@ -61,6 +61,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   useRemoveOpportunityAssetIncluded,
   useRemoveOpportunityCapexItensity,
+  useRemoveOpportunityCoInvestment,
   useRemoveOpportunityEbitda,
   useRemoveOpportunityEbitdaCAGR,
   useRemoveOpportunityEbitdaMargin,
@@ -87,6 +88,7 @@ import {
   useUpdateGraphRows,
   useUpdateOpportunityAssetIncluded,
   useUpdateOpportunityCapexItensity,
+  useUpdateOpportunityCoInvestment,
   useUpdateOpportunityDescription,
   useUpdateOpportunityEbitda,
   useUpdateOpportunityEbitdaCAGR,
@@ -181,6 +183,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateNetDebtDashEbitda = useUpdateOpportunityNetDebtDashEbitda();
   const updateCapexItensity = useUpdateOpportunityCapexItensity();
   const updateWorkingCapitalNeeds = useUpdateOpportunityWorkingCapitalNeeds();
+  const updateCoInvestment = useUpdateOpportunityCoInvestment();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -208,6 +211,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeNetDebtDashEbitda = useRemoveOpportunityNetDebtDashEbitda();
   const removeCapexItensity = useRemoveOpportunityCapexItensity();
   const removeWorkingCapitalNeeds = useRemoveOpportunityWorkingCapitalNeeds();
+  const removeCoInvestment = useRemoveOpportunityCoInvestment();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -2325,6 +2329,115 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.workingCapitalNeeds === null}
                             onClick={async () => {
                               await removeWorkingCapitalNeeds.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </section>
+
+      <section>
+        <Card className="border-none bg-transparent shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="font-bold text-lg">
+              {t("coInvestmentCard.title")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader className="bg-muted">
+                <TableRow>
+                  <TableHead className="px-6 py-4">
+                    {t("coInvestmentCard.table.header.metric")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4">
+                    {t("coInvestmentCard.table.header.value")}
+                  </TableHead>
+                  <TableHead className="px-6 py-4 text-right">
+                    {t("coInvestmentCard.table.header.actions")}
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow key={"coInvestment"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentCard.table.body.coInvestment.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.coInvestment != null
+                      ? opportunity.coInvestment
+                        ? t("coInvestmentCard.table.body.coInvestment.yes")
+                        : t("coInvestmentCard.table.body.coInvestment.no")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.coInvestment?.toString() || ""
+                            }
+                            description={t(
+                              "coInvestmentCard.table.body.coInvestment.description"
+                            )}
+                            fieldName="coInvestment"
+                            inputType="select"
+                            onSaveAction={async (value) => {
+                              await updateCoInvestment.mutateAsync({
+                                id: opportunityId,
+                                coInvestment: value === "true",
+                              });
+                            }}
+                            options={[
+                              {
+                                label: t(
+                                  "coInvestmentCard.table.body.coInvestment.yes"
+                                ),
+                                value: "true",
+                              },
+                              {
+                                label: t(
+                                  "coInvestmentCard.table.body.coInvestment.no"
+                                ),
+                                value: "false",
+                              },
+                            ]}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.coInvestment.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "coInvestmentCard.table.body.coInvestment.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.coInvestment === null}
+                            onClick={async () => {
+                              await removeCoInvestment.mutateAsync({
                                 id: opportunityId,
                               });
                             }}

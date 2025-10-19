@@ -252,4 +252,23 @@ export default {
     uploadSuccess: "Shareholder structure images uploaded successfully",
     noImages: "No shareholder structure images uploaded yet",
   },
+  coInvestmentCard: {
+    title: "Limited Partner Information",
+    table: {
+      header: {
+        metric: "Metric",
+        value: "Value",
+        actions: "Actions",
+      },
+      body: {
+        coInvestment: {
+          label: "Co-Investment",
+          yes: "Yes",
+          no: "No",
+          description: "Select if there is co-investment in this opportunity",
+          placeholder: "Select co-investment status",
+        },
+      },
+    },
+  },
 } as const;

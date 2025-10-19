@@ -254,4 +254,23 @@ export default {
     uploadSuccess: "Imagens da estrutura de acionistas carregadas com sucesso",
     noImages: "Nenhuma imagem da estrutura de acionistas carregada ainda",
   },
+  coInvestmentCard: {
+    title: "Limited Partner Information",
+    table: {
+      header: {
+        metric: "Métrica",
+        value: "Valor",
+        actions: "Ações",
+      },
+      body: {
+        coInvestment: {
+          label: "Co-Investimento",
+          yes: "Sim",
+          no: "Não",
+          description: "Selecione se há co-investimento nesta oportunidade",
+          placeholder: "Selecione o status de co-investimento",
+        },
+      },
+    },
+  },
 } as const;
