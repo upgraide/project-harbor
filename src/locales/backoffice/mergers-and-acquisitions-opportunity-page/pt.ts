@@ -230,6 +230,14 @@ export default {
             "Insira o EBITDA por Dívida Financeira Líquida (x) da oportunidade",
           units: "x",
         },
+        capexItensity: {
+          label: "Intensidade de Investimento em Capital",
+          placeholder:
+            "Insira a Intensidade de Investimento em Capital (exemplo: 8.5)",
+          description:
+            "Insira a Intensidade de Investimento em Capital da oportunidade",
+          units: "%",
+        },
       },
     },
   },

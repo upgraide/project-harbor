@@ -1181,6 +1181,54 @@ export const useRemoveOpportunityNetDebtDashEbitda = () => {
 };
 
 /**
+ * Hook to update opportunity capexItensity
+ */
+export const useUpdateOpportunityCapexItensity = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateCapexItensity.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update CapEx Intensity: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove opportunity capexItensity
+ */
+export const useRemoveOpportunityCapexItensity = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeCapexItensity.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove CapEx Intensity: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
  * Hook to update opportunity shareholder structure images
  */
 export const useUpdateOpportunityShareholderStructure = () => {

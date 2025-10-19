@@ -232,6 +232,12 @@ export default {
           description: "Enter the Net Debt/EBITDA multiple of the opportunity",
           units: "x",
         },
+        capexItensity: {
+          label: "Capex Intensity (Capex/EBITDA)",
+          placeholder: "Enter the Capex Intensity (example: 8.5)",
+          description: "Enter the Capex Intensity of the opportunity",
+          units: "%",
+        },
       },
     },
   },

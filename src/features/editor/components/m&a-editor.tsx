@@ -60,6 +60,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import {
   useRemoveOpportunityAssetIncluded,
+  useRemoveOpportunityCapexItensity,
   useRemoveOpportunityEbitda,
   useRemoveOpportunityEbitdaCAGR,
   useRemoveOpportunityEbitdaMargin,
@@ -84,6 +85,7 @@ import {
   useSuspenseOpportunity,
   useUpdateGraphRows,
   useUpdateOpportunityAssetIncluded,
+  useUpdateOpportunityCapexItensity,
   useUpdateOpportunityDescription,
   useUpdateOpportunityEbitda,
   useUpdateOpportunityEbitdaCAGR,
@@ -175,6 +177,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateEbitdaMargin = useUpdateOpportunityEbitdaMargin();
   const updateFcf = useUpdateOpportunityFcf();
   const updateNetDebtDashEbitda = useUpdateOpportunityNetDebtDashEbitda();
+  const updateCapexItensity = useUpdateOpportunityCapexItensity();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -200,6 +203,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeEbitdaMargin = useRemoveOpportunityEbitdaMargin();
   const removeFcf = useRemoveOpportunityFcf();
   const removeNetDebtDashEbitda = useRemoveOpportunityNetDebtDashEbitda();
+  const removeCapexItensity = useRemoveOpportunityCapexItensity();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -2187,6 +2191,71 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.netDebtDashEbitda === null}
                             onClick={async () => {
                               await removeNetDebtDashEbitda.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"capexItensity"}>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDACard.table.body.capexItensity.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.capexItensity != null
+                      ? opportunity.capexItensity +
+                        t("postNDACard.table.body.capexItensity.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.capexItensity?.toString() || ""
+                            }
+                            description={t(
+                              "postNDACard.table.body.capexItensity.description"
+                            )}
+                            fieldName="capexItensity"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateCapexItensity.mutateAsync({
+                                id: opportunityId,
+                                capexItensity: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "postNDACard.table.body.capexItensity.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "postNDACard.table.body.capexItensity.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.capexItensity === null}
+                            onClick={async () => {
+                              await removeCapexItensity.mutateAsync({
                                 id: opportunityId,
                               });
                             }}
