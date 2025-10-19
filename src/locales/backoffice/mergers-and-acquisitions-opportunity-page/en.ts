@@ -191,6 +191,13 @@ export default {
           prefix: "€",
           units: "M",
         },
+        equityValue: {
+          label: "Equity Value",
+          placeholder: "Enter the Equity Value (example: 30)",
+          description: "Enter the Equity Value of the opportunity",
+          prefix: "€",
+          units: "M",
+        },
       },
     },
   },

@@ -191,6 +191,13 @@ export default {
           prefix: "€",
           units: "M",
         },
+        equityValue: {
+          label: "Valor do Capital Próprio",
+          placeholder: "Insira o Valor do Capital Próprio (exemplo: 30)",
+          description: "Insira o Valor do Capital Próprio da oportunidade",
+          prefix: "€",
+          units: "M",
+        },
       },
     },
   },
