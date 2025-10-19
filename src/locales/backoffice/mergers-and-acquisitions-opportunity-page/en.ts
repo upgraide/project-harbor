@@ -274,6 +274,12 @@ export default {
           description: "Enter the Equity Contribution of the opportunity",
           units: "%",
         },
+        grossIRR: {
+          label: "Gross IRR",
+          placeholder: "Enter the Gross IRR (example: 25)",
+          description: "Enter the Gross IRR of the opportunity",
+          units: "%",
+        },
       },
     },
   },

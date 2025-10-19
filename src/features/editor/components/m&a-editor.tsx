@@ -73,6 +73,7 @@ import {
   useRemoveOpportunityEvDashEbitdaEntry,
   useRemoveOpportunityEvDashEbitdaExit,
   useRemoveOpportunityFcf,
+  useRemoveOpportunityGrossIRR,
   useRemoveOpportunityIm,
   useRemoveOpportunityImage,
   useRemoveOpportunityIndustry,
@@ -102,6 +103,7 @@ import {
   useUpdateOpportunityEvDashEbitdaEntry,
   useUpdateOpportunityEvDashEbitdaExit,
   useUpdateOpportunityFcf,
+  useUpdateOpportunityGrossIRR,
   useUpdateOpportunityIm,
   useUpdateOpportunityImages,
   useUpdateOpportunityIndustry,
@@ -187,6 +189,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateWorkingCapitalNeeds = useUpdateOpportunityWorkingCapitalNeeds();
   const updateCoInvestment = useUpdateOpportunityCoInvestment();
   const updateEquityContribution = useUpdateOpportunityEquityContribution();
+  const updateGrossIRR = useUpdateOpportunityGrossIRR();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -216,6 +219,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeWorkingCapitalNeeds = useRemoveOpportunityWorkingCapitalNeeds();
   const removeCoInvestment = useRemoveOpportunityCoInvestment();
   const removeEquityContribution = useRemoveOpportunityEquityContribution();
+  const removeGrossIRR = useRemoveOpportunityGrossIRR();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -2509,6 +2513,71 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.equityContribution === null}
                             onClick={async () => {
                               await removeEquityContribution.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"grossIRR"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentCard.table.body.grossIRR.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.grossIRR != null
+                      ? opportunity.grossIRR +
+                        t("coInvestmentCard.table.body.grossIRR.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.grossIRR?.toString() || ""
+                            }
+                            description={t(
+                              "coInvestmentCard.table.body.grossIRR.description"
+                            )}
+                            fieldName="grossIRR"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateGrossIRR.mutateAsync({
+                                id: opportunityId,
+                                grossIRR: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.grossIRR.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "coInvestmentCard.table.body.grossIRR.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.grossIRR === null}
+                            onClick={async () => {
+                              await removeGrossIRR.mutateAsync({
                                 id: opportunityId,
                               });
                             }}

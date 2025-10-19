@@ -276,6 +276,12 @@ export default {
           description: "Insira a Contribuição de Capital da oportunidade",
           units: "%",
         },
+        grossIRR: {
+          label: "TIR Bruta",
+          placeholder: "Insira a TIR Bruta (exemplo: 25)",
+          description: "Insira a TIR Bruta da oportunidade",
+          units: "%",
+        },
       },
     },
   },
