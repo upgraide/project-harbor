@@ -66,6 +66,7 @@ import {
   useRemoveOpportunityEnterpriseValue,
   useRemoveOpportunityEquityValue,
   useRemoveOpportunityEstimatedAssetValue,
+  useRemoveOpportunityEvDashEbitdaEntry,
   useRemoveOpportunityIm,
   useRemoveOpportunityImage,
   useRemoveOpportunityIndustry,
@@ -86,6 +87,7 @@ import {
   useUpdateOpportunityEnterpriseValue,
   useUpdateOpportunityEquityValue,
   useUpdateOpportunityEstimatedAssetValue,
+  useUpdateOpportunityEvDashEbitdaEntry,
   useUpdateOpportunityIm,
   useUpdateOpportunityImages,
   useUpdateOpportunityIndustry,
@@ -160,6 +162,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateEnterpriseValue = useUpdateOpportunityEnterpriseValue();
   const updateEquityValue = useUpdateOpportunityEquityValue();
   const updateShareholderStructure = useUpdateOpportunityShareholderStructure();
+  const updateEvDashEbitdaEntry = useUpdateOpportunityEvDashEbitdaEntry();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -180,6 +183,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeEquityValue = useRemoveOpportunityEquityValue();
   const removeShareholderStructure =
     useRemoveOpportunityShareholderStructureImage();
+  const removeEvDashEbitdaEntry = useRemoveOpportunityEvDashEbitdaEntry();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -1845,6 +1849,71 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.equityValue === null}
                             onClick={async () => {
                               await removeEquityValue.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"evDashEbitdaEntry"}>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDACard.table.body.evDashEbitdaEntry.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.evDashEbitdaEntry != null
+                      ? opportunity.evDashEbitdaEntry +
+                        t("postNDACard.table.body.evDashEbitdaEntry.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.evDashEbitdaEntry?.toString() || ""
+                            }
+                            description={t(
+                              "postNDACard.table.body.evDashEbitdaEntry.description"
+                            )}
+                            fieldName="evDashEbitdaEntry"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateEvDashEbitdaEntry.mutateAsync({
+                                id: opportunityId,
+                                evDashEbitdaEntry: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "postNDACard.table.body.evDashEbitdaEntry.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "postNDACard.table.body.evDashEbitdaEntry.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.evDashEbitdaEntry === null}
+                            onClick={async () => {
+                              await removeEvDashEbitdaEntry.mutateAsync({
                                 id: opportunityId,
                               });
                             }}

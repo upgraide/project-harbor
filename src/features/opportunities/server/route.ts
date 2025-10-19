@@ -377,6 +377,22 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { equityValue: null },
       })
     ),
+  updateEvDashEbitdaEntry: protectedProcedure
+    .input(z.object({ id: z.string(), evDashEbitdaEntry: z.number() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { evDashEbitdaEntry: input.evDashEbitdaEntry },
+      })
+    ),
+  removeEvDashEbitdaEntry: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { evDashEbitdaEntry: null },
+      })
+    ),
   updateShareholderStructure: protectedProcedure
     .input(
       z.object({

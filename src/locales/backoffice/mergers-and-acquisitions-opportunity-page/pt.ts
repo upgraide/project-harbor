@@ -198,6 +198,12 @@ export default {
           prefix: "€",
           units: "M",
         },
+        evDashEbitdaEntry: {
+          label: "Múltiplo EBITDA Entrada",
+          placeholder: "Insira o Múltiplo EBITDA Entrada (exemplo: 8.5)",
+          description: "Insira o Múltiplo EBITDA Entrada da oportunidade",
+          units: "x",
+        },
       },
     },
   },

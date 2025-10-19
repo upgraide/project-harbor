@@ -941,6 +941,54 @@ export const useRemoveOpportunityEquityValue = () => {
 };
 
 /**
+ * Hook to update opportunity evDashEbitdaEntry
+ */
+export const useUpdateOpportunityEvDashEbitdaEntry = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateEvDashEbitdaEntry.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update EV/EBITDA Entry: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove opportunity evDashEbitdaEntry
+ */
+export const useRemoveOpportunityEvDashEbitdaEntry = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeEvDashEbitdaEntry.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove EV/EBITDA Entry: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
  * Hook to update opportunity shareholder structure images
  */
 export const useUpdateOpportunityShareholderStructure = () => {

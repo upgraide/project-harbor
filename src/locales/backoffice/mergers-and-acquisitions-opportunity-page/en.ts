@@ -198,6 +198,13 @@ export default {
           prefix: "€",
           units: "M",
         },
+        evDashEbitdaEntry: {
+          label: "EV/EBITDA (Entry)",
+          placeholder: "Enter the EV/EBITDA (Entry) multiple (example: 8.5)",
+          description:
+            "Enter the EV/EBITDA (Entry) multiple of the opportunity",
+          units: "x",
+        },
       },
     },
   },
