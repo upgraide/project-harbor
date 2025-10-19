@@ -5,6 +5,7 @@ import mergersAndAcquisitionOpportunites from "./backoffice/mergers-and-acquisit
 import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitions-create-page/pt";
 import mergersAndAcquisitionOpportunityPage from "./backoffice/mergers-and-acquisitions-opportunity-page/pt";
 import sidebar from "./backoffice/sidebar/pt";
+import users from "./backoffice/users/pt";
 import languageSwitcher from "./language-switcher/pt";
 import index from "./pages/index/pt";
 import themeSwitcher from "./theme-switcher/pt";
@@ -23,5 +24,6 @@ export default {
     entityComponents,
     mergersAndAcquisitionOpportunityPage,
     mergersAndAcquisitionCreatePage,
+    users,
   },
 } as const;

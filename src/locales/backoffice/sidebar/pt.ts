@@ -10,6 +10,9 @@ export default {
     "real-estate": {
       title: "Imobiliário",
     },
+    users: {
+      title: "Usuários",
+    },
     logout: {
       title: "Sair",
     },

@@ -8,6 +8,7 @@ export const backofficePath = () => "/backoffice";
 
 export const backofficeMergeAndAcquisitionPath = () => "/backoffice/m&a";
 export const backofficeRealEstatePath = () => "/backoffice/real-estate";
+export const backofficeUsersPath = () => "/backoffice/users";
 
 export const backofficeMergeAndAcquisitionOpportunityPath = (id: string) =>
   `/backoffice/m&a/${id}`;

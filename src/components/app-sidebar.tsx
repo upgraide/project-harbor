@@ -5,6 +5,7 @@ import {
   HomeIcon,
   LayoutPanelLeft,
   LogOutIcon,
+  UsersIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -14,6 +15,7 @@ import {
   backofficeMergeAndAcquisitionPath,
   backofficePath,
   backofficeRealEstatePath,
+  backofficeUsersPath,
   indexPath,
 } from "@/paths";
 import { DynamicImage } from "./dynamic-image";
@@ -51,6 +53,11 @@ const createMenuItems = (t: ReturnType<typeof useScopedI18n>) => [
         title: t("items.real-estate.title"),
         icon: HomeIcon,
         url: backofficeRealEstatePath(),
+      },
+      {
+        title: t("items.users.title"),
+        icon: UsersIcon,
+        url: backofficeUsersPath(),
       },
     ],
   },
