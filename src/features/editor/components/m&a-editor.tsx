@@ -61,25 +61,32 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   useRemoveOpportunityAssetIncluded,
   useRemoveOpportunityCapexItensity,
+  useRemoveOpportunityCashConvertion,
+  useRemoveOpportunityCashOnCashReturn,
   useRemoveOpportunityCoInvestment,
   useRemoveOpportunityEbitda,
   useRemoveOpportunityEbitdaCAGR,
   useRemoveOpportunityEbitdaMargin,
   useRemoveOpportunityEbitdaNormalized,
   useRemoveOpportunityEnterpriseValue,
+  useRemoveOpportunityEntryMultiple,
   useRemoveOpportunityEquityContribution,
   useRemoveOpportunityEquityValue,
   useRemoveOpportunityEstimatedAssetValue,
   useRemoveOpportunityEvDashEbitdaEntry,
   useRemoveOpportunityEvDashEbitdaExit,
+  useRemoveOpportunityExitExpectedMultiple,
   useRemoveOpportunityFcf,
   useRemoveOpportunityGrossIRR,
+  useRemoveOpportunityHoldPeriod,
   useRemoveOpportunityIm,
   useRemoveOpportunityImage,
   useRemoveOpportunityIndustry,
   useRemoveOpportunityIndustrySubsector,
+  useRemoveOpportunityMoic,
   useRemoveOpportunityNetDebt,
   useRemoveOpportunityNetDebtDashEbitda,
+  useRemoveOpportunityNetIRR,
   useRemoveOpportunitySales,
   useRemoveOpportunitySalesCAGR,
   useRemoveOpportunityShareholderStructureImage,
@@ -90,6 +97,8 @@ import {
   useUpdateGraphRows,
   useUpdateOpportunityAssetIncluded,
   useUpdateOpportunityCapexItensity,
+  useUpdateOpportunityCashConvertion,
+  useUpdateOpportunityCashOnCashReturn,
   useUpdateOpportunityCoInvestment,
   useUpdateOpportunityDescription,
   useUpdateOpportunityEbitda,
@@ -97,19 +106,24 @@ import {
   useUpdateOpportunityEbitdaMargin,
   useUpdateOpportunityEbitdaNormalized,
   useUpdateOpportunityEnterpriseValue,
+  useUpdateOpportunityEntryMultiple,
   useUpdateOpportunityEquityContribution,
   useUpdateOpportunityEquityValue,
   useUpdateOpportunityEstimatedAssetValue,
   useUpdateOpportunityEvDashEbitdaEntry,
   useUpdateOpportunityEvDashEbitdaExit,
+  useUpdateOpportunityExitExpectedMultiple,
   useUpdateOpportunityFcf,
   useUpdateOpportunityGrossIRR,
+  useUpdateOpportunityHoldPeriod,
   useUpdateOpportunityIm,
   useUpdateOpportunityImages,
   useUpdateOpportunityIndustry,
   useUpdateOpportunityIndustrySubsector,
+  useUpdateOpportunityMoic,
   useUpdateOpportunityNetDebt,
   useUpdateOpportunityNetDebtDashEbitda,
+  useUpdateOpportunityNetIRR,
   useUpdateOpportunitySales,
   useUpdateOpportunitySalesCAGR,
   useUpdateOpportunityShareholderStructure,
@@ -190,6 +204,13 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateCoInvestment = useUpdateOpportunityCoInvestment();
   const updateEquityContribution = useUpdateOpportunityEquityContribution();
   const updateGrossIRR = useUpdateOpportunityGrossIRR();
+  const updateCashConvertion = useUpdateOpportunityCashConvertion();
+  const updateCashOnCashReturn = useUpdateOpportunityCashOnCashReturn();
+  const updateEntryMultiple = useUpdateOpportunityEntryMultiple();
+  const updateExitExpectedMultiple = useUpdateOpportunityExitExpectedMultiple();
+  const updateHoldPeriod = useUpdateOpportunityHoldPeriod();
+  const updateMoic = useUpdateOpportunityMoic();
+  const updateNetIRR = useUpdateOpportunityNetIRR();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -220,6 +241,13 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeCoInvestment = useRemoveOpportunityCoInvestment();
   const removeEquityContribution = useRemoveOpportunityEquityContribution();
   const removeGrossIRR = useRemoveOpportunityGrossIRR();
+  const removeCashConvertion = useRemoveOpportunityCashConvertion();
+  const removeCashOnCashReturn = useRemoveOpportunityCashOnCashReturn();
+  const removeEntryMultiple = useRemoveOpportunityEntryMultiple();
+  const removeExitExpectedMultiple = useRemoveOpportunityExitExpectedMultiple();
+  const removeHoldPeriod = useRemoveOpportunityHoldPeriod();
+  const removeMoic = useRemoveOpportunityMoic();
+  const removeNetIRR = useRemoveOpportunityNetIRR();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -2578,6 +2606,459 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.grossIRR === null}
                             onClick={async () => {
                               await removeGrossIRR.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"netIRR"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentCard.table.body.netIRR.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.netIRR != null
+                      ? opportunity.netIRR +
+                        t("coInvestmentCard.table.body.netIRR.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={opportunity.netIRR?.toString() || ""}
+                            description={t(
+                              "coInvestmentCard.table.body.netIRR.description"
+                            )}
+                            fieldName="netIRR"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateNetIRR.mutateAsync({
+                                id: opportunityId,
+                                netIRR: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.netIRR.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "coInvestmentCard.table.body.netIRR.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.netIRR === null}
+                            onClick={async () => {
+                              await removeNetIRR.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"moic"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentCard.table.body.moic.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.moic != null
+                      ? opportunity.moic +
+                        t("coInvestmentCard.table.body.moic.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={opportunity.moic?.toString() || ""}
+                            description={t(
+                              "coInvestmentCard.table.body.moic.description"
+                            )}
+                            fieldName="moic"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateMoic.mutateAsync({
+                                id: opportunityId,
+                                moic: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.moic.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t("coInvestmentCard.table.body.moic.label")}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.moic === null}
+                            onClick={async () => {
+                              await removeMoic.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"cashOnCashReturn"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentCard.table.body.cashOnCashReturn.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.cashOnCashReturn != null
+                      ? opportunity.cashOnCashReturn +
+                        t("coInvestmentCard.table.body.cashOnCashReturn.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.cashOnCashReturn?.toString() || ""
+                            }
+                            description={t(
+                              "coInvestmentCard.table.body.cashOnCashReturn.description"
+                            )}
+                            fieldName="cashOnCashReturn"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateCashOnCashReturn.mutateAsync({
+                                id: opportunityId,
+                                cashOnCashReturn: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.cashOnCashReturn.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "coInvestmentCard.table.body.cashOnCashReturn.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.cashOnCashReturn === null}
+                            onClick={async () => {
+                              await removeCashOnCashReturn.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"cashConvertion"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentCard.table.body.cashConvertion.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.cashConvertion != null
+                      ? opportunity.cashConvertion +
+                        t("coInvestmentCard.table.body.cashConvertion.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.cashConvertion?.toString() || ""
+                            }
+                            description={t(
+                              "coInvestmentCard.table.body.cashConvertion.description"
+                            )}
+                            fieldName="cashConvertion"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateCashConvertion.mutateAsync({
+                                id: opportunityId,
+                                cashConvertion: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.cashConvertion.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "coInvestmentCard.table.body.cashConvertion.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.cashConvertion === null}
+                            onClick={async () => {
+                              await removeCashConvertion.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"entryMultiple"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentCard.table.body.entryMultiple.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.entryMultiple != null
+                      ? opportunity.entryMultiple +
+                        t("coInvestmentCard.table.body.entryMultiple.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.entryMultiple?.toString() || ""
+                            }
+                            description={t(
+                              "coInvestmentCard.table.body.entryMultiple.description"
+                            )}
+                            fieldName="entryMultiple"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateEntryMultiple.mutateAsync({
+                                id: opportunityId,
+                                entryMultiple: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.entryMultiple.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "coInvestmentCard.table.body.entryMultiple.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.entryMultiple === null}
+                            onClick={async () => {
+                              await removeEntryMultiple.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"exitExpectedMultiple"}>
+                  <TableCell className="px-6 py-4">
+                    {t(
+                      "coInvestmentCard.table.body.exitExpectedMultiple.label"
+                    )}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.exitExpectedMultiple != null
+                      ? opportunity.exitExpectedMultiple +
+                        t(
+                          "coInvestmentCard.table.body.exitExpectedMultiple.units"
+                        )
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.exitExpectedMultiple?.toString() || ""
+                            }
+                            description={t(
+                              "coInvestmentCard.table.body.exitExpectedMultiple.description"
+                            )}
+                            fieldName="exitExpectedMultiple"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateExitExpectedMultiple.mutateAsync({
+                                id: opportunityId,
+                                exitExpectedMultiple: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.exitExpectedMultiple.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "coInvestmentCard.table.body.exitExpectedMultiple.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.exitExpectedMultiple === null}
+                            onClick={async () => {
+                              await removeExitExpectedMultiple.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"holdPeriod"}>
+                  <TableCell className="px-6 py-4">
+                    {t("coInvestmentCard.table.body.holdPeriod.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.holdPeriod != null
+                      ? opportunity.holdPeriod +
+                        t("coInvestmentCard.table.body.holdPeriod.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={
+                              opportunity.holdPeriod?.toString() || ""
+                            }
+                            description={t(
+                              "coInvestmentCard.table.body.holdPeriod.description"
+                            )}
+                            fieldName="holdPeriod"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateHoldPeriod.mutateAsync({
+                                id: opportunityId,
+                                holdPeriod: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "coInvestmentCard.table.body.holdPeriod.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t(
+                              "coInvestmentCard.table.body.holdPeriod.label"
+                            )}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.holdPeriod === null}
+                            onClick={async () => {
+                              await removeHoldPeriod.mutateAsync({
                                 id: opportunityId,
                               });
                             }}

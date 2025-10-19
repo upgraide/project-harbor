@@ -537,6 +537,118 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { grossIRR: null },
       })
     ),
+  updateNetIRR: protectedProcedure
+    .input(z.object({ id: z.string(), netIRR: z.number() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { netIRR: input.netIRR },
+      })
+    ),
+  removeNetIRR: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { netIRR: null },
+      })
+    ),
+  updateMoic: protectedProcedure
+    .input(z.object({ id: z.string(), moic: z.number() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { moic: input.moic },
+      })
+    ),
+  removeMoic: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { moic: null },
+      })
+    ),
+  updateCashOnCashReturn: protectedProcedure
+    .input(z.object({ id: z.string(), cashOnCashReturn: z.number() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { cashOnCashReturn: input.cashOnCashReturn },
+      })
+    ),
+  removeCashOnCashReturn: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { cashOnCashReturn: null },
+      })
+    ),
+  updateCashConvertion: protectedProcedure
+    .input(z.object({ id: z.string(), cashConvertion: z.number() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { cashConvertion: input.cashConvertion },
+      })
+    ),
+  removeCashConvertion: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { cashConvertion: null },
+      })
+    ),
+  updateEntryMultiple: protectedProcedure
+    .input(z.object({ id: z.string(), entryMultiple: z.number() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { entryMultiple: input.entryMultiple },
+      })
+    ),
+  removeEntryMultiple: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { entryMultiple: null },
+      })
+    ),
+  updateExitExpectedMultiple: protectedProcedure
+    .input(z.object({ id: z.string(), exitExpectedMultiple: z.number() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { exitExpectedMultiple: input.exitExpectedMultiple },
+      })
+    ),
+  removeExitExpectedMultiple: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { exitExpectedMultiple: null },
+      })
+    ),
+  updateHoldPeriod: protectedProcedure
+    .input(z.object({ id: z.string(), holdPeriod: z.number() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { holdPeriod: input.holdPeriod },
+      })
+    ),
+  removeHoldPeriod: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { holdPeriod: null },
+      })
+    ),
   updateShareholderStructure: protectedProcedure
     .input(
       z.object({
