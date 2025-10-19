@@ -37,7 +37,10 @@ export const usersRouter = createTRPCRouter({
             sessions: {
               orderBy: { createdAt: "desc" },
               take: 1,
-              select: { createdAt: true },
+              select: {
+                createdAt: true,
+                expiresAt: true,
+              },
             },
           },
           orderBy: {
@@ -63,8 +66,6 @@ export const usersRouter = createTRPCRouter({
         id: user.id,
         name: user.name,
         email: user.email,
-        createdAt: user.createdAt,
-        lastLoginAt: user.sessions[0]?.createdAt || null,
       }));
 
       return {
@@ -76,5 +77,18 @@ export const usersRouter = createTRPCRouter({
         hasNextPage,
         hasPreviousPage,
       };
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.delete({
+        where: { id: input.id },
+        select: {
+          name: true,
+          email: true,
+        },
+      });
+      return user;
     }),
 });

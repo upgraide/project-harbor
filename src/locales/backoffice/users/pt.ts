@@ -11,5 +11,16 @@ export default {
     joinedDate: "Data de Entrada",
     lastLogin: "Último Acesso",
     neverLoggedIn: "Nunca acessou",
+    status: "Status",
+    actions: "Ações",
+    active: "Ativo",
+    inactive: "Inativo",
+  },
+  deleteDialog: {
+    title: "Deletar Usuário",
+    description:
+      "Tem certeza que deseja deletar {name}? Esta ação não pode ser desfeita.",
+    confirm: "Deletar",
+    cancel: "Cancelar",
   },
 } as const;
