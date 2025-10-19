@@ -843,3 +843,55 @@ export const useRemoveOpportunityIm = () => {
     })
   );
 };
+
+/**
+ * Hook to update opportunity shareholder structure images
+ */
+export const useUpdateOpportunityShareholderStructure = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateShareholderStructure.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to update shareholder structure images: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove a shareholder structure image from opportunity
+ */
+export const useRemoveOpportunityShareholderStructureImage = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeShareholderStructure.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to remove shareholder structure image: ${error.message}`
+        );
+      },
+    })
+  );
+};

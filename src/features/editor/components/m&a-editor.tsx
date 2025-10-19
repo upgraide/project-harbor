@@ -71,6 +71,7 @@ import {
   useRemoveOpportunityNetDebt,
   useRemoveOpportunitySales,
   useRemoveOpportunitySalesCAGR,
+  useRemoveOpportunityShareholderStructureImage,
   useRemoveOpportunityType,
   useRemoveOpportunityTypeDetails,
   useSuspenseOpportunity,
@@ -88,6 +89,7 @@ import {
   useUpdateOpportunityNetDebt,
   useUpdateOpportunitySales,
   useUpdateOpportunitySalesCAGR,
+  useUpdateOpportunityShareholderStructure,
   useUpdateOpportunityType,
   useUpdateOpportunityTypeDetails,
 } from "@/features/opportunities/hooks/use-m&a-opportunities";
@@ -167,6 +169,9 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeEstimatedAssetValue = useRemoveOpportunityEstimatedAssetValue();
   const removeImage = useRemoveOpportunityImage();
   const removeIm = useRemoveOpportunityIm();
+  const updateShareholderStructure = useUpdateOpportunityShareholderStructure();
+  const removeShareholderStructure =
+    useRemoveOpportunityShareholderStructureImage();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -540,7 +545,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                                 label: t(
                                   "financialInformationCard.table.body.industry.values.TRANSFORMATION_INDUSTRY"
                                 ),
-                                value: TypeDetails.MINORITARIO,
+                                value: Industry.TRANSFORMATION_INDUSTRY,
                               },
                               {
                                 label: t(
@@ -1537,6 +1542,105 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
         <Card className="border-none bg-transparent shadow-none">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="font-bold text-lg">
+              {t("shareholderStructureCard.title")}
+            </CardTitle>
+            <UploadButton
+              endpoint="imageUploader"
+              onClientUploadComplete={async (res) => {
+                const imageUrls = res.map((file) => file.url);
+                const currentImages = opportunity.shareholderStructure || [];
+                const totalImages = currentImages.length + imageUrls.length;
+
+                // Validate we don't exceed 10 images total
+                if (totalImages > 10) {
+                  toast.error("Cannot exceed 10 images total");
+                  return;
+                }
+
+                await updateShareholderStructure.mutateAsync({
+                  id: opportunityId,
+                  shareholderStructure: [...currentImages, ...imageUrls],
+                });
+                toast.success(t("shareholderStructureCard.uploadSuccess"));
+              }}
+              onUploadError={(error: Error) => {
+                toast.error(error.message);
+              }}
+            />
+          </CardHeader>
+          <CardContent>
+            {opportunity.shareholderStructure &&
+            opportunity.shareholderStructure.length > 0 ? (
+              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {opportunity.shareholderStructure.map((imageUrl) => (
+                  <div
+                    className="group relative aspect-square overflow-hidden rounded-lg bg-muted"
+                    key={imageUrl}
+                  >
+                    <Image
+                      alt="Shareholder structure image"
+                      className="object-cover"
+                      fill
+                      src={imageUrl}
+                    />
+                    <button
+                      className={cn(
+                        "absolute inset-0",
+                        "flex items-center justify-center",
+                        "bg-black/50",
+                        "opacity-0 group-hover:opacity-100",
+                        "disabled:opacity-100",
+                        "transition-opacity"
+                      )}
+                      disabled={removeShareholderStructure.isPending}
+                      onClick={() => {
+                        removeShareholderStructure.mutateAsync({
+                          id: opportunityId,
+                          imageUrl,
+                        });
+                      }}
+                      title="Delete shareholder structure image"
+                      type="button"
+                    >
+                      {removeShareholderStructure.isPending ? (
+                        <div
+                          className={cn(
+                            "size-6",
+                            "rounded-full",
+                            "border-2 border-white border-t-transparent",
+                            "animate-spin"
+                          )}
+                        />
+                      ) : (
+                        <XIcon className="size-6 text-white" />
+                      )}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div
+                className={cn(
+                  "border border-dashed",
+                  "rounded-lg",
+                  "flex flex-col items-center justify-center",
+                  "py-12",
+                  "border-muted-foreground/50"
+                )}
+              >
+                <p className="text-balance text-muted-foreground text-sm">
+                  {t("shareholderStructureCard.noImages")}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section>
+        <Card className="border-none bg-transparent shadow-none">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="font-bold text-lg">
               {t("postNDACard.title")}
             </CardTitle>
           </CardHeader>
@@ -1556,7 +1660,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow key={"ebitdaNormalized"}>
+                <TableRow key={"im"}>
                   <TableCell className="px-6 py-4">
                     {t("postNDACard.table.body.im.label")}
                   </TableCell>

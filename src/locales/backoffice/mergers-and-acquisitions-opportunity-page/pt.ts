@@ -187,4 +187,9 @@ export default {
       },
     },
   },
+  shareholderStructureCard: {
+    title: "Estrutura de Acionistas",
+    uploadSuccess: "Imagens da estrutura de acionistas carregadas com sucesso",
+    noImages: "Nenhuma imagem da estrutura de acionistas carregada ainda",
+  },
 } as const;

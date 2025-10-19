@@ -345,6 +345,42 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { im: null },
       })
     ),
+  updateShareholderStructure: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        shareholderStructure: z.array(z.string()),
+      })
+    )
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { shareholderStructure: input.shareholderStructure },
+      })
+    ),
+  removeShareholderStructure: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        imageUrl: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await deleteFromUploadthing(input.imageUrl);
+      return prisma.mergerAndAcquisition
+        .findUniqueOrThrow({
+          where: { id: input.id },
+        })
+        .then((opportunity) => {
+          const updatedImages = (opportunity.shareholderStructure || []).filter(
+            (img) => img !== input.imageUrl
+          );
+          return prisma.mergerAndAcquisition.update({
+            where: { id: input.id },
+            data: { shareholderStructure: updatedImages },
+          });
+        });
+    }),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ input }) =>

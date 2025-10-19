@@ -187,4 +187,9 @@ export default {
       },
     },
   },
+  shareholderStructureCard: {
+    title: "Shareholder Structure",
+    uploadSuccess: "Shareholder structure images uploaded successfully",
+    noImages: "No shareholder structure images uploaded yet",
+  },
 } as const;
