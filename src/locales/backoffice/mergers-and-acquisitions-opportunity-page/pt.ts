@@ -204,6 +204,12 @@ export default {
           description: "Insira o Múltiplo EBITDA Entrada da oportunidade",
           units: "x",
         },
+        evDashEbitdaExit: {
+          label: "Múltiplo EBITDA Comparáveis",
+          placeholder: "Insira o Múltiplo EBITDA Comparáveis (exemplo: 12.5)",
+          description: "Insira o Múltiplo EBITDA Comparáveis da oportunidade",
+          units: "x",
+        },
       },
     },
   },

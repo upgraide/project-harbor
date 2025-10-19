@@ -205,6 +205,14 @@ export default {
             "Enter the EV/EBITDA (Entry) multiple of the opportunity",
           units: "x",
         },
+        evDashEbitdaExit: {
+          label: "EV/EBITDA (Exit/Comps)",
+          placeholder:
+            "Enter the EV/EBITDA (Exit/Comps) multiple (example: 12.5)",
+          description:
+            "Enter the EV/EBITDA (Exit/Comps) multiple of the opportunity",
+          units: "x",
+        },
       },
     },
   },
