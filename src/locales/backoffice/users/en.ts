@@ -23,4 +23,20 @@ export default {
     confirm: "Delete",
     cancel: "Cancel",
   },
+  inviteDialog: {
+    title: "Invite User",
+    description: "Send an invitation to join the system",
+    labels: {
+      name: "Full Name",
+      email: "Email Address",
+      language: "Preferred Language",
+    },
+    languages: {
+      english: "English",
+      portuguese: "Português",
+    },
+    send: "Send Invitation",
+    sending: "Sending...",
+    cancel: "Cancel",
+  },
 } as const;

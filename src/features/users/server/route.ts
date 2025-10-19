@@ -1,6 +1,9 @@
 import { z } from "zod";
 import { PAGINATION } from "@/config/constants";
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { sendInviteEmail } from "@/lib/emails/send-invite";
+import { generatePassword } from "@/lib/generate-password";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const usersRouter = createTRPCRouter({
@@ -90,5 +93,70 @@ export const usersRouter = createTRPCRouter({
         },
       });
       return user;
+    }),
+
+  invite: protectedProcedure
+    .input(
+      z.object({
+        email: z.email().min(1),
+        name: z.string().min(1),
+        language: z.enum(["en", "pt"]).default("en"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { email, name, language } = input;
+
+      // Check if user already exists
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (existingUser) {
+        throw new Error("User with this email already exists");
+      }
+
+      // Generate a random password
+      const generatedPassword = generatePassword();
+
+      try {
+        // Create the user using better-auth
+        const newUser = await auth.api.signUpEmail({
+          body: {
+            name,
+            email,
+            password: generatedPassword,
+          },
+        });
+
+        if (!newUser.user) {
+          throw new Error("Failed to create user");
+        }
+
+        // Send invite email
+        const baseUrl = process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}`
+          : "http://localhost:3000";
+
+        await sendInviteEmail({
+          userEmail: email,
+          password: generatedPassword,
+          language,
+          inviteLink: `${baseUrl}/login`,
+        });
+
+        return {
+          success: true,
+          user: {
+            id: newUser.user.id,
+            email: newUser.user.email,
+            name: newUser.user.name,
+          },
+        };
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(`Failed to invite user: ${error.message}`);
+        }
+        throw error;
+      }
     }),
 });
