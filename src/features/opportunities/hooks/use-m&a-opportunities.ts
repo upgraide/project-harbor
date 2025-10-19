@@ -1229,6 +1229,54 @@ export const useRemoveOpportunityCapexItensity = () => {
 };
 
 /**
+ * Hook to update opportunity workingCapitalNeeds
+ */
+export const useUpdateOpportunityWorkingCapitalNeeds = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateWorkingCapitalNeeds.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update Working Capital Needs: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove opportunity workingCapitalNeeds
+ */
+export const useRemoveOpportunityWorkingCapitalNeeds = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeWorkingCapitalNeeds.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove Working Capital Needs: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
  * Hook to update opportunity shareholder structure images
  */
 export const useUpdateOpportunityShareholderStructure = () => {

@@ -238,6 +238,12 @@ export default {
           description: "Enter the Capex Intensity of the opportunity",
           units: "%",
         },
+        workingCapitalNeeds: {
+          label: "Working Capital Needs (% Revenue)",
+          placeholder: "Enter the Working Capital Needs (example: 2.5)",
+          description: "Enter the Working Capital Needs of the opportunity",
+          units: "%",
+        },
       },
     },
   },

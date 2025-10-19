@@ -238,6 +238,14 @@ export default {
             "Insira a Intensidade de Investimento em Capital da oportunidade",
           units: "%",
         },
+        workingCapitalNeeds: {
+          label: "Necessidades de Fundo de Maneio",
+          placeholder:
+            "Insira as Necessidades de Fundo de Maneio (exemplo: 2.5)",
+          description:
+            "Insira as Necessidades de Fundo de Maneio da oportunidade",
+          units: "%",
+        },
       },
     },
   },
