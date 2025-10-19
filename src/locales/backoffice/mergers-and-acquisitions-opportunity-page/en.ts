@@ -219,6 +219,13 @@ export default {
           description: "Enter the EBITDA Margin of the opportunity",
           units: "%",
         },
+        fcf: {
+          label: "Free Cash Flow (FCF)",
+          placeholder: "Enter the Free Cash Flow (example: 5.2)",
+          description: "Enter the Free Cash Flow of the opportunity",
+          prefix: "€",
+          units: "M",
+        },
       },
     },
   },

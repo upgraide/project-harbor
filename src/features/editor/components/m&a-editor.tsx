@@ -69,6 +69,7 @@ import {
   useRemoveOpportunityEstimatedAssetValue,
   useRemoveOpportunityEvDashEbitdaEntry,
   useRemoveOpportunityEvDashEbitdaExit,
+  useRemoveOpportunityFcf,
   useRemoveOpportunityIm,
   useRemoveOpportunityImage,
   useRemoveOpportunityIndustry,
@@ -92,6 +93,7 @@ import {
   useUpdateOpportunityEstimatedAssetValue,
   useUpdateOpportunityEvDashEbitdaEntry,
   useUpdateOpportunityEvDashEbitdaExit,
+  useUpdateOpportunityFcf,
   useUpdateOpportunityIm,
   useUpdateOpportunityImages,
   useUpdateOpportunityIndustry,
@@ -169,6 +171,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateEvDashEbitdaEntry = useUpdateOpportunityEvDashEbitdaEntry();
   const updateEvDashEbitdaExit = useUpdateOpportunityEvDashEbitdaExit();
   const updateEbitdaMargin = useUpdateOpportunityEbitdaMargin();
+  const updateFcf = useUpdateOpportunityFcf();
 
   // Remove operations
   const removeType = useRemoveOpportunityType();
@@ -192,6 +195,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removeEvDashEbitdaEntry = useRemoveOpportunityEvDashEbitdaEntry();
   const removeEvDashEbitdaExit = useRemoveOpportunityEvDashEbitdaExit();
   const removeEbitdaMargin = useRemoveOpportunityEbitdaMargin();
+  const removeFcf = useRemoveOpportunityFcf();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -2052,6 +2056,68 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             disabled={opportunity.ebitdaMargin === null}
                             onClick={async () => {
                               await removeEbitdaMargin.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4 text-destructive" />
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+                <TableRow key={"fcf"}>
+                  <TableCell className="px-6 py-4">
+                    {t("postNDACard.table.body.fcf.label")}
+                  </TableCell>
+                  <TableCell className="px-6 py-4">
+                    {opportunity.fcf != null
+                      ? t("postNDACard.table.body.fcf.prefix") +
+                        opportunity.fcf +
+                        t("postNDACard.table.body.fcf.units")
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="outline">
+                          <EllipsisVerticalIcon className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-12 min-w-10 space-y-1"
+                      >
+                        <DropdownMenuItem asChild>
+                          <EditorEditButton
+                            cancelButtonText={t("cancelButtonText")}
+                            currentValue={opportunity.fcf?.toString() || ""}
+                            description={t(
+                              "postNDACard.table.body.fcf.description"
+                            )}
+                            fieldName="fcf"
+                            inputType="number"
+                            onSaveAction={async (value) => {
+                              await updateFcf.mutateAsync({
+                                id: opportunityId,
+                                fcf: Number.parseFloat(value),
+                              });
+                            }}
+                            placeholder={t(
+                              "postNDACard.table.body.fcf.placeholder"
+                            )}
+                            saveButtonText={t("saveButtonText")}
+                            title={t("postNDACard.table.body.fcf.label")}
+                          />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={opportunity.fcf === null}
+                            onClick={async () => {
+                              await removeFcf.mutateAsync({
                                 id: opportunityId,
                               });
                             }}

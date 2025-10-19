@@ -216,6 +216,12 @@ export default {
           description: "Insira a EBITDA Margin da oportunidade",
           units: "%",
         },
+        fcf: {
+          label: "Cash Flows Descontados",
+          placeholder: "Insira o Cash Flows Descontados (exemplo: 5.2)",
+          description: "Insira o Cash Flows Descontados da oportunidade",
+          units: "M€",
+        },
       },
     },
   },

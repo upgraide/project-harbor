@@ -1085,6 +1085,54 @@ export const useRemoveOpportunityEbitdaMargin = () => {
 };
 
 /**
+ * Hook to update opportunity fcf
+ */
+export const useUpdateOpportunityFcf = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateFcf.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update Free Cash Flow: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to remove opportunity fcf
+ */
+export const useRemoveOpportunityFcf = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.removeFcf.mutationOptions({
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove Free Cash Flow: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
  * Hook to update opportunity shareholder structure images
  */
 export const useUpdateOpportunityShareholderStructure = () => {
