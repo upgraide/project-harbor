@@ -4,6 +4,7 @@ import entityComponents from "./backoffice/entity-components/pt";
 import mergersAndAcquisitionOpportunites from "./backoffice/mergers-and-acquisition-opportunites/pt";
 import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitions-create-page/pt";
 import mergersAndAcquisitionOpportunityPage from "./backoffice/mergers-and-acquisitions-opportunity-page/pt";
+import realEstateCreatePage from "./backoffice/real-estate-create-page/pt";
 import realEstateOpportunities from "./backoffice/real-estate-opportunities/pt";
 import sidebar from "./backoffice/sidebar/pt";
 import users from "./backoffice/users/pt";
@@ -29,6 +30,7 @@ export default {
     realEstateOpportunities,
     mergersAndAcquisitionCreatePage,
     users,
+    realEstateCreatePage,
   },
   dashboard: {
     navigation,

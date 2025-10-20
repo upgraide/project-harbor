@@ -1,4 +1,4 @@
-import { Creator } from "@/features/creator/components/m&a-creator";
+import { Creator } from "@/features/creator/components/real-estate-creator";
 import { requireAuth } from "@/lib/auth-utils";
 
 const Page = async () => {

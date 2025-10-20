@@ -18,6 +18,26 @@ export const useSuspenseOpportunities = () => {
 };
 
 /**
+ * Hook to create a new real estate opportunity
+ */
+export const useCreateRealEstateOpportunity = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.create.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} created`);
+        queryClient.invalidateQueries(trpc.realEstate.getMany.queryOptions({}));
+      },
+      onError: (error) => {
+        toast.error(`Failed to create opportunity: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
  * Hook to delete an opportunity
  */
 export const useDeleteOpportunity = () => {
