@@ -76,7 +76,7 @@ export const InviteEmail = ({
       <Preview>{t.previewText}</Preview>
       <Tailwind>
         <Body className="mx-auto my-auto bg-white px-2 font-sans">
-          <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-[#eaeaea] border-solid p-[20px]">
+          <Container className="mx-auto my-[40px] max-w-[465px] rounded border border-solid p-[20px]">
             <Section className="mt-[32px]">
               <Img
                 alt="Harbor Partners"
@@ -86,44 +86,44 @@ export const InviteEmail = ({
                 width="200"
               />
             </Section>
-            <Heading className="mx-0 my-[30px] p-0 text-center font-normal text-[24px] text-black">
+            <Heading className="mx-0 my-[30px] p-0 text-center font-normal text-[#113152] text-[24px]">
               <strong>Harbor Exclusive Investment Opportunities</strong>
             </Heading>
-            <Text className="text-[14px] text-black leading-[24px]">
+            <Text className="text-[#113152] text-[14px] leading-[24px]">
               {t.greeting}
             </Text>
-            <Text className="text-[14px] text-black leading-[24px]">
+            <Text className="text-[#113152] text-[14px] leading-[24px]">
               {t.introduction}
             </Text>
-            <Text className="text-[14px] text-black leading-[24px]">
+            <Text className="text-[#113152] text-[14px] leading-[24px]">
               {t.description}
             </Text>
-            <Text className="text-[14px] text-black leading-[24px]">
+            <Text className="text-[#113152] text-[14px] leading-[24px]">
               {t.centralized}
             </Text>
-            <Text className="text-[14px] text-black leading-[24px]">
+            <Text className="text-[#113152] text-[14px] leading-[24px]">
               {t.access}
             </Text>
-            <Section className="mt-[32px] mb-[32px] rounded-md border border-dashed bg-gray-100 p-4 text-center">
-              <Text className="text-left text-[14px] text-black leading-[24px]">
+            <Section className="mt-[32px] mb-[32px] rounded-md border border-dashed bg-[#F5F5F5] p-4 text-center">
+              <Text className="text-left text-[#113152] text-[14px] leading-[24px]">
                 <strong>{t.emailLabel}:</strong> {userEmail}
               </Text>
-              <Text className="text-left text-[14px] text-black leading-[24px]">
+              <Text className="text-left text-[#113152] text-[14px] leading-[24px]">
                 <strong>{t.passwordLabel}:</strong> {password}
               </Text>
             </Section>
             <Section className="mt-[32px] mb-[32px] text-center">
               <Button
-                className="mt-0 w-[90%] rounded bg-[#3B5BDB] px-5 py-3 text-center font-semibold text-[12px] text-white no-underline"
+                className="mt-0 w-[90%] rounded bg-[#113152] px-5 py-3 text-center font-semibold text-[12px] text-white no-underline"
                 href={inviteLink}
               >
                 {t.buttonText}
               </Button>
             </Section>
-            <Text className="text-[14px] text-black leading-[24px]">
+            <Text className="text-[#113152] text-[14px] leading-[24px]">
               {t.support}
             </Text>
-            <Text className="text-[14px] text-black leading-[24px]">
+            <Text className="text-[#113152] text-[14px] leading-[24px]">
               <strong>{t.signoff}</strong>
             </Text>
           </Container>
