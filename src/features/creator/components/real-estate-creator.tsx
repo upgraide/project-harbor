@@ -117,6 +117,52 @@ export const Creator = () => {
     },
   });
 
+  // Watch the selected asset type
+  const selectedAsset = form.watch("asset");
+
+  // Determine which fields should be visible based on asset type
+  const getVisibleFields = (asset?: string) => {
+    const fieldsConfig: Record<string, Set<string>> = {
+      AGNOSTIC: new Set(),
+      MIXED: new Set(),
+      HOSPITALITY: new Set(["nRoomsLastYear", "noi", "occupancyLastYear"]),
+      LOGISTICS_AND_INDUSTRIAL: new Set(["walt"]),
+      OFFICE: new Set(["walt"]),
+      RESIDENTIAL: new Set(),
+      SENIOR_LIVING: new Set(["nBeds"]),
+      SHOPPING_CENTER: new Set(),
+      STREET_RETAIL: new Set(),
+      STUDENT_HOUSING: new Set(["nBeds"]),
+    };
+    return fieldsConfig[asset || ""] || new Set();
+  };
+
+  const visibleFields = getVisibleFields(selectedAsset);
+  const shouldShowField = (fieldName: string): boolean =>
+    visibleFields.size === 0 ? false : visibleFields.has(fieldName);
+
+  // Watch the selected investment strategy
+  const selectedInvestment = form.watch("investment");
+
+  // Determine which fields should be visible based on investment strategy
+  const getVisibleFieldsForStrategy = (strategy?: string) => {
+    const strategyConfig: Record<string, Set<string>> = {
+      LEASE_AND_OPERATION: new Set(["rent"]),
+      S_AND_L: new Set(["rent", "rentPerSqm", "yield"]),
+      CORE: new Set(["rent", "rentPerSqm", "yield"]),
+      FIX_AND_FLIP: new Set(["capex", "capexPerSqm", "sale", "salePerSqm"]),
+      REFURBISHMENT: new Set(["capex", "capexPerSqm", "sale", "salePerSqm"]),
+      VALUE_ADD: new Set(["capex", "capexPerSqm", "sale", "salePerSqm"]),
+      OPPORTUNISTIC: new Set(["capex", "capexPerSqm", "sale", "salePerSqm"]),
+      DEVELOPMENT: new Set(["capex", "capexPerSqm", "sale", "salePerSqm"]),
+    };
+    return strategyConfig[strategy || ""] || new Set();
+  };
+
+  const visibleStrategyFields = getVisibleFieldsForStrategy(selectedInvestment);
+  const shouldShowStrategyField = (fieldName: string): boolean =>
+    visibleStrategyFields.has(fieldName);
+
   const handleSubmit = async (values: FormValues) => {
     try {
       const newOpportunity = (await createOpportunity.mutateAsync({
@@ -396,135 +442,145 @@ export const Creator = () => {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="nRoomsLastYear"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("assetInformationCard.nRoomsLastYear.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "assetInformationCard.nRoomsLastYear.placeholder"
-                          )}
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("assetInformationCard.nRoomsLastYear.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowField("nRoomsLastYear") && (
+                  <FormField
+                    control={form.control}
+                    name="nRoomsLastYear"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("assetInformationCard.nRoomsLastYear.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "assetInformationCard.nRoomsLastYear.placeholder"
+                            )}
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("assetInformationCard.nRoomsLastYear.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
-                <FormField
-                  control={form.control}
-                  name="nBeds"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("assetInformationCard.nBeds.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "assetInformationCard.nBeds.placeholder"
-                          )}
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("assetInformationCard.nBeds.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowField("nBeds") && (
+                  <FormField
+                    control={form.control}
+                    name="nBeds"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("assetInformationCard.nBeds.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "assetInformationCard.nBeds.placeholder"
+                            )}
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("assetInformationCard.nBeds.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
-                <FormField
-                  control={form.control}
-                  name="noi"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("assetInformationCard.noi.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "assetInformationCard.noi.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("assetInformationCard.noi.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowField("noi") && (
+                  <FormField
+                    control={form.control}
+                    name="noi"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("assetInformationCard.noi.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "assetInformationCard.noi.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("assetInformationCard.noi.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
-                <FormField
-                  control={form.control}
-                  name="occupancyLastYear"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("assetInformationCard.occupancyLastYear.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "assetInformationCard.occupancyLastYear.placeholder"
+                {shouldShowField("occupancyLastYear") && (
+                  <FormField
+                    control={form.control}
+                    name="occupancyLastYear"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("assetInformationCard.occupancyLastYear.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "assetInformationCard.occupancyLastYear.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "assetInformationCard.occupancyLastYear.description"
                           )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t(
-                          "assetInformationCard.occupancyLastYear.description"
-                        )}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
-                <FormField
-                  control={form.control}
-                  name="walt"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("assetInformationCard.walt.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "assetInformationCard.walt.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("assetInformationCard.walt.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowField("walt") && (
+                  <FormField
+                    control={form.control}
+                    name="walt"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("assetInformationCard.walt.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "assetInformationCard.walt.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("assetInformationCard.walt.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </CardContent>
             </Card>
           </section>
@@ -564,31 +620,33 @@ export const Creator = () => {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="rentPerSqm"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("operationalFinancialCard.rentPerSqm.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "operationalFinancialCard.rentPerSqm.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("operationalFinancialCard.rentPerSqm.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowStrategyField("rentPerSqm") && (
+                  <FormField
+                    control={form.control}
+                    name="rentPerSqm"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("operationalFinancialCard.rentPerSqm.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "operationalFinancialCard.rentPerSqm.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("operationalFinancialCard.rentPerSqm.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}
@@ -642,57 +700,61 @@ export const Creator = () => {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="yield"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("operationalFinancialCard.yield.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "operationalFinancialCard.yield.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("operationalFinancialCard.yield.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowStrategyField("yield") && (
+                  <FormField
+                    control={form.control}
+                    name="yield"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("operationalFinancialCard.yield.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "operationalFinancialCard.yield.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("operationalFinancialCard.yield.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
-                <FormField
-                  control={form.control}
-                  name="rent"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("operationalFinancialCard.rent.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "operationalFinancialCard.rent.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("operationalFinancialCard.rent.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowStrategyField("rent") && (
+                  <FormField
+                    control={form.control}
+                    name="rent"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("operationalFinancialCard.rent.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "operationalFinancialCard.rent.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("operationalFinancialCard.rent.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <FormField
                   control={form.control}
@@ -750,109 +812,119 @@ export const Creator = () => {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="capex"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("operationalFinancialCard.capex.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "operationalFinancialCard.capex.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("operationalFinancialCard.capex.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowStrategyField("capex") && (
+                  <FormField
+                    control={form.control}
+                    name="capex"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("operationalFinancialCard.capex.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "operationalFinancialCard.capex.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("operationalFinancialCard.capex.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
-                <FormField
-                  control={form.control}
-                  name="capexPerSqm"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("operationalFinancialCard.capexPerSqm.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "operationalFinancialCard.capexPerSqm.placeholder"
+                {shouldShowStrategyField("capexPerSqm") && (
+                  <FormField
+                    control={form.control}
+                    name="capexPerSqm"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("operationalFinancialCard.capexPerSqm.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "operationalFinancialCard.capexPerSqm.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t(
+                            "operationalFinancialCard.capexPerSqm.description"
                           )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("operationalFinancialCard.capexPerSqm.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
-                <FormField
-                  control={form.control}
-                  name="sale"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("operationalFinancialCard.sale.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "operationalFinancialCard.sale.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("operationalFinancialCard.sale.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowStrategyField("sale") && (
+                  <FormField
+                    control={form.control}
+                    name="sale"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("operationalFinancialCard.sale.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "operationalFinancialCard.sale.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("operationalFinancialCard.sale.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
-                <FormField
-                  control={form.control}
-                  name="salePerSqm"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t("operationalFinancialCard.salePerSqm.label")}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "operationalFinancialCard.salePerSqm.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("operationalFinancialCard.salePerSqm.description")}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {shouldShowStrategyField("salePerSqm") && (
+                  <FormField
+                    control={form.control}
+                    name="salePerSqm"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t("operationalFinancialCard.salePerSqm.label")}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "operationalFinancialCard.salePerSqm.placeholder"
+                            )}
+                            step="0.01"
+                            type="number"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("operationalFinancialCard.salePerSqm.description")}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </CardContent>
             </Card>
           </section>
