@@ -6,7 +6,7 @@ import {
   EditorLoading,
 } from "@/features/editor/components/m&a-editor";
 import { EditorHeader } from "@/features/editor/components/m&a-editor-header";
-import { prefetchOpportunity } from "@/features/opportunities/server/prefetch";
+import { prefetchMAOpportunity } from "@/features/opportunities/server/prefetch";
 import { requireAuth } from "@/lib/auth-utils";
 import { HydrateClient } from "@/trpc/server";
 
@@ -19,7 +19,7 @@ type PageProps = {
 const Page = async ({ params }: PageProps) => {
   await requireAuth();
   const { opportunityId } = await params;
-  prefetchOpportunity(opportunityId);
+  prefetchMAOpportunity(opportunityId);
 
   return (
     <HydrateClient>

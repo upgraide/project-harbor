@@ -958,3 +958,66 @@ export const opportunitiesRouter = createTRPCRouter({
       };
     }),
 });
+
+export const realEstateRouter = createTRPCRouter({
+  getMany: protectedProcedure
+    .input(
+      z.object({
+        page: z.number().default(PAGINATION.DEFAULT_PAGE),
+        pageSize: z
+          .number()
+          .min(PAGINATION.MIN_PAGE_SIZE)
+          .max(PAGINATION.MAX_PAGE_SIZE)
+          .default(PAGINATION.DEFAULT_PAGE_SIZE),
+        search: z.string().default(""),
+      })
+    )
+    .query(async ({ input }) => {
+      const { page, pageSize, search } = input;
+      const [items, totalCount] = await Promise.all([
+        prisma.realEstate.findMany({
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          where: {
+            name: { contains: search, mode: "insensitive" },
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+        }),
+        prisma.realEstate.count({
+          where: {
+            name: { contains: search, mode: "insensitive" },
+          },
+        }),
+      ]);
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+      const hasNextPage = page < totalPages;
+      const hasPreviousPage = page > 1;
+
+      return {
+        items,
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNextPage,
+        hasPreviousPage,
+      };
+    }),
+  remove: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.delete({
+        where: { id: input.id },
+      })
+    ),
+  getOne: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ input }) =>
+      prisma.realEstate.findUniqueOrThrow({
+        where: { id: input.id },
+      })
+    ),
+});

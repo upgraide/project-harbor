@@ -8,7 +8,7 @@ import {
   OpportunitiesLoading,
 } from "@/features/opportunities/components/m&a-opportunities";
 import { opportunityParamsLoader } from "@/features/opportunities/server/params-loader";
-import { prefetchOpportunities } from "@/features/opportunities/server/prefetch";
+import { prefetchMAOpportunities } from "@/features/opportunities/server/prefetch";
 import { requireAuth } from "@/lib/auth-utils";
 import { HydrateClient } from "@/trpc/server";
 
@@ -20,7 +20,7 @@ const Page = async ({ searchParams }: Props) => {
   await requireAuth();
 
   const params = await opportunityParamsLoader(searchParams);
-  prefetchOpportunities(params);
+  prefetchMAOpportunities(params);
 
   return (
     <OpportunitiesContainer>

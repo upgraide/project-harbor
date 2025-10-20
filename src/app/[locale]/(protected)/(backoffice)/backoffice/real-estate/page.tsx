@@ -1,8 +1,36 @@
+import type { SearchParams } from "nuqs/server";
+import { Suspense } from "react";
+import { ErrorBoundary } from "react-error-boundary";
+import {
+  OpportunitiesContainer,
+  OpportunitiesError,
+  OpportunitiesList,
+  OpportunitiesLoading,
+} from "@/features/opportunities/components/real-estate-opportunities";
+import { opportunityParamsLoader } from "@/features/opportunities/server/params-loader";
+import { prefetchRealEstateOpportunities } from "@/features/opportunities/server/prefetch";
 import { requireAuth } from "@/lib/auth-utils";
+import { HydrateClient } from "@/trpc/server";
 
-const Page = async () => {
+type Props = {
+  searchParams: Promise<SearchParams>;
+};
+
+const Page = async ({ searchParams }: Props) => {
   await requireAuth();
-  return <p>Real Estate Opportunities</p>;
+  const params = await opportunityParamsLoader(searchParams);
+  prefetchRealEstateOpportunities(params);
+  return (
+    <OpportunitiesContainer>
+      <HydrateClient>
+        <ErrorBoundary fallback={<OpportunitiesError />}>
+          <Suspense fallback={<OpportunitiesLoading />}>
+            <OpportunitiesList />
+          </Suspense>
+        </ErrorBoundary>
+      </HydrateClient>
+    </OpportunitiesContainer>
+  );
 };
 
 export default Page;
