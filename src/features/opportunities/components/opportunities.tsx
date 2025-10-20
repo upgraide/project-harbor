@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import {
   EmptyView,
   EntityContainer,
-  EntityHeader,
   EntityItem,
   EntityList,
   EntityPagination,
@@ -29,7 +28,7 @@ import {
 import { useOpportunitiesParams } from "../hooks/use-opportunities-params";
 
 export const OpportunitiesSearch = () => {
-  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
+  const t = useScopedI18n("dashboard.opportunities");
   const [params, setParams] = useOpportunitiesParams();
   const { searchValue, onSearchChange } = useEntitySearch({
     params,
@@ -57,20 +56,6 @@ export const OpportunitiesList = () => {
   );
 };
 
-export const OpportunitiesHeader = ({ disabled }: { disabled?: boolean }) => {
-  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
-
-  return (
-    <EntityHeader
-      description={t("description")}
-      disabled={disabled}
-      newButtonHref={backofficeMergeAndAcquisitionOpportunityCreatePath()}
-      newButtonLabel={t("newButtonLabel")}
-      title={t("title")}
-    />
-  );
-};
-
 export const OpportunitiesPagination = () => {
   const opportunities = useSuspenseOpportunities();
   const [params, setParams] = useOpportunitiesParams();
@@ -90,7 +75,6 @@ export const OpportunitiesContainer = ({
   children: React.ReactNode;
 }) => (
   <EntityContainer
-    header={<OpportunitiesHeader />}
     pagination={<OpportunitiesPagination />}
     search={<OpportunitiesSearch />}
   >

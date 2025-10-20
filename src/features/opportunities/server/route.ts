@@ -834,3 +834,127 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
       };
     }),
 });
+
+export const opportunitiesRouter = createTRPCRouter({
+  getAll: protectedProcedure
+    .input(
+      z.object({
+        page: z.number().default(PAGINATION.DEFAULT_PAGE),
+        pageSize: z
+          .number()
+          .min(PAGINATION.MIN_PAGE_SIZE)
+          .max(PAGINATION.MAX_PAGE_SIZE)
+          .default(PAGINATION.DEFAULT_PAGE_SIZE),
+        type: z.enum(["all", "mna", "realEstate"]).default("all"),
+        search: z.string().default(""),
+      })
+    )
+    .query(async ({ input }) => {
+      const { page, pageSize, type, search } = input;
+
+      // Build where conditions for M&A
+      const mnaWhere = {
+        name: { contains: search, mode: "insensitive" as const },
+      };
+
+      // Build where conditions for Real Estate
+      const realEstateWhere = {
+        name: { contains: search, mode: "insensitive" as const },
+      };
+
+      // Fetch data based on type filter
+      let mnaItems: Array<{
+        id: string;
+        name: string;
+        description: string | null;
+        images: string[];
+        createdAt: Date;
+        updatedAt: Date;
+      }> = [];
+      let realEstateItems: Array<{
+        id: string;
+        name: string;
+        description: string | null;
+        images: string[];
+        createdAt: Date;
+        updatedAt: Date;
+      }> = [];
+      let mnaCount = 0;
+      let realEstateCount = 0;
+
+      if (type === "all" || type === "mna") {
+        [mnaItems, mnaCount] = await Promise.all([
+          prisma.mergerAndAcquisition.findMany({
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+            where: mnaWhere,
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              images: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          }),
+          prisma.mergerAndAcquisition.count({ where: mnaWhere }),
+        ]);
+      }
+
+      if (type === "all" || type === "realEstate") {
+        [realEstateItems, realEstateCount] = await Promise.all([
+          prisma.realEstate.findMany({
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+            where: realEstateWhere,
+            orderBy: { createdAt: "desc" },
+            select: {
+              id: true,
+              name: true,
+              description: true,
+              images: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          }),
+          prisma.realEstate.count({ where: realEstateWhere }),
+        ]);
+      }
+
+      // Combine and transform items with type information
+      const items = [
+        ...mnaItems.map((item) => ({
+          ...item,
+          opportunityType: "mna" as const,
+        })),
+        ...realEstateItems.map((item) => ({
+          ...item,
+          opportunityType: "realEstate" as const,
+        })),
+      ];
+
+      // Sort by createdAt descending when showing all types
+      if (type === "all") {
+        items.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      }
+
+      const totalCount = mnaCount + realEstateCount;
+      const totalPages = Math.ceil(totalCount / pageSize);
+      const hasNextPage = page < totalPages;
+      const hasPreviousPage = page > 1;
+
+      return {
+        items,
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNextPage,
+        hasPreviousPage,
+      };
+    }),
+});

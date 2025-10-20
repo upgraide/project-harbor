@@ -1798,6 +1798,7 @@ export const useRemoveOpportunityHoldPeriod = () => {
   return useMutation(
     trpc.mergerAndAcquisition.removeHoldPeriod.mutationOptions({
       onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
         queryClient.invalidateQueries(
           trpc.mergerAndAcquisition.getMany.queryOptions({})
         );

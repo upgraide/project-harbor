@@ -7,6 +7,7 @@ import mergersAndAcquisitionOpportunityPage from "./backoffice/mergers-and-acqui
 import sidebar from "./backoffice/sidebar/pt";
 import users from "./backoffice/users/pt";
 import navigation from "./dashboard/naviagation/en";
+import opportunities from "./dashboard/opportunities/pt";
 import languageSwitcher from "./language-switcher/pt";
 import index from "./pages/index/pt";
 import themeSwitcher from "./theme-switcher/pt";
@@ -29,5 +30,6 @@ export default {
   },
   dashboard: {
     navigation,
+    opportunities,
   },
 } as const;
