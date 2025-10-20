@@ -71,6 +71,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "husky": "^9.1.7",
+    "jscodeshift": "^17.3.0",
     "lefthook": "^1.13.6",
     "lint-staged": "^16.2.4",
     "mprocs": "^0.7.3",

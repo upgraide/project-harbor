@@ -6,9 +6,10 @@ import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitio
 import mergersAndAcquisitionOpportunityPage from "./backoffice/mergers-and-acquisitions-opportunity-page/pt";
 import realEstateCreatePage from "./backoffice/real-estate-create-page/pt";
 import realEstateOpportunities from "./backoffice/real-estate-opportunities/pt";
+import realEstateOpportunityPage from "./backoffice/real-estate-opportunity-page/pt";
 import sidebar from "./backoffice/sidebar/pt";
 import users from "./backoffice/users/pt";
-import navigation from "./dashboard/naviagation/en";
+import navigation from "./dashboard/naviagation/pt";
 import opportunities from "./dashboard/opportunities/pt";
 import languageSwitcher from "./language-switcher/pt";
 import index from "./pages/index/pt";
@@ -27,10 +28,11 @@ export default {
     mergersAndAcquisitionOpportunites,
     entityComponents,
     mergersAndAcquisitionOpportunityPage,
-    realEstateOpportunities,
     mergersAndAcquisitionCreatePage,
     users,
     realEstateCreatePage,
+    realEstateOpportunities,
+    realEstateOpportunityPage,
   },
   dashboard: {
     navigation,

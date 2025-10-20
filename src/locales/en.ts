@@ -6,6 +6,7 @@ import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitio
 import mergersAndAcquisitionOpportunityPage from "./backoffice/mergers-and-acquisitions-opportunity-page/en";
 import realEstateCreatePage from "./backoffice/real-estate-create-page/en";
 import realEstateOpportunities from "./backoffice/real-estate-opportunities/en";
+import realEstateOpportunityPage from "./backoffice/real-estate-opportunity-page/en";
 import sidebar from "./backoffice/sidebar/en";
 import users from "./backoffice/users/en";
 import navigation from "./dashboard/naviagation/pt";
@@ -31,6 +32,7 @@ export default {
     users,
     realEstateCreatePage,
     realEstateOpportunities,
+    realEstateOpportunityPage,
   },
   dashboard: {
     navigation,
