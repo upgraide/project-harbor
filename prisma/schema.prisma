@@ -74,16 +74,6 @@ model Verification {
   @@map("verification")
 }
 
-model Opportunity {
-  id        String   @id @default(cuid())
-  name      String
-
-  userId    String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model MergerAndAcquisition {
   id        String   @id @default(cuid())
   name      String
@@ -151,6 +141,85 @@ model MergerAndAcquisition {
   updatedAt DateTime @updatedAt
 }
 
+model RealEstate {
+  id        String   @id @default(cuid())
+  name      String
+  description String?
+  englishDescription String?
+  
+  // Images
+  images    String[] // Array of image URLs/paths
+  
+  // Asset type
+  asset     RealEstateAssetType?
+  
+  // Pre-NDA Fields
+  nRoomsLastYear Int?
+  noi Float?
+  occupancyLastYear Float?
+  walt Float?
+  nBeds Int?
+  investment RealEstateInvestmentType?
+  subRent Float?
+  rentPerSqm Float?
+  subYield Float?
+  capex Float?
+  capexPerSqm Float?
+  sale Float?
+  salePerSqm Float?
+  location String?
+  area Float?
+  value Float?
+  yield Float?
+  rent Float?
+  gcaAboveGround Float?
+  gcaBelowGround Float?
+  
+  // Post-NDA Fields
+  license String?
+  irr Float?
+  coc Float?
+  licenseStage String?
+  holdingPeriod Float?
+  breakEvenOccupancy Float?
+  vacancyRate Float?
+  estimatedRentValue Float?
+  occupancyRate Float?
+  moic Float?
+  price Float?
+  totalInvestment Float?
+  profitOnCost Float?
+  profit Float?
+  sofCosts Float?
+  sellPerSqm Float?
+  gdv Float?
+  wault Float?
+  debtServiceCoverageRatio Float?
+  expectedExitYield Float?
+  ltv Float?
+  ltc Float?
+  yieldOnCost Float?
+
+  
+  // Co-Investment Fields
+  coInvestment Boolean?
+  gpEquityValue Float?
+  gpEquityPercentage Float?
+  totalEquityRequired Float?
+  sponsorPresentation String?
+  promoteStructure String?
+  projectIRR Float?
+  investorIRR Float?
+  coInvestmentHoldPeriod Float?
+  coInvestmentBreakEvenOccupancy Float?
+  
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("real_estate")
+}
+
 // Enums for type safety
 enum Type {
   BUY_IN
@@ -197,4 +266,28 @@ enum EbitdaRange {
   RANGE_2_3
   RANGE_3_5
   RANGE_5_PLUS
+}
+
+enum RealEstateAssetType {
+  AGNOSTIC
+  MIXED
+  HOSPITALITY
+  LOGISTICS_AND_INDUSTRIAL
+  OFFICE
+  RESIDENTIAL
+  SENIOR_LIVING
+  SHOPPING_CENTER
+  STREET_RETAIL
+  STUDENT_HOUSING
+}
+
+enum RealEstateInvestmentType {
+  LEASE_AND_OPERATION
+  S_AND_L
+  CORE
+  FIX_AND_FLIP
+  REFURBISHMENT
+  VALUE_ADD
+  OPPORTUNISTIC
+  DEVELOPMENT
 }
