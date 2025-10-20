@@ -6,6 +6,7 @@ import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitio
 import mergersAndAcquisitionOpportunityPage from "./backoffice/mergers-and-acquisitions-opportunity-page/en";
 import sidebar from "./backoffice/sidebar/en";
 import users from "./backoffice/users/en";
+import navigation from "./dashboard/naviagation/pt";
 import languageSwitcher from "./language-switcher/en";
 import index from "./pages/index/en";
 import themeSwitcher from "./theme-switcher/en";
@@ -25,5 +26,8 @@ export default {
     mergersAndAcquisitionOpportunityPage,
     mergersAndAcquisitionCreatePage,
     users,
+  },
+  dashboard: {
+    navigation,
   },
 } as const;

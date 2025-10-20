@@ -3,7 +3,12 @@ export const requestAccessPath = () => "/request-access";
 export const loginPath = () => "/login";
 
 // Protected paths
+
+// Dashboard paths
 export const dashboardPath = () => "/dashboard";
+export const dashboardSettingsPath = () => "/dashboard/settings";
+
+// Backoffice paths
 export const backofficePath = () => "/backoffice";
 
 export const backofficeMergeAndAcquisitionPath = () => "/backoffice/m&a";
