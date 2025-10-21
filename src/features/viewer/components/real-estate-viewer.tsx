@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { useSuspenseOpportunity } from "@/features/opportunities/hooks/use-real-estate-opportunities";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
+import { LocationMap } from "./location-map";
 
 export const ViewerLoading = () => {
   const t = useScopedI18n("backoffice.realEstateOpportunityPage");
@@ -381,18 +382,6 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                     </TableRow>
                   )}
 
-                  {opportunity.location != null &&
-                    opportunity.location !== "" && (
-                      <TableRow key="location">
-                        <TableCell className="px-6 py-4">
-                          {t("preNDACard.location.label")}
-                        </TableCell>
-                        <TableCell className="px-6 py-4">
-                          {opportunity.location}
-                        </TableCell>
-                      </TableRow>
-                    )}
-
                   {opportunity.area != null && (
                     <TableRow key="area">
                       <TableCell className="px-6 py-4">
@@ -466,6 +455,21 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   )}
                 </TableBody>
               </Table>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
+      {opportunity.location != null && opportunity.location !== "" && (
+        <section>
+          <Card className="border-none bg-transparent shadow-none">
+            <CardHeader>
+              <CardTitle className="font-bold text-lg">
+                {t("preNDACard.location.label")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <LocationMap location={opportunity.location} />
             </CardContent>
           </Card>
         </section>
