@@ -29,22 +29,20 @@ export const requireUnAuth = async () => {
   return session;
 };
 
-export const requireAdmin = async () => {
+const requireRole = async (
+  allowedRoles: Role[],
+  redirectPath: string = dashboardPath()
+) => {
   const user = (await requireAuth()).user;
   const role = await caller.users.getRole({ id: user.id });
 
-  if (role !== Role.ADMIN) {
-    redirect(backofficePath());
+  if (!allowedRoles.includes(role)) {
+    redirect(redirectPath);
   }
 
-  return role;
-};
-
-export const requireTeam = async () => {
-  const user = (await requireAuth()).user;
-  const role = await caller.users.getRole({ id: user.id });
-  if (role !== Role.TEAM) {
-    redirect(dashboardPath());
-  }
   return { user, role };
 };
+
+export const requireAdmin = () => requireRole([Role.ADMIN], backofficePath());
+
+export const requireTeam = () => requireRole([Role.TEAM, Role.ADMIN]);
