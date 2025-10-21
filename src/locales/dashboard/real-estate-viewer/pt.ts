@@ -14,7 +14,7 @@ export default {
     maxImagesError: "Não é possível exceder 10 imagens no total",
   },
   preNDACard: {
-    title: "Informações Financeiras (Pré-NDA)",
+    title: "Informações Financeiras",
     table: {
       header: {
         metric: "Métrica",
@@ -176,7 +176,7 @@ export default {
     },
   },
   postNDACard: {
-    title: "Informações Financeiras (Pós-NDA)",
+    title: "Informação Adicional",
     table: {
       header: {
         metric: "Métrica",
@@ -329,7 +329,7 @@ export default {
     },
   },
   limitedPartnerCard: {
-    title: "Informações de Co-Investimento",
+    title: "Limited Partner Information",
     table: {
       header: {
         metric: "Métrica",
