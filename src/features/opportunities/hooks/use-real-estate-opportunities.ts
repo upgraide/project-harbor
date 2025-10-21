@@ -1360,3 +1360,1038 @@ export const useUpdateOpportunityPromoteStructure = () => {
     })
   );
 };
+
+// Pre-NDA Remove Hooks
+export const useRemoveOpportunityAsset = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeAsset.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Asset removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove asset: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityNRoomsLastYear = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeNRoomsLastYear.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Number of rooms removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove number of rooms: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityNOI = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeNOI.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("NOI removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove NOI: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityOccupancyLastYear = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeOccupancyLastYear.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Occupancy last year removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove occupancy last year: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityWALT = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeWALT.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("WALT removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove WALT: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityNBeds = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeNBeds.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Number of beds removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove number of beds: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityInvestment = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeInvestment.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Investment removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove investment: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunitySubRent = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeSubRent.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Sub rent removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove sub rent: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityRentPerSqm = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeRentPerSqm.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Rent per sqm removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove rent per sqm: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunitySubYield = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeSubYield.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Sub yield removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove sub yield: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityCapex = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeCapex.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Capex removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove capex: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityCapexPerSqm = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeCapexPerSqm.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Capex per sqm removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove capex per sqm: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunitySale = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeSale.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Sale removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove sale: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunitySalePerSqm = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeSalePerSqm.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Sale per sqm removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove sale per sqm: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityLocation = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeLocation.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Location removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove location: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityArea = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeArea.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Area removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove area: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityValue = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeValue.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Value removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove value: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityYield = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeYield.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Yield removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove yield: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityRent = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeRent.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Rent removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove rent: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityGCAAboveGround = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeGCAAboveGround.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("GCA above ground removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove GCA above ground: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityGCABelowGround = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeGCABelowGround.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("GCA below ground removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove GCA below ground: ${error.message}`);
+      },
+    })
+  );
+};
+
+// Post-NDA Remove Hooks
+export const useRemoveOpportunityLicense = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeLicense.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("License removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove license: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityLicenseStage = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeLicenseStage.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("License stage removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove license stage: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityIRR = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeIRR.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("IRR removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove IRR: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityCOC = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeCOC.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("COC removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove COC: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityHoldingPeriod = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeHoldingPeriod.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Holding period removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove holding period: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityBreakEvenOccupancy = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeBreakEvenOccupancy.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Break-even occupancy removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove break-even occupancy: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityVacancyRate = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeVacancyRate.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Vacancy rate removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove vacancy rate: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityEstimatedRentValue = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeEstimatedRentValue.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Estimated rent value removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove estimated rent value: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityOccupancyRate = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeOccupancyRate.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Occupancy rate removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove occupancy rate: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityMOIC = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeMOIC.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("MOIC removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove MOIC: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityPrice = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removePrice.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Price removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove price: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityTotalInvestment = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeTotalInvestment.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Total investment removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove total investment: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityProfitOnCost = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeProfitOnCost.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Profit on cost removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove profit on cost: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityProfit = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeProfit.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Profit removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove profit: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunitySofCosts = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeSofCosts.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Soft costs removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove soft costs: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunitySellPerSqm = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeSellPerSqm.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Sell per sqm removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove sell per sqm: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityGDV = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeGDV.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("GDV removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove GDV: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityWAULT = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeWAULT.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("WAULT removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove WAULT: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityDebtServiceCoverageRatio = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeDebtServiceCoverageRatio.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Debt service coverage ratio removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to remove debt service coverage ratio: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityExpectedExitYield = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeExpectedExitYield.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Expected exit yield removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove expected exit yield: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityLTV = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeLTV.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("LTV removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove LTV: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityLTC = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeLTC.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("LTC removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove LTC: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityYieldOnCost = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeYieldOnCost.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Yield on cost removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove yield on cost: ${error.message}`);
+      },
+    })
+  );
+};
+
+// Limited Partner Remove Hooks
+export const useRemoveOpportunityCoInvestment = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeCoInvestment.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Co-investment removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove co-investment: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityGPEquityValue = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeGPEquityValue.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("GP equity value removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove GP equity value: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityGPEquityPercentage = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeGPEquityPercentage.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("GP equity percentage removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove GP equity percentage: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityTotalEquityRequired = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeTotalEquityRequired.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Total equity required removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove total equity required: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityProjectIRR = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeProjectIRR.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Project IRR removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove project IRR: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityInvestorIRR = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeInvestorIRR.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Investor IRR removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove investor IRR: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityCoInvestmentHoldPeriod = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeCoInvestmentHoldPeriod.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Co-investment hold period removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to remove co-investment hold period: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityCoInvestmentBreakEvenOccupancy = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeCoInvestmentBreakEvenOccupancy.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Co-investment break-even occupancy removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to remove co-investment break-even occupancy: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunitySponsorPresentation = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removeSponsorPresentation.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Sponsor presentation removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove sponsor presentation: ${error.message}`);
+      },
+    })
+  );
+};
+
+export const useRemoveOpportunityPromoteStructure = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.removePromoteStructure.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Promote structure removed");
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to remove promote structure: ${error.message}`);
+      },
+    })
+  );
+};

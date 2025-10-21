@@ -1,6 +1,6 @@
 "use client";
 
-import { EditIcon, EllipsisVerticalIcon, XIcon } from "lucide-react";
+import { EditIcon, EllipsisVerticalIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -41,7 +41,61 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  useRemoveOpportunityArea,
+  useRemoveOpportunityAsset,
+  useRemoveOpportunityBreakEvenOccupancy,
+  useRemoveOpportunityCapex,
+  useRemoveOpportunityCapexPerSqm,
+  useRemoveOpportunityCOC,
+  useRemoveOpportunityCoInvestment,
+  useRemoveOpportunityCoInvestmentBreakEvenOccupancy,
+  useRemoveOpportunityCoInvestmentHoldPeriod,
+  useRemoveOpportunityDebtServiceCoverageRatio,
+  useRemoveOpportunityEstimatedRentValue,
+  useRemoveOpportunityExpectedExitYield,
+  useRemoveOpportunityGCAAboveGround,
+  useRemoveOpportunityGCABelowGround,
+  useRemoveOpportunityGDV,
+  useRemoveOpportunityGPEquityPercentage,
+  useRemoveOpportunityGPEquityValue,
+  useRemoveOpportunityHoldingPeriod,
   useRemoveOpportunityImage,
+  useRemoveOpportunityInvestment,
+  useRemoveOpportunityInvestorIRR,
+  useRemoveOpportunityIRR,
+  useRemoveOpportunityLicense,
+  useRemoveOpportunityLicenseStage,
+  useRemoveOpportunityLocation,
+  useRemoveOpportunityLTC,
+  useRemoveOpportunityLTV,
+  useRemoveOpportunityMOIC,
+  useRemoveOpportunityNBeds,
+  useRemoveOpportunityNOI,
+  useRemoveOpportunityNRoomsLastYear,
+  useRemoveOpportunityOccupancyLastYear,
+  useRemoveOpportunityOccupancyRate,
+  useRemoveOpportunityPrice,
+  useRemoveOpportunityProfit,
+  useRemoveOpportunityProfitOnCost,
+  useRemoveOpportunityProjectIRR,
+  useRemoveOpportunityPromoteStructure,
+  useRemoveOpportunityRent,
+  useRemoveOpportunityRentPerSqm,
+  useRemoveOpportunitySale,
+  useRemoveOpportunitySalePerSqm,
+  useRemoveOpportunitySellPerSqm,
+  useRemoveOpportunitySofCosts,
+  useRemoveOpportunitySponsorPresentation,
+  useRemoveOpportunitySubRent,
+  useRemoveOpportunitySubYield,
+  useRemoveOpportunityTotalEquityRequired,
+  useRemoveOpportunityTotalInvestment,
+  useRemoveOpportunityVacancyRate,
+  useRemoveOpportunityValue,
+  useRemoveOpportunityWALT,
+  useRemoveOpportunityWAULT,
+  useRemoveOpportunityYield,
+  useRemoveOpportunityYieldOnCost,
   useSuspenseOpportunity,
   useUpdateOpportunityArea,
   useUpdateOpportunityAsset,
@@ -179,6 +233,29 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateGCAAboveGround = useUpdateOpportunityGCAAboveGround();
   const updateGCABelowGround = useUpdateOpportunityGCABelowGround();
 
+  // Remove operations - Pre-NDA fields
+  const removeAsset = useRemoveOpportunityAsset();
+  const removeNRoomsLastYear = useRemoveOpportunityNRoomsLastYear();
+  const removeNOI = useRemoveOpportunityNOI();
+  const removeOccupancyLastYear = useRemoveOpportunityOccupancyLastYear();
+  const removeWALT = useRemoveOpportunityWALT();
+  const removeNBeds = useRemoveOpportunityNBeds();
+  const removeInvestment = useRemoveOpportunityInvestment();
+  const removeSubRent = useRemoveOpportunitySubRent();
+  const removeRentPerSqm = useRemoveOpportunityRentPerSqm();
+  const removeSubYield = useRemoveOpportunitySubYield();
+  const removeCapex = useRemoveOpportunityCapex();
+  const removeCapexPerSqm = useRemoveOpportunityCapexPerSqm();
+  const removeSale = useRemoveOpportunitySale();
+  const removeSalePerSqm = useRemoveOpportunitySalePerSqm();
+  const removeLocation = useRemoveOpportunityLocation();
+  const removeArea = useRemoveOpportunityArea();
+  const removeValue = useRemoveOpportunityValue();
+  const removeYield = useRemoveOpportunityYield();
+  const removeRent = useRemoveOpportunityRent();
+  const removeGCAAboveGround = useRemoveOpportunityGCAAboveGround();
+  const removeGCABelowGround = useRemoveOpportunityGCABelowGround();
+
   // Post-NDA fields
   const updateLicense = useUpdateOpportunityLicense();
   const updateLicenseStage = useUpdateOpportunityLicenseStage();
@@ -238,6 +315,46 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
     }
     return "";
   };
+
+  // Remove operations - Post-NDA fields
+  const removeLicense = useRemoveOpportunityLicense();
+  const removeLicenseStage = useRemoveOpportunityLicenseStage();
+  const removeIRR = useRemoveOpportunityIRR();
+  const removeCOC = useRemoveOpportunityCOC();
+  const removeHoldingPeriod = useRemoveOpportunityHoldingPeriod();
+  const removeBreakEvenOccupancy = useRemoveOpportunityBreakEvenOccupancy();
+  const removeVacancyRate = useRemoveOpportunityVacancyRate();
+  const removeEstimatedRentValue = useRemoveOpportunityEstimatedRentValue();
+  const removeOccupancyRate = useRemoveOpportunityOccupancyRate();
+  const removeMOIC = useRemoveOpportunityMOIC();
+  const removePrice = useRemoveOpportunityPrice();
+  const removeTotalInvestment = useRemoveOpportunityTotalInvestment();
+  const removeProfitOnCost = useRemoveOpportunityProfitOnCost();
+  const removeProfit = useRemoveOpportunityProfit();
+  const removeSofCosts = useRemoveOpportunitySofCosts();
+  const removeSellPerSqm = useRemoveOpportunitySellPerSqm();
+  const removeGDV = useRemoveOpportunityGDV();
+  const removeWAULT = useRemoveOpportunityWAULT();
+  const removeDebtServiceCoverageRatio =
+    useRemoveOpportunityDebtServiceCoverageRatio();
+  const removeExpectedExitYield = useRemoveOpportunityExpectedExitYield();
+  const removeLTV = useRemoveOpportunityLTV();
+  const removeLTC = useRemoveOpportunityLTC();
+  const removeYieldOnCost = useRemoveOpportunityYieldOnCost();
+
+  // Remove operations - Limited Partner fields
+  const removeCoInvestment = useRemoveOpportunityCoInvestment();
+  const removeGPEquityValue = useRemoveOpportunityGPEquityValue();
+  const removeGPEquityPercentage = useRemoveOpportunityGPEquityPercentage();
+  const removeTotalEquityRequired = useRemoveOpportunityTotalEquityRequired();
+  const removeProjectIRR = useRemoveOpportunityProjectIRR();
+  const removeInvestorIRR = useRemoveOpportunityInvestorIRR();
+  const removeCoInvestmentHoldPeriod =
+    useRemoveOpportunityCoInvestmentHoldPeriod();
+  const removeCoInvestmentBreakEvenOccupancy =
+    useRemoveOpportunityCoInvestmentBreakEvenOccupancy();
+  const removeSponsorPresentation = useRemoveOpportunitySponsorPresentation();
+  const removePromoteStructure = useRemoveOpportunityPromoteStructure();
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -431,6 +548,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.asset.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.asset === null ||
+                              removeAsset.isPending
+                            }
+                            onClick={async () => {
+                              await removeAsset.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -478,6 +612,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.nRoomsLastYear.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.nRoomsLastYear === null ||
+                              removeNRoomsLastYear.isPending
+                            }
+                            onClick={async () => {
+                              await removeNRoomsLastYear.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -522,6 +673,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("preNDACard.noi.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.noi === null || removeNOI.isPending
+                            }
+                            onClick={async () => {
+                              await removeNOI.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -573,6 +740,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.occupancyLastYear.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.occupancyLastYear === null ||
+                              removeOccupancyLastYear.isPending
+                            }
+                            onClick={async () => {
+                              await removeOccupancyLastYear.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -616,12 +800,28 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.walt.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.walt === null || removeWALT.isPending
+                            }
+                            onClick={async () => {
+                              await removeWALT.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
 
-                <TableRow key="nBeds">
+                <TableRow key="nbeds">
                   <TableCell className="px-6 py-4">
                     {t("preNDACard.nBeds.label")}
                   </TableCell>
@@ -656,6 +856,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("preNDACard.nBeds.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.nBeds === null ||
+                              removeNBeds.isPending
+                            }
+                            onClick={async () => {
+                              await removeNBeds.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -698,6 +915,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("preNDACard.investment.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.investment === null ||
+                              removeInvestment.isPending
+                            }
+                            onClick={async () => {
+                              await removeInvestment.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -743,6 +977,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("preNDACard.subRent.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.subRent === null ||
+                              removeSubRent.isPending
+                            }
+                            onClick={async () => {
+                              await removeSubRent.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -791,6 +1042,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.rentPerSqm.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.rentPerSqm === null ||
+                              removeRentPerSqm.isPending
+                            }
+                            onClick={async () => {
+                              await removeRentPerSqm.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -836,6 +1104,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.subYield.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.subYield === null ||
+                              removeSubYield.isPending
+                            }
+                            onClick={async () => {
+                              await removeSubYield.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -880,6 +1165,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("preNDACard.capex.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.capex === null ||
+                              removeCapex.isPending
+                            }
+                            onClick={async () => {
+                              await removeCapex.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -932,6 +1234,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.capexPerSqm.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.capexPerSqm === null ||
+                              removeCapexPerSqm.isPending
+                            }
+                            onClick={async () => {
+                              await removeCapexPerSqm.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -976,6 +1295,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("preNDACard.sale.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.sale === null || removeSale.isPending
+                            }
+                            onClick={async () => {
+                              await removeSale.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1024,6 +1359,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.salePerSqm.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.salePerSqm === null ||
+                              removeSalePerSqm.isPending
+                            }
+                            onClick={async () => {
+                              await removeSalePerSqm.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1034,7 +1386,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     {t("preNDACard.location.label")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.location || "N/A"}
+                    {opportunity.location ?? "N/A"}
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
@@ -1050,7 +1402,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                         <DropdownMenuItem asChild>
                           <EditorEditButton
                             cancelButtonText={t("cancelButtonText")}
-                            currentValue={opportunity.location ?? ""}
+                            currentValue={opportunity.location || ""}
                             description={t("preNDACard.location.description")}
                             fieldName="location"
                             inputType="text"
@@ -1065,6 +1417,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.location.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.location === null ||
+                              removeLocation.isPending
+                            }
+                            onClick={async () => {
+                              await removeLocation.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1075,7 +1444,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     {t("preNDACard.area.label")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.area
+                    {opportunity.area != null
                       ? opportunity.area + t("preNDACard.area.units")
                       : "N/A"}
                   </TableCell>
@@ -1107,6 +1476,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("preNDACard.area.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.area === null || removeArea.isPending
+                            }
+                            onClick={async () => {
+                              await removeArea.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1153,6 +1538,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.value.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.value === null ||
+                              removeValue.isPending
+                            }
+                            onClick={async () => {
+                              await removeValue.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1195,6 +1597,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("preNDACard.yield.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.yield === null ||
+                              removeYield.isPending
+                            }
+                            onClick={async () => {
+                              await removeYield.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1241,6 +1660,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.rent.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.rent === null || removeRent.isPending
+                            }
+                            onClick={async () => {
+                              await removeRent.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1251,7 +1686,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     {t("preNDACard.gcaAboveGround.label")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.gcaAboveGround
+                    {opportunity.gcaAboveGround != null
                       ? opportunity.gcaAboveGround +
                         t("preNDACard.gcaAboveGround.units")
                       : "N/A"}
@@ -1291,6 +1726,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("preNDACard.gcaAboveGround.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.gcaAboveGround === null ||
+                              removeGCAAboveGround.isPending
+                            }
+                            onClick={async () => {
+                              await removeGCAAboveGround.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1301,7 +1753,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     {t("preNDACard.gcaBelowGround.label")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.gcaBelowGround
+                    {opportunity.gcaBelowGround != null
                       ? opportunity.gcaBelowGround +
                         t("preNDACard.gcaBelowGround.units")
                       : "N/A"}
@@ -1340,6 +1792,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("preNDACard.gcaBelowGround.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.gcaBelowGround === null ||
+                              removeGCABelowGround.isPending
+                            }
+                            onClick={async () => {
+                              await removeGCABelowGround.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1410,6 +1879,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.license.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.license === null ||
+                              removeLicense.isPending
+                            }
+                            onClick={async () => {
+                              await removeLicense.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1455,6 +1941,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.licenseStage.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.licenseStage === null ||
+                              removeLicenseStage.isPending
+                            }
+                            onClick={async () => {
+                              await removeLicenseStage.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1498,6 +2001,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.irr.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.irr === null || removeIRR.isPending
+                            }
+                            onClick={async () => {
+                              await removeIRR.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1540,6 +2059,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("postNDACard.coc.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.coc === null || removeCOC.isPending
+                            }
+                            onClick={async () => {
+                              await removeCOC.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1591,6 +2126,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.holdingPeriod.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.holdingPeriod === null ||
+                              removeHoldingPeriod.isPending
+                            }
+                            onClick={async () => {
+                              await removeHoldingPeriod.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1631,9 +2183,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             onSaveAction={async (value) => {
                               await updateBreakEvenOccupancy.mutateAsync({
                                 id: opportunityId,
-                                breakEvenOccupancy: value
-                                  ? Number(value)
-                                  : null,
+                                breakEvenOccupancy: Number(value),
                               });
                             }}
                             placeholder={t(
@@ -1642,6 +2192,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("postNDACard.breakEvenOccupancy.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.breakEvenOccupancy === null ||
+                              removeBreakEvenOccupancy.isPending
+                            }
+                            onClick={async () => {
+                              await removeBreakEvenOccupancy.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1693,6 +2260,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.vacancyRate.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.vacancyRate === null ||
+                              removeVacancyRate.isPending
+                            }
+                            onClick={async () => {
+                              await removeVacancyRate.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1734,9 +2318,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             onSaveAction={async (value) => {
                               await updateEstimatedRentValue.mutateAsync({
                                 id: opportunityId,
-                                estimatedRentValue: value
-                                  ? Number(value)
-                                  : null,
+                                estimatedRentValue: Number(value),
                               });
                             }}
                             placeholder={t(
@@ -1745,6 +2327,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("postNDACard.estimatedRentValue.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.estimatedRentValue === null ||
+                              removeEstimatedRentValue.isPending
+                            }
+                            onClick={async () => {
+                              await removeEstimatedRentValue.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1796,6 +2395,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.occupancyRate.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.occupancyRate === null ||
+                              removeOccupancyRate.isPending
+                            }
+                            onClick={async () => {
+                              await removeOccupancyRate.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1838,6 +2454,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("postNDACard.moic.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.moic === null || removeMOIC.isPending
+                            }
+                            onClick={async () => {
+                              await removeMOIC.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1883,6 +2515,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("postNDACard.price.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.price === null ||
+                              removePrice.isPending
+                            }
+                            onClick={async () => {
+                              await removePrice.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -1935,6 +2584,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.totalInvestment.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.totalInvestment === null ||
+                              removeTotalInvestment.isPending
+                            }
+                            onClick={async () => {
+                              await removeTotalInvestment.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -1985,6 +2651,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.profitOnCost.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.profitOnCost === null ||
+                              removeProfitOnCost.isPending
+                            }
+                            onClick={async () => {
+                              await removeProfitOnCost.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2029,6 +2712,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("postNDACard.profit.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.profit === null ||
+                              removeProfit.isPending
+                            }
+                            onClick={async () => {
+                              await removeProfit.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2076,6 +2776,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("postNDACard.sofCosts.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.sofCosts === null ||
+                              removeSofCosts.isPending
+                            }
+                            onClick={async () => {
+                              await removeSofCosts.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2128,6 +2845,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.sellPerSqm.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.sellPerSqm === null ||
+                              removeSellPerSqm.isPending
+                            }
+                            onClick={async () => {
+                              await removeSellPerSqm.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2173,6 +2907,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.gdv.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.gdv === null || removeGDV.isPending
+                            }
+                            onClick={async () => {
+                              await removeGDV.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2216,6 +2966,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.wault.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.wault === null ||
+                              removeWAULT.isPending
+                            }
+                            onClick={async () => {
+                              await removeWAULT.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2257,9 +3024,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             onSaveAction={async (value) => {
                               await updateDebtServiceCoverageRatio.mutateAsync({
                                 id: opportunityId,
-                                debtServiceCoverageRatio: value
-                                  ? Number(value)
-                                  : null,
+                                debtServiceCoverageRatio: Number(value),
                               });
                             }}
                             placeholder={t(
@@ -2270,6 +3035,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               "postNDACard.debtServiceCoverageRatio.label"
                             )}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.debtServiceCoverageRatio === null ||
+                              removeDebtServiceCoverageRatio.isPending
+                            }
+                            onClick={async () => {
+                              await removeDebtServiceCoverageRatio.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2321,6 +3103,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.expectedExitYield.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.expectedExitYield === null ||
+                              removeExpectedExitYield.isPending
+                            }
+                            onClick={async () => {
+                              await removeExpectedExitYield.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2364,6 +3163,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("postNDACard.ltv.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.ltv === null || removeLTV.isPending
+                            }
+                            onClick={async () => {
+                              await removeLTV.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2406,6 +3221,22 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("postNDACard.ltc.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.ltc === null || removeLTC.isPending
+                            }
+                            onClick={async () => {
+                              await removeLTC.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2456,6 +3287,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             saveButtonText={t("saveButtonText")}
                             title={t("postNDACard.yieldOnCost.label")}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.yieldOnCost === null ||
+                              removeYieldOnCost.isPending
+                            }
+                            onClick={async () => {
+                              await removeYieldOnCost.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2542,6 +3390,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("limitedPartnerCard.coInvestment.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.coInvestment === null ||
+                              removeCoInvestment.isPending
+                            }
+                            onClick={async () => {
+                              await removeCoInvestment.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2593,6 +3458,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("limitedPartnerCard.gpEquityValue.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.gpEquityValue === null ||
+                              removeGPEquityValue.isPending
+                            }
+                            onClick={async () => {
+                              await removeGPEquityValue.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2633,9 +3515,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             onSaveAction={async (value) => {
                               await updateGPEquityPercentage.mutateAsync({
                                 id: opportunityId,
-                                gpEquityPercentage: value
-                                  ? Number(value)
-                                  : null,
+                                gpEquityPercentage: Number(value),
                               });
                             }}
                             placeholder={t(
@@ -2646,6 +3526,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               "limitedPartnerCard.gpEquityPercentage.label"
                             )}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.gpEquityPercentage === null ||
+                              removeGPEquityPercentage.isPending
+                            }
+                            onClick={async () => {
+                              await removeGPEquityPercentage.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2688,9 +3585,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             onSaveAction={async (value) => {
                               await updateTotalEquityRequired.mutateAsync({
                                 id: opportunityId,
-                                totalEquityRequired: value
-                                  ? Number(value)
-                                  : null,
+                                totalEquityRequired: Number(value),
                               });
                             }}
                             placeholder={t(
@@ -2701,6 +3596,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               "limitedPartnerCard.totalEquityRequired.label"
                             )}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.totalEquityRequired === null ||
+                              removeTotalEquityRequired.isPending
+                            }
+                            onClick={async () => {
+                              await removeTotalEquityRequired.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2752,6 +3664,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("limitedPartnerCard.projectIRR.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.projectIRR === null ||
+                              removeProjectIRR.isPending
+                            }
+                            onClick={async () => {
+                              await removeProjectIRR.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2802,6 +3731,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             title={t("limitedPartnerCard.investorIRR.label")}
                           />
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.investorIRR === null ||
+                              removeInvestorIRR.isPending
+                            }
+                            onClick={async () => {
+                              await removeInvestorIRR.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -2843,9 +3789,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             onSaveAction={async (value) => {
                               await updateCoInvestmentHoldPeriod.mutateAsync({
                                 id: opportunityId,
-                                coInvestmentHoldPeriod: value
-                                  ? Number(value)
-                                  : null,
+                                coInvestmentHoldPeriod: Number(value),
                               });
                             }}
                             placeholder={t(
@@ -2856,6 +3800,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               "limitedPartnerCard.coInvestmentHoldPeriod.label"
                             )}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.coInvestmentHoldPeriod === null ||
+                              removeCoInvestmentHoldPeriod.isPending
+                            }
+                            onClick={async () => {
+                              await removeCoInvestmentHoldPeriod.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2903,9 +3864,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               await updateCoInvestmentBreakEvenOccupancy.mutateAsync(
                                 {
                                   id: opportunityId,
-                                  coInvestmentBreakEvenOccupancy: value
-                                    ? Number(value)
-                                    : null,
+                                  coInvestmentBreakEvenOccupancy: Number(value),
                                 }
                               );
                             }}
@@ -2917,6 +3876,26 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               "limitedPartnerCard.coInvestmentBreakEvenOccupancy.label"
                             )}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.coInvestmentBreakEvenOccupancy ===
+                                null ||
+                              removeCoInvestmentBreakEvenOccupancy.isPending
+                            }
+                            onClick={async () => {
+                              await removeCoInvestmentBreakEvenOccupancy.mutateAsync(
+                                {
+                                  id: opportunityId,
+                                }
+                              );
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2944,7 +3923,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                         <DropdownMenuItem asChild>
                           <EditorEditButton
                             cancelButtonText={t("cancelButtonText")}
-                            currentValue={opportunity.sponsorPresentation ?? ""}
+                            currentValue={opportunity.sponsorPresentation || ""}
                             description={t(
                               "limitedPartnerCard.sponsorPresentation.description"
                             )}
@@ -2964,6 +3943,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               "limitedPartnerCard.sponsorPresentation.label"
                             )}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.sponsorPresentation === null ||
+                              removeSponsorPresentation.isPending
+                            }
+                            onClick={async () => {
+                              await removeSponsorPresentation.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -2991,7 +3987,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                         <DropdownMenuItem asChild>
                           <EditorEditButton
                             cancelButtonText={t("cancelButtonText")}
-                            currentValue={opportunity.promoteStructure ?? ""}
+                            currentValue={opportunity.promoteStructure || ""}
                             description={t(
                               "limitedPartnerCard.promoteStructure.description"
                             )}
@@ -3011,6 +4007,23 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               "limitedPartnerCard.promoteStructure.label"
                             )}
                           />
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Button
+                            disabled={
+                              opportunity.promoteStructure === null ||
+                              removePromoteStructure.isPending
+                            }
+                            onClick={async () => {
+                              await removePromoteStructure.mutateAsync({
+                                id: opportunityId,
+                              });
+                            }}
+                            size="icon"
+                            variant="destructive"
+                          >
+                            <TrashIcon className="size-4" />
+                          </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

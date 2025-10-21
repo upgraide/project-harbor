@@ -1679,4 +1679,439 @@ export const realEstateRouter = createTRPCRouter({
         data: { promoteStructure: input.promoteStructure },
       })
     ),
+  // Pre-NDA Remove Mutations
+  removeAsset: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { asset: null },
+      })
+    ),
+  removeNRoomsLastYear: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { nRoomsLastYear: null },
+      })
+    ),
+  removeNOI: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { noi: null },
+      })
+    ),
+  removeOccupancyLastYear: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { occupancyLastYear: null },
+      })
+    ),
+  removeWALT: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { walt: null },
+      })
+    ),
+  removeNBeds: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { nBeds: null },
+      })
+    ),
+  removeInvestment: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { investment: null },
+      })
+    ),
+  removeSubRent: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { subRent: null },
+      })
+    ),
+  removeRentPerSqm: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { rentPerSqm: null },
+      })
+    ),
+  removeSubYield: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { subYield: null },
+      })
+    ),
+  removeCapex: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { capex: null },
+      })
+    ),
+  removeCapexPerSqm: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { capexPerSqm: null },
+      })
+    ),
+  removeSale: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { sale: null },
+      })
+    ),
+  removeSalePerSqm: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { salePerSqm: null },
+      })
+    ),
+  removeLocation: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { location: null },
+      })
+    ),
+  removeArea: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { area: null },
+      })
+    ),
+  removeValue: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { value: null },
+      })
+    ),
+  removeYield: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { yield: null },
+      })
+    ),
+  removeRent: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { rent: null },
+      })
+    ),
+  removeGCAAboveGround: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { gcaAboveGround: null },
+      })
+    ),
+  removeGCABelowGround: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { gcaBelowGround: null },
+      })
+    ),
+  // Post-NDA Remove Mutations
+  removeLicense: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { license: null },
+      })
+    ),
+  removeLicenseStage: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { licenseStage: null },
+      })
+    ),
+  removeIRR: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { irr: null },
+      })
+    ),
+  removeCOC: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { coc: null },
+      })
+    ),
+  removeHoldingPeriod: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { holdingPeriod: null },
+      })
+    ),
+  removeBreakEvenOccupancy: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { breakEvenOccupancy: null },
+      })
+    ),
+  removeVacancyRate: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { vacancyRate: null },
+      })
+    ),
+  removeEstimatedRentValue: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { estimatedRentValue: null },
+      })
+    ),
+  removeOccupancyRate: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { occupancyRate: null },
+      })
+    ),
+  removeMOIC: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { moic: null },
+      })
+    ),
+  removePrice: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { price: null },
+      })
+    ),
+  removeTotalInvestment: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { totalInvestment: null },
+      })
+    ),
+  removeProfitOnCost: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { profitOnCost: null },
+      })
+    ),
+  removeProfit: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { profit: null },
+      })
+    ),
+  removeSofCosts: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { sofCosts: null },
+      })
+    ),
+  removeSellPerSqm: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { sellPerSqm: null },
+      })
+    ),
+  removeGDV: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { gdv: null },
+      })
+    ),
+  removeWAULT: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { wault: null },
+      })
+    ),
+  removeDebtServiceCoverageRatio: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { debtServiceCoverageRatio: null },
+      })
+    ),
+  removeExpectedExitYield: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { expectedExitYield: null },
+      })
+    ),
+  removeLTV: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { ltv: null },
+      })
+    ),
+  removeLTC: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { ltc: null },
+      })
+    ),
+  removeYieldOnCost: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { yieldOnCost: null },
+      })
+    ),
+  // Limited Partner Remove Mutations
+  removeCoInvestment: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { coInvestment: null },
+      })
+    ),
+  removeGPEquityValue: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { gpEquityValue: null },
+      })
+    ),
+  removeGPEquityPercentage: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { gpEquityPercentage: null },
+      })
+    ),
+  removeTotalEquityRequired: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { totalEquityRequired: null },
+      })
+    ),
+  removeProjectIRR: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { projectIRR: null },
+      })
+    ),
+  removeInvestorIRR: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { investorIRR: null },
+      })
+    ),
+  removeCoInvestmentHoldPeriod: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { coInvestmentHoldPeriod: null },
+      })
+    ),
+  removeCoInvestmentBreakEvenOccupancy: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { coInvestmentBreakEvenOccupancy: null },
+      })
+    ),
+  removeSponsorPresentation: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { sponsorPresentation: null },
+      })
+    ),
+  removePromoteStructure: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ input }) =>
+      prisma.realEstate.update({
+        where: { id: input.id },
+        data: { promoteStructure: null },
+      })
+    ),
 });

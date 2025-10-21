@@ -482,7 +482,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -566,7 +566,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -686,7 +686,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -784,7 +784,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -887,7 +887,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -977,7 +977,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1046,7 +1046,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1112,7 +1112,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1184,7 +1184,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1251,7 +1251,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1344,7 +1344,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1416,7 +1416,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1787,7 +1787,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1853,7 +1853,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1919,7 +1919,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -1984,7 +1984,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2049,7 +2049,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2114,7 +2114,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2176,7 +2176,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2241,7 +2241,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2306,7 +2306,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2371,7 +2371,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2480,7 +2480,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2547,7 +2547,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2612,7 +2612,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2675,7 +2675,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2736,7 +2736,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2801,7 +2801,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2866,7 +2866,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -2931,7 +2931,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -3000,7 +3000,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -3065,7 +3065,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                             size="icon"
                             variant="destructive"
                           >
-                            <TrashIcon className="size-4 text-destructive" />
+                            <TrashIcon className="size-4" />
                           </Button>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
