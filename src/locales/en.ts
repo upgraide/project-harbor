@@ -9,7 +9,7 @@ import realEstateOpportunities from "./backoffice/real-estate-opportunities/en";
 import realEstateOpportunityPage from "./backoffice/real-estate-opportunity-page/en";
 import sidebar from "./backoffice/sidebar/en";
 import users from "./backoffice/users/en";
-import navigation from "./dashboard/naviagation/pt";
+import navigation from "./dashboard/naviagation/en";
 import opportunities from "./dashboard/opportunities/en";
 import languageSwitcher from "./language-switcher/en";
 import index from "./pages/index/en";
