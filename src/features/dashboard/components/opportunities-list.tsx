@@ -96,17 +96,26 @@ export const OpportunitiesTabs = () => {
   const [params, setParams] = useOpportunitiesParams();
   const t = useScopedI18n("dashboard.opportunities");
 
-  const handleTypeChange = (type: string) => {
+  const handleTypeChange = (type: "all" | "mna" | "realEstate") => {
     setParams({ ...params, type, page: 1 });
   };
 
   return (
-    <Tabs onValueChange={handleTypeChange} value={params.type}>
+    <Tabs
+      onValueChange={(value) =>
+        handleTypeChange(value as "all" | "mna" | "realEstate")
+      }
+      value={params.type}
+    >
       <TabsList className="grid w-fit grid-cols-3">
         <TabsTrigger onClick={() => handleTypeChange("all")} value="all">
           {t("all")}
         </TabsTrigger>
-        <TabsTrigger onClick={() => handleTypeChange("mna")} value="mna">
+        <TabsTrigger
+          className="truncate"
+          onClick={() => handleTypeChange("mna")}
+          value="mna"
+        >
           {t("mna")}
         </TabsTrigger>
         <TabsTrigger
