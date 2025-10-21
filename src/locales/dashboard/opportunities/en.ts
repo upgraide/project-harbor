@@ -8,4 +8,7 @@ export default {
   updated: "Updated",
   created: "Created",
   viewButton: "View Opportunity",
+  all: "All",
+  mna: "M&A",
+  realEstate: "Real Estate",
 };

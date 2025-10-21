@@ -8,4 +8,7 @@ export default {
   updated: "Atualizada",
   created: "Criada",
   viewButton: "Ver Oportunidade",
+  all: "Todas",
+  mna: "M&A",
+  realEstate: "Imóveis",
 };

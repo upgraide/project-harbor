@@ -20,6 +20,7 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEntitySearch } from "@/features/opportunities/hooks/use-entity-search";
 import { useSuspenseOpportunities } from "@/features/opportunities/hooks/use-opportunities";
 import { useOpportunitiesParams } from "@/features/opportunities/hooks/use-opportunities-params";
@@ -91,6 +92,34 @@ export const OpportunitiesSearch = () => {
   );
 };
 
+export const OpportunitiesTabs = () => {
+  const [params, setParams] = useOpportunitiesParams();
+  const t = useScopedI18n("dashboard.opportunities");
+
+  const handleTypeChange = (type: string) => {
+    setParams({ ...params, type, page: 1 });
+  };
+
+  return (
+    <Tabs onValueChange={handleTypeChange} value={params.type}>
+      <TabsList className="grid w-fit grid-cols-3">
+        <TabsTrigger onClick={() => handleTypeChange("all")} value="all">
+          {t("all")}
+        </TabsTrigger>
+        <TabsTrigger onClick={() => handleTypeChange("mna")} value="mna">
+          {t("mna")}
+        </TabsTrigger>
+        <TabsTrigger
+          onClick={() => handleTypeChange("realEstate")}
+          value="realEstate"
+        >
+          {t("realEstate")}
+        </TabsTrigger>
+      </TabsList>
+    </Tabs>
+  );
+};
+
 export const OpportunitiesContainer = ({
   children,
 }: {
@@ -99,7 +128,12 @@ export const OpportunitiesContainer = ({
   <EntityContainer
     header={<OpportunitiesHeader />}
     pagination={<OpportunitiesPagination />}
-    search={<OpportunitiesSearch />}
+    search={
+      <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
+        <OpportunitiesTabs />
+        <OpportunitiesSearch />
+      </div>
+    }
   >
     {children}
   </EntityContainer>

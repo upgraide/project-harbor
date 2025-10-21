@@ -9,4 +9,5 @@ export const opportunityParams = {
     .withDefault(PAGINATION.DEFAULT_PAGE_SIZE)
     .withOptions({ clearOnDefault: true }),
   search: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
+  type: parseAsString.withDefault("all").withOptions({ clearOnDefault: true }),
 };
