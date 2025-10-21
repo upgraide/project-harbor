@@ -113,19 +113,25 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
     opportunity.ltc != null ||
     opportunity.yieldOnCost != null;
 
-  const hasLimitedPartnerData = () =>
-    opportunity.coInvestment != null ||
-    opportunity.gpEquityValue != null ||
-    opportunity.gpEquityPercentage != null ||
-    opportunity.totalEquityRequired != null ||
-    opportunity.projectIRR != null ||
-    opportunity.investorIRR != null ||
-    opportunity.coInvestmentHoldPeriod != null ||
-    opportunity.coInvestmentBreakEvenOccupancy != null ||
-    (opportunity.sponsorPresentation != null &&
-      opportunity.sponsorPresentation !== "") ||
-    (opportunity.promoteStructure != null &&
-      opportunity.promoteStructure !== "");
+  const hasLimitedPartnerData = () => {
+    if (opportunity.coInvestment === false) {
+      return false;
+    }
+    return (
+      opportunity.coInvestment != null ||
+      opportunity.gpEquityValue != null ||
+      opportunity.gpEquityPercentage != null ||
+      opportunity.totalEquityRequired != null ||
+      opportunity.projectIRR != null ||
+      opportunity.investorIRR != null ||
+      opportunity.coInvestmentHoldPeriod != null ||
+      opportunity.coInvestmentBreakEvenOccupancy != null ||
+      (opportunity.sponsorPresentation != null &&
+        opportunity.sponsorPresentation !== "") ||
+      (opportunity.promoteStructure != null &&
+        opportunity.promoteStructure !== "")
+    );
+  };
 
   const hasImages = () =>
     opportunity.images != null && opportunity.images.length > 0;
