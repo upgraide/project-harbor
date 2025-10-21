@@ -16,18 +16,18 @@ import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import { LocationMap } from "./location-map";
 
 export const ViewerLoading = () => {
-  const t = useScopedI18n("backoffice.realEstateOpportunityPage");
+  const t = useScopedI18n("dashboard.realEstateViewer");
   return <LoadingView message={t("loadingMessage")} />;
 };
 
 export const ViewerError = () => {
-  const t = useScopedI18n("backoffice.realEstateOpportunityPage");
+  const t = useScopedI18n("dashboard.realEstateViewer");
   return <ErrorView message={t("errorMessage")} />;
 };
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component
 export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
-  const t = useScopedI18n("backoffice.realEstateOpportunityPage");
+  const t = useScopedI18n("dashboard.realEstateViewer");
   const locale = useCurrentLocale();
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
 

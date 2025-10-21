@@ -11,6 +11,7 @@ import sidebar from "./backoffice/sidebar/en";
 import users from "./backoffice/users/en";
 import navigation from "./dashboard/naviagation/en";
 import opportunities from "./dashboard/opportunities/en";
+import realEstateViewer from "./dashboard/real-estate-viewer/en";
 import languageSwitcher from "./language-switcher/en";
 import index from "./pages/index/en";
 import themeSwitcher from "./theme-switcher/en";
@@ -37,5 +38,6 @@ export default {
   dashboard: {
     navigation,
     opportunities,
+    realEstateViewer,
   },
 } as const;
