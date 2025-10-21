@@ -7,6 +7,10 @@ export const loginPath = () => "/login";
 // Dashboard paths
 export const dashboardPath = () => "/dashboard";
 export const dashboardSettingsPath = () => "/dashboard/settings";
+export const dashboardMergerAndAcquisitionOpportunityPath = (id: string) =>
+  `/dashboard/m&a/${id}`;
+export const dashboardRealEstateOpportunityPath = (id: string) =>
+  `/dashboard/real-estate/${id}`;
 
 // Backoffice paths
 export const backofficePath = () => "/backoffice";

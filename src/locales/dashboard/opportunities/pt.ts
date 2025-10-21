@@ -1,7 +1,10 @@
 export default {
-  loadingMessage: "A carregar oportunidades...",
-  errorMessage: "Ocorreu um erro ao carregar as oportunidades",
+  loadingMessage: "Carregando oportunidades...",
+  errorMessage: "Erro ao carregar oportunidades",
   description: "Lista de todas as oportunidades",
   title: "Oportunidades",
-  searchPlaceholder: "Pesquisar oportunidades",
+  searchPlaceholder: "Procurar oportunidades",
+  emptyMessage: "Nenhuma oportunidade encontrada",
+  updated: "Atualizado",
+  created: "Criado",
 };

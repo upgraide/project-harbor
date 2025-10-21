@@ -1,16 +1,33 @@
 "use client";
 
+import { formatDistanceToNow } from "date-fns";
+import { pt } from "date-fns/locale";
+import { BriefcaseIcon } from "lucide-react";
+import Link from "next/link";
 import {
+  EmptyView,
   EntityContainer,
+  EntityList,
   EntityPagination,
   EntitySearch,
   ErrorView,
   LoadingView,
 } from "@/components/entity-components";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
 import { useEntitySearch } from "@/features/opportunities/hooks/use-entity-search";
 import { useSuspenseOpportunities } from "@/features/opportunities/hooks/use-opportunities";
 import { useOpportunitiesParams } from "@/features/opportunities/hooks/use-opportunities-params";
-import { useScopedI18n } from "@/locales/client";
+import { cn } from "@/lib/utils";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
+import {
+  dashboardMergerAndAcquisitionOpportunityPath,
+  dashboardRealEstateOpportunityPath,
+} from "@/paths";
 
 export const OpportunitiesLoading = () => {
   const t = useScopedI18n("dashboard.opportunities");
@@ -87,3 +104,103 @@ export const OpportunitiesContainer = ({
     {children}
   </EntityContainer>
 );
+
+export const OpportunitiesEmpty = () => {
+  const t = useScopedI18n("dashboard.opportunities");
+  return <EmptyView message={t("emptyMessage")} />;
+};
+
+export const OpportunitiesList = () => {
+  const opportunities = useSuspenseOpportunities();
+
+  return (
+    <EntityList
+      emptyView={<OpportunitiesEmpty />}
+      getKey={(opportunity) => opportunity.id}
+      items={opportunities.data.items}
+      renderItem={(item) => <OpportunityItem data={item} />}
+    />
+  );
+};
+
+type OpportunityItemProps = {
+  data: {
+    id: string;
+    name: string;
+    description: string | null;
+    images: string[];
+    createdAt: Date;
+    updatedAt: Date;
+    opportunityType: "mna" | "realEstate";
+  };
+};
+
+type EntityItemProps = {
+  href: string;
+  title: string;
+  subtitle?: React.ReactNode;
+  image?: React.ReactNode;
+  className?: string;
+};
+
+export const EntityItem = ({
+  href,
+  title,
+  subtitle,
+  image,
+  className,
+}: EntityItemProps) => (
+  <Link href={href} prefetch>
+    <Card
+      className={cn("cursor-pointer p-4 shadow-none hover:shadow", className)}
+    >
+      <CardContent className="flex flex-row items-center justify-between p-0">
+        <div className="flex items-center gap-3">
+          {image}
+          <div>
+            <CardTitle className="font-medium text-base">{title}</CardTitle>
+            {!!subtitle && (
+              <CardDescription className="text-xs">{subtitle}</CardDescription>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  </Link>
+);
+
+export const OpportunityItem = ({ data }: OpportunityItemProps) => {
+  const t = useScopedI18n("dashboard.opportunities");
+  const locale = useCurrentLocale();
+
+  const href =
+    data.opportunityType === "mna"
+      ? dashboardMergerAndAcquisitionOpportunityPath(data.id)
+      : dashboardRealEstateOpportunityPath(data.id);
+
+  return (
+    <EntityItem
+      href={href}
+      image={
+        <div className="flex size-8 items-center justify-center">
+          <BriefcaseIcon className="size-5 text-muted-foreground" />
+        </div>
+      }
+      subtitle={
+        <>
+          {t("updated")}{" "}
+          {formatDistanceToNow(data.updatedAt, {
+            addSuffix: true,
+            locale: locale === "pt" ? pt : undefined,
+          })}{" "}
+          &bull; {t("created")}{" "}
+          {formatDistanceToNow(data.createdAt, {
+            addSuffix: true,
+            locale: locale === "pt" ? pt : undefined,
+          })}
+        </>
+      }
+      title={data.name}
+    />
+  );
+};

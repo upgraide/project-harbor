@@ -4,6 +4,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import {
   OpportunitiesContainer,
   OpportunitiesError,
+  OpportunitiesList,
   OpportunitiesLoading,
 } from "@/features/dashboard/components/opportunities-list";
 import { opportunityParamsLoader } from "@/features/opportunities/server/params-loader";
@@ -26,7 +27,7 @@ const Page = async ({ searchParams }: Props) => {
         <ErrorBoundary fallback={<OpportunitiesError />}>
           <Suspense fallback={<OpportunitiesLoading />}>
             <main className="flex-1">
-              <h1>Dashboard</h1>
+              <OpportunitiesList />
             </main>
           </Suspense>
         </ErrorBoundary>

@@ -4,4 +4,7 @@ export default {
   description: "List of all the opportunities",
   title: "Opportunities",
   searchPlaceholder: "Search opportunities",
+  emptyMessage: "No opportunities found",
+  updated: "Updated",
+  created: "Created",
 };
