@@ -25,6 +25,15 @@ const CITY_THRESHOLD = 0.5;
 const CITY_ZOOM = 13;
 const REGION_ZOOM = 10;
 
+// Map padding constants
+const MAP_BOUNDS_PADDING = 50;
+
+// Polygon styling constants
+const POLYGON_COLOR = "#3b82f6";
+const POLYGON_WEIGHT = 2;
+const POLYGON_OPACITY = 0.7;
+const POLYGON_FILL_OPACITY = 0.2;
+
 // Default map center
 const DEFAULT_LAT = 51.505;
 const DEFAULT_LON = -0.09;
@@ -60,6 +69,7 @@ export const LocationMap = ({ location }: LocationMapProps) => {
     }
 
     // Dynamically import Leaflet only on client side
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Multiple geometry types need to be handled
     const initializeMap = async () => {
       const { default: L } = await import("leaflet");
 
@@ -98,40 +108,108 @@ export const LocationMap = ({ location }: LocationMapProps) => {
       // Geocode the location using OpenStreetMap Nominatim API
       try {
         const response = await fetch(
-          `${NOMINATIM_BASE_URL}?format=json&q=${encodeURIComponent(location)}&limit=1`
+          `${NOMINATIM_BASE_URL}?format=json&q=${encodeURIComponent(location)}&limit=1&polygon_geojson=1`
         );
         const data = (await response.json()) as Array<{
           lat: string;
           lon: string;
           display_name: string;
           boundingbox: [string, string, string, string];
+          geojson?: {
+            type: string;
+            coordinates: unknown;
+          };
         }>;
 
         if (data.length > 0) {
-          const { lat, lon, display_name, boundingbox } = data[0];
+          const { lat, lon, display_name, geojson } = data[0];
           const coordinates = L.latLng(Number(lat), Number(lon));
 
-          // Determine zoom level based on location type
-          // More specific places (like streets) have smaller bounding boxes
-          const latRange = Math.abs(
-            Number(boundingbox[1]) - Number(boundingbox[0])
-          );
-          const zoomLevel = getZoomLevelForBounds(latRange);
-
           const map = mapInstanceRef.current as L.Map;
-          map.setView(coordinates, zoomLevel);
 
-          // Remove existing markers
+          // Remove existing markers and layers
           map.eachLayer((layer: L.Layer) => {
-            if (layer instanceof L.Marker) {
+            if (layer instanceof L.Marker || layer instanceof L.GeoJSON) {
               map.removeLayer(layer);
             }
           });
 
-          // Add marker
-          L.marker(coordinates, { icon: defaultIcon })
-            .bindPopup(display_name)
-            .addTo(map);
+          // If we have a polygon geometry, display it
+          if (geojson && geojson.type === "Polygon") {
+            const geoJsonFeature = {
+              type: "Feature" as const,
+              geometry: geojson,
+              properties: {
+                name: display_name,
+              },
+            };
+
+            const geoJsonLayer = L.geoJSON(geoJsonFeature, {
+              style: {
+                color: POLYGON_COLOR,
+                weight: POLYGON_WEIGHT,
+                opacity: POLYGON_OPACITY,
+                fillOpacity: POLYGON_FILL_OPACITY,
+              },
+            });
+
+            geoJsonLayer.addTo(map);
+
+            // Fit map to the bounds of the polygon
+            const bounds = geoJsonLayer.getBounds();
+            map.fitBounds(bounds, {
+              padding: [MAP_BOUNDS_PADDING, MAP_BOUNDS_PADDING],
+            });
+
+            // Add a marker at the center
+            L.marker(coordinates, { icon: defaultIcon })
+              .bindPopup(display_name)
+              .addTo(map);
+          } else if (geojson && geojson.type === "MultiPolygon") {
+            // Handle multipolygon (e.g., countries with multiple parts)
+            const geoJsonFeature = {
+              type: "Feature" as const,
+              geometry: geojson,
+              properties: {
+                name: display_name,
+              },
+            };
+
+            const geoJsonLayer = L.geoJSON(geoJsonFeature, {
+              style: {
+                color: POLYGON_COLOR,
+                weight: POLYGON_WEIGHT,
+                opacity: POLYGON_OPACITY,
+                fillOpacity: POLYGON_FILL_OPACITY,
+              },
+            });
+
+            geoJsonLayer.addTo(map);
+
+            // Fit map to the bounds of the polygon
+            const bounds = geoJsonLayer.getBounds();
+            map.fitBounds(bounds, {
+              padding: [MAP_BOUNDS_PADDING, MAP_BOUNDS_PADDING],
+            });
+
+            // Add a marker at the center
+            L.marker(coordinates, { icon: defaultIcon })
+              .bindPopup(display_name)
+              .addTo(map);
+          } else {
+            // Fallback: use the bounding box to determine zoom and just show a marker
+            const latRange = Math.abs(
+              Number(data[0].boundingbox[1]) - Number(data[0].boundingbox[0])
+            );
+            const zoomLevel = getZoomLevelForBounds(latRange);
+
+            map.setView(coordinates, zoomLevel);
+
+            // Add marker
+            L.marker(coordinates, { icon: defaultIcon })
+              .bindPopup(display_name)
+              .addTo(map);
+          }
         }
       } catch {
         // Silently fail if geocoding doesn't work
