@@ -406,9 +406,9 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
         )}
 
         {hasGraphData() && (
-          <div className="min-h-96 w-full flex-1">
+          <div className="min-h-64 w-full flex-1 md:min-h-96">
             <Card className="h-full border-none bg-transparent shadow-none">
-              <CardContent className="h-full">
+              <CardContent className="h-full p-2 md:p-4">
                 <ChartContainer
                   className="h-full w-full"
                   config={chartConfig(t)}
@@ -417,8 +417,8 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                     accessibilityLayer
                     data={opportunity.graphRows ?? []}
                     margin={{
-                      left: 50,
-                      right: 50,
+                      left: 30,
+                      right: 30,
                       top: 20,
                     }}
                   >
