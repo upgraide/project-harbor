@@ -869,6 +869,7 @@ export const opportunitiesRouter = createTRPCRouter({
         id: string;
         name: string;
         description: string | null;
+        englishDescription: string | null;
         images: string[];
         createdAt: Date;
         updatedAt: Date;
@@ -877,6 +878,7 @@ export const opportunitiesRouter = createTRPCRouter({
         id: string;
         name: string;
         description: string | null;
+        englishDescription: string | null;
         images: string[];
         createdAt: Date;
         updatedAt: Date;
@@ -895,6 +897,7 @@ export const opportunitiesRouter = createTRPCRouter({
               id: true,
               name: true,
               description: true,
+              englishDescription: true,
               images: true,
               createdAt: true,
               updatedAt: true,
@@ -915,6 +918,7 @@ export const opportunitiesRouter = createTRPCRouter({
               id: true,
               name: true,
               description: true,
+              englishDescription: true,
               images: true,
               createdAt: true,
               updatedAt: true,

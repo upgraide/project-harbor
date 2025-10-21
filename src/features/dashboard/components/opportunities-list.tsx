@@ -2,17 +2,18 @@
 
 import { formatDistanceToNow } from "date-fns";
 import { pt } from "date-fns/locale";
-import { BriefcaseIcon } from "lucide-react";
+import { BriefcaseIcon, BuildingIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   EmptyView,
   EntityContainer,
-  EntityList,
   EntityPagination,
   EntitySearch,
   ErrorView,
   LoadingView,
 } from "@/components/entity-components";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -22,7 +23,6 @@ import {
 import { useEntitySearch } from "@/features/opportunities/hooks/use-entity-search";
 import { useSuspenseOpportunities } from "@/features/opportunities/hooks/use-opportunities";
 import { useOpportunitiesParams } from "@/features/opportunities/hooks/use-opportunities-params";
-import { cn } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import {
   dashboardMergerAndAcquisitionOpportunityPath,
@@ -113,13 +113,16 @@ export const OpportunitiesEmpty = () => {
 export const OpportunitiesList = () => {
   const opportunities = useSuspenseOpportunities();
 
+  if (opportunities.data.items.length === 0) {
+    return <OpportunitiesEmpty />;
+  }
+
   return (
-    <EntityList
-      emptyView={<OpportunitiesEmpty />}
-      getKey={(opportunity) => opportunity.id}
-      items={opportunities.data.items}
-      renderItem={(item) => <OpportunityItem data={item} />}
-    />
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {opportunities.data.items.map((item) => (
+        <OpportunityItem data={item} key={item.id} />
+      ))}
+    </div>
   );
 };
 
@@ -128,46 +131,13 @@ type OpportunityItemProps = {
     id: string;
     name: string;
     description: string | null;
+    englishDescription: string | null;
     images: string[];
     createdAt: Date;
     updatedAt: Date;
     opportunityType: "mna" | "realEstate";
   };
 };
-
-type EntityItemProps = {
-  href: string;
-  title: string;
-  subtitle?: React.ReactNode;
-  image?: React.ReactNode;
-  className?: string;
-};
-
-export const EntityItem = ({
-  href,
-  title,
-  subtitle,
-  image,
-  className,
-}: EntityItemProps) => (
-  <Link href={href} prefetch>
-    <Card
-      className={cn("cursor-pointer p-4 shadow-none hover:shadow", className)}
-    >
-      <CardContent className="flex flex-row items-center justify-between p-0">
-        <div className="flex items-center gap-3">
-          {image}
-          <div>
-            <CardTitle className="font-medium text-base">{title}</CardTitle>
-            {!!subtitle && (
-              <CardDescription className="text-xs">{subtitle}</CardDescription>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  </Link>
-);
 
 export const OpportunityItem = ({ data }: OpportunityItemProps) => {
   const t = useScopedI18n("dashboard.opportunities");
@@ -178,29 +148,58 @@ export const OpportunityItem = ({ data }: OpportunityItemProps) => {
       ? dashboardMergerAndAcquisitionOpportunityPath(data.id)
       : dashboardRealEstateOpportunityPath(data.id);
 
+  const firstImage = data.images?.[0];
+
+  const displayDescription =
+    locale === "en" ? data.englishDescription : data.description;
+
   return (
-    <EntityItem
-      href={href}
-      image={
-        <div className="flex size-8 items-center justify-center">
-          <BriefcaseIcon className="size-5 text-muted-foreground" />
+    <Card className="flex flex-col overflow-hidden py-0 shadow-sm transition-shadow hover:shadow-md">
+      {firstImage ? (
+        <div className="relative h-48 w-full overflow-hidden bg-muted">
+          <Image
+            alt={data.name}
+            className="object-cover"
+            fill
+            src={firstImage}
+          />
         </div>
-      }
-      subtitle={
-        <>
-          {t("updated")}{" "}
-          {formatDistanceToNow(data.updatedAt, {
-            addSuffix: true,
-            locale: locale === "pt" ? pt : undefined,
-          })}{" "}
-          &bull; {t("created")}{" "}
-          {formatDistanceToNow(data.createdAt, {
-            addSuffix: true,
-            locale: locale === "pt" ? pt : undefined,
-          })}
-        </>
-      }
-      title={data.name}
-    />
+      ) : (
+        <div className="flex h-48 items-center justify-center bg-muted">
+          {data.opportunityType === "mna" ? (
+            <BriefcaseIcon className="size-12 text-muted-foreground" />
+          ) : (
+            <BuildingIcon className="size-12 text-muted-foreground" />
+          )}
+        </div>
+      )}
+
+      <CardContent className="flex flex-1 flex-col gap-3 p-4">
+        <div className="flex flex-1 flex-col gap-2">
+          <CardTitle className="line-clamp-2 text-base">{data.name}</CardTitle>
+          {displayDescription && (
+            <CardDescription className="line-clamp-3 text-sm">
+              {displayDescription}
+            </CardDescription>
+          )}
+        </div>
+
+        <div className="space-y-1 text-muted-foreground text-xs">
+          <p>
+            {t("updated")}{" "}
+            {formatDistanceToNow(data.updatedAt, {
+              addSuffix: true,
+              locale: locale === "pt" ? pt : undefined,
+            })}
+          </p>
+        </div>
+
+        <Link className="w-full" href={href} prefetch>
+          <Button className="w-full" type="button" variant="default">
+            {t("viewButton")}
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
   );
 };

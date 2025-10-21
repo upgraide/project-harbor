@@ -7,4 +7,5 @@ export default {
   emptyMessage: "Nenhuma oportunidade encontrada",
   updated: "Atualizado",
   created: "Criado",
+  viewButton: "Ver Oportunidade",
 };

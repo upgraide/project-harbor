@@ -7,4 +7,5 @@ export default {
   emptyMessage: "No opportunities found",
   updated: "Updated",
   created: "Created",
+  viewButton: "View Opportunity",
 };
