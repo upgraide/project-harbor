@@ -47,16 +47,6 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
     );
   };
 
-  const getCoInvestmentStatus = (value: boolean | null | undefined) => {
-    if (value === true) {
-      return t("limitedPartnerCard.coInvestment.yes");
-    }
-    if (value === false) {
-      return t("limitedPartnerCard.coInvestment.no");
-    }
-    return "N/A";
-  };
-
   const hasDescription = () => {
     const desc =
       locale === "en"
@@ -806,17 +796,6 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {opportunity.coInvestment != null && (
-                    <TableRow key="coInvestment">
-                      <TableCell className="px-6 py-4">
-                        {t("limitedPartnerCard.coInvestment.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {getCoInvestmentStatus(opportunity.coInvestment)}
-                      </TableCell>
-                    </TableRow>
-                  )}
-
                   {opportunity.gpEquityValue != null && (
                     <TableRow key="gpEquityValue">
                       <TableCell className="px-6 py-4">
