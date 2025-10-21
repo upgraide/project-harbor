@@ -24,9 +24,16 @@ model User {
   updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
+  role          Role      @default(USER)
 
   @@unique([email])
   @@map("user")
+}
+
+enum Role {
+  USER
+  TEAM
+  ADMIN
 }
 
 model Session {

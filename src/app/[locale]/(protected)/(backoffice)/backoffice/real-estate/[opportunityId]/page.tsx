@@ -7,7 +7,7 @@ import {
 } from "@/features/editor/components/real-estate-editor";
 import { EditorHeader } from "@/features/editor/components/real-estate-editor-header";
 import { prefetchRealEstateOpportunity } from "@/features/opportunities/server/prefetch";
-import { requireAuth } from "@/lib/auth-utils";
+import { requireTeam } from "@/lib/auth-utils";
 import { HydrateClient } from "@/trpc/server";
 
 type PageProps = {
@@ -17,7 +17,7 @@ type PageProps = {
 };
 
 const Page = async ({ params }: PageProps) => {
-  await requireAuth();
+  await requireTeam();
   const { opportunityId } = await params;
   prefetchRealEstateOpportunity(opportunityId);
 

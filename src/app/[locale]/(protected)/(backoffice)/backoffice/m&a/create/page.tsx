@@ -1,8 +1,8 @@
 import { Creator } from "@/features/creator/components/m&a-creator";
-import { requireAuth } from "@/lib/auth-utils";
+import { requireTeam } from "@/lib/auth-utils";
 
 const Page = async () => {
-  await requireAuth();
+  await requireTeam();
 
   return (
     <main className="flex-1">

@@ -9,7 +9,7 @@ import {
 } from "@/features/opportunities/components/real-estate-opportunities";
 import { opportunityParamsLoader } from "@/features/opportunities/server/params-loader";
 import { prefetchRealEstateOpportunities } from "@/features/opportunities/server/prefetch";
-import { requireAuth } from "@/lib/auth-utils";
+import { requireTeam } from "@/lib/auth-utils";
 import { HydrateClient } from "@/trpc/server";
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const Page = async ({ searchParams }: Props) => {
-  await requireAuth();
+  await requireTeam();
   const params = await opportunityParamsLoader(searchParams);
   prefetchRealEstateOpportunities(params);
   return (

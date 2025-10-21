@@ -9,7 +9,7 @@ import {
 } from "@/features/users/components/users-states";
 import { usersParamsLoader } from "@/features/users/server/params-loader";
 import { prefetchUsers } from "@/features/users/server/prefetch";
-import { requireAuth } from "@/lib/auth-utils";
+import { requireTeam } from "@/lib/auth-utils";
 import { HydrateClient } from "@/trpc/server";
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const Page = async ({ searchParams }: Props) => {
-  await requireAuth();
+  await requireTeam();
   const params = await usersParamsLoader(searchParams);
   prefetchUsers(params);
   return (

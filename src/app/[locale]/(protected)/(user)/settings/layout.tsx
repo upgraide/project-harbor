@@ -1,12 +1,11 @@
-import { AppHeader } from "@/components/app-header";
-import { requireTeam } from "@/lib/auth-utils";
+import { Navigation } from "@/features/dashboard/components/header";
+import { requireAuth } from "@/lib/auth-utils";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
-  const { user } = await requireTeam();
-
+  const user = (await requireAuth()).user;
   return (
     <>
-      <AppHeader
+      <Navigation
         user={{
           name: user.name,
           email: user.email,

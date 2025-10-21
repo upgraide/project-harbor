@@ -159,4 +159,15 @@ export const usersRouter = createTRPCRouter({
         throw error;
       }
     }),
+  getRole: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const user = await prisma.user.findUnique({
+        where: { id: input.id },
+      });
+      if (!user) {
+        throw new Error("User not found");
+      }
+      return user.role;
+    }),
 });

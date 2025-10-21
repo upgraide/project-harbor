@@ -1,6 +1,8 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { dashboardPath, loginPath } from "@/paths";
+import { Role } from "@/generated/prisma";
+import { backofficePath, dashboardPath, loginPath } from "@/paths";
+import { caller } from "@/trpc/server";
 import { auth } from "./auth";
 
 export const requireAuth = async () => {
@@ -25,4 +27,24 @@ export const requireUnAuth = async () => {
   }
 
   return session;
+};
+
+export const requireAdmin = async () => {
+  const user = (await requireAuth()).user;
+  const role = await caller.users.getRole({ id: user.id });
+
+  if (role !== Role.ADMIN) {
+    redirect(backofficePath());
+  }
+
+  return role;
+};
+
+export const requireTeam = async () => {
+  const user = (await requireAuth()).user;
+  const role = await caller.users.getRole({ id: user.id });
+  if (role !== Role.TEAM) {
+    redirect(dashboardPath());
+  }
+  return { user, role };
 };
