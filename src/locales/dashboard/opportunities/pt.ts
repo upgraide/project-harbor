@@ -9,6 +9,6 @@ export default {
   created: "Criada",
   viewButton: "Ver Oportunidade",
   all: "Todas",
-  mna: "M&A",
-  realEstate: "Imóveis",
+  mna: "Fusões e Aquisições",
+  realEstate: "Imobiliário",
 };

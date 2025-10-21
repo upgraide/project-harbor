@@ -1,4 +1,4 @@
-import { parseAsInteger, parseAsString } from "nuqs/server";
+import { parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
 import { PAGINATION } from "@/config/constants";
 
 export const opportunityParams = {
@@ -9,5 +9,7 @@ export const opportunityParams = {
     .withDefault(PAGINATION.DEFAULT_PAGE_SIZE)
     .withOptions({ clearOnDefault: true }),
   search: parseAsString.withDefault("").withOptions({ clearOnDefault: true }),
-  type: parseAsString.withDefault("all").withOptions({ clearOnDefault: true }),
+  type: parseAsStringEnum(["all", "mna", "realEstate"])
+    .withDefault("all")
+    .withOptions({ clearOnDefault: true }),
 };
