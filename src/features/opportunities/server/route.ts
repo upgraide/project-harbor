@@ -892,7 +892,7 @@ export const opportunitiesRouter = createTRPCRouter({
             skip: (page - 1) * pageSize,
             take: pageSize,
             where: mnaWhere,
-            orderBy: { createdAt: "desc" },
+            orderBy: { updatedAt: "desc" },
             select: {
               id: true,
               name: true,
@@ -913,7 +913,7 @@ export const opportunitiesRouter = createTRPCRouter({
             skip: (page - 1) * pageSize,
             take: pageSize,
             where: realEstateWhere,
-            orderBy: { createdAt: "desc" },
+            orderBy: { updatedAt: "desc" },
             select: {
               id: true,
               name: true,
@@ -940,11 +940,11 @@ export const opportunitiesRouter = createTRPCRouter({
         })),
       ];
 
-      // Sort by createdAt descending when showing all types
+      // Sort by updatedAt descending when showing all types
       if (type === "all") {
         items.sort(
           (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
         );
       }
 

@@ -5,7 +5,7 @@ export default {
   title: "Oportunidades",
   searchPlaceholder: "Procurar oportunidades",
   emptyMessage: "Nenhuma oportunidade encontrada",
-  updated: "Atualizado",
-  created: "Criado",
+  updated: "Atualizada",
+  created: "Criada",
   viewButton: "Ver Oportunidade",
 };
