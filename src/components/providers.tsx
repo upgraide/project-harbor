@@ -15,15 +15,15 @@ type ProviderProps = {
 
 export function Providers({ children, locale }: ProviderProps) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      disableTransitionOnChange
-      enableSystem
-    >
-      <TRPCReactProvider>
-        <NuqsAdapter>
-          <LanguageProvider locale={locale}>
+    <LanguageProvider locale={locale}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        disableTransitionOnChange
+        enableSystem
+      >
+        <TRPCReactProvider>
+          <NuqsAdapter>
             <NextSSRPlugin
               /**
                * The `extractRouterConfig` will extract **only** the route configs
@@ -35,9 +35,9 @@ export function Providers({ children, locale }: ProviderProps) {
             />
             {children}
             <Toaster richColors />
-          </LanguageProvider>
-        </NuqsAdapter>
-      </TRPCReactProvider>
-    </ThemeProvider>
+          </NuqsAdapter>
+        </TRPCReactProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }
