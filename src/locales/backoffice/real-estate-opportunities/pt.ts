@@ -1,0 +1,11 @@
+export default {
+  title: "Oportunidades de Imobiliário",
+  description: "Crie e gerencie oportunidades de imobiliário",
+  newButtonLabel: "Nova Oportunidade",
+  loadingMessage: "A carregar oportunidades...",
+  errorMessage: "Erro ao carregar as oportunidades...",
+  emptyMessage: "Nenhuma oportunidade encontrada. Crie uma oportunidade.",
+  searchPlaceholder: "Pesquisar oportunidades",
+  updatedAt: "Atualizado",
+  createdAt: "Criado",
+} as const;

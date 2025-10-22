@@ -1,0 +1,300 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+  role          Role      @default(USER)
+
+  @@unique([email])
+  @@map("user")
+}
+
+enum Role {
+  USER
+  TEAM
+  ADMIN
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
+}
+
+model MergerAndAcquisition {
+  id        String   @id @default(cuid())
+  name      String
+  description String?
+  englishDescription String?
+
+  // Basic fields
+  images    String[] // Array of image URLs/paths
+  
+  // Type and details
+  type      Type?
+  typeDetails TypeDetails?
+  
+  // Industry classification
+  industry  Industry?
+  industrySubsector IndustrySubsector?
+  
+  // Financial metrics
+  sales     SalesRange?
+  ebitda    EbitdaRange?
+  ebitdaNormalized Float?
+  netDebt   Float?
+
+  // Graph data (stored as JSON)
+  graphRows Json[] // Array of { year: string, revenue: number, ebitda: number, ebitdaMargin: number }
+  
+  // Growth metrics
+  salesCAGR Float?
+  ebitdaCAGR Float?
+  
+  // Asset information
+  assetIncluded Boolean?
+  estimatedAssetValue Float?
+  
+  preNDANotes String?
+  
+  // Post-NDA Fields
+  shareholderStructure String[] // Array of file paths/URLs
+  im String?
+  entrepriseValue Float?
+  equityValue Float?
+  evDashEbitdaEntry Float?
+  evDashEbitdaExit Float?
+  ebitdaMargin Float?
+  fcf Float?
+  netDebtDashEbitda Float?
+  capexItensity Float?
+  workingCapitalNeeds Float?
+  postNDANotes String?
+  
+  // Co-Investment Fields
+  coInvestment Boolean?
+  equityContribution Float?
+  grossIRR Float?
+  netIRR Float?
+  moic Float?
+  cashOnCashReturn Float?
+  cashConvertion Float?
+  entryMultiple Float?
+  exitExpectedMultiple Float?
+  holdPeriod Float?
+
+  userId    String   // Who created the Merger and Acquisition
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RealEstate {
+  id        String   @id @default(cuid())
+  name      String
+  description String?
+  englishDescription String?
+  
+  // Images
+  images    String[] // Array of image URLs/paths
+  
+  // Asset type
+  asset     RealEstateAssetType?
+  
+  // Pre-NDA Fields
+  nRoomsLastYear Int?
+  noi Float?
+  occupancyLastYear Float?
+  walt Float?
+  nBeds Int?
+  investment RealEstateInvestmentType?
+  subRent Float?
+  rentPerSqm Float?
+  subYield Float?
+  capex Float?
+  capexPerSqm Float?
+  sale Float?
+  salePerSqm Float?
+  location String?
+  area Float?
+  value Float?
+  yield Float?
+  rent Float?
+  gcaAboveGround Float?
+  gcaBelowGround Float?
+  
+  // Post-NDA Fields
+  license String?
+  irr Float?
+  coc Float?
+  licenseStage String?
+  holdingPeriod Float?
+  breakEvenOccupancy Float?
+  vacancyRate Float?
+  estimatedRentValue Float?
+  occupancyRate Float?
+  moic Float?
+  price Float?
+  totalInvestment Float?
+  profitOnCost Float?
+  profit Float?
+  sofCosts Float?
+  sellPerSqm Float?
+  gdv Float?
+  wault Float?
+  debtServiceCoverageRatio Float?
+  expectedExitYield Float?
+  ltv Float?
+  ltc Float?
+  yieldOnCost Float?
+
+  
+  // Co-Investment Fields
+  coInvestment Boolean?
+  gpEquityValue Float?
+  gpEquityPercentage Float?
+  totalEquityRequired Float?
+  sponsorPresentation String?
+  promoteStructure String?
+  projectIRR Float?
+  investorIRR Float?
+  coInvestmentHoldPeriod Float?
+  coInvestmentBreakEvenOccupancy Float?
+  
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("real_estate")
+}
+
+// Enums for type safety
+enum Type {
+  BUY_IN
+  BUY_OUT
+  BUY_IN_BUY_OUT
+}
+
+enum TypeDetails {
+  MAIORITARIO
+  MINORITARIO
+  FULL_OWNERSHIP
+}
+
+enum Industry {
+  SERVICES
+  TRANSFORMATION_INDUSTRY
+  TRADING
+  ENERGY_INFRASTRUCTURE
+  FITNESS
+  HEALTHCARE_PHARMACEUTICALS
+  IT
+  TMT
+  TRANSPORTS
+}
+
+enum IndustrySubsector {
+  BUSINESS_SERVICES
+  FINANCIAL_SERVICES
+  CONSTRUCTION_MATERIALS
+  FOOD_BEVERAGES
+  OTHERS
+}
+
+enum SalesRange {
+  RANGE_0_5
+  RANGE_5_10
+  RANGE_10_15
+  RANGE_20_30
+  RANGE_30_PLUS
+}
+
+enum EbitdaRange {
+  RANGE_1_2
+  RANGE_2_3
+  RANGE_3_5
+  RANGE_5_PLUS
+}
+
+enum RealEstateAssetType {
+  AGNOSTIC
+  MIXED
+  HOSPITALITY
+  LOGISTICS_AND_INDUSTRIAL
+  OFFICE
+  RESIDENTIAL
+  SENIOR_LIVING
+  SHOPPING_CENTER
+  STREET_RETAIL
+  STUDENT_HOUSING
+}
+
+enum RealEstateInvestmentType {
+  LEASE_AND_OPERATION
+  S_AND_L
+  CORE
+  FIX_AND_FLIP
+  REFURBISHMENT
+  VALUE_ADD
+  OPPORTUNISTIC
+  DEVELOPMENT
+}

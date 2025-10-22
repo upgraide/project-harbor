@@ -1,0 +1,158 @@
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useScopedI18n } from "@/locales/client";
+import { useInviteUser } from "../hooks/use-invite-user";
+
+const inviteFormSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .min(2, "Name must be at least 2 characters"),
+  language: z.enum(["en", "pt"]),
+});
+
+type InviteFormValues = z.infer<typeof inviteFormSchema>;
+
+type InviteUserDialogProps = {
+  open: boolean;
+  onOpenChangeAction: (open: boolean) => void;
+};
+
+export const InviteUserDialog = ({
+  open,
+  onOpenChangeAction,
+}: InviteUserDialogProps) => {
+  const t = useScopedI18n("backoffice.users.inviteDialog");
+  const inviteUser = useInviteUser();
+
+  const form = useForm<InviteFormValues>({
+    resolver: zodResolver(inviteFormSchema),
+    defaultValues: {
+      email: "",
+      name: "",
+      language: "en",
+    },
+  });
+
+  const onSubmit = async (data: InviteFormValues) => {
+    await inviteUser.mutateAsync(data);
+    if (!inviteUser.isPending) {
+      form.reset();
+      onOpenChangeAction(false);
+    }
+  };
+
+  return (
+    <Dialog onOpenChange={onOpenChangeAction} open={open}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("description")}</DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("labels.name")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("labels.email")}</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="john@example.com"
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="language"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("labels.language")}</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="en">
+                        {t("languages.english")}
+                      </SelectItem>
+                      <SelectItem value="pt">
+                        {t("languages.portuguese")}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end gap-2 pt-4">
+              <Button
+                onClick={() => onOpenChangeAction(false)}
+                type="button"
+                variant="outline"
+              >
+                {t("cancel")}
+              </Button>
+              <Button disabled={inviteUser.isPending} type="submit">
+                {inviteUser.isPending ? t("sending") : t("send")}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+};
