@@ -118,17 +118,23 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
     opportunity.exitExpectedMultiple != null ||
     opportunity.holdPeriod != null;
 
-  const hasPostNDAData = () =>
-    opportunity.im != null ||
-    opportunity.entrepriseValue != null ||
-    opportunity.equityValue != null ||
-    opportunity.evDashEbitdaEntry != null ||
-    opportunity.evDashEbitdaExit != null ||
-    opportunity.ebitdaMargin != null ||
-    opportunity.fcf != null ||
-    opportunity.netDebtDashEbitda != null ||
-    opportunity.capexItensity != null ||
-    opportunity.workingCapitalNeeds != null;
+  const hasPostNDAData = () => {
+    if (!opportunity.coInvestment) {
+      return false;
+    }
+    return (
+      opportunity.im != null ||
+      opportunity.entrepriseValue != null ||
+      opportunity.equityValue != null ||
+      opportunity.evDashEbitdaEntry != null ||
+      opportunity.evDashEbitdaExit != null ||
+      opportunity.ebitdaMargin != null ||
+      opportunity.fcf != null ||
+      opportunity.netDebtDashEbitda != null ||
+      opportunity.capexItensity != null ||
+      opportunity.workingCapitalNeeds != null
+    );
+  };
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -693,18 +699,6 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {opportunity.coInvestment != null && (
-                    <TableRow key="coInvestment">
-                      <TableCell className="px-6 py-4">
-                        {t("coInvestmentCard.table.body.coInvestment.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t(
-                          `coInvestmentCard.table.body.coInvestment.${opportunity.coInvestment ? "yes" : "no"}`
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  )}
                   {opportunity.equityContribution != null && (
                     <TableRow key="equityContribution">
                       <TableCell className="px-6 py-4">
