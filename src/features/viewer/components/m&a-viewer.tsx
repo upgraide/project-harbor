@@ -136,6 +136,10 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
     opportunity.capexItensity != null ||
     opportunity.workingCapitalNeeds != null;
 
+  const hasShareholderStructure = () =>
+    opportunity.shareholderStructure != null &&
+    opportunity.shareholderStructure.length > 0;
+
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
       <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
@@ -673,6 +677,44 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   )}
                 </TableBody>
               </Table>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
+      {hasShareholderStructure() && (
+        <section>
+          <Card className="border-none bg-transparent shadow-none">
+            <CardHeader>
+              <CardTitle className="font-bold text-lg">
+                {t("shareholderStructureCard.title")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {opportunity.shareholderStructure &&
+              opportunity.shareholderStructure.length > 0 ? (
+                <div className="flex flex-col gap-4">
+                  {opportunity.shareholderStructure.map((imageUrl) => (
+                    <div
+                      className="relative h-64 overflow-hidden rounded-lg bg-muted"
+                      key={imageUrl}
+                    >
+                      <Image
+                        alt="Shareholder structure"
+                        className="object-cover"
+                        fill
+                        src={imageUrl}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center rounded-lg border border-muted-foreground/50 border-dashed py-12">
+                  <p className="text-balance text-muted-foreground text-sm">
+                    {t("shareholderStructureCard.noImages")}
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </section>
