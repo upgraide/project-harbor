@@ -61,7 +61,7 @@ const chartConfig = (t: ReturnType<typeof useScopedI18n>) =>
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component
 export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
-  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
+  const t = useScopedI18n("dashboard.mAndAViewer");
   const locale = useCurrentLocale();
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
 

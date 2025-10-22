@@ -9,6 +9,7 @@ import realEstateOpportunities from "./backoffice/real-estate-opportunities/en";
 import realEstateOpportunityPage from "./backoffice/real-estate-opportunity-page/en";
 import sidebar from "./backoffice/sidebar/en";
 import users from "./backoffice/users/en";
+import mAndAViewer from "./dashboard/m&a-viewer/en";
 import navigation from "./dashboard/naviagation/en";
 import opportunities from "./dashboard/opportunities/en";
 import realEstateViewer from "./dashboard/real-estate-viewer/en";
@@ -39,5 +40,6 @@ export default {
     navigation,
     opportunities,
     realEstateViewer,
+    mAndAViewer,
   },
 } as const;
