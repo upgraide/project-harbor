@@ -106,6 +106,30 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const hasGraphData = () =>
     opportunity.graphRows != null && opportunity.graphRows.length > 0;
 
+  const hasCoInvestmentData = () =>
+    opportunity.coInvestment != null ||
+    opportunity.equityContribution != null ||
+    opportunity.grossIRR != null ||
+    opportunity.netIRR != null ||
+    opportunity.moic != null ||
+    opportunity.cashOnCashReturn != null ||
+    opportunity.cashConvertion != null ||
+    opportunity.entryMultiple != null ||
+    opportunity.exitExpectedMultiple != null ||
+    opportunity.holdPeriod != null;
+
+  const hasPostNDAData = () =>
+    opportunity.im != null ||
+    opportunity.entrepriseValue != null ||
+    opportunity.equityValue != null ||
+    opportunity.evDashEbitdaEntry != null ||
+    opportunity.evDashEbitdaExit != null ||
+    opportunity.ebitdaMargin != null ||
+    opportunity.fcf != null ||
+    opportunity.netDebtDashEbitda != null ||
+    opportunity.capexItensity != null ||
+    opportunity.workingCapitalNeeds != null;
+
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
       <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
@@ -507,6 +531,297 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
           </div>
         )}
       </div>
+
+      {hasPostNDAData() && (
+        <section>
+          <Card className="border-none bg-transparent shadow-none">
+            <CardHeader>
+              <CardTitle className="font-bold text-lg">
+                {t("postNDACard.title")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader className="bg-muted">
+                  <TableRow>
+                    <TableHead className="px-6 py-4">
+                      {t("postNDACard.table.header.metric")}
+                    </TableHead>
+                    <TableHead className="px-6 py-4">
+                      {t("postNDACard.table.header.value")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {opportunity.im != null && (
+                    <TableRow key="im">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.im.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.im}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.entrepriseValue != null && (
+                    <TableRow key="enterpriseValue">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.enterpriseValue.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.enterpriseValue.prefix") +
+                          opportunity.entrepriseValue +
+                          t("postNDACard.table.body.enterpriseValue.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.equityValue != null && (
+                    <TableRow key="equityValue">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.equityValue.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.equityValue.prefix") +
+                          opportunity.equityValue +
+                          t("postNDACard.table.body.equityValue.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.evDashEbitdaEntry != null && (
+                    <TableRow key="evDashEbitdaEntry">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.evDashEbitdaEntry.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.evDashEbitdaEntry +
+                          t("postNDACard.table.body.evDashEbitdaEntry.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.evDashEbitdaExit != null && (
+                    <TableRow key="evDashEbitdaExit">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.evDashEbitdaExit.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.evDashEbitdaExit +
+                          t("postNDACard.table.body.evDashEbitdaExit.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.ebitdaMargin != null && (
+                    <TableRow key="ebitdaMargin">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.ebitdaMargin.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.ebitdaMargin +
+                          t("postNDACard.table.body.ebitdaMargin.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.fcf != null && (
+                    <TableRow key="fcf">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.fcf.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.fcf.prefix") +
+                          opportunity.fcf +
+                          t("postNDACard.table.body.fcf.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.netDebtDashEbitda != null && (
+                    <TableRow key="netDebtDashEbitda">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.netDebtDashEbitda.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.netDebtDashEbitda +
+                          t("postNDACard.table.body.netDebtDashEbitda.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.capexItensity != null && (
+                    <TableRow key="capexItensity">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.capexItensity.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.capexItensity +
+                          t("postNDACard.table.body.capexItensity.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.workingCapitalNeeds != null && (
+                    <TableRow key="workingCapitalNeeds">
+                      <TableCell className="px-6 py-4">
+                        {t("postNDACard.table.body.workingCapitalNeeds.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.workingCapitalNeeds +
+                          t("postNDACard.table.body.workingCapitalNeeds.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </section>
+      )}
+
+      {hasCoInvestmentData() && (
+        <section>
+          <Card className="border-none bg-transparent shadow-none">
+            <CardHeader>
+              <CardTitle className="font-bold text-lg">
+                {t("coInvestmentCard.title")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader className="bg-muted">
+                  <TableRow>
+                    <TableHead className="px-6 py-4">
+                      {t("coInvestmentCard.table.header.metric")}
+                    </TableHead>
+                    <TableHead className="px-6 py-4">
+                      {t("coInvestmentCard.table.header.value")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {opportunity.coInvestment != null && (
+                    <TableRow key="coInvestment">
+                      <TableCell className="px-6 py-4">
+                        {t("coInvestmentCard.table.body.coInvestment.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {t(
+                          `coInvestmentCard.table.body.coInvestment.${opportunity.coInvestment ? "yes" : "no"}`
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.equityContribution != null && (
+                    <TableRow key="equityContribution">
+                      <TableCell className="px-6 py-4">
+                        {t(
+                          "coInvestmentCard.table.body.equityContribution.label"
+                        )}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.equityContribution +
+                          t(
+                            "coInvestmentCard.table.body.equityContribution.units"
+                          )}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.grossIRR != null && (
+                    <TableRow key="grossIRR">
+                      <TableCell className="px-6 py-4">
+                        {t("coInvestmentCard.table.body.grossIRR.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.grossIRR +
+                          t("coInvestmentCard.table.body.grossIRR.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.netIRR != null && (
+                    <TableRow key="netIRR">
+                      <TableCell className="px-6 py-4">
+                        {t("coInvestmentCard.table.body.netIRR.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.netIRR +
+                          t("coInvestmentCard.table.body.netIRR.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.moic != null && (
+                    <TableRow key="moic">
+                      <TableCell className="px-6 py-4">
+                        {t("coInvestmentCard.table.body.moic.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.moic +
+                          t("coInvestmentCard.table.body.moic.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.cashOnCashReturn != null && (
+                    <TableRow key="cashOnCashReturn">
+                      <TableCell className="px-6 py-4">
+                        {t(
+                          "coInvestmentCard.table.body.cashOnCashReturn.label"
+                        )}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.cashOnCashReturn +
+                          t(
+                            "coInvestmentCard.table.body.cashOnCashReturn.units"
+                          )}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.cashConvertion != null && (
+                    <TableRow key="cashConvertion">
+                      <TableCell className="px-6 py-4">
+                        {t("coInvestmentCard.table.body.cashConvertion.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.cashConvertion +
+                          t("coInvestmentCard.table.body.cashConvertion.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.entryMultiple != null && (
+                    <TableRow key="entryMultiple">
+                      <TableCell className="px-6 py-4">
+                        {t("coInvestmentCard.table.body.entryMultiple.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.entryMultiple +
+                          t("coInvestmentCard.table.body.entryMultiple.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.exitExpectedMultiple != null && (
+                    <TableRow key="exitExpectedMultiple">
+                      <TableCell className="px-6 py-4">
+                        {t(
+                          "coInvestmentCard.table.body.exitExpectedMultiple.label"
+                        )}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.exitExpectedMultiple +
+                          t(
+                            "coInvestmentCard.table.body.exitExpectedMultiple.units"
+                          )}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {opportunity.holdPeriod != null && (
+                    <TableRow key="holdPeriod">
+                      <TableCell className="px-6 py-4">
+                        {t("coInvestmentCard.table.body.holdPeriod.label")}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        {opportunity.holdPeriod +
+                          t("coInvestmentCard.table.body.holdPeriod.units")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </section>
+      )}
     </main>
   );
 };
