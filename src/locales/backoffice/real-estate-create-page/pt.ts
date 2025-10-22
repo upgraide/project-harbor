@@ -1,5 +1,5 @@
 export default {
-  title: "Criar Oportunidade de Imóvel",
+  title: "Criar Oportunidade de Imobiliário",
   createButtonText: "Criar Oportunidade",
   creatingButtonText: "Criando...",
   cancelButtonText: "Cancelar",
