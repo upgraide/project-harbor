@@ -106,35 +106,35 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const hasGraphData = () =>
     opportunity.graphRows != null && opportunity.graphRows.length > 0;
 
-  const hasCoInvestmentData = () =>
-    opportunity.coInvestment != null ||
-    opportunity.equityContribution != null ||
-    opportunity.grossIRR != null ||
-    opportunity.netIRR != null ||
-    opportunity.moic != null ||
-    opportunity.cashOnCashReturn != null ||
-    opportunity.cashConvertion != null ||
-    opportunity.entryMultiple != null ||
-    opportunity.exitExpectedMultiple != null ||
-    opportunity.holdPeriod != null;
-
-  const hasPostNDAData = () => {
+  const hasCoInvestmentData = () => {
     if (!opportunity.coInvestment) {
-      return false;
+      return null;
     }
     return (
-      opportunity.im != null ||
-      opportunity.entrepriseValue != null ||
-      opportunity.equityValue != null ||
-      opportunity.evDashEbitdaEntry != null ||
-      opportunity.evDashEbitdaExit != null ||
-      opportunity.ebitdaMargin != null ||
-      opportunity.fcf != null ||
-      opportunity.netDebtDashEbitda != null ||
-      opportunity.capexItensity != null ||
-      opportunity.workingCapitalNeeds != null
+      opportunity.coInvestment != null ||
+      opportunity.equityContribution != null ||
+      opportunity.grossIRR != null ||
+      opportunity.netIRR != null ||
+      opportunity.moic != null ||
+      opportunity.cashOnCashReturn != null ||
+      opportunity.cashConvertion != null ||
+      opportunity.entryMultiple != null ||
+      opportunity.exitExpectedMultiple != null ||
+      opportunity.holdPeriod != null
     );
   };
+
+  const hasPostNDAData = () =>
+    opportunity.im != null ||
+    opportunity.entrepriseValue != null ||
+    opportunity.equityValue != null ||
+    opportunity.evDashEbitdaEntry != null ||
+    opportunity.evDashEbitdaExit != null ||
+    opportunity.ebitdaMargin != null ||
+    opportunity.fcf != null ||
+    opportunity.netDebtDashEbitda != null ||
+    opportunity.capexItensity != null ||
+    opportunity.workingCapitalNeeds != null;
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
