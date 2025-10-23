@@ -169,6 +169,7 @@ export default {
     uploadSuccess: "Images uploaded successfully",
     noImages: "No images uploaded yet",
     maxImagesError: "Cannot exceed 10 images total",
+    uploadButtonText: "Upload Images",
   },
   postNDACard: {
     title: "Further Information (Post-NDA)",
@@ -251,6 +252,7 @@ export default {
     title: "Shareholder Structure",
     uploadSuccess: "Shareholder structure images uploaded successfully",
     noImages: "No shareholder structure images uploaded yet",
+    uploadButtonText: "Upload Shareholder Structure",
   },
   coInvestmentCard: {
     title: "Limited Partner Information",

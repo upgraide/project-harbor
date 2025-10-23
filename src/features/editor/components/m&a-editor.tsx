@@ -59,6 +59,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { StyledUploadButton } from "@/features/editor/components/styled-upload-button";
 import {
   useRemoveOpportunityAssetIncluded,
   useRemoveOpportunityCapexItensity,
@@ -140,7 +141,7 @@ import {
   Type,
   TypeDetails,
 } from "@/generated/prisma";
-import { cn, UploadButton } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 const chartConfig = (t: ReturnType<typeof useScopedI18n>, isDark: boolean) =>
@@ -266,7 +267,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             <CardTitle className="font-bold text-lg">
               {t("imagesCard.title")}
             </CardTitle>
-            <UploadButton
+            <StyledUploadButton
+              buttonText={t("imagesCard.uploadButtonText")}
               endpoint="imageUploader"
               onClientUploadComplete={async (res) => {
                 const imageUrls = res.map((file) => file.url);
@@ -1639,7 +1641,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             <CardTitle className="font-bold text-lg">
               {t("shareholderStructureCard.title")}
             </CardTitle>
-            <UploadButton
+            <StyledUploadButton
+              buttonText={t("shareholderStructureCard.uploadButtonText")}
               endpoint="imageUploader"
               onClientUploadComplete={async (res) => {
                 const imageUrls = res.map((file) => file.url);

@@ -169,6 +169,7 @@ export default {
     uploadSuccess: "Imagens carregadas com sucesso",
     noImages: "Nenhuma imagem carregada ainda",
     maxImagesError: "Não é possível exceder 10 imagens no total",
+    uploadButtonText: "Carregar Imagens",
   },
   postNDACard: {
     title: "Informação Pós-NDA",
@@ -253,6 +254,7 @@ export default {
     title: "Estrutura de Acionistas",
     uploadSuccess: "Imagens da estrutura de acionistas carregadas com sucesso",
     noImages: "Nenhuma imagem da estrutura de acionistas carregada ainda",
+    uploadButtonText: "Carregar Estrutura de Acionistas",
   },
   coInvestmentCard: {
     title: "Limited Partner Information",

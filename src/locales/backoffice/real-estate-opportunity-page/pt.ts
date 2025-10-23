@@ -12,6 +12,7 @@ export default {
     uploadSuccess: "Imagens enviadas com sucesso",
     noImages: "Nenhuma imagem carregada ainda",
     maxImagesError: "Não é possível exceder 10 imagens no total",
+    uploadButtonText: "Carregar Imagens",
   },
   preNDACard: {
     title: "Informações Financeiras (Pré-NDA)",

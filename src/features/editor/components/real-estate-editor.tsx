@@ -40,6 +40,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { StyledUploadButton } from "@/features/editor/components/styled-upload-button";
 import {
   useRemoveOpportunityArea,
   useRemoveOpportunityAsset,
@@ -158,7 +159,7 @@ import {
   RealEstateAssetType,
   RealEstateInvestmentType,
 } from "@/generated/prisma";
-import { cn, UploadButton } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 export const EditorLoading = () => {
@@ -366,7 +367,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             <CardTitle className="font-bold text-lg">
               {t("imagesCard.title")}
             </CardTitle>
-            <UploadButton
+            <StyledUploadButton
+              buttonText={t("imagesCard.uploadButtonText")}
               endpoint="imageUploader"
               onClientUploadComplete={async (res) => {
                 const imageUrls = res.map((file) => file.url);
