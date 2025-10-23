@@ -1,4 +1,5 @@
 export default {
+  title: "Settings",
   updateProfileCard: {
     title: "Your Name",
     description: "This is your name. It will be displayed on your profile.",
