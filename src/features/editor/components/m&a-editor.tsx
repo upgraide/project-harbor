@@ -366,14 +366,26 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             </CardTitle>
             <EditorEditButton
               cancelButtonText={t("cancelButtonText")}
-              currentValue={opportunity.description || ""}
+              currentValue={
+                locale === "en"
+                  ? opportunity.englishDescription || ""
+                  : opportunity.description || ""
+              }
               fieldName="description"
               inputType="textarea"
               onSaveAction={async (value) => {
-                await updateDescription.mutateAsync({
-                  id: opportunityId,
-                  description: value,
-                });
+                if (locale === "en") {
+                  await updateDescription.mutateAsync({
+                    id: opportunityId,
+                    description: value,
+                    isEnglish: true,
+                  });
+                } else {
+                  await updateDescription.mutateAsync({
+                    id: opportunityId,
+                    description: value,
+                  });
+                }
               }}
               saveButtonText={t("saveButtonText")}
               title={t("editDescription")}

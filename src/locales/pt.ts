@@ -13,6 +13,7 @@ import mAndAViewer from "./dashboard/m&a-viewer/pt";
 import navigation from "./dashboard/naviagation/pt";
 import opportunities from "./dashboard/opportunities/pt";
 import realEstateViewer from "./dashboard/real-estate-viewer/pt";
+import settings from "./dashboard/settings/pt";
 import languageSwitcher from "./language-switcher/pt";
 import index from "./pages/index/pt";
 import themeSwitcher from "./theme-switcher/pt";
@@ -41,5 +42,6 @@ export default {
     opportunities,
     realEstateViewer,
     mAndAViewer,
+    settings,
   },
 } as const;
