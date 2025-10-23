@@ -5,6 +5,7 @@ import prisma from "@/lib/db";
 import { sendInviteEmail } from "@/lib/emails/send-invite";
 import { generatePassword } from "@/lib/generate-password";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { updateProfileSchema } from "../schemas/update-profile-schema";
 
 export const usersRouter = createTRPCRouter({
   getMany: protectedProcedure
@@ -164,5 +165,66 @@ export const usersRouter = createTRPCRouter({
         throw new Error("User not found");
       }
       return user.role;
+    }),
+
+  updateProfile: protectedProcedure
+    .input(updateProfileSchema)
+    .mutation(async ({ input, ctx }) => {
+      const user = await prisma.user.update({
+        where: { id: ctx.user.id },
+        data: {
+          name: input.name,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      });
+      return user;
+    }),
+
+  updateAvatar: protectedProcedure
+    .input(z.object({ image: z.string().nullable() }))
+    .mutation(async ({ input, ctx }) => {
+      const user = await prisma.user.update({
+        where: { id: ctx.user.id },
+        data: {
+          image: input.image,
+        },
+        select: {
+          id: true,
+          image: true,
+        },
+      });
+      return user;
+    }),
+
+  deleteUploadedFile: protectedProcedure
+    .input(z.object({ fileUrl: z.string() }))
+    .mutation(async ({ input }) => {
+      try {
+        const response = await fetch("https://uploadthing.com/api/deleteFile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.UPLOADTHING_SECRET}`,
+          },
+          body: JSON.stringify({
+            url: input.fileUrl,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to delete file from uploadthing");
+        }
+
+        return { success: true };
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(`Failed to delete file: ${error.message}`);
+        }
+        throw error;
+      }
     }),
 });
