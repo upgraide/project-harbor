@@ -171,7 +171,7 @@ export const usersRouter = createTRPCRouter({
     .input(updateProfileSchema)
     .mutation(async ({ input, ctx }) => {
       const user = await prisma.user.update({
-        where: { id: ctx.user.id },
+        where: { id: ctx.auth.user.id },
         data: {
           name: input.name,
         },
@@ -188,7 +188,7 @@ export const usersRouter = createTRPCRouter({
     .input(z.object({ image: z.string().nullable() }))
     .mutation(async ({ input, ctx }) => {
       const user = await prisma.user.update({
-        where: { id: ctx.user.id },
+        where: { id: ctx.auth.user.id },
         data: {
           image: input.image,
         },
