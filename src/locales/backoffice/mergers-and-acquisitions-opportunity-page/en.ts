@@ -252,7 +252,7 @@ export default {
     title: "Shareholder Structure",
     uploadSuccess: "Shareholder structure images uploaded successfully",
     noImages: "No shareholder structure images uploaded yet",
-    uploadButtonText: "Upload Shareholder Structure",
+    uploadButtonText: "Upload Images",
   },
   coInvestmentCard: {
     title: "Limited Partner Information",

@@ -254,7 +254,7 @@ export default {
     title: "Estrutura de Acionistas",
     uploadSuccess: "Imagens da estrutura de acionistas carregadas com sucesso",
     noImages: "Nenhuma imagem da estrutura de acionistas carregada ainda",
-    uploadButtonText: "Carregar Estrutura de Acionistas",
+    uploadButtonText: "Carregar Imagens",
   },
   coInvestmentCard: {
     title: "Limited Partner Information",
