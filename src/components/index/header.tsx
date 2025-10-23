@@ -10,7 +10,7 @@ const Header = () => {
   return (
     <header
       className={cn(
-        "relative z-20 mx-auto flex items-center justify-between p-4 sm:p-6",
+        "relative z-20 mx-auto flex items-center justify-between p-0 sm:p-6",
         isMobile && "flex-col gap-4"
       )}
     >
