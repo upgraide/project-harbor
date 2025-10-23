@@ -14,7 +14,9 @@ export const requireAuth = async () => {
     redirect(loginPath());
   }
 
-  return session;
+  const role = await caller.users.getRole({ id: session.user.id });
+
+  return { user: session.user, role };
 };
 
 export const requireUnAuth = async () => {

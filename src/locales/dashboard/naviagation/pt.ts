@@ -6,4 +6,5 @@ export default {
   logout: "Sair",
   toastLogoutSuccess: "Saiu com sucesso!",
   toastLogoutError: "Falha ao sair. Por favor, tente novamente.",
+  admin: "Backoffice",
 };

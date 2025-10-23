@@ -2,14 +2,15 @@ import { Navigation } from "@/features/dashboard/components/header";
 import { requireAuth } from "@/lib/auth-utils";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
-  const session = await requireAuth();
+  const { user, role } = await requireAuth();
   return (
     <>
       <Navigation
         user={{
-          name: session.user.name,
-          email: session.user.email,
-          image: session.user.image ?? "",
+          name: user.name,
+          email: user.email,
+          image: user.image ?? "",
+          role,
         }}
       />
       <main className="flex-1">{children}</main>

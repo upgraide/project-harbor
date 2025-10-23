@@ -19,10 +19,6 @@ type InviteEmailProps = {
   inviteLink?: string;
 };
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "https://www.harborpartners.app";
-
 const translations = {
   en: {
     previewText: "Exclusive Invite - Access to Harbor Investment Opportunities",
@@ -66,7 +62,7 @@ export const InviteEmail = ({
   userEmail,
   password,
   language = "en",
-  inviteLink = `${baseUrl}/login`,
+  inviteLink = "https://www.harborpartners.app/login",
 }: InviteEmailProps) => {
   const t = translations[language];
 

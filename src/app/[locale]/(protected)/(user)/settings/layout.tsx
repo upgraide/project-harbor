@@ -7,7 +7,7 @@ import { getScopedI18n } from "@/locales/server";
 import { dashboardSettingsPath } from "@/paths";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
-  const user = (await requireAuth()).user;
+  const { user, role } = await requireAuth();
   const t = await getScopedI18n("dashboard.settings");
   return (
     <>
@@ -16,6 +16,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
           name: user.name,
           email: user.email,
           image: user.image ?? "",
+          role,
         }}
       />
       <main className="flex-1">

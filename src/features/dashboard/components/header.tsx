@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Role } from "@/generated/prisma";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
@@ -27,6 +28,7 @@ export function Navigation({
     name: string;
     email: string;
     image: string;
+    role?: Role;
   };
 }) {
   const t = useScopedI18n("dashboard.navigation");
@@ -35,6 +37,7 @@ export function Navigation({
 
   const isDashboardPath = pathname === dashboardPath();
   const isSettingsPath = pathname === dashboardSettingsPath();
+  const isTeamOrAdmin = user.role === Role.TEAM || user.role === Role.ADMIN;
 
   return (
     <nav className="sticky top-0 z-50 flex w-full flex-col border-border border-b bg-card px-6">
@@ -73,6 +76,11 @@ export function Navigation({
         </div>
 
         <div className="flex h-10 items-center gap-3">
+          {isTeamOrAdmin && (
+            <Button className="h-8" size="sm" variant="default">
+              {t("admin")}
+            </Button>
+          )}
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button className="h-8 w-8 rounded-full" variant="ghost">
