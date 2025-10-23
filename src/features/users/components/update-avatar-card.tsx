@@ -52,7 +52,9 @@ const UpdateAvatarCard = ({
     }
   };
 
-  const handleUploadComplete = async (res: typeof res | undefined) => {
+  const handleUploadComplete = async (
+    res: Array<{ url: string }> | undefined
+  ) => {
     if (!res || res.length === 0) {
       toast.error("No file uploaded");
       setIsUploading(false);
