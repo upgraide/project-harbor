@@ -21,7 +21,7 @@ type InviteEmailProps = {
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : "https://harbor.app";
+  : "https://www.harborpartners.app";
 
 const translations = {
   en: {
@@ -137,5 +137,5 @@ InviteEmail.PreviewProps = {
   userEmail: "investor@example.com",
   password: "SecureP@ss123",
   language: "en",
-  inviteLink: "https://harbor.app/login",
+  inviteLink: "https://www.harborpartners.app/login",
 } as InviteEmailProps;

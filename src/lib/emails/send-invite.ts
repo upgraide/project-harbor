@@ -29,7 +29,7 @@ export const sendInviteEmail = async ({
     );
 
     const result = await resend.emails.send({
-      from: "onboarding@resend.dev", // Replace with your verified email
+      from: "invites@notfications.harborpartners.app",
       to: userEmail,
       subject: emailSubject,
       html: emailHtml,
