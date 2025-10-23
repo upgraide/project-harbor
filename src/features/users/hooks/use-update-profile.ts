@@ -24,3 +24,37 @@ export const useUpdateProfileName = () => {
     })
   );
 };
+
+/**
+ * Hook to update a user's avatar
+ */
+export const useUpdateProfileAvatar = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  return useMutation(
+    trpc.users.updateAvatar.mutationOptions({
+      onSuccess: () => {
+        router.refresh();
+        queryClient.invalidateQueries(trpc.users.getMany.queryOptions({}));
+      },
+      onError: () => {
+        toast.error("Failed to update avatar");
+      },
+    })
+  );
+};
+
+/**
+ * Hook to delete an uploaded file from uploadthing
+ */
+export const useDeleteUploadedFile = () => {
+  const trpc = useTRPC();
+  return useMutation(
+    trpc.users.deleteUploadedFile.mutationOptions({
+      onError: () => {
+        toast.error("Failed to delete file");
+      },
+    })
+  );
+};
