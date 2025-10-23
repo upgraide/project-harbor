@@ -1169,20 +1169,28 @@ export const realEstateRouter = createTRPCRouter({
       })
     ),
   updateDescription: protectedProcedure
-    .input(z.object({ id: z.string(), description: z.string().min(1) }))
+    .input(
+      z.object({
+        id: z.string(),
+        description: z.string().min(1),
+        isEnglish: z.boolean().optional(),
+      })
+    )
     .mutation(async ({ input }) => {
       // Update the description in the database
       const updated = await prisma.realEstate.update({
         where: { id: input.id },
-        data: { description: input.description },
+        data: input.isEnglish
+          ? { englishDescription: input.description }
+          : { description: input.description },
       });
 
-      // Trigger translation if description is provided
-      if (input.description) {
+      // Trigger async translation to English via Inngest only for Portuguese descriptions
+      if (!input.isEnglish) {
         await inngest.send({
           name: "opportunity/translate-description",
           data: {
-            opportunityId: updated.id,
+            opportunityId: input.id,
             description: input.description,
           },
         });
