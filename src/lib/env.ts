@@ -21,6 +21,8 @@ export const env = createEnv({
     GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1),
     UPLOADTHING_TOKEN: z.string().min(1),
     RESEND_API_KEY: z.string().min(1),
+    INNGEST_EVENT_KEY: z.string(),
+    INNGEST_API_BASE_URL: z.url(),
   },
 
   /**
