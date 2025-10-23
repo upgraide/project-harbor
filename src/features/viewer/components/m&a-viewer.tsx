@@ -873,6 +873,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         {opportunity.holdPeriod +
+                          " " +
                           t("coInvestmentCard.table.body.holdPeriod.units")}
                       </TableCell>
                     </TableRow>

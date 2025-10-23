@@ -3033,6 +3033,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   <TableCell className="px-6 py-4">
                     {opportunity.holdPeriod != null
                       ? opportunity.holdPeriod +
+                        " " +
                         t("coInvestmentCard.table.body.holdPeriod.units")
                       : "N/A"}
                   </TableCell>
