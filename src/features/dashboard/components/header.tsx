@@ -19,7 +19,12 @@ import { Role } from "@/generated/prisma";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
-import { dashboardPath, dashboardSettingsPath, indexPath } from "@/paths";
+import {
+  backofficePath,
+  dashboardPath,
+  dashboardSettingsPath,
+  indexPath,
+} from "@/paths";
 
 export function Navigation({
   user,
@@ -77,9 +82,11 @@ export function Navigation({
 
         <div className="flex h-10 items-center gap-3">
           {isTeamOrAdmin && (
-            <Button className="h-8" size="sm" variant="default">
-              {t("admin")}
-            </Button>
+            <Link href={backofficePath()}>
+              <Button className="h-8" size="sm" variant="default">
+                {t("admin")}
+              </Button>
+            </Link>
           )}
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
