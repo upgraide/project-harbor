@@ -3,6 +3,7 @@
 "use client";
 
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import {
   Bar,
   CartesianGrid,
@@ -43,11 +44,11 @@ export const ViewerError = () => {
   return <ErrorView message={t("errorMessage")} />;
 };
 
-const chartConfig = (t: ReturnType<typeof useScopedI18n>) =>
+const chartConfig = (t: ReturnType<typeof useScopedI18n>, isDark: boolean) =>
   ({
     revenue: {
       label: t("graphCard.table.header.revenue"),
-      color: "#113152",
+      color: isDark ? "#BECED7" : "#113152",
     },
     ebitda: {
       label: t("graphCard.table.header.ebitda"),
@@ -63,6 +64,12 @@ const chartConfig = (t: ReturnType<typeof useScopedI18n>) =>
 export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("dashboard.mAndAViewer");
   const locale = useCurrentLocale();
+  const { theme, resolvedTheme } = useTheme();
+  const isDark =
+    resolvedTheme === "dark" ||
+    (theme === "system" &&
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
 
   const hasDescription = () => {
@@ -445,7 +452,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
               <CardContent className="h-full p-2 md:p-4">
                 <ChartContainer
                   className="h-full w-full"
-                  config={chartConfig(t)}
+                  config={chartConfig(t, isDark)}
                 >
                   <ComposedChart
                     accessibilityLayer
@@ -494,12 +501,12 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                     />
                     <Bar
                       dataKey="revenue"
-                      fill="#113152"
+                      fill={isDark ? "#BECED7" : "#113152"}
                       label={{
                         position: "top",
                         fontSize: 12,
                         fontWeight: 600,
-                        fill: "#000000",
+                        fill: isDark ? "#FFFFFF" : "#000000",
                         formatter: (value: number) => value.toFixed(2),
                       }}
                       radius={[4, 4, 0, 0]}
@@ -513,7 +520,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                         fontSize: 12,
                         formatter: (value: number) => value.toFixed(2),
                       }}
-                      stroke="#AEAEAE"
+                      stroke="#4F565A"
                       strokeWidth={2}
                       type="monotone"
                       yAxisId="right"

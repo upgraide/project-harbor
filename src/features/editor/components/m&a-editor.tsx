@@ -4,6 +4,7 @@
 
 import { EditIcon, EllipsisVerticalIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { useState } from "react";
 import {
   Bar,
@@ -142,11 +143,11 @@ import {
 import { cn, UploadButton } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
-const chartConfig = (t: ReturnType<typeof useScopedI18n>) =>
+const chartConfig = (t: ReturnType<typeof useScopedI18n>, isDark: boolean) =>
   ({
     revenue: {
       label: t("graphCard.table.header.revenue"),
-      color: "#113152",
+      color: isDark ? "#BECED7" : "#113152",
     },
     ebitda: {
       label: t("graphCard.table.header.ebitda"),
@@ -173,6 +174,12 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
   const locale = useCurrentLocale();
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
+  const { theme, resolvedTheme } = useTheme();
+  const isDark =
+    resolvedTheme === "dark" ||
+    (theme === "system" &&
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   // Update operations
   const updateDescription = useUpdateOpportunityDescription();
@@ -1433,7 +1440,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             <CardTitle className="font-bold text-lg" />
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig(t)}>
+            <ChartContainer config={chartConfig(t, isDark)}>
               <ComposedChart
                 accessibilityLayer
                 data={opportunity.graphRows ?? []}
@@ -1478,12 +1485,12 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                 />
                 <Bar
                   dataKey="revenue"
-                  fill="#113152"
+                  fill={isDark ? "#BECED7" : "#113152"}
                   label={{
                     position: "top",
                     fontSize: 12,
                     fontWeight: 600,
-                    fill: "#000000",
+                    fill: isDark ? "#FFFFFF" : "#000000",
                     formatter: (value: number) => value.toFixed(2),
                   }}
                   radius={[4, 4, 0, 0]}
@@ -1497,7 +1504,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     fontSize: 12,
                     formatter: (value: number) => value.toFixed(2),
                   }}
-                  stroke="#AEAEAE"
+                  stroke="#4F565A"
                   strokeWidth={2}
                   type="monotone"
                   yAxisId="right"
