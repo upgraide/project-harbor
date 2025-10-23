@@ -1,7 +1,7 @@
 "use client";
 
 import { UploadIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -26,19 +26,13 @@ const UpdateAvatarCard = ({
   const updateAvatar = useUpdateProfileAvatar();
   const deleteFile = useDeleteUploadedFile();
   const [isRemoving, setIsRemoving] = useState(false);
-  const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-
-  // Sync current image with session
-  useEffect(() => {
-    if (session?.user.image) {
-      setCurrentImage(session.user.image);
-    }
-  }, [session?.user.image]);
 
   if (!session?.user) {
     return null;
   }
+
+  const currentImage = session.user.image;
 
   const handleRemoveAvatar = async () => {
     if (!currentImage) {
@@ -46,8 +40,6 @@ const UpdateAvatarCard = ({
     }
 
     setIsRemoving(true);
-    const oldImage = currentImage;
-    setCurrentImage(null);
 
     await toast.promise(
       (async () => {
@@ -58,11 +50,14 @@ const UpdateAvatarCard = ({
         // Delete the old image from uploadthing
         try {
           await deleteFile.mutateAsync({
-            fileUrl: oldImage,
+            fileUrl: currentImage,
           });
         } catch (_error) {
           // Handle error silently
         }
+
+        // Force page reload
+        location.reload();
       })(),
       {
         loading: t("removeToast.loading"),
@@ -74,10 +69,7 @@ const UpdateAvatarCard = ({
   };
 
   const getDisplayImage = () =>
-    currentImage ||
-    (session.user.image
-      ? session.user.image
-      : `https://avatar.vercel.sh/${session.user.email}`);
+    currentImage || `https://avatar.vercel.sh/${session.user.email}`;
 
   const getAvatarFallback = () =>
     session.user.name && session.user.name.length > 0
@@ -126,10 +118,6 @@ const UpdateAvatarCard = ({
                 onClientUploadComplete={async (res) => {
                   if (res && res.length > 0) {
                     const newImageUrl = res[0].url;
-                    const oldImageUrl = currentImage || session.user.image;
-
-                    // Update immediately
-                    setCurrentImage(newImageUrl);
 
                     await toast.promise(
                       (async () => {
@@ -138,15 +126,18 @@ const UpdateAvatarCard = ({
                         });
 
                         // Delete old image from uploadthing if it exists
-                        if (oldImageUrl) {
+                        if (currentImage) {
                           try {
                             await deleteFile.mutateAsync({
-                              fileUrl: oldImageUrl,
+                              fileUrl: currentImage,
                             });
                           } catch (_error) {
                             // Handle error silently
                           }
                         }
+
+                        // Force page reload
+                        location.reload();
                       })(),
                       {
                         error: t("uploadToast.error"),
