@@ -39,14 +39,7 @@ export const AppHeader = ({ user }: AppHeaderProps) => {
           <DropdownMenuTrigger asChild>
             <Button className="h-8 w-8 rounded-full" variant="ghost">
               <Avatar className="h-8 w-8 rounded-full">
-                <AvatarImage
-                  alt={user.email}
-                  src={
-                    user.image
-                      ? user.image
-                      : `https://avatar.vercel.sh/${user.email}`
-                  }
-                />
+                <AvatarImage alt={user.email} src={user.image || ""} />
                 <AvatarFallback className="h-8 w-8 rounded-full">
                   {user.name && user.name.length > 0
                     ? user.name.charAt(0).toUpperCase()
