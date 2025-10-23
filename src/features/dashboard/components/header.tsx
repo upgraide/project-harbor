@@ -82,7 +82,7 @@ export function Navigation({
 
         <div className="flex h-10 items-center gap-3">
           {isTeamOrAdmin && (
-            <Link href={backofficePath()}>
+            <Link href={backofficePath()} prefetch={true}>
               <Button className="h-8" size="sm" variant="default">
                 {t("admin")}
               </Button>
