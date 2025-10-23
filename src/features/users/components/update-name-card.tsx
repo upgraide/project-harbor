@@ -34,6 +34,9 @@ const UpdateNameCard = ({ initialName }: UpdateNameCardProps) => {
     },
   });
 
+  const currentName = form.watch("name");
+  const isNameChanged = currentName !== (initialName || "");
+
   const onSubmit = (values: UpdateProfileSchemaType) => {
     toast.promise(
       updateProfileName.mutateAsync({
@@ -78,7 +81,7 @@ const UpdateNameCard = ({ initialName }: UpdateNameCardProps) => {
         <div className="flex min-h-14 w-full items-center justify-between rounded-lg rounded-t-none border-border border-t bg-secondary px-6">
           <p className="font-normal text-sm">{t("warning")}</p>
           <Button
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || !isNameChanged}
             size="sm"
             type="submit"
           >

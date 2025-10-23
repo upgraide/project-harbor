@@ -107,7 +107,6 @@ const UpdateAvatarCard = ({
                   button:
                     "border-0 bg-transparent p-0 ring-0 text-transparent hover:bg-transparent focus-visible:ring-0 h-full w-full cursor-pointer text-[0px]",
                   container: "h-full w-full",
-                  label: "hidden",
                   allowedContent: "hidden",
                 }}
                 className="ut-button:h-full ut-button:w-full ut-button:cursor-pointer ut-button:border-0 ut-button:bg-transparent ut-button:p-0 ut-button:text-[0px] ut-button:text-transparent ut-button:ring-0 ut-button:hover:bg-transparent ut-button:focus-visible:ring-0"
