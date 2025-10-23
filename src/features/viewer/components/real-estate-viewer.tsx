@@ -133,27 +133,45 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
       {hasImages() && (
         <section>
           <Card className="border-none bg-transparent shadow-none">
-            <CardHeader>
-              <CardTitle className="font-bold text-lg">
-                {t("imagesCard.title")}
-              </CardTitle>
-            </CardHeader>
             <CardContent>
               {opportunity.images && opportunity.images.length > 0 ? (
-                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {opportunity.images.map((imageUrl) => (
-                    <div
-                      className="relative aspect-square overflow-hidden rounded-lg bg-muted"
-                      key={imageUrl}
-                    >
+                <div className="flex flex-col gap-4">
+                  {opportunity.images.length === 1 ? (
+                    <div className="relative aspect-square overflow-hidden rounded-lg bg-muted md:aspect-video">
                       <Image
                         alt="Opportunity image"
                         className="object-cover"
                         fill
-                        src={imageUrl}
+                        src={opportunity.images[0]}
                       />
                     </div>
-                  ))}
+                  ) : (
+                    <>
+                      <div className="relative aspect-square overflow-hidden rounded-lg bg-muted md:aspect-video">
+                        <Image
+                          alt="Opportunity image"
+                          className="object-cover"
+                          fill
+                          src={opportunity.images[0]}
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                        {opportunity.images.slice(1).map((imageUrl) => (
+                          <div
+                            className="relative aspect-square overflow-hidden rounded-lg bg-muted"
+                            key={imageUrl}
+                          >
+                            <Image
+                              alt="Opportunity image"
+                              className="object-cover"
+                              fill
+                              src={imageUrl}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center rounded-lg border border-muted-foreground/50 border-dashed py-12">
