@@ -95,24 +95,46 @@ export const translateDescription = inngest.createFunction(
       await step.run("update-opportunity-english-description", async () => {
         Sentry.logger.info("Updating database", { opportunityId });
 
-        // First verify the opportunity exists
-        const existing = await prisma.mergerAndAcquisition.findUnique({
+        // First verify the opportunity exists in either MergerAndAcquisition or RealEstate
+        const mergerAcqExisting = await prisma.mergerAndAcquisition.findUnique({
           where: { id: opportunityId },
         });
 
-        if (!existing) {
-          throw new Error(`Opportunity not found: ${opportunityId}`);
+        if (mergerAcqExisting) {
+          const result = await prisma.mergerAndAcquisition.update({
+            where: { id: opportunityId },
+            data: { englishDescription: translatedText },
+          });
+
+          Sentry.logger.info(
+            "Database update successful (MergerAndAcquisition)",
+            {
+              opportunityId,
+              newEnglishDescriptionLength:
+                result.englishDescription?.length ?? 0,
+            }
+          );
+          return;
         }
 
-        const result = await prisma.mergerAndAcquisition.update({
+        const realEstateExisting = await prisma.realEstate.findUnique({
           where: { id: opportunityId },
-          data: { englishDescription: translatedText },
         });
 
-        Sentry.logger.info("Database update successful", {
-          opportunityId,
-          newEnglishDescriptionLength: result.englishDescription?.length ?? 0,
-        });
+        if (realEstateExisting) {
+          const result = await prisma.realEstate.update({
+            where: { id: opportunityId },
+            data: { englishDescription: translatedText },
+          });
+
+          Sentry.logger.info("Database update successful (RealEstate)", {
+            opportunityId,
+            newEnglishDescriptionLength: result.englishDescription?.length ?? 0,
+          });
+          return;
+        }
+
+        throw new Error(`Opportunity not found: ${opportunityId}`);
       });
 
       Sentry.logger.info("Description translated successfully", {
