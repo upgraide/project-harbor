@@ -22,7 +22,6 @@ export const env = createEnv({
     UPLOADTHING_TOKEN: z.string().min(1),
     RESEND_API_KEY: z.string().min(1),
     INNGEST_EVENT_KEY: z.string(),
-    INNGEST_API_BASE_URL: z.url(),
   },
 
   /**
