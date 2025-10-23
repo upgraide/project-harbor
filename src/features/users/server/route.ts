@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { sendInviteEmail } from "@/lib/emails/send-invite";
 import { generatePassword } from "@/lib/generate-password";
+import { deleteFromUploadthing } from "@/lib/uploadthing-server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { updateProfileSchema } from "../schemas/update-profile-schema";
 
@@ -185,8 +186,18 @@ export const usersRouter = createTRPCRouter({
     }),
 
   updateAvatar: protectedProcedure
-    .input(z.object({ image: z.string().nullable() }))
+    .input(
+      z.object({
+        image: z.string().nullable(),
+        oldImage: z.string().optional(),
+      })
+    )
     .mutation(async ({ input, ctx }) => {
+      // Delete old image from uploadthing if it exists
+      if (input.oldImage) {
+        await deleteFromUploadthing(input.oldImage);
+      }
+
       const user = await prisma.user.update({
         where: { id: ctx.auth.user.id },
         data: {
@@ -203,28 +214,12 @@ export const usersRouter = createTRPCRouter({
   deleteUploadedFile: protectedProcedure
     .input(z.object({ fileUrl: z.string() }))
     .mutation(async ({ input }) => {
-      try {
-        const response = await fetch("https://uploadthing.com/api/deleteFile", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.UPLOADTHING_SECRET}`,
-          },
-          body: JSON.stringify({
-            url: input.fileUrl,
-          }),
-        });
+      const success = await deleteFromUploadthing(input.fileUrl);
 
-        if (!response.ok) {
-          throw new Error("Failed to delete file from uploadthing");
-        }
-
-        return { success: true };
-      } catch (error) {
-        if (error instanceof Error) {
-          throw new Error(`Failed to delete file: ${error.message}`);
-        }
-        throw error;
+      if (!success) {
+        throw new Error("Failed to delete file from uploadthing");
       }
+
+      return { success: true };
     }),
 });

@@ -9,10 +9,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
 import { UploadButton } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
-import {
-  useDeleteUploadedFile,
-  useUpdateProfileAvatar,
-} from "../hooks/use-update-profile";
+import { useUpdateProfileAvatar } from "../hooks/use-update-profile";
 
 type UpdateAvatarCardProps = {
   initialImage?: string | null;
@@ -24,7 +21,6 @@ const UpdateAvatarCard = ({
   const t = useScopedI18n("dashboard.settings.updateAvatarCard");
   const { data: session } = authClient.useSession();
   const updateAvatar = useUpdateProfileAvatar();
-  const deleteFile = useDeleteUploadedFile();
   const [isRemoving, setIsRemoving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -41,31 +37,44 @@ const UpdateAvatarCard = ({
 
     setIsRemoving(true);
 
-    await toast.promise(
-      (async () => {
-        await updateAvatar.mutateAsync({
-          image: null,
-        });
+    try {
+      // Update avatar to null (which will delete old image via updateAvatar)
+      await updateAvatar.mutateAsync({
+        image: null,
+        oldImage: currentImage,
+      });
 
-        // Delete the old image from uploadthing
-        try {
-          await deleteFile.mutateAsync({
-            fileUrl: currentImage,
-          });
-        } catch (_error) {
-          // Handle error silently
-        }
+      // Force page reload after mutation completes
+      location.reload();
+    } catch {
+      toast.error(t("removeToast.error"));
+      setIsRemoving(false);
+    }
+  };
 
-        // Force page reload
-        location.reload();
-      })(),
-      {
-        loading: t("removeToast.loading"),
-        success: t("removeToast.success"),
-        error: t("removeToast.error"),
-      }
-    );
-    setIsRemoving(false);
+  const handleUploadComplete = async (res: typeof res | undefined) => {
+    if (!res || res.length === 0) {
+      toast.error("No file uploaded");
+      setIsUploading(false);
+      return;
+    }
+
+    const newImageUrl = res[0].url;
+
+    try {
+      await updateAvatar.mutateAsync({
+        image: newImageUrl,
+        oldImage: currentImage || undefined,
+      });
+
+      // Force page reload after mutation completes
+      location.reload();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      toast.error(`${t("uploadToast.error")}: ${errorMessage}`);
+      setIsUploading(false);
+    }
   };
 
   const getDisplayImage = () => currentImage || undefined;
@@ -114,41 +123,7 @@ const UpdateAvatarCard = ({
                   setIsUploading(true);
                   return files;
                 }}
-                onClientUploadComplete={async (res) => {
-                  if (res && res.length > 0) {
-                    const newImageUrl = res[0].url;
-
-                    await toast.promise(
-                      (async () => {
-                        await updateAvatar.mutateAsync({
-                          image: newImageUrl,
-                        });
-
-                        // Delete old image from uploadthing if it exists
-                        if (currentImage) {
-                          try {
-                            await deleteFile.mutateAsync({
-                              fileUrl: currentImage,
-                            });
-                          } catch (_error) {
-                            // Handle error silently
-                          }
-                        }
-
-                        // Force page reload
-                        location.reload();
-                      })(),
-                      {
-                        error: t("uploadToast.error"),
-                        loading: t("uploadToast.loading"),
-                        success: t("uploadToast.success"),
-                      }
-                    );
-                  } else {
-                    toast.error("No file uploaded");
-                  }
-                  setIsUploading(false);
-                }}
+                onClientUploadComplete={handleUploadComplete}
                 onUploadError={(error: Error) => {
                   toast.error(error.message);
                   setIsUploading(false);
@@ -162,15 +137,13 @@ const UpdateAvatarCard = ({
         <p className="font-normal text-sm">{t("uploadHint")}</p>
         {currentImage && (
           <Button
-            disabled={
-              isRemoving || updateAvatar.isPending || deleteFile.isPending
-            }
+            disabled={isRemoving || updateAvatar.isPending}
             onClick={handleRemoveAvatar}
             size="sm"
             type="button"
             variant="outline"
           >
-            {isRemoving || updateAvatar.isPending || deleteFile.isPending ? (
+            {isRemoving || updateAvatar.isPending ? (
               <>
                 <Spinner className="size-4" />
                 {t("resetButton")}
