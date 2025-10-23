@@ -68,8 +68,7 @@ const UpdateAvatarCard = ({
     setIsRemoving(false);
   };
 
-  const getDisplayImage = () =>
-    currentImage || `https://avatar.vercel.sh/${session.user.email}`;
+  const getDisplayImage = () => currentImage;
 
   const getAvatarFallback = () =>
     session.user.name && session.user.name.length > 0

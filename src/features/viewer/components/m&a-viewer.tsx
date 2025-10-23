@@ -153,7 +153,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
 
       {hasImages() && (
         <section>
-          <Card className="border-none bg-transparent shadow-none">
+          <Card className="mx-24 border-none bg-transparent shadow-none">
             <CardContent>
               {opportunity.images && opportunity.images.length > 0 ? (
                 <div className="flex flex-col gap-4">
@@ -718,7 +718,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
             <CardContent>
               {opportunity.shareholderStructure &&
               opportunity.shareholderStructure.length > 0 ? (
-                <div className="flex flex-col gap-4">
+                <div className="mx-24 flex flex-col gap-4">
                   {opportunity.shareholderStructure.map((imageUrl) => (
                     <div
                       className="relative aspect-square overflow-hidden rounded-lg bg-muted md:aspect-video"

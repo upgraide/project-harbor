@@ -63,11 +63,7 @@ export function Navigation({
             <Avatar className="h-8 w-8 rounded-full">
               <AvatarImage
                 alt={user.email}
-                src={
-                  user.image
-                    ? user.image
-                    : `https://avatar.vercel.sh/${user.email}`
-                }
+                src={user.image ? user.image : ""}
               />
               <AvatarFallback className="h-8 w-8 rounded-full">
                 {user.name && user.name.length > 0
@@ -94,11 +90,7 @@ export function Navigation({
                 <Avatar className="h-8 w-8 rounded-full">
                   <AvatarImage
                     alt={user.email}
-                    src={
-                      user.image
-                        ? user.image
-                        : `https://avatar.vercel.sh/${user.email}`
-                    }
+                    src={user.image ? user.image : ""}
                   />
                   <AvatarFallback className="h-8 w-8 rounded-full">
                     {user.name && user.name.length > 0
