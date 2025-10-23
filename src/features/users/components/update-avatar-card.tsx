@@ -68,7 +68,7 @@ const UpdateAvatarCard = ({
     setIsRemoving(false);
   };
 
-  const getDisplayImage = () => currentImage;
+  const getDisplayImage = () => currentImage || undefined;
 
   const getAvatarFallback = () =>
     session.user.name && session.user.name.length > 0
