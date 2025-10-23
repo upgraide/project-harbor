@@ -111,8 +111,9 @@ const UpdateAvatarCard = ({
                 }}
                 className="ut-button:h-full ut-button:w-full ut-button:cursor-pointer ut-button:border-0 ut-button:bg-transparent ut-button:p-0 ut-button:text-[0px] ut-button:text-transparent ut-button:ring-0 ut-button:hover:bg-transparent ut-button:focus-visible:ring-0"
                 endpoint="imageUploader"
-                onBeforeUploadBegin={() => {
+                onBeforeUploadBegin={(files) => {
                   setIsUploading(true);
+                  return files;
                 }}
                 onClientUploadComplete={async (res) => {
                   if (res && res.length > 0) {
