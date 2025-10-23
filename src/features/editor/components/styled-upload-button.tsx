@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import type { ClientUploadedFileData } from "uploadthing/types";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { cn, UploadButton as UTUploadButton } from "@/lib/utils";
 
@@ -9,9 +10,7 @@ type StyledUploadButtonProps = {
   className?: string;
   endpoint: keyof OurFileRouter;
   onClientUploadComplete?: (
-    res: Parameters<
-      React.ComponentProps<typeof UTUploadButton>["onClientUploadComplete"]
-    >[0]
+    res: ClientUploadedFileData<{ uploadedBy: string }>[]
   ) => void | Promise<void>;
   onUploadError?: (error: Error) => void;
 };
