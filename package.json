@@ -9,6 +9,7 @@
     "lint": "biome check",
     "format": "biome format --write",
     "inngest:dev": "pnpm dlx inngest-cli dev",
+    "postinstall": "prisma generate",
     "prisma:studio": "prisma studio",
     "dev:all": "mprocs"
   },
