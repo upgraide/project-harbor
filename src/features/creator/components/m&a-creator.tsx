@@ -148,7 +148,6 @@ export const Creator = () => {
       toast.error("Failed to create opportunity");
     }
   };
-
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
       <h1 className="font-bold text-2xl md:text-4xl">{t("title")}</h1>

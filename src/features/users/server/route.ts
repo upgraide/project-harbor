@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { sendInviteEmail } from "@/lib/emails/send-invite";
 import { generatePassword } from "@/lib/generate-password";
-import { deleteFromUploadthing } from "@/lib/uploadthing-server";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const usersRouter = createTRPCRouter({
@@ -133,16 +132,11 @@ export const usersRouter = createTRPCRouter({
           throw new Error("Failed to create user");
         }
 
-        // Send invite email
-        const baseUrl = process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : "http://localhost:3000";
-
         await sendInviteEmail({
           userEmail: email,
           password: generatedPassword,
           language,
-          inviteLink: `${baseUrl}/login`,
+          inviteLink: "https://www.harborpartners.app/login",
         });
 
         return {
@@ -170,64 +164,5 @@ export const usersRouter = createTRPCRouter({
         throw new Error("User not found");
       }
       return user.role;
-    }),
-
-  updateProfile: protectedProcedure
-    .input(
-      z.object({
-        name: z.string().min(1, "Name is required"),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const userId = ctx.auth.user.id;
-
-      const updatedUser = await prisma.user.update({
-        where: { id: userId },
-        data: {
-          name: input.name,
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-        },
-      });
-
-      return updatedUser;
-    }),
-
-  updateAvatar: protectedProcedure
-    .input(
-      z.object({
-        image: z.string().nullable(),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const userId = ctx.auth.user.id;
-
-      const updatedUser = await prisma.user.update({
-        where: { id: userId },
-        data: {
-          image: input.image,
-        },
-        select: {
-          id: true,
-          image: true,
-          email: true,
-        },
-      });
-
-      return updatedUser;
-    }),
-
-  deleteUploadedFile: protectedProcedure
-    .input(
-      z.object({
-        fileUrl: z.string(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      const success = await deleteFromUploadthing(input.fileUrl);
-      return { success };
     }),
 });
