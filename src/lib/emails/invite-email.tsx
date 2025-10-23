@@ -82,7 +82,7 @@ export const InviteEmail = ({
                 alt="Harbor Partners"
                 className="mx-auto my-0"
                 height="50"
-                src={`${baseUrl}/assets/logo-dark.png`}
+                src={"https://www.harborpartners.app/assets/logo-dark.png"}
                 width="200"
               />
             </Section>
