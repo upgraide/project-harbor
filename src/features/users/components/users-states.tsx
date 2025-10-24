@@ -1,3 +1,5 @@
+"use client";
+
 import { ErrorView, LoadingView } from "@/components/entity-components";
 import { useScopedI18n } from "@/locales/client";
 
