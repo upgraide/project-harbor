@@ -106,9 +106,14 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         holdPeriod: parseOptionalFloat(input.holdPeriod),
       };
 
-      // Create the opportunity
+      // Create the opportunity with analytics
       const created = await prisma.mergerAndAcquisition.create({
-        data,
+        data: {
+          ...data,
+          analytics: {
+            create: {},
+          },
+        },
       });
 
       // Trigger translation if description is provided
@@ -1097,6 +1102,9 @@ export const realEstateRouter = createTRPCRouter({
           sponsorPresentation: input.sponsorPresentation,
           promoteStructure: input.promoteStructure,
           createdBy: ctx.auth.user.id,
+          analytics: {
+            create: {},
+          },
         },
       })
     ),

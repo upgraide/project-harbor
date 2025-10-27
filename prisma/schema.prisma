@@ -146,6 +146,9 @@ model MergerAndAcquisition {
   userId    String   // Who created the Merger and Acquisition
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  // Relations
+  analytics OpportunityAnalytics?
 }
 
 model RealEstate {
@@ -224,7 +227,35 @@ model RealEstate {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
+  // Relations
+  analytics OpportunityAnalytics?
+  
   @@map("real_estate")
+}
+
+model OpportunityAnalytics {
+  id        String   @id @default(cuid())
+  
+  // Polymorphic relationship - one of these will be set
+  mergerAndAcquisitionId String? @unique
+  mergerAndAcquisition   MergerAndAcquisition? @relation(fields: [mergerAndAcquisitionId], references: [id], onDelete: Cascade)
+  
+  realEstateId String? @unique
+  realEstate   RealEstate? @relation(fields: [realEstateId], references: [id], onDelete: Cascade)
+  
+  // Analytics metrics
+  views     Int      @default(0)
+  
+  // Future analytics fields can be added here:
+  // uniqueViews Int @default(0)
+  // downloads Int @default(0)
+  // shares Int @default(0)
+  // lastViewedAt DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("opportunity_analytics")
 }
 
 // Enums for type safety

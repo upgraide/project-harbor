@@ -21,6 +21,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  useIncrementMnaViews,
+  useIncrementRealEstateViews,
+} from "@/features/opportunities/hooks/use-analytics";
 import { useEntitySearch } from "@/features/opportunities/hooks/use-entity-search";
 import { useSuspenseOpportunities } from "@/features/opportunities/hooks/use-opportunities";
 import { useOpportunitiesParams } from "@/features/opportunities/hooks/use-opportunities-params";
@@ -185,6 +189,8 @@ type OpportunityItemProps = {
 export const OpportunityItem = ({ data }: OpportunityItemProps) => {
   const t = useScopedI18n("dashboard.opportunities");
   const locale = useCurrentLocale();
+  const incrementMnaViews = useIncrementMnaViews();
+  const incrementRealEstateViews = useIncrementRealEstateViews();
 
   const href =
     data.opportunityType === "mna"
@@ -195,6 +201,15 @@ export const OpportunityItem = ({ data }: OpportunityItemProps) => {
 
   const displayDescription =
     locale === "en" ? data.englishDescription : data.description;
+
+  const handleClick = () => {
+    // Track view when user clicks to view opportunity
+    if (data.opportunityType === "mna") {
+      incrementMnaViews.mutate({ opportunityId: data.id });
+    } else {
+      incrementRealEstateViews.mutate({ opportunityId: data.id });
+    }
+  };
 
   return (
     <Card className="flex flex-col overflow-hidden py-0 shadow-sm transition-shadow hover:shadow-md">
@@ -237,7 +252,7 @@ export const OpportunityItem = ({ data }: OpportunityItemProps) => {
           </p>
         </div>
 
-        <Link className="w-full" href={href} prefetch>
+        <Link className="w-full" href={href} onClick={handleClick} prefetch>
           <Button className="w-full" type="button" variant="default">
             {t("viewButton")}
           </Button>

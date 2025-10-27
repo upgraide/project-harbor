@@ -255,6 +255,7 @@ type EntityItemProps = {
   onRemove?: () => void | Promise<void>;
   isRemoving?: boolean;
   className?: string;
+  onClick?: () => void;
 };
 
 export const EntityItem = ({
@@ -266,6 +267,7 @@ export const EntityItem = ({
   onRemove,
   isRemoving,
   className,
+  onClick,
 }: EntityItemProps) => {
   const t = useScopedI18n("backoffice.entityComponents");
   const handleRemove = async (e: React.MouseEvent) => {
@@ -280,8 +282,13 @@ export const EntityItem = ({
       await onRemove();
     }
   };
+
+  const handleClick = () => {
+    onClick?.();
+  };
+
   return (
-    <Link href={href} prefetch>
+    <Link href={href} onClick={handleClick} prefetch>
       <Card
         className={cn(
           "cursor-pointer p-4 shadow-none hover:shadow",
