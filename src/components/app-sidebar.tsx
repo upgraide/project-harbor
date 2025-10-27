@@ -2,6 +2,7 @@
 
 import {
   BriefcaseBusinessIcon,
+  ChartBarIcon,
   HomeIcon,
   LayoutPanelLeft,
   LogOutIcon,
@@ -12,6 +13,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { useScopedI18n } from "@/locales/client";
 import {
+  backofficeAnalyticsPath,
   backofficeMergeAndAcquisitionPath,
   backofficePath,
   backofficeRealEstatePath,
@@ -58,6 +60,11 @@ const createMenuItems = (t: ReturnType<typeof useScopedI18n>) => [
         title: t("items.users.title"),
         icon: UsersIcon,
         url: backofficeUsersPath(),
+      },
+      {
+        title: t("items.analytics.title"),
+        icon: ChartBarIcon,
+        url: backofficeAnalyticsPath(),
       },
     ],
   },

@@ -13,6 +13,9 @@ export default {
     users: {
       title: "Users",
     },
+    analytics: {
+      title: "Analytics",
+    },
     logout: {
       title: "Logout",
     },

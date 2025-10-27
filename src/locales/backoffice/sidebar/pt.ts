@@ -13,6 +13,9 @@ export default {
     users: {
       title: "Utilizadores",
     },
+    analytics: {
+      title: "Estatísticas",
+    },
     logout: {
       title: "Sair",
     },

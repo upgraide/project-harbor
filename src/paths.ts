@@ -28,3 +28,5 @@ export const backofficeRealEstateOpportunityPath = (id: string) =>
   `/backoffice/real-estate/${id}`;
 export const backofficeRealEstateOpportunityCreatePath = () =>
   "/backoffice/real-estate/create";
+
+export const backofficeAnalyticsPath = () => "/backoffice/analytics";
