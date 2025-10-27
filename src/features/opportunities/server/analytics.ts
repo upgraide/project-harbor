@@ -137,6 +137,7 @@ export const analyticsRouter = createTRPCRouter({
               id: true,
               name: true,
               images: true,
+              updatedAt: true,
             },
           },
           realEstate: {
@@ -144,6 +145,7 @@ export const analyticsRouter = createTRPCRouter({
               id: true,
               name: true,
               images: true,
+              updatedAt: true,
             },
           },
         },
