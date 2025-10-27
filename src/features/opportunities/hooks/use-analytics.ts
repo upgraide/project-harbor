@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 /**
@@ -47,16 +47,46 @@ export const useTopViewedOpportunities = (
 
 /**
  * Hook to increment view count for a Merger & Acquisition opportunity
+ * Automatically invalidates analytics queries on success
  */
 export const useIncrementMnaViews = () => {
   const trpc = useTRPC();
-  return useMutation(trpc.analytics.incrementMnaViews.mutationOptions());
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.analytics.incrementMnaViews.mutationOptions({
+      onSuccess: () => {
+        // Invalidate all analytics queries to refetch with updated data
+        queryClient.invalidateQueries(
+          trpc.analytics.getTopViewed.queryOptions({ limit: 5, type: "all" })
+        );
+        queryClient.invalidateQueries(
+          trpc.analytics.getAggregatedAnalytics.queryOptions()
+        );
+      },
+    })
+  );
 };
 
 /**
  * Hook to increment view count for a Real Estate opportunity
+ * Automatically invalidates analytics queries on success
  */
 export const useIncrementRealEstateViews = () => {
   const trpc = useTRPC();
-  return useMutation(trpc.analytics.incrementRealEstateViews.mutationOptions());
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.analytics.incrementRealEstateViews.mutationOptions({
+      onSuccess: () => {
+        // Invalidate all analytics queries to refetch with updated data
+        queryClient.invalidateQueries(
+          trpc.analytics.getTopViewed.queryOptions({ limit: 5, type: "all" })
+        );
+        queryClient.invalidateQueries(
+          trpc.analytics.getAggregatedAnalytics.queryOptions()
+        );
+      },
+    })
+  );
 };
