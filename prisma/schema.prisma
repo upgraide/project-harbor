@@ -26,6 +26,10 @@ model User {
   accounts      Account[]
   role          Role      @default(USER)
 
+  // Relations for opportunity interactions
+  mergerAndAcquisitionInterests UserMergerAndAcquisitionInterest[] @relation("userMergerAndAcquisitions")
+  realEstateInterests           UserRealEstateInterest[]           @relation("userRealEstates")
+
   @@unique([email])
   @@map("user")
 }
@@ -149,6 +153,7 @@ model MergerAndAcquisition {
   
   // Relations
   analytics OpportunityAnalytics?
+  userInterests UserMergerAndAcquisitionInterest[] @relation("mergerAndAcquisitionUsers")
 }
 
 model RealEstate {
@@ -229,6 +234,7 @@ model RealEstate {
   
   // Relations
   analytics OpportunityAnalytics?
+  userInterests UserRealEstateInterest[] @relation("realEstateUsers")
   
   @@map("real_estate")
 }
@@ -256,6 +262,51 @@ model OpportunityAnalytics {
   updatedAt DateTime @updatedAt
   
   @@map("opportunity_analytics")
+}
+
+// User Interest and NDA Tracking Models
+model UserMergerAndAcquisitionInterest {
+  id String @id @default(cuid())
+  
+  userId String
+  user User @relation("userMergerAndAcquisitions", fields: [userId], references: [id], onDelete: Cascade)
+  
+  mergerAndAcquisitionId String
+  mergerAndAcquisition MergerAndAcquisition @relation("mergerAndAcquisitionUsers", fields: [mergerAndAcquisitionId], references: [id], onDelete: Cascade)
+  
+  // Interest status: true = interested, false = not interested
+  interested Boolean @default(false)
+  
+  // NDA tracking
+  ndaSigned Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, mergerAndAcquisitionId])
+  @@map("user_m_and_a_interest")
+}
+
+model UserRealEstateInterest {
+  id String @id @default(cuid())
+  
+  userId String
+  user User @relation("userRealEstates", fields: [userId], references: [id], onDelete: Cascade)
+  
+  realEstateId String
+  realEstate RealEstate @relation("realEstateUsers", fields: [realEstateId], references: [id], onDelete: Cascade)
+  
+  // Interest status: true = interested, false = not interested
+  interested Boolean @default(false)
+  
+  // NDA tracking
+  ndaSigned Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, realEstateId])
+  @@map("user_real_estate_interest")
 }
 
 // Enums for type safety
