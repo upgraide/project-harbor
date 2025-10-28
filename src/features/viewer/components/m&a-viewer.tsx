@@ -2,6 +2,7 @@
 /** biome-ignore-all lint/style/noMagicNumbers: Ignored */
 "use client";
 
+import { CheckCircle2, XCircle } from "lucide-react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -948,32 +949,29 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
           {handleMarkInterest.isPending ? (
             <Spinner className="mr-2" />
           ) : userInterest?.interested ? (
-            t("buttons.markInterestedDone")
-          ) : (
-            t("buttons.markInterested")
-          )}
+            <CheckCircle2 className="mr-2 h-4 w-4" />
+          ) : null}
+          {userInterest?.interested
+            ? t("buttons.markInterestedDone")
+            : t("buttons.markInterested")}
         </Button>
         <Button
-          className="w-full sm:w-auto"
+          className={cn("w-full sm:w-auto", userInterest?.interested === false)}
           disabled={
-            handleMarkNoInterest.isPending ||
-            (userInterest?.interested === false && !userInterest?.ndaSigned)
+            handleMarkNoInterest.isPending || userInterest?.interested === false
           }
           onClick={() => setShowNotInterestedDialog(true)}
           type="button"
-          variant={
-            userInterest?.interested === false && !userInterest?.ndaSigned
-              ? "destructive"
-              : "outline"
-          }
+          variant="destructive"
         >
           {handleMarkNoInterest.isPending ? (
             <Spinner className="mr-2" />
-          ) : userInterest?.interested === false && !userInterest?.ndaSigned ? (
-            t("buttons.notInterestedDone")
-          ) : (
-            t("buttons.notInterested")
-          )}
+          ) : userInterest?.interested === false ? (
+            <XCircle className="mr-2 h-4 w-4" />
+          ) : null}
+          {userInterest?.interested === false
+            ? t("buttons.notInterestedDone")
+            : t("buttons.notInterested")}
         </Button>
         <Button
           className="w-full sm:w-auto"
@@ -985,10 +983,11 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
           {handleSignNDA.isPending ? (
             <Spinner className="mr-2" />
           ) : userInterest?.ndaSigned ? (
-            t("buttons.signNDADone")
-          ) : (
-            t("buttons.signNDA")
-          )}
+            <CheckCircle2 className="mr-2 h-4 w-4" />
+          ) : null}
+          {userInterest?.ndaSigned
+            ? t("buttons.signNDADone")
+            : t("buttons.signNDA")}
         </Button>
       </section>
 
