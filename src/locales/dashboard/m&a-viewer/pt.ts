@@ -327,4 +327,20 @@ export default {
       },
     },
   },
+  buttons: {
+    markInterested: "Marcar como Interessado",
+    markInterestedDone: "Interessado",
+    notInterested: "Não Interessado",
+    notInterestedDone: "Não Interessado",
+    signNDA: "Assinar NDA",
+    signNDADone: "NDA Assinado",
+    submit: "Enviar",
+    cancel: "Cancelar",
+  },
+  notInterestedDialog: {
+    title: "Por que não está interessado?",
+    description:
+      "Por favor, diga-nos por que não está interessado nesta oportunidade. Isso ajuda-nos a melhorar as nossas ofertas.",
+    placeholder: "Insira o seu motivo...",
+  },
 } as const;

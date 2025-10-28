@@ -33,6 +33,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -937,20 +938,27 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
       <section className="flex flex-col gap-2 sm:flex-row sm:gap-4">
         <Button
           className="w-full sm:w-auto"
-          disabled={handleMarkInterest.isPending}
+          disabled={
+            handleMarkInterest.isPending || userInterest?.interested === true
+          }
           onClick={() => handleMarkInterest.mutate({ opportunityId })}
           type="button"
           variant={userInterest?.interested ? "default" : "outline"}
         >
-          {handleMarkInterest.isPending
-            ? "Loading..."
-            : userInterest?.interested
-              ? "✓ Interested"
-              : "Mark as Interested"}
+          {handleMarkInterest.isPending ? (
+            <Spinner className="mr-2" />
+          ) : userInterest?.interested ? (
+            t("buttons.markInterestedDone")
+          ) : (
+            t("buttons.markInterested")
+          )}
         </Button>
         <Button
           className="w-full sm:w-auto"
-          disabled={handleMarkNoInterest.isPending}
+          disabled={
+            handleMarkNoInterest.isPending ||
+            (userInterest?.interested === false && !userInterest?.ndaSigned)
+          }
           onClick={() => setShowNotInterestedDialog(true)}
           type="button"
           variant={
@@ -959,24 +967,28 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
               : "outline"
           }
         >
-          {handleMarkNoInterest.isPending
-            ? "Loading..."
-            : userInterest?.interested === false && !userInterest?.ndaSigned
-              ? "✗ Not Interested"
-              : "Not Interested"}
+          {handleMarkNoInterest.isPending ? (
+            <Spinner className="mr-2" />
+          ) : userInterest?.interested === false && !userInterest?.ndaSigned ? (
+            t("buttons.notInterestedDone")
+          ) : (
+            t("buttons.notInterested")
+          )}
         </Button>
         <Button
           className="w-full sm:w-auto"
-          disabled={handleSignNDA.isPending}
+          disabled={handleSignNDA.isPending || userInterest?.ndaSigned === true}
           onClick={() => handleSignNDA.mutate({ opportunityId })}
           type="button"
           variant={userInterest?.ndaSigned ? "default" : "secondary"}
         >
-          {handleSignNDA.isPending
-            ? "Loading..."
-            : userInterest?.ndaSigned
-              ? "✓ NDA Signed"
-              : "Sign NDA"}
+          {handleSignNDA.isPending ? (
+            <Spinner className="mr-2" />
+          ) : userInterest?.ndaSigned ? (
+            t("buttons.signNDADone")
+          ) : (
+            t("buttons.signNDA")
+          )}
         </Button>
       </section>
 
@@ -986,21 +998,22 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Why are you not interested?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("notInterestedDialog.title")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Please tell us why you're not interested in this opportunity. This
-              helps us improve our offerings.
+              {t("notInterestedDialog.description")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <Textarea
             className="min-h-24"
             onChange={(e) => setNotInterestedReason(e.target.value)}
-            placeholder="Enter your reason..."
+            placeholder={t("notInterestedDialog.placeholder")}
             value={notInterestedReason}
           />
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <AlertDialogCancel className="w-full sm:w-auto">
-              Cancel
+              {t("buttons.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               className="w-full sm:w-auto"
@@ -1013,7 +1026,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                 setNotInterestedReason("");
               }}
             >
-              Submit
+              {t("buttons.submit")}
             </AlertDialogAction>
           </div>
         </AlertDialogContent>
