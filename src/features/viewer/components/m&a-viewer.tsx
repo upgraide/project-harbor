@@ -4,6 +4,7 @@
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import {
   Bar,
   CartesianGrid,
@@ -13,6 +14,16 @@ import {
   YAxis,
 } from "recharts";
 import { ErrorView, LoadingView } from "@/components/entity-components";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   type ChartConfig,
@@ -30,7 +41,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useSuspenseOpportunity } from "@/features/opportunities/hooks/use-m&a-opportunities";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  useGetMergerAndAcquisitionInterest,
+  useMarkMergerAndAcquisitionInterest,
+  useMarkMergerAndAcquisitionNoInterest,
+  useSignMergerAndAcquisitionNDA,
+  useSuspenseOpportunity,
+} from "@/features/opportunities/hooks/use-m&a-opportunities";
 import { cn } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
@@ -71,6 +89,9 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches);
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
+
+  const { data: preloadedInterest } =
+    useGetMergerAndAcquisitionInterest(opportunityId);
 
   const hasDescription = () => {
     const desc =
@@ -146,6 +167,34 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const hasShareholderStructure = () =>
     opportunity.shareholderStructure != null &&
     opportunity.shareholderStructure.length > 0;
+
+  const [showNotInterestedDialog, setShowNotInterestedDialog] = useState(false);
+  const [notInterestedReason, setNotInterestedReason] = useState("");
+  const [userInterest, setUserInterest] = useState<{
+    interested: boolean;
+    ndaSigned: boolean;
+  }>({
+    interested: preloadedInterest?.interested ?? false,
+    ndaSigned: preloadedInterest?.ndaSigned ?? false,
+  });
+
+  const handleMarkInterest = useMarkMergerAndAcquisitionInterest(() =>
+    setUserInterest((prev) => ({ ...prev, interested: true }))
+  );
+  const handleMarkNoInterest = useMarkMergerAndAcquisitionNoInterest(() =>
+    setUserInterest((prev) => ({ ...prev, interested: false }))
+  );
+  const handleSignNDA = useSignMergerAndAcquisitionNDA(() =>
+    setUserInterest((prev) => ({ ...prev, ndaSigned: true }))
+  );
+
+  useEffect(() => {
+    setUserInterest((prev) => ({
+      ...prev,
+      interested: preloadedInterest?.interested ?? false,
+      ndaSigned: preloadedInterest?.ndaSigned ?? false,
+    }));
+  }, [preloadedInterest]);
 
   return (
     <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
@@ -567,7 +616,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
         )}
       </div>
 
-      {hasPostNDAData() && (
+      {hasPostNDAData() && userInterest?.ndaSigned === true && (
         <section>
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader>
@@ -707,7 +756,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
         </section>
       )}
 
-      {hasShareholderStructure() && (
+      {hasShareholderStructure() && userInterest?.ndaSigned === true && (
         <section>
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader>
@@ -745,7 +794,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
         </section>
       )}
 
-      {hasCoInvestmentData() && (
+      {hasCoInvestmentData() && userInterest?.ndaSigned === true && (
         <section>
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader>
@@ -884,6 +933,91 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
           </Card>
         </section>
       )}
+
+      <section className="flex flex-col gap-2 sm:flex-row sm:gap-4">
+        <Button
+          className="w-full sm:w-auto"
+          disabled={handleMarkInterest.isPending}
+          onClick={() => handleMarkInterest.mutate({ opportunityId })}
+          type="button"
+          variant={userInterest?.interested ? "default" : "outline"}
+        >
+          {handleMarkInterest.isPending
+            ? "Loading..."
+            : userInterest?.interested
+              ? "✓ Interested"
+              : "Mark as Interested"}
+        </Button>
+        <Button
+          className="w-full sm:w-auto"
+          disabled={handleMarkNoInterest.isPending}
+          onClick={() => setShowNotInterestedDialog(true)}
+          type="button"
+          variant={
+            userInterest?.interested === false && !userInterest?.ndaSigned
+              ? "destructive"
+              : "outline"
+          }
+        >
+          {handleMarkNoInterest.isPending
+            ? "Loading..."
+            : userInterest?.interested === false && !userInterest?.ndaSigned
+              ? "✗ Not Interested"
+              : "Not Interested"}
+        </Button>
+        <Button
+          className="w-full sm:w-auto"
+          disabled={handleSignNDA.isPending}
+          onClick={() => handleSignNDA.mutate({ opportunityId })}
+          type="button"
+          variant={userInterest?.ndaSigned ? "default" : "secondary"}
+        >
+          {handleSignNDA.isPending
+            ? "Loading..."
+            : userInterest?.ndaSigned
+              ? "✓ NDA Signed"
+              : "Sign NDA"}
+        </Button>
+      </section>
+
+      <AlertDialog
+        onOpenChange={setShowNotInterestedDialog}
+        open={showNotInterestedDialog}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Why are you not interested?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Please tell us why you're not interested in this opportunity. This
+              helps us improve our offerings.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Textarea
+            className="min-h-24"
+            onChange={(e) => setNotInterestedReason(e.target.value)}
+            placeholder="Enter your reason..."
+            value={notInterestedReason}
+          />
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <AlertDialogCancel className="w-full sm:w-auto">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="w-full sm:w-auto"
+              onClick={() => {
+                handleMarkNoInterest.mutate({
+                  opportunityId,
+                  reason: notInterestedReason || undefined,
+                });
+                setShowNotInterestedDialog(false);
+                setNotInterestedReason("");
+              }}
+            >
+              Submit
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 };

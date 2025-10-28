@@ -4,6 +4,7 @@ import {
   opportunitiesRouter,
   realEstateRouter,
 } from "@/features/opportunities/server/route";
+import { userInterestRouter } from "@/features/opportunities/server/user-interest";
 import { usersRouter } from "@/features/users/server/route";
 import { createTRPCRouter } from "../init";
 
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   opportunities: opportunitiesRouter,
   realEstate: realEstateRouter,
   analytics: analyticsRouter,
+  userInterest: userInterestRouter,
 });
 
 // export type definition of API

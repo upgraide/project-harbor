@@ -1812,3 +1812,88 @@ export const useRemoveOpportunityHoldPeriod = () => {
     })
   );
 };
+
+/**
+ * Hook to mark a user as interested in an M&A opportunity
+ */
+export const useMarkMergerAndAcquisitionInterest = (onSuccess?: () => void) => {
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.userInterest.markMergerAndAcquisitionInterest.mutationOptions({
+      onSuccess: () => {
+        toast.success("Interest recorded");
+        onSuccess?.();
+      },
+      onError: (error) => {
+        toast.error(`Failed to record interest: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to mark a user as not interested in an M&A opportunity
+ */
+export const useMarkMergerAndAcquisitionNoInterest = (
+  onSuccess?: () => void
+) => {
+  const trpc = useTRPC();
+
+  return useMutation(
+    trpc.userInterest.markMergerAndAcquisitionNoInterest.mutationOptions({
+      onSuccess: () => {
+        toast.success("No interest recorded");
+        onSuccess?.();
+      },
+      onError: (error) => {
+        toast.error(`Failed to record no interest: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to mark NDA as signed for an M&A opportunity
+ */
+export const useSignMergerAndAcquisitionNDA = (onSuccess?: () => void) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.userInterest.signMergerAndAcquisitionNDA.mutationOptions({
+      onSuccess: (_data, variables) => {
+        toast.success("NDA signed");
+        // Invalidate both queries to refetch and show post-NDA data
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({
+            id: variables.opportunityId,
+          })
+        );
+        // Also invalidate the user interest query to update the interest status
+        queryClient.invalidateQueries(
+          trpc.userInterest.getMergerAndAcquisitionInterest.queryOptions({
+            opportunityId: variables.opportunityId,
+          })
+        );
+        onSuccess?.();
+      },
+      onError: (error) => {
+        toast.error(`Failed to sign NDA: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to get user's interest status for an M&A opportunity
+ */
+export const useGetMergerAndAcquisitionInterest = (opportunityId: string) => {
+  const trpc = useTRPC();
+
+  return useSuspenseQuery(
+    trpc.userInterest.getMergerAndAcquisitionInterest.queryOptions({
+      opportunityId,
+    })
+  );
+};

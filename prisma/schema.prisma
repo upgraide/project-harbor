@@ -277,6 +277,9 @@ model UserMergerAndAcquisitionInterest {
   // Interest status: true = interested, false = not interested
   interested Boolean @default(false)
   
+  // Reason for not being interested
+  notInterestedReason String?
+  
   // NDA tracking
   ndaSigned Boolean @default(false)
   
@@ -298,6 +301,9 @@ model UserRealEstateInterest {
   
   // Interest status: true = interested, false = not interested
   interested Boolean @default(false)
+  
+  // Reason for not being interested
+  notInterestedReason String?
   
   // NDA tracking
   ndaSigned Boolean @default(false)
