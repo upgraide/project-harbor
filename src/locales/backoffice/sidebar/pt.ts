@@ -13,6 +13,9 @@ export default {
     users: {
       title: "Utilizadores",
     },
+    investors: {
+      title: "Clientes / Investidores",
+    },
     analytics: {
       title: "Estatísticas",
     },

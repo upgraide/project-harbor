@@ -8,6 +8,7 @@ import {
   LayoutPanelLeft,
   LogOutIcon,
   UsersIcon,
+  WalletIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ import { useScopedI18n } from "@/locales/client";
 import {
   backofficeAnalyticsPath,
   backofficeInvestmentInterestsPath,
+  backofficeInvestorsPath,
   backofficeMergeAndAcquisitionPath,
   backofficePath,
   backofficeRealEstatePath,
@@ -62,6 +64,11 @@ const createMenuItems = (t: ReturnType<typeof useScopedI18n>) => [
         title: t("items.users.title"),
         icon: UsersIcon,
         url: backofficeUsersPath(),
+      },
+      {
+        title: t("items.investors.title"),
+        icon: WalletIcon,
+        url: backofficeInvestorsPath(),
       },
       {
         title: t("items.analytics.title"),

@@ -1,4 +1,5 @@
 import { investmentInterestsRouter } from "@/features/investment-interests/server/route";
+import { investorsRouter } from "@/features/investors/server/route";
 import { analyticsRouter } from "@/features/opportunities/server/analytics";
 import {
   mergerAndAcquisitionRouter,
@@ -12,6 +13,7 @@ import { createTRPCRouter } from "../init";
 export const appRouter = createTRPCRouter({
   mergerAndAcquisition: mergerAndAcquisitionRouter,
   users: usersRouter,
+  investors: investorsRouter,
   opportunities: opportunitiesRouter,
   realEstate: realEstateRouter,
   analytics: analyticsRouter,

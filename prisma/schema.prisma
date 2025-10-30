@@ -26,6 +26,10 @@ model User {
   accounts      Account[]
   role          Role      @default(USER)
 
+  // Investor-specific fields
+  investorType        InvestorType?
+  preferredLocation   String?
+
   // Relations for opportunity interactions
   mergerAndAcquisitionInterests UserMergerAndAcquisitionInterest[] @relation("userMergerAndAcquisitions")
   realEstateInterests           UserRealEstateInterest[]           @relation("userRealEstates")
@@ -38,6 +42,12 @@ enum Role {
   USER
   TEAM
   ADMIN
+}
+
+enum InvestorType {
+  LESS_THAN_10M
+  BETWEEN_10M_100M
+  GREATER_THAN_100M
 }
 
 model Session {

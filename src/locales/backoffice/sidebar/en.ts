@@ -13,6 +13,9 @@ export default {
     users: {
       title: "Users",
     },
+    investors: {
+      title: "Clients / Investors",
+    },
     analytics: {
       title: "Analytics",
     },
