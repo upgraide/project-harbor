@@ -9,6 +9,7 @@ import { dashboardSettingsPath } from "@/paths";
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const { user, role } = await requireAuth();
   const t = await getScopedI18n("dashboard.settings");
+  const title = t("title" as never) as string;
   return (
     <>
       <Navigation
@@ -30,7 +31,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
                 )}
                 href={dashboardSettingsPath()}
               >
-                <span className={cn("text-sm")}>{t("title" as const)}</span>
+                <span className={cn("text-sm")}>{title}</span>
               </Link>
             </div>
             {children}
