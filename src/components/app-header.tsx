@@ -54,7 +54,8 @@ export const AppHeader = ({ user }: AppHeaderProps) => {
           >
             <DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
               <p className="font-medium text-sm group-hover:text-primary group-focus:text-primary">
-                {user.name || user.email?.split("@")[0]}
+                {user.name ||
+                  (user.email ? user.email.split("@")[0] : undefined)}
               </p>
               <p className="text-primary/60 text-sm">{user.email}</p>
             </DropdownMenuItem>
