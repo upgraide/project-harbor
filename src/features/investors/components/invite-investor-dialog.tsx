@@ -67,10 +67,12 @@ export const InviteInvestorDialog = ({
   });
 
   const onSubmit = async (data: InviteFormValues) => {
-    await inviteInvestor.mutateAsync(data);
-    if (!inviteInvestor.isPending) {
+    try {
+      await inviteInvestor.mutateAsync(data);
       form.reset();
       onOpenChangeAction(false);
+    } catch {
+      // Error is handled by the mutation's onError callback
     }
   };
 

@@ -34,9 +34,16 @@ export const InvestorsList = () => {
         <div className="flex gap-4">
           <Select
             onValueChange={(value) => {
-              setParams({ investorType: value, page: 1 });
+              setParams({
+                investorType: value as
+                  | "all"
+                  | "<€10M"
+                  | "€10M-€100M"
+                  | ">€100M",
+                page: 1,
+              });
             }}
-            value={params.investorType}
+            value={params.investorType ?? "all"}
           >
             <SelectTrigger className="w-fit">
               <SelectValue
@@ -61,9 +68,12 @@ export const InvestorsList = () => {
 
           <Select
             onValueChange={(value) => {
-              setParams({ interestSegment: value, page: 1 });
+              setParams({
+                interestSegment: value as "all" | "CRE" | "M&A",
+                page: 1,
+              });
             }}
-            value={params.interestSegment}
+            value={params.interestSegment ?? "all"}
           >
             <SelectTrigger className="w-fit">
               <SelectValue

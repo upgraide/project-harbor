@@ -9,7 +9,7 @@ import { dashboardSettingsPath } from "@/paths";
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const { user, role } = await requireAuth();
   const t = await getScopedI18n("dashboard.settings");
-  const title = (t as (key: string) => string)("title");
+  const title = t("title");
   return (
     <>
       <Navigation

@@ -30,7 +30,7 @@ const MIN_MESSAGE_LENGTH = 10;
 const MAX_LENGTH = 100;
 const MESSAGE_MAX_LENGTH = 1000;
 
-const createRequestAccessSchema = (t: ReturnType<typeof useScopedI18n>) =>
+const createRequestAccessSchema = (t: (key: string) => string) =>
   z.object({
     name: z
       .string()

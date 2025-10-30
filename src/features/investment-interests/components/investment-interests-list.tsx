@@ -46,9 +46,12 @@ export const InvestmentInterestsList = () => {
         <div className="flex gap-4">
           <Select
             onValueChange={(value) => {
-              setParams({ type: value, page: 1 });
+              setParams({
+                type: value as "all" | "m&a" | "real-estate",
+                page: 1,
+              });
             }}
-            value={params.type}
+            value={params.type ?? "all"}
           >
             <SelectTrigger className="w-fit">
               <SelectValue placeholder={t("filters.type.placeholder")} />
@@ -64,9 +67,12 @@ export const InvestmentInterestsList = () => {
 
           <Select
             onValueChange={(value) => {
-              setParams({ status: value, page: 1 });
+              setParams({
+                status: value as "all" | "pending" | "processed",
+                page: 1,
+              });
             }}
-            value={params.status}
+            value={params.status ?? "all"}
           >
             <SelectTrigger className="w-fit">
               <SelectValue placeholder={t("filters.status.placeholder")} />

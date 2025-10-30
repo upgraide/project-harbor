@@ -1,25 +1,20 @@
-import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
+import {
+  parseAsInteger,
+  parseAsString,
+  parseAsStringEnum,
+  useQueryStates,
+} from "nuqs";
 import { PAGINATION } from "@/config/constants";
 
 export const useInvestmentInterestsParams = () =>
   useQueryStates(
     {
       page: parseAsInteger.withDefault(PAGINATION.DEFAULT_PAGE),
-      pageSize: parseAsInteger
-        .withDefault(PAGINATION.DEFAULT_PAGE_SIZE)
-        .withOptions({
-          validate: (value) => {
-            if (value < PAGINATION.MIN_PAGE_SIZE) {
-              return PAGINATION.MIN_PAGE_SIZE;
-            }
-            if (value > PAGINATION.MAX_PAGE_SIZE) {
-              return PAGINATION.MAX_PAGE_SIZE;
-            }
-            return value;
-          },
-        }),
-      type: parseAsString.withDefault("all"),
-      status: parseAsString.withDefault("all"),
+      pageSize: parseAsInteger.withDefault(PAGINATION.DEFAULT_PAGE_SIZE),
+      type: parseAsStringEnum(["all", "m&a", "real-estate"]).withDefault("all"),
+      status: parseAsStringEnum(["all", "pending", "processed"]).withDefault(
+        "all"
+      ),
       search: parseAsString.withDefault(""),
     },
     {

@@ -30,6 +30,12 @@ export const AppHeader = ({ user }: AppHeaderProps) => {
   const router = useRouter();
   const t = useScopedI18n("dashboard.navigation");
 
+  // Extract email prefix without causing TypeScript excessive complexity
+  const emailPrefix =
+    typeof user?.email === "string" && user.email.includes("@")
+      ? user.email.slice(0, user.email.indexOf("@"))
+      : undefined;
+
   return (
     <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b bg-background px-4">
       <SidebarTrigger />
@@ -54,8 +60,7 @@ export const AppHeader = ({ user }: AppHeaderProps) => {
           >
             <DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
               <p className="font-medium text-sm group-hover:text-primary group-focus:text-primary">
-                {user.name ||
-                  (user.email ? user.email.split("@")[0] : undefined)}
+                {user.name || emailPrefix}
               </p>
               <p className="text-primary/60 text-sm">{user.email}</p>
             </DropdownMenuItem>

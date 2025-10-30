@@ -73,7 +73,10 @@ export const UsersList = () => {
                       {t("deleteDialog.title")}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      {t("deleteDialog.description", { name: user.name })}
+                      {t("deleteDialog.description").replace(
+                        "{name}",
+                        user.name
+                      )}
                     </AlertDialogDescription>
                     <div className="flex justify-end gap-2">
                       <AlertDialogCancel>

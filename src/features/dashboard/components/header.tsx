@@ -44,6 +44,12 @@ export function Navigation({
   const isSettingsPath = pathname === dashboardSettingsPath();
   const isTeamOrAdmin = user.role === Role.TEAM || user.role === Role.ADMIN;
 
+  // Extract email prefix without causing TypeScript excessive complexity
+  const emailPrefix =
+    typeof user.email === "string" && user.email.includes("@")
+      ? user.email.slice(0, user.email.indexOf("@"))
+      : undefined;
+
   return (
     <nav className="sticky top-0 z-50 flex w-full flex-col border-border border-b bg-card px-6">
       <div className="mx-auto flex w-full max-w-screen-xl items-center justify-between py-3">
@@ -106,8 +112,7 @@ export function Navigation({
             >
               <DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
                 <p className="font-medium text-sm group-hover:text-primary group-focus:text-primary">
-                  {user.name ||
-                    (user.email ? user.email.split("@")[0] : undefined)}
+                  {user.name || emailPrefix}
                 </p>
                 <p className="text-primary/60 text-sm">{user.email}</p>
               </DropdownMenuItem>

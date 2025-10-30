@@ -14,11 +14,11 @@ export const useInviteInvestor = () => {
     trpc.investors.invite.mutationOptions({
       onSuccess: (data) => {
         toast.success(`Investor ${data.user.name} invited successfully!`);
-        queryClient.invalidateQueries(
-          trpc.investors.getMany.queryOptions(params)
-        );
+        queryClient.invalidateQueries({
+          queryKey: trpc.investors.getMany.queryOptions(params).queryKey,
+        });
       },
-      onError: (error) => {
+      onError: (error: unknown) => {
         const errorMessage =
           error instanceof Error ? error.message : "Failed to invite investor";
         toast.error(errorMessage);

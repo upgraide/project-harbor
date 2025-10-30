@@ -144,7 +144,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
-const chartConfig = (t: ReturnType<typeof useScopedI18n>, isDark: boolean) =>
+const chartConfig = (t: (key: string) => string, isDark: boolean) =>
   ({
     revenue: {
       label: t("graphCard.table.header.revenue"),

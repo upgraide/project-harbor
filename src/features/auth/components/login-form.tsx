@@ -27,7 +27,7 @@ import { authClient } from "@/lib/auth-client";
 import { useScopedI18n } from "@/locales/client";
 import { dashboardPath, requestAccessPath } from "@/paths";
 
-const createLoginSchema = (t: ReturnType<typeof useScopedI18n>) =>
+const createLoginSchema = (t: (key: string) => string) =>
   z.object({
     email: z.email({ message: t("schemaMessages.email") }),
     password: z

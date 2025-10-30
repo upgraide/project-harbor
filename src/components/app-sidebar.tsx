@@ -41,7 +41,8 @@ import {
 const LOGO_EXPANDED_SIZE = 175;
 const LOGO_COLLAPSED_SIZE = 64;
 
-const createMenuItems = (t: ReturnType<typeof useScopedI18n>) => [
+// Use simple function type to avoid TypeScript excessive complexity
+const createMenuItems = (t: (key: string) => string) => [
   {
     title: t("title"),
     items: [

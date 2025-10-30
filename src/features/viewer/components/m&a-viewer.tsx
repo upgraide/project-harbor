@@ -64,7 +64,7 @@ export const ViewerError = () => {
   return <ErrorView message={t("errorMessage")} />;
 };
 
-const chartConfig = (t: ReturnType<typeof useScopedI18n>, isDark: boolean) =>
+const chartConfig = (t: (key: string) => string, isDark: boolean) =>
   ({
     revenue: {
       label: t("graphCard.table.header.revenue"),

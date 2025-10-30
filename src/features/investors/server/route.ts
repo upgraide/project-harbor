@@ -1,7 +1,10 @@
 import { z } from "zod";
 import { PAGINATION } from "@/config/constants";
 import { InvestorType, Role } from "@/generated/prisma";
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { sendInviteEmail } from "@/lib/emails/send-invite";
+import { generatePassword } from "@/lib/generate-password";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const investorsRouter = createTRPCRouter({
@@ -281,5 +284,86 @@ export const investorsRouter = createTRPCRouter({
         hasNextPage,
         hasPreviousPage,
       };
+    }),
+
+  invite: protectedProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        name: z.string().min(1),
+        language: z.enum(["en", "pt"]),
+        investorType: z.enum(["<€10M", "€10M-€100M", ">€100M"]).optional(),
+        preferredLocation: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { email, name, language, investorType, preferredLocation } = input;
+
+      // Check if user already exists
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      if (existingUser) {
+        throw new Error("User with this email already exists");
+      }
+
+      // Map investor type string to enum
+      let investorTypeEnum: InvestorType | null = null;
+      if (investorType === "<€10M") {
+        investorTypeEnum = InvestorType.LESS_THAN_10M;
+      } else if (investorType === "€10M-€100M") {
+        investorTypeEnum = InvestorType.BETWEEN_10M_100M;
+      } else if (investorType === ">€100M") {
+        investorTypeEnum = InvestorType.GREATER_THAN_100M;
+      }
+
+      // Generate a random password
+      const generatedPassword = generatePassword();
+
+      try {
+        // Create the user using better-auth
+        const newUser = await auth.api.signUpEmail({
+          body: {
+            name,
+            email,
+            password: generatedPassword,
+          },
+        });
+
+        if (!newUser.user) {
+          throw new Error("Failed to create user");
+        }
+
+        // Update user with investor-specific fields
+        await prisma.user.update({
+          where: { id: newUser.user.id },
+          data: {
+            investorType: investorTypeEnum,
+            preferredLocation,
+          },
+        });
+
+        await sendInviteEmail({
+          userEmail: email,
+          password: generatedPassword,
+          language,
+          inviteLink: "https://www.harborpartners.app/login",
+        });
+
+        return {
+          success: true,
+          user: {
+            id: newUser.user.id,
+            email: newUser.user.email,
+            name: newUser.user.name,
+          },
+        };
+      } catch (error) {
+        if (error instanceof Error) {
+          throw new Error(`Failed to invite investor: ${error.message}`);
+        }
+        throw error;
+      }
     }),
 });
