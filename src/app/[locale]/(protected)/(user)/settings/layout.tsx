@@ -30,7 +30,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
                 )}
                 href={dashboardSettingsPath()}
               >
-                <span className={cn("text-sm")}>{t("title")}</span>
+                <span className={cn("text-sm")}>{t("title" as const)}</span>
               </Link>
             </div>
             {children}
