@@ -2,6 +2,7 @@ export default {
   title: "Interesses de Investimento",
   description:
     "Visualize e gerencie os interesses dos investidores em oportunidades de F&A e Imobiliário",
+  searchPlaceholder: "Pesquisar por nome da oportunidade...",
   errorMessage:
     "Falha ao carregar interesses de investimento. Por favor, tente novamente.",
   emptyTitle: "Nenhum Interesse de Investimento",

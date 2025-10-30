@@ -24,6 +24,7 @@ import {
 } from "@/paths";
 import { useSuspenseInvestmentInterests } from "../hooks/use-investment-interests";
 import { useInvestmentInterestsParams } from "../hooks/use-investment-interests-params";
+import { InvestmentInterestsSearch } from "./investment-interests-search";
 
 export const InvestmentInterestsList = () => {
   const interests = useSuspenseInvestmentInterests();
@@ -41,44 +42,47 @@ export const InvestmentInterestsList = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4">
-        <Select
-          onValueChange={(value) => {
-            setParams({ type: value, page: 1 });
-          }}
-          value={params.type}
-        >
-          <SelectTrigger className="w-fit">
-            <SelectValue placeholder={t("filters.type.placeholder")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("filters.type.all")}</SelectItem>
-            <SelectItem value="m&a">{t("filters.type.m&a")}</SelectItem>
-            <SelectItem value="real-estate">
-              {t("filters.type.real-estate")}
-            </SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex items-center gap-4">
+        <div className="flex gap-4">
+          <Select
+            onValueChange={(value) => {
+              setParams({ type: value, page: 1 });
+            }}
+            value={params.type}
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder={t("filters.type.placeholder")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("filters.type.all")}</SelectItem>
+              <SelectItem value="m&a">{t("filters.type.m&a")}</SelectItem>
+              <SelectItem value="real-estate">
+                {t("filters.type.real-estate")}
+              </SelectItem>
+            </SelectContent>
+          </Select>
 
-        <Select
-          onValueChange={(value) => {
-            setParams({ status: value, page: 1 });
-          }}
-          value={params.status}
-        >
-          <SelectTrigger className="w-fit">
-            <SelectValue placeholder={t("filters.status.placeholder")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("filters.status.all")}</SelectItem>
-            <SelectItem value="pending">
-              {t("filters.status.pending")}
-            </SelectItem>
-            <SelectItem value="processed">
-              {t("filters.status.processed")}
-            </SelectItem>
-          </SelectContent>
-        </Select>
+          <Select
+            onValueChange={(value) => {
+              setParams({ status: value, page: 1 });
+            }}
+            value={params.status}
+          >
+            <SelectTrigger className="w-fit">
+              <SelectValue placeholder={t("filters.status.placeholder")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("filters.status.all")}</SelectItem>
+              <SelectItem value="pending">
+                {t("filters.status.pending")}
+              </SelectItem>
+              <SelectItem value="processed">
+                {t("filters.status.processed")}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <InvestmentInterestsSearch />
       </div>
 
       {interests.data.items.length === 0 ? (

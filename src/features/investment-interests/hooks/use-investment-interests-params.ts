@@ -20,6 +20,7 @@ export const useInvestmentInterestsParams = () =>
         }),
       type: parseAsString.withDefault("all"),
       status: parseAsString.withDefault("all"),
+      search: parseAsString.withDefault(""),
     },
     {
       history: "push",

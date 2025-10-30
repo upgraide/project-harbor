@@ -73,13 +73,37 @@ export const investmentInterestsRouter = createTRPCRouter({
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         type: z.enum(["all", "m&a", "real-estate"]).default("all"),
         status: z.enum(["all", "pending", "processed"]).default("all"),
+        search: z.string().default(""),
       })
     )
     .query(async ({ input }) => {
-      const { page, pageSize, type, status } = input;
+      const { page, pageSize, type, status, search } = input;
 
       const mAndAWhere = buildWhereClause(type, status, "m&a");
       const realEstateWhere = buildWhereClause(type, status, "real-estate");
+
+      const searchTerm = search.trim();
+      const mAndASearchFilter = searchTerm
+        ? {
+            mergerAndAcquisition: {
+              name: {
+                contains: searchTerm,
+                mode: "insensitive" as const,
+              },
+            },
+          }
+        : undefined;
+
+      const realEstateSearchFilter = searchTerm
+        ? {
+            realEstate: {
+              name: {
+                contains: searchTerm,
+                mode: "insensitive" as const,
+              },
+            },
+          }
+        : undefined;
 
       const isMAndAOnly = type === "m&a";
       const isRealEstateOnly = type === "real-estate";
@@ -88,8 +112,14 @@ export const investmentInterestsRouter = createTRPCRouter({
         if (!mAndAWhere) {
           return [];
         }
+        const whereClause = mAndASearchFilter
+          ? {
+              ...mAndAWhere,
+              ...mAndASearchFilter,
+            }
+          : mAndAWhere;
         return await prisma.userMergerAndAcquisitionInterest.findMany({
-          where: mAndAWhere,
+          where: whereClause,
           skip: isMAndAOnly ? (page - 1) * pageSize : 0,
           take: isMAndAOnly ? pageSize : undefined,
           include: {
@@ -117,8 +147,14 @@ export const investmentInterestsRouter = createTRPCRouter({
         if (!realEstateWhere) {
           return [];
         }
+        const whereClause = realEstateSearchFilter
+          ? {
+              ...realEstateWhere,
+              ...realEstateSearchFilter,
+            }
+          : realEstateWhere;
         return await prisma.userRealEstateInterest.findMany({
-          where: realEstateWhere,
+          where: whereClause,
           skip: isRealEstateOnly ? (page - 1) * pageSize : 0,
           take: isRealEstateOnly ? pageSize : undefined,
           include: {
@@ -165,15 +201,24 @@ export const investmentInterestsRouter = createTRPCRouter({
       if (isAllTypes) {
         totalCount = allInterests.length;
       } else if (isMAndAOnly && mAndAWhere) {
+        const whereClause = mAndASearchFilter
+          ? {
+              ...mAndAWhere,
+              ...mAndASearchFilter,
+            }
+          : mAndAWhere;
         totalCount = await prisma.userMergerAndAcquisitionInterest.count({
-          where: mAndAWhere as { interested: boolean; ndaSigned?: boolean },
+          where: whereClause,
         });
       } else if (realEstateWhere) {
+        const whereClause = realEstateSearchFilter
+          ? {
+              ...realEstateWhere,
+              ...realEstateSearchFilter,
+            }
+          : realEstateWhere;
         totalCount = await prisma.userRealEstateInterest.count({
-          where: realEstateWhere as {
-            interested: boolean;
-            ndaSigned?: boolean;
-          },
+          where: whereClause,
         });
       } else {
         totalCount = 0;

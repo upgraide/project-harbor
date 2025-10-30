@@ -11,6 +11,7 @@ const investmentInterestsParamsSchema = z.object({
     .default(PAGINATION.DEFAULT_PAGE_SIZE),
   type: z.enum(["all", "m&a", "real-estate"]).default("all"),
   status: z.enum(["all", "pending", "processed"]).default("all"),
+  search: z.string().default(""),
 });
 
 export const investmentInterestsParamsLoader = async (
@@ -22,6 +23,7 @@ export const investmentInterestsParamsLoader = async (
     pageSize: resolvedSearchParams.pageSize,
     type: resolvedSearchParams.type,
     status: resolvedSearchParams.status,
+    search: resolvedSearchParams.search,
   });
 
   return params;

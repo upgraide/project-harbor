@@ -2,6 +2,7 @@ export default {
   title: "Investment Interests",
   description:
     "View and manage investor interests in M&A and Real Estate opportunities",
+  searchPlaceholder: "Search by opportunity name...",
   errorMessage: "Failed to load investment interests. Please try again.",
   emptyTitle: "No Investment Interests",
   emptyMessage: "No investment interests found matching your filters.",
