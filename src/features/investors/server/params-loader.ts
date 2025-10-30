@@ -1,5 +1,5 @@
 import type { SearchParams } from "nuqs/server";
-import { parseAsInteger, parseAsString } from "nuqs/server";
+import { parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
 import { PAGINATION } from "@/config/constants";
 
 export const investorsParamsLoader = async (
@@ -12,10 +12,15 @@ export const investorsParamsLoader = async (
   const pageSize = parseAsInteger
     .withDefault(PAGINATION.DEFAULT_PAGE_SIZE)
     .parseServerSide(params.pageSize);
-  const investorType = parseAsString
+  const investorType = parseAsStringEnum([
+    "all",
+    "<€10M",
+    "€10M-€100M",
+    ">€100M",
+  ])
     .withDefault("all")
     .parseServerSide(params.investorType);
-  const interestSegment = parseAsString
+  const interestSegment = parseAsStringEnum(["all", "CRE", "M&A"])
     .withDefault("all")
     .parseServerSide(params.interestSegment);
   const industry = parseAsString
