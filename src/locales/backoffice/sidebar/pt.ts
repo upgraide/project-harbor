@@ -16,6 +16,9 @@ export default {
     analytics: {
       title: "Estatísticas",
     },
+    "investment-interests": {
+      title: "Interesses de Investimento",
+    },
     logout: {
       title: "Sair",
     },

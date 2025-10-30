@@ -16,6 +16,9 @@ export default {
     analytics: {
       title: "Analytics",
     },
+    "investment-interests": {
+      title: "Investment Interests",
+    },
     logout: {
       title: "Logout",
     },

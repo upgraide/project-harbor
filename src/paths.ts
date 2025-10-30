@@ -30,3 +30,5 @@ export const backofficeRealEstateOpportunityCreatePath = () =>
   "/backoffice/real-estate/create";
 
 export const backofficeAnalyticsPath = () => "/backoffice/analytics";
+export const backofficeInvestmentInterestsPath = () =>
+  "/backoffice/investment-interests";

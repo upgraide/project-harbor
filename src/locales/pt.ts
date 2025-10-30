@@ -2,6 +2,7 @@ import loginForm from "./auth/login-form/pt";
 import requestAccessForm from "./auth/request-access-form/pt";
 import analytics from "./backoffice/analytics/pt";
 import entityComponents from "./backoffice/entity-components/pt";
+import investmentInterests from "./backoffice/investment-interests/pt";
 import mergersAndAcquisitionOpportunites from "./backoffice/mergers-and-acquisition-opportunites/pt";
 import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitions-create-page/pt";
 import mergersAndAcquisitionOpportunityPage from "./backoffice/mergers-and-acquisitions-opportunity-page/pt";
@@ -38,6 +39,7 @@ export default {
     realEstateOpportunities,
     realEstateOpportunityPage,
     analytics,
+    "investment-interests": investmentInterests,
   },
   dashboard: {
     navigation,

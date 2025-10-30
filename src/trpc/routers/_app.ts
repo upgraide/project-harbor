@@ -1,3 +1,4 @@
+import { investmentInterestsRouter } from "@/features/investment-interests/server/route";
 import { analyticsRouter } from "@/features/opportunities/server/analytics";
 import {
   mergerAndAcquisitionRouter,
@@ -15,6 +16,7 @@ export const appRouter = createTRPCRouter({
   realEstate: realEstateRouter,
   analytics: analyticsRouter,
   userInterest: userInterestRouter,
+  investmentInterests: investmentInterestsRouter,
 });
 
 // export type definition of API

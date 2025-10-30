@@ -15,13 +15,13 @@ type ProviderProps = {
 
 export function Providers({ children, locale }: ProviderProps) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      disableTransitionOnChange
-      enableSystem
-    >
-      <LanguageProvider locale={locale}>
+    <LanguageProvider locale={locale}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        disableTransitionOnChange
+        enableSystem
+      >
         <TRPCReactProvider>
           <NuqsAdapter>
             <NextSSRPlugin
@@ -37,7 +37,7 @@ export function Providers({ children, locale }: ProviderProps) {
             <Toaster richColors />
           </NuqsAdapter>
         </TRPCReactProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }
