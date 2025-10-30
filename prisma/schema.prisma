@@ -30,6 +30,9 @@ model User {
   investorType        InvestorType?
   preferredLocation   String?
 
+  // Password management
+  passwordChanged     Boolean   @default(false)
+
   // Relations for opportunity interactions
   mergerAndAcquisitionInterests UserMergerAndAcquisitionInterest[] @relation("userMergerAndAcquisitions")
   realEstateInterests           UserRealEstateInterest[]           @relation("userRealEstates")

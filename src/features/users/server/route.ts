@@ -1,5 +1,6 @@
+import { headers } from "next/headers";
 import { z } from "zod";
-import { PAGINATION } from "@/config/constants";
+import { PAGINATION, PASSWORD } from "@/config/constants";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { sendInviteEmail } from "@/lib/emails/send-invite";
@@ -222,4 +223,45 @@ export const usersRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  changePassword: protectedProcedure
+    .input(
+      z.object({
+        currentPassword: z.string().min(1),
+        newPassword: z.string().min(PASSWORD.MIN_LENGTH),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { currentPassword, newPassword } = input;
+
+      // Change password using Better Auth
+      await auth.api.changePassword({
+        body: {
+          currentPassword,
+          newPassword,
+        },
+        headers: await headers(),
+      });
+
+      // Update passwordChanged flag in database
+      await prisma.user.update({
+        where: { id: ctx.auth.user.id },
+        data: {
+          passwordChanged: true,
+        },
+      });
+
+      return { success: true };
+    }),
+
+  getPasswordChangedStatus: protectedProcedure.query(async ({ ctx }) => {
+    const user = await prisma.user.findUnique({
+      where: { id: ctx.auth.user.id },
+      select: {
+        passwordChanged: true,
+      },
+    });
+
+    return { passwordChanged: user?.passwordChanged ?? false };
+  }),
 });

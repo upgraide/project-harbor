@@ -1,3 +1,4 @@
+import changePasswordDialog from "./auth/change-password-dialog/pt";
 import loginForm from "./auth/login-form/pt";
 import requestAccessForm from "./auth/request-access-form/pt";
 import analytics from "./backoffice/analytics/pt";
@@ -28,6 +29,7 @@ export default {
   auth: {
     loginForm,
     requestAccessForm,
+    changePasswordDialog,
   },
   backoffice: {
     sidebar,
