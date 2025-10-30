@@ -8,6 +8,7 @@ import investors from "./backoffice/investors/pt";
 import mergersAndAcquisitionOpportunites from "./backoffice/mergers-and-acquisition-opportunites/pt";
 import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitions-create-page/pt";
 import mergersAndAcquisitionOpportunityPage from "./backoffice/mergers-and-acquisitions-opportunity-page/pt";
+import notifications from "./backoffice/notifications/pt";
 import realEstateCreatePage from "./backoffice/real-estate-create-page/pt";
 import realEstateOpportunities from "./backoffice/real-estate-opportunities/pt";
 import realEstateOpportunityPage from "./backoffice/real-estate-opportunity-page/pt";
@@ -44,6 +45,7 @@ export default {
     analytics,
     "investment-interests": investmentInterests,
     investors,
+    notifications,
   },
   dashboard: {
     navigation,

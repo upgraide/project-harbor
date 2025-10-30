@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  BellIcon,
   BriefcaseBusinessIcon,
   ChartBarIcon,
   HeartIcon,
@@ -19,6 +20,7 @@ import {
   backofficeInvestmentInterestsPath,
   backofficeInvestorsPath,
   backofficeMergeAndAcquisitionPath,
+  backofficeNotificationsPath,
   backofficePath,
   backofficeRealEstatePath,
   backofficeUsersPath,
@@ -80,6 +82,11 @@ const createMenuItems = (t: (key: string) => string) => [
         title: t("items.investment-interests.title"),
         icon: HeartIcon,
         url: backofficeInvestmentInterestsPath(),
+      },
+      {
+        title: t("items.notifications.title"),
+        icon: BellIcon,
+        url: backofficeNotificationsPath(),
       },
     ],
   },

@@ -22,6 +22,9 @@ export default {
     "investment-interests": {
       title: "Investment Interests",
     },
+    notifications: {
+      title: "Notifications",
+    },
     logout: {
       title: "Logout",
     },

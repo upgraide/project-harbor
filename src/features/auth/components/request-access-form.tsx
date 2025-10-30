@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useScopedI18n } from "@/locales/client";
 import { loginPath } from "@/paths";
+import { useRequestAccess } from "../hooks/use-request-access";
 
 const MIN_LENGTH = 1;
 const MIN_MESSAGE_LENGTH = 10;
@@ -60,6 +61,7 @@ type RequestAccessFormValues = z.infer<
 
 export function RequestAccessForm() {
   const t = useScopedI18n("auth.requestAccessForm");
+  const requestAccessMutation = useRequestAccess();
 
   const requestAccessSchema = createRequestAccessSchema(t);
 
@@ -76,11 +78,12 @@ export function RequestAccessForm() {
   });
 
   const onSubmit = async (values: RequestAccessFormValues) => {
-    // biome-ignore lint/suspicious/noConsole: Temporary
-    await console.log(values);
+    await requestAccessMutation.mutateAsync(values);
+    form.reset();
   };
 
-  const isPending = form.formState.isSubmitting;
+  const isPending =
+    form.formState.isSubmitting || requestAccessMutation.isPending;
 
   return (
     <div className="flex flex-col gap-6">

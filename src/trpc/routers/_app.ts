@@ -1,3 +1,4 @@
+import { accessRequestRouter } from "@/features/auth/server/route";
 import { investmentInterestsRouter } from "@/features/investment-interests/server/route";
 import { investorsRouter } from "@/features/investors/server/route";
 import { analyticsRouter } from "@/features/opportunities/server/analytics";
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   analytics: analyticsRouter,
   userInterest: userInterestRouter,
   investmentInterests: investmentInterestsRouter,
+  accessRequest: accessRequestRouter,
 });
 
 // export type definition of API

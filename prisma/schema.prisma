@@ -399,3 +399,24 @@ enum RealEstateInvestmentType {
   OPPORTUNISTIC
   DEVELOPMENT
 }
+
+model AccessRequest {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String
+  phone     String
+  position  String
+  message   String
+  status    AccessRequestStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("access_request")
+}
+
+enum AccessRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

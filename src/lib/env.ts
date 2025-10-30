@@ -22,6 +22,10 @@ export const env = createEnv({
     UPLOADTHING_TOKEN: z.string().min(1),
     RESEND_API_KEY: z.string().min(1),
     INNGEST_EVENT_KEY: z.string(),
+    PUSHER_APP_ID: z.string().min(1),
+    PUSHER_KEY: z.string().min(1),
+    PUSHER_SECRET: z.string().min(1),
+    PUSHER_CLUSTER: z.string().min(1),
   },
 
   /**
@@ -29,15 +33,16 @@ export const env = createEnv({
    * For them to be exposed to the client, prefix them with `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string()
+    NEXT_PUBLIC_PUSHER_KEY: z.string().min(1),
+    NEXT_PUBLIC_PUSHER_CLUSTER: z.string().min(1),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
    */
   experimental__runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    NEXT_PUBLIC_PUSHER_KEY: process.env.NEXT_PUBLIC_PUSHER_KEY,
+    NEXT_PUBLIC_PUSHER_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
   },
   skipValidation:
     !!process.env.CI ||
