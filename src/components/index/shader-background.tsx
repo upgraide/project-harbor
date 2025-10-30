@@ -2,7 +2,7 @@
 
 import { MeshGradient } from "@paper-design/shaders-react";
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 type ShaderBackgroundProps = {
   children: React.ReactNode;
@@ -10,25 +10,6 @@ type ShaderBackgroundProps = {
 
 export const ShaderBackground = ({ children }: ShaderBackgroundProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [, setIsActive] = useState(false);
-
-  useEffect(() => {
-    const handleMouseEnter = () => setIsActive(true);
-    const handleMouseLeave = () => setIsActive(false);
-
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("mouseenter", handleMouseEnter);
-      container.addEventListener("mouseleave", handleMouseLeave);
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener("mouseenter", handleMouseEnter);
-        container.removeEventListener("mouseleave", handleMouseLeave);
-      }
-    };
-  }, []);
 
   return (
     <div className="relative min-h-screen overflow-hidden" ref={containerRef}>

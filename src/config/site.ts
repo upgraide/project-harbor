@@ -8,7 +8,7 @@ export const siteConfig = {
     "Harbor Partners is a Lisbon based, Investment Advisory Firm, dedicated to providing holistic and integrated services to institutional and high net worth individual clients.",
   keywords: ["Harbor Partners", "Web Application", "Harbor Partners"],
   links: {
-    email: "", // TODO: Pedir o Email ao Salvador
+    email: "",
   },
   authors: [
     {

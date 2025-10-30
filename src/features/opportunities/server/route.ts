@@ -426,19 +426,16 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       await deleteFromUploadthing(input.imageUrl);
-      return prisma.mergerAndAcquisition
-        .findUniqueOrThrow({
-          where: { id: input.id },
-        })
-        .then((opportunity) => {
-          const updatedImages = (opportunity.images || []).filter(
-            (img) => img !== input.imageUrl
-          );
-          return prisma.mergerAndAcquisition.update({
-            where: { id: input.id },
-            data: { images: updatedImages },
-          });
-        });
+      const opportunity = await prisma.mergerAndAcquisition.findUniqueOrThrow({
+        where: { id: input.id },
+      });
+      const updatedImages = (opportunity.images || []).filter(
+        (img) => img !== input.imageUrl
+      );
+      return prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { images: updatedImages },
+      });
     }),
   updateIm: protectedProcedure
     .input(z.object({ id: z.string(), im: z.string() }))
@@ -782,19 +779,16 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       await deleteFromUploadthing(input.imageUrl);
-      return prisma.mergerAndAcquisition
-        .findUniqueOrThrow({
-          where: { id: input.id },
-        })
-        .then((opportunity) => {
-          const updatedImages = (opportunity.shareholderStructure || []).filter(
-            (img) => img !== input.imageUrl
-          );
-          return prisma.mergerAndAcquisition.update({
-            where: { id: input.id },
-            data: { shareholderStructure: updatedImages },
-          });
-        });
+      const opportunity = await prisma.mergerAndAcquisition.findUniqueOrThrow({
+        where: { id: input.id },
+      });
+      const updatedImages = (opportunity.shareholderStructure || []).filter(
+        (img) => img !== input.imageUrl
+      );
+      return prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { shareholderStructure: updatedImages },
+      });
     }),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -1228,19 +1222,16 @@ export const realEstateRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       await deleteFromUploadthing(input.imageUrl);
-      return prisma.realEstate
-        .findUniqueOrThrow({
-          where: { id: input.id },
-        })
-        .then((opportunity) => {
-          const updatedImages = (opportunity.images || []).filter(
-            (img) => img !== input.imageUrl
-          );
-          return prisma.realEstate.update({
-            where: { id: input.id },
-            data: { images: updatedImages },
-          });
-        });
+      const opportunity = await prisma.realEstate.findUniqueOrThrow({
+        where: { id: input.id },
+      });
+      const updatedImages = (opportunity.images || []).filter(
+        (img) => img !== input.imageUrl
+      );
+      return prisma.realEstate.update({
+        where: { id: input.id },
+        data: { images: updatedImages },
+      });
     }),
   // Pre-NDA Update Mutations
   updateAsset: protectedProcedure
