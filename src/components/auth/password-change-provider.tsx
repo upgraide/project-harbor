@@ -6,7 +6,37 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ChangePasswordDialog } from "@/features/auth/components/change-password-dialog";
 import { useTRPC } from "@/trpc/client";
 
-const SESSION_STORAGE_KEY = "password-change-dialog-shown";
+const PASSWORD_DIALOG_COOKIE_NAME = "password_change_dialog_shown";
+const PASSWORD_DIALOG_COOKIE_MAX_AGE = 60 * 60 * 24; // 24 hours in seconds
+
+// Helper functions to manage cookies
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") {
+    return null;
+  }
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts[1]?.split(";")[0] ?? null;
+  }
+  return null;
+}
+
+function setCookie(name: string, value: string, maxAge: number): void {
+  if (typeof document === "undefined") {
+    return;
+  }
+  // biome-ignore lint/suspicious/noDocumentCookie: We need to set cookies for dialog tracking
+  document.cookie = `${name}=${value}; path=/; max-age=${maxAge}`;
+}
+
+function removeCookie(name: string): void {
+  if (typeof document === "undefined") {
+    return;
+  }
+  // biome-ignore lint/suspicious/noDocumentCookie: We need to remove cookies for dialog tracking
+  document.cookie = `${name}=; path=/; max-age=0`;
+}
 
 export function PasswordChangeProvider({
   children,
@@ -28,13 +58,17 @@ export function PasswordChangeProvider({
   const checkAndShowDialog = useCallback(() => {
     // Check if password hasn't been changed
     if (passwordStatus && !passwordStatus.passwordChanged) {
-      // Check sessionStorage to see if we've already shown it in this session
-      const hasShownInSession = sessionStorage.getItem(SESSION_STORAGE_KEY);
+      // Check cookie to see if we've already shown it in the last 24 hours
+      const hasShownIn24Hours = getCookie(PASSWORD_DIALOG_COOKIE_NAME);
 
-      if (!hasShownInSession) {
+      if (!hasShownIn24Hours) {
         setOpen(true);
-        // Mark as shown in this session
-        sessionStorage.setItem(SESSION_STORAGE_KEY, "true");
+        // Mark as shown with 24-hour expiration
+        setCookie(
+          PASSWORD_DIALOG_COOKIE_NAME,
+          "true",
+          PASSWORD_DIALOG_COOKIE_MAX_AGE
+        );
       }
     }
   }, [passwordStatus]);
@@ -62,21 +96,15 @@ export function PasswordChangeProvider({
     }
   }, [passwordStatus, checkAndShowDialog]);
 
-  const handleOpenChange = useCallback(
-    (newOpen: boolean) => {
-      setOpen(newOpen);
-      // If dialog is closed without changing password, remove the session flag
-      // so it can show again on next navigation
-      if (!newOpen && passwordStatus && !passwordStatus.passwordChanged) {
-        sessionStorage.removeItem(SESSION_STORAGE_KEY);
-      }
-    },
-    [passwordStatus]
-  );
+  const handleOpenChange = useCallback((newOpen: boolean) => {
+    setOpen(newOpen);
+    // Note: We don't remove the cookie when dialog is closed
+    // This ensures it only shows once every 24 hours even if closed
+  }, []);
 
   const handleSuccess = useCallback(() => {
-    // Password changed successfully, clear session flag
-    sessionStorage.removeItem(SESSION_STORAGE_KEY);
+    // Password changed successfully, clear cookie
+    removeCookie(PASSWORD_DIALOG_COOKIE_NAME);
     setOpen(false);
   }, []);
 
