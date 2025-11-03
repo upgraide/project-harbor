@@ -27,11 +27,11 @@ model User {
   role          Role      @default(USER)
 
   // Investor-specific fields
-  investorType        InvestorType?
-  preferredLocation   String?
+  investorType      InvestorType?
+  preferredLocation String?
 
   // Password management
-  passwordChanged     Boolean   @default(false)
+  passwordChanged Boolean @default(false)
 
   // Relations for opportunity interactions
   mergerAndAcquisitionInterests UserMergerAndAcquisitionInterest[] @relation("userMergerAndAcquisitions")
@@ -99,231 +99,232 @@ model Verification {
 }
 
 model MergerAndAcquisition {
-  id        String   @id @default(cuid())
-  name      String
-  description String?
+  id                 String  @id @default(cuid())
+  name               String
+  description        String?
   englishDescription String?
 
   // Basic fields
-  images    String[] // Array of image URLs/paths
-  
+  images String[] // Array of image URLs/paths
+
   // Type and details
-  type      Type?
+  type        Type?
   typeDetails TypeDetails?
-  
+
   // Industry classification
-  industry  Industry?
+  industry          Industry?
   industrySubsector IndustrySubsector?
-  
+
   // Financial metrics
-  sales     SalesRange?
-  ebitda    EbitdaRange?
+  sales            SalesRange?
+  ebitda           EbitdaRange?
   ebitdaNormalized Float?
-  netDebt   Float?
+  netDebt          Float?
 
   // Graph data (stored as JSON)
   graphRows Json[] // Array of { year: string, revenue: number, ebitda: number, ebitdaMargin: number }
-  
+
   // Growth metrics
-  salesCAGR Float?
+  salesCAGR  Float?
   ebitdaCAGR Float?
-  
+
   // Asset information
-  assetIncluded Boolean?
+  assetIncluded       Boolean?
   estimatedAssetValue Float?
-  
+
   preNDANotes String?
-  
+
   // Post-NDA Fields
   shareholderStructure String[] // Array of file paths/URLs
-  im String?
-  entrepriseValue Float?
-  equityValue Float?
-  evDashEbitdaEntry Float?
-  evDashEbitdaExit Float?
-  ebitdaMargin Float?
-  fcf Float?
-  netDebtDashEbitda Float?
-  capexItensity Float?
-  workingCapitalNeeds Float?
-  postNDANotes String?
-  
-  // Co-Investment Fields
-  coInvestment Boolean?
-  equityContribution Float?
-  grossIRR Float?
-  netIRR Float?
-  moic Float?
-  cashOnCashReturn Float?
-  cashConvertion Float?
-  entryMultiple Float?
-  exitExpectedMultiple Float?
-  holdPeriod Float?
+  im                   String?
+  entrepriseValue      Float?
+  equityValue          Float?
+  evDashEbitdaEntry    Float?
+  evDashEbitdaExit     Float?
+  ebitdaMargin         Float?
+  fcf                  Float?
+  netDebtDashEbitda    Float?
+  capexItensity        Float?
+  workingCapitalNeeds  Float?
+  postNDANotes         String?
 
-  userId    String   // Who created the Merger and Acquisition
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+  // Co-Investment Fields
+  coInvestment         Boolean?
+  equityContribution   Float?
+  grossIRR             Float?
+  netIRR               Float?
+  moic                 Float?
+  cashOnCashReturn     Float?
+  cashConvertion       Float?
+  entryMultiple        Float?
+  exitExpectedMultiple Float?
+  holdPeriod           Float?
+
+  userId    String // Who created the Merger and Acquisition
+  status    OpportunityStatus @default(ACTIVE)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
   // Relations
-  analytics OpportunityAnalytics?
+  analytics     OpportunityAnalytics?
   userInterests UserMergerAndAcquisitionInterest[] @relation("mergerAndAcquisitionUsers")
 }
 
 model RealEstate {
-  id        String   @id @default(cuid())
-  name      String
-  description String?
+  id                 String  @id @default(cuid())
+  name               String
+  description        String?
   englishDescription String?
-  
-  // Images
-  images    String[] // Array of image URLs/paths
-  
-  // Asset type
-  asset     RealEstateAssetType?
-  
-  // Pre-NDA Fields
-  nRoomsLastYear Int?
-  noi Float?
-  occupancyLastYear Float?
-  walt Float?
-  nBeds Int?
-  investment RealEstateInvestmentType?
-  subRent Float?
-  rentPerSqm Float?
-  subYield Float?
-  capex Float?
-  capexPerSqm Float?
-  sale Float?
-  salePerSqm Float?
-  location String?
-  area Float?
-  value Float?
-  yield Float?
-  rent Float?
-  gcaAboveGround Float?
-  gcaBelowGround Float?
-  
-  // Post-NDA Fields
-  license String?
-  irr Float?
-  coc Float?
-  licenseStage String?
-  holdingPeriod Float?
-  breakEvenOccupancy Float?
-  vacancyRate Float?
-  estimatedRentValue Float?
-  occupancyRate Float?
-  moic Float?
-  price Float?
-  totalInvestment Float?
-  profitOnCost Float?
-  profit Float?
-  sofCosts Float?
-  sellPerSqm Float?
-  gdv Float?
-  wault Float?
-  debtServiceCoverageRatio Float?
-  expectedExitYield Float?
-  ltv Float?
-  ltc Float?
-  yieldOnCost Float?
 
-  
+  // Images
+  images String[] // Array of image URLs/paths
+
+  // Asset type
+  asset RealEstateAssetType?
+
+  // Pre-NDA Fields
+  nRoomsLastYear    Int?
+  noi               Float?
+  occupancyLastYear Float?
+  walt              Float?
+  nBeds             Int?
+  investment        RealEstateInvestmentType?
+  subRent           Float?
+  rentPerSqm        Float?
+  subYield          Float?
+  capex             Float?
+  capexPerSqm       Float?
+  sale              Float?
+  salePerSqm        Float?
+  location          String?
+  area              Float?
+  value             Float?
+  yield             Float?
+  rent              Float?
+  gcaAboveGround    Float?
+  gcaBelowGround    Float?
+
+  // Post-NDA Fields
+  license                  String?
+  irr                      Float?
+  coc                      Float?
+  licenseStage             String?
+  holdingPeriod            Float?
+  breakEvenOccupancy       Float?
+  vacancyRate              Float?
+  estimatedRentValue       Float?
+  occupancyRate            Float?
+  moic                     Float?
+  price                    Float?
+  totalInvestment          Float?
+  profitOnCost             Float?
+  profit                   Float?
+  sofCosts                 Float?
+  sellPerSqm               Float?
+  gdv                      Float?
+  wault                    Float?
+  debtServiceCoverageRatio Float?
+  expectedExitYield        Float?
+  ltv                      Float?
+  ltc                      Float?
+  yieldOnCost              Float?
+
   // Co-Investment Fields
-  coInvestment Boolean?
-  gpEquityValue Float?
-  gpEquityPercentage Float?
-  totalEquityRequired Float?
-  sponsorPresentation String?
-  promoteStructure String?
-  projectIRR Float?
-  investorIRR Float?
-  coInvestmentHoldPeriod Float?
+  coInvestment                   Boolean?
+  gpEquityValue                  Float?
+  gpEquityPercentage             Float?
+  totalEquityRequired            Float?
+  sponsorPresentation            String?
+  promoteStructure               String?
+  projectIRR                     Float?
+  investorIRR                    Float?
+  coInvestmentHoldPeriod         Float?
   coInvestmentBreakEvenOccupancy Float?
-  
+
   createdBy String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+  status    OpportunityStatus @default(ACTIVE)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
   // Relations
-  analytics OpportunityAnalytics?
+  analytics     OpportunityAnalytics?
   userInterests UserRealEstateInterest[] @relation("realEstateUsers")
-  
+
   @@map("real_estate")
 }
 
 model OpportunityAnalytics {
-  id        String   @id @default(cuid())
-  
+  id String @id @default(cuid())
+
   // Polymorphic relationship - one of these will be set
-  mergerAndAcquisitionId String? @unique
+  mergerAndAcquisitionId String?               @unique
   mergerAndAcquisition   MergerAndAcquisition? @relation(fields: [mergerAndAcquisitionId], references: [id], onDelete: Cascade)
-  
-  realEstateId String? @unique
+
+  realEstateId String?     @unique
   realEstate   RealEstate? @relation(fields: [realEstateId], references: [id], onDelete: Cascade)
-  
+
   // Analytics metrics
-  views     Int      @default(0)
-  
+  views Int @default(0)
+
   // Future analytics fields can be added here:
   // uniqueViews Int @default(0)
   // downloads Int @default(0)
   // shares Int @default(0)
   // lastViewedAt DateTime?
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@map("opportunity_analytics")
 }
 
 // User Interest and NDA Tracking Models
 model UserMergerAndAcquisitionInterest {
   id String @id @default(cuid())
-  
+
   userId String
-  user User @relation("userMergerAndAcquisitions", fields: [userId], references: [id], onDelete: Cascade)
-  
+  user   User   @relation("userMergerAndAcquisitions", fields: [userId], references: [id], onDelete: Cascade)
+
   mergerAndAcquisitionId String
-  mergerAndAcquisition MergerAndAcquisition @relation("mergerAndAcquisitionUsers", fields: [mergerAndAcquisitionId], references: [id], onDelete: Cascade)
-  
+  mergerAndAcquisition   MergerAndAcquisition @relation("mergerAndAcquisitionUsers", fields: [mergerAndAcquisitionId], references: [id], onDelete: Cascade)
+
   // Interest status: true = interested, false = not interested
   interested Boolean @default(false)
-  
+
   // Reason for not being interested
   notInterestedReason String?
-  
+
   // NDA tracking
   ndaSigned Boolean @default(false)
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@unique([userId, mergerAndAcquisitionId])
   @@map("user_m_and_a_interest")
 }
 
 model UserRealEstateInterest {
   id String @id @default(cuid())
-  
+
   userId String
-  user User @relation("userRealEstates", fields: [userId], references: [id], onDelete: Cascade)
-  
+  user   User   @relation("userRealEstates", fields: [userId], references: [id], onDelete: Cascade)
+
   realEstateId String
-  realEstate RealEstate @relation("realEstateUsers", fields: [realEstateId], references: [id], onDelete: Cascade)
-  
+  realEstate   RealEstate @relation("realEstateUsers", fields: [realEstateId], references: [id], onDelete: Cascade)
+
   // Interest status: true = interested, false = not interested
   interested Boolean @default(false)
-  
+
   // Reason for not being interested
   notInterestedReason String?
-  
+
   // NDA tracking
   ndaSigned Boolean @default(false)
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@unique([userId, realEstateId])
   @@map("user_real_estate_interest")
 }
@@ -401,7 +402,7 @@ enum RealEstateInvestmentType {
 }
 
 model AccessRequest {
-  id        String   @id @default(cuid())
+  id        String              @id @default(cuid())
   name      String
   email     String
   company   String
@@ -409,8 +410,8 @@ model AccessRequest {
   position  String
   message   String
   status    AccessRequestStatus @default(PENDING)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
 
   @@map("access_request")
 }
@@ -419,4 +420,10 @@ enum AccessRequestStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum OpportunityStatus {
+  ACTIVE
+  INACTIVE
+  CONCLUDED
 }

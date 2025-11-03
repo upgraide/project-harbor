@@ -9,4 +9,11 @@ export default {
     totalViews: "visualizações totais",
     views: "Visualizações",
   },
+  kpis: {
+    aum: "Total de Ativos Sob Gestão (AUM)",
+    assetsTransacted: "Total de Ativos Transacionados",
+    mandatesClosedYTD: "Total de Mandatos Fechados (Negócios) no Ano (YTD)",
+    activeClients: "Clientes Ativos",
+    newClientsQuarter: "Novos Clientes neste trimestre",
+  },
 };

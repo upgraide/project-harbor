@@ -90,3 +90,11 @@ export const useIncrementRealEstateViews = () => {
     })
   );
 };
+
+/**
+ * Hook to get backoffice KPIs for analytics overview
+ */
+export const useBackofficeKPIs = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getBackofficeKPIs.queryOptions());
+};

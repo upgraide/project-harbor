@@ -1,3 +1,4 @@
+import { startOfQuarter, startOfYear } from "date-fns";
 import { z } from "zod";
 import prisma from "@/lib/db";
 import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
@@ -159,4 +160,64 @@ export const analyticsRouter = createTRPCRouter({
           : ("realEstate" as const),
       }));
     }),
+
+  /**
+   * Get backoffice KPIs for analytics overview
+   */
+  getBackofficeKPIs: protectedProcedure.query(async () => {
+    const now = new Date();
+    const yearStart = startOfYear(now);
+    const quarterStart = startOfQuarter(now);
+
+    // Total Assets Under Management (AUM): Count of active opportunities
+    const activeMnaCount = await prisma.mergerAndAcquisition.count({
+      where: { status: "ACTIVE" },
+    });
+    const activeRealEstateCount = await prisma.realEstate.count({
+      where: { status: "ACTIVE" },
+    });
+    const totalAUM = activeMnaCount + activeRealEstateCount;
+
+    // Total Assets Transacted: Count of concluded opportunities
+    const totalAssetsTransacted =
+      (await prisma.mergerAndAcquisition.count({
+        where: { status: "CONCLUDED" },
+      })) +
+      (await prisma.realEstate.count({
+        where: { status: "CONCLUDED" },
+      }));
+
+    // Total Mandates Closed YTD: Count of concluded opportunities created this year
+    const mandatesClosedYTD =
+      (await prisma.mergerAndAcquisition.count({
+        where: {
+          status: "CONCLUDED",
+          createdAt: { gte: yearStart },
+        },
+      })) +
+      (await prisma.realEstate.count({
+        where: {
+          status: "CONCLUDED",
+          createdAt: { gte: yearStart },
+        },
+      }));
+
+    // Active Clients: Total count of users
+    const activeClients = await prisma.user.count();
+
+    // New Clients this quarter: Count of users created in current quarter
+    const newClientsQuarter = await prisma.user.count({
+      where: {
+        createdAt: { gte: quarterStart },
+      },
+    });
+
+    return {
+      totalAUM,
+      totalAssetsTransacted,
+      mandatesClosedYTD,
+      activeClients,
+      newClientsQuarter,
+    };
+  }),
 });

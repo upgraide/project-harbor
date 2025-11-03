@@ -76,6 +76,9 @@ export const AnalyticsError = () => {
   return <ErrorView message={t("errorMessage")} />;
 };
 
+// biome-ignore lint/performance/noBarrelFile: export is needed for suspense fallback
+export { AnalyticsOverview } from "./analytics-overview";
+
 export const AnalyticsList = () => {
   const t = useScopedI18n("backoffice.analytics");
   const { data: topViewed, isLoading } = useTopViewedOpportunities(
