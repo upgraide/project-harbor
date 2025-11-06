@@ -98,3 +98,43 @@ export const useBackofficeKPIs = () => {
   const trpc = useTRPC();
   return useQuery(trpc.analytics.getBackofficeKPIs.queryOptions());
 };
+
+/**
+ * Hook to get assets transacted growth by month (last 12 months)
+ */
+export const useAssetsTransactedByMonth = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getAssetsTransactedByMonth.queryOptions());
+};
+
+/**
+ * Hook to get AUM growth by month (last 12 months)
+ */
+export const useAumByMonth = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getAumByMonth.queryOptions());
+};
+
+/**
+ * Hook to get deal pipeline funnel data
+ */
+export const usePipelineFunnel = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getPipelineFunnel.queryOptions());
+};
+
+/**
+ * Hook to get client segmentation by investor type
+ */
+export const useClientSegmentation = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getClientSegmentation.queryOptions());
+};
+
+/**
+ * Hook to get sector breakdown
+ */
+export const useSectorBreakdown = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getSectorBreakdown.queryOptions());
+};

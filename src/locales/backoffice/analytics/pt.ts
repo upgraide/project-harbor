@@ -16,4 +16,32 @@ export default {
     activeClients: "Clientes Ativos",
     newClientsQuarter: "Novos Clientes neste trimestre",
   },
+  graphs: {
+    sectionTitle: "2. Gráficos e Visualizações Principais (Seção do Meio)",
+    assetsTransacted: {
+      title: "Crescimento de Ativos Transacionados ao Longo do Tempo",
+      yLabel: "Total de Ativos Transacionados",
+    },
+    aum: {
+      title: "Crescimento do AUM ao Longo do Tempo",
+      yLabel: "Total AUM",
+    },
+    pipeline: {
+      title: "Funil do Pipeline de Negócios",
+      stages: {
+        leads: "Leads",
+        dueDiligence: "Due Diligence",
+        negotiation: "Negociação",
+        closed: "Fechado",
+      },
+    },
+    segmentation: {
+      title: "Segmentação de Clientes",
+      valueLabel: "Clientes",
+    },
+    sector: {
+      title: "Repartição de Receitas por Setor",
+      yLabel: "Contagem",
+    },
+  },
 };

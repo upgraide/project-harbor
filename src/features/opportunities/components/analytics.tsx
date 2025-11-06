@@ -78,6 +78,11 @@ export const AnalyticsError = () => {
 
 // biome-ignore lint/performance/noBarrelFile: export is needed for suspense fallback
 export { AnalyticsOverview } from "./analytics-overview";
+export { AssetsTransactedLineChart } from "./assets-transacted-line";
+export { AumLineChart } from "./aum-line";
+export { ClientSegmentationDonutChart } from "./client-segmentation-donut";
+export { PipelineFunnelChart } from "./pipeline-funnel";
+export { SectorBreakdownBarChart } from "./sector-breakdown-bar";
 
 export const AnalyticsList = () => {
   const t = useScopedI18n("backoffice.analytics");
