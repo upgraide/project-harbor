@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutPanelLeft, LogOutIcon } from "lucide-react";
+import { BookUserIcon, LayoutPanelLeft, LogOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { DynamicImage } from "@/components/dynamic-image";
@@ -75,6 +75,19 @@ export const CrmSidebar = () => {
                     : LOGO_EXPANDED_SIZE
                 }
               />
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            asChild
+            className="mt-4 h-10 gap-x-4 bg-primary px-4 text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
+            tooltip="Backoffice"
+            variant="default"
+          >
+            <Link href={backofficePath()} prefetch>
+              <BookUserIcon className="size-4" />
+              <span>Backoffice</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
