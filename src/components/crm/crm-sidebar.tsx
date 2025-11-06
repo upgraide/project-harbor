@@ -1,34 +1,9 @@
 "use client";
 
-import {
-  BellIcon,
-  BookUserIcon,
-  BriefcaseBusinessIcon,
-  ChartBarIcon,
-  HeartIcon,
-  HomeIcon,
-  LayoutPanelLeft,
-  LogOutIcon,
-  UsersIcon,
-  WalletIcon,
-} from "lucide-react";
+import { LayoutPanelLeft, LogOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
-import { useScopedI18n } from "@/locales/client";
-import {
-  backofficeAnalyticsPath,
-  backofficeInvestmentInterestsPath,
-  backofficeInvestorsPath,
-  backofficeMergeAndAcquisitionPath,
-  backofficeNotificationsPath,
-  backofficePath,
-  backofficeRealEstatePath,
-  backofficeUsersPath,
-  crmPath,
-  indexPath,
-} from "@/paths";
-import { DynamicImage } from "./dynamic-image";
+import { DynamicImage } from "@/components/dynamic-image";
 import {
   Sidebar,
   SidebarContent,
@@ -40,7 +15,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "./ui/sidebar";
+} from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
+import { useScopedI18n } from "@/locales/client";
+import { backofficePath, indexPath } from "@/paths";
 
 const LOGO_EXPANDED_SIZE = 175;
 const LOGO_COLLAPSED_SIZE = 64;
@@ -55,46 +33,11 @@ const createMenuItems = (t: (key: string) => string) => [
         icon: LayoutPanelLeft,
         url: backofficePath(),
       },
-      {
-        title: t("items.m&a.title"),
-        icon: BriefcaseBusinessIcon,
-        url: backofficeMergeAndAcquisitionPath(),
-      },
-      {
-        title: t("items.real-estate.title"),
-        icon: HomeIcon,
-        url: backofficeRealEstatePath(),
-      },
-      {
-        title: t("items.users.title"),
-        icon: UsersIcon,
-        url: backofficeUsersPath(),
-      },
-      {
-        title: t("items.investors.title"),
-        icon: WalletIcon,
-        url: backofficeInvestorsPath(),
-      },
-      {
-        title: t("items.analytics.title"),
-        icon: ChartBarIcon,
-        url: backofficeAnalyticsPath(),
-      },
-      {
-        title: t("items.investment-interests.title"),
-        icon: HeartIcon,
-        url: backofficeInvestmentInterestsPath(),
-      },
-      {
-        title: t("items.notifications.title"),
-        icon: BellIcon,
-        url: backofficeNotificationsPath(),
-      },
     ],
   },
 ];
 
-export const AppSidebar = () => {
+export const CrmSidebar = () => {
   const t = useScopedI18n("backoffice.sidebar");
   const menuItems = createMenuItems(t);
   const pathname = usePathname();
@@ -132,19 +75,6 @@ export const AppSidebar = () => {
                     : LOGO_EXPANDED_SIZE
                 }
               />
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            asChild
-            className="mt-4 h-10 gap-x-4 bg-primary px-4 text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
-            tooltip="CRM"
-            variant="default"
-          >
-            <Link href={crmPath()} prefetch>
-              <BookUserIcon className="size-4" />
-              <span>CRM</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
