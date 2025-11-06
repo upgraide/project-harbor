@@ -302,4 +302,19 @@ export default {
       },
     },
   },
+  teamAssignmentCard: {
+    title: "Atribuição de Equipa",
+    clientAcquisitioner: {
+      label: "Adquiridor de Cliente",
+      placeholder: "Selecione um adquiridor de cliente",
+      description:
+        "Selecione o adquiridor de cliente para esta oportunidade (deve ser um utilizador Team ou Admin)",
+    },
+    accountManagers: {
+      label: "Gestores de Conta",
+      placeholder: "Selecione gestores de conta",
+      description:
+        "Selecione um ou mais gestores de conta para esta oportunidade (devem ser utilizadores Team ou Admin)",
+    },
+  },
 } as const;

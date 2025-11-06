@@ -4,8 +4,10 @@ import {
   EbitdaRange,
   Industry,
   IndustrySubsector,
+  OpportunityType,
   RealEstateAssetType,
   RealEstateInvestmentType,
+  Role,
   SalesRange,
   Type,
   TypeDetails,
@@ -62,9 +64,50 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         entryMultiple: z.string().optional(),
         exitExpectedMultiple: z.string().optional(),
         holdPeriod: z.string().optional(),
+        clientAcquisitionerId: z.string().optional(),
+        accountManagerIds: z.string().array().optional(),
       })
     )
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex mutation
     .mutation(async ({ ctx, input }) => {
+      // Validate client acquisitioner if provided
+      if (input.clientAcquisitionerId) {
+        const clientAcquisitioner = await prisma.user.findUnique({
+          where: { id: input.clientAcquisitionerId },
+          select: { role: true },
+        });
+        if (!clientAcquisitioner) {
+          throw new Error("Client acquisitioner user not found");
+        }
+        if (
+          clientAcquisitioner.role !== Role.TEAM &&
+          clientAcquisitioner.role !== Role.ADMIN
+        ) {
+          throw new Error("Client acquisitioner must have TEAM or ADMIN role");
+        }
+      }
+
+      // Validate account managers if provided
+      if (input.accountManagerIds && input.accountManagerIds.length > 0) {
+        const accountManagers = await prisma.user.findMany({
+          where: {
+            id: { in: input.accountManagerIds },
+          },
+          select: { id: true, role: true },
+        });
+
+        if (accountManagers.length !== input.accountManagerIds.length) {
+          throw new Error("One or more account managers not found");
+        }
+
+        const invalidRoles = accountManagers.filter(
+          (user) => user.role !== Role.TEAM && user.role !== Role.ADMIN
+        );
+        if (invalidRoles.length > 0) {
+          throw new Error("All account managers must have TEAM or ADMIN role");
+        }
+      }
+
       // Convert string numbers to floats where needed
       const data = {
         userId: ctx.auth.user.id,
@@ -104,6 +147,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         entryMultiple: parseOptionalFloat(input.entryMultiple),
         exitExpectedMultiple: parseOptionalFloat(input.exitExpectedMultiple),
         holdPeriod: parseOptionalFloat(input.holdPeriod),
+        clientAcquisitionerId: input.clientAcquisitionerId || null,
       };
 
       // Create the opportunity with analytics
@@ -115,6 +159,17 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
           },
         },
       });
+
+      // Create account manager assignments if provided
+      if (input.accountManagerIds && input.accountManagerIds.length > 0) {
+        await prisma.opportunityAccountManager.createMany({
+          data: input.accountManagerIds.map((userId) => ({
+            opportunityId: created.id,
+            opportunityType: OpportunityType.MNA,
+            userId,
+          })),
+        });
+      }
 
       // Trigger translation if description is provided
       if (input.description) {
@@ -792,11 +847,41 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
     }),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(({ input }) =>
-      prisma.mergerAndAcquisition.findUniqueOrThrow({
+    .query(async ({ input }) => {
+      const opportunity = await prisma.mergerAndAcquisition.findUniqueOrThrow({
         where: { id: input.id },
-      })
-    ),
+        include: {
+          clientAcquisitioner: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      const accountManagers = await prisma.opportunityAccountManager.findMany({
+        where: {
+          opportunityId: input.id,
+          opportunityType: OpportunityType.MNA,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return {
+        ...opportunity,
+        accountManagers: accountManagers.map((am) => am.user),
+      };
+    }),
 
   getMany: protectedProcedure
     .input(
@@ -1034,10 +1119,51 @@ export const realEstateRouter = createTRPCRouter({
         coInvestmentBreakEvenOccupancy: z.number().nullable().optional(),
         sponsorPresentation: z.string().optional(),
         promoteStructure: z.string().optional(),
+        clientAcquisitionerId: z.string().optional(),
+        accountManagerIds: z.string().array().optional(),
       })
     )
-    .mutation(({ ctx, input }) =>
-      prisma.realEstate.create({
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex mutation
+    .mutation(async ({ ctx, input }) => {
+      // Validate client acquisitioner if provided
+      if (input.clientAcquisitionerId) {
+        const clientAcquisitioner = await prisma.user.findUnique({
+          where: { id: input.clientAcquisitionerId },
+          select: { role: true },
+        });
+        if (!clientAcquisitioner) {
+          throw new Error("Client acquisitioner user not found");
+        }
+        if (
+          clientAcquisitioner.role !== Role.TEAM &&
+          clientAcquisitioner.role !== Role.ADMIN
+        ) {
+          throw new Error("Client acquisitioner must have TEAM or ADMIN role");
+        }
+      }
+
+      // Validate account managers if provided
+      if (input.accountManagerIds && input.accountManagerIds.length > 0) {
+        const accountManagers = await prisma.user.findMany({
+          where: {
+            id: { in: input.accountManagerIds },
+          },
+          select: { id: true, role: true },
+        });
+
+        if (accountManagers.length !== input.accountManagerIds.length) {
+          throw new Error("One or more account managers not found");
+        }
+
+        const invalidRoles = accountManagers.filter(
+          (user) => user.role !== Role.TEAM && user.role !== Role.ADMIN
+        );
+        if (invalidRoles.length > 0) {
+          throw new Error("All account managers must have TEAM or ADMIN role");
+        }
+      }
+
+      const created = await prisma.realEstate.create({
         data: {
           name: input.name,
           description: input.description,
@@ -1096,12 +1222,37 @@ export const realEstateRouter = createTRPCRouter({
           sponsorPresentation: input.sponsorPresentation,
           promoteStructure: input.promoteStructure,
           createdBy: ctx.auth.user.id,
+          clientAcquisitionerId: input.clientAcquisitionerId || null,
           analytics: {
             create: {},
           },
         },
-      })
-    ),
+      });
+
+      // Create account manager assignments if provided
+      if (input.accountManagerIds && input.accountManagerIds.length > 0) {
+        await prisma.opportunityAccountManager.createMany({
+          data: input.accountManagerIds.map((userId) => ({
+            opportunityId: created.id,
+            opportunityType: OpportunityType.REAL_ESTATE,
+            userId,
+          })),
+        });
+      }
+
+      // Trigger translation if description is provided
+      if (input.description) {
+        await inngest.send({
+          name: "opportunity/translate-description",
+          data: {
+            opportunityId: created.id,
+            description: input.description,
+          },
+        });
+      }
+
+      return created;
+    }),
   getMany: protectedProcedure
     .input(
       z.object({
@@ -1157,11 +1308,41 @@ export const realEstateRouter = createTRPCRouter({
     ),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(({ input }) =>
-      prisma.realEstate.findUniqueOrThrow({
+    .query(async ({ input }) => {
+      const opportunity = await prisma.realEstate.findUniqueOrThrow({
         where: { id: input.id },
-      })
-    ),
+        include: {
+          clientAcquisitioner: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      const accountManagers = await prisma.opportunityAccountManager.findMany({
+        where: {
+          opportunityId: input.id,
+          opportunityType: OpportunityType.REAL_ESTATE,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return {
+        ...opportunity,
+        accountManagers: accountManagers.map((am) => am.user),
+      };
+    }),
   updateName: protectedProcedure
     .input(z.object({ id: z.string(), name: z.string().min(1) }))
     .mutation(({ input }) =>

@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateRealEstateOpportunity } from "@/features/opportunities/hooks/use-real-estate-opportunities";
+import { UserMultiSelect } from "@/features/users/components/user-multi-select";
+import { UserSelect } from "@/features/users/components/user-select";
 import {
   RealEstateAssetType,
   RealEstateInvestmentType,
@@ -91,6 +93,8 @@ const formSchema = z.object({
   investorIRR: z.string().optional(),
   coInvestmentHoldPeriod: z.string().optional(),
   coInvestmentBreakEvenOccupancy: z.string().optional(),
+  clientAcquisitionerId: z.string().optional(),
+  accountManagerIds: z.string().array().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -114,6 +118,8 @@ export const Creator = () => {
       location: "",
       license: "",
       licenseStage: "",
+      clientAcquisitionerId: "",
+      accountManagerIds: [],
     },
   });
 
@@ -228,6 +234,10 @@ export const Creator = () => {
         coInvestmentBreakEvenOccupancy: parseOptionalFloat(
           values.coInvestmentBreakEvenOccupancy
         ),
+        clientAcquisitionerId: values.clientAcquisitionerId || undefined,
+        accountManagerIds: values.accountManagerIds?.length
+          ? values.accountManagerIds
+          : undefined,
       })) as unknown as { id: string };
 
       toast.success("Opportunity created successfully!");
@@ -1760,6 +1770,68 @@ export const Creator = () => {
                         {t(
                           "coInvestmentCard.coInvestmentBreakEvenOccupancy.description"
                         )}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* Companion and Account Managers */}
+          <section>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("teamAssignmentCard.title")}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="clientAcquisitionerId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t("teamAssignmentCard.clientAcquisitioner.label")}
+                      </FormLabel>
+                      <FormControl>
+                        <UserSelect
+                          onValueChange={field.onChange}
+                          placeholder={t(
+                            "teamAssignmentCard.clientAcquisitioner.placeholder"
+                          )}
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {t(
+                          "teamAssignmentCard.clientAcquisitioner.description"
+                        )}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="accountManagerIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t("teamAssignmentCard.accountManagers.label")}
+                      </FormLabel>
+                      <FormControl>
+                        <UserMultiSelect
+                          action={field.onChange}
+                          placeholder={t(
+                            "teamAssignmentCard.accountManagers.placeholder"
+                          )}
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {t("teamAssignmentCard.accountManagers.description")}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
