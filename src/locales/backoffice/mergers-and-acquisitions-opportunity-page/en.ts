@@ -327,4 +327,13 @@ export default {
       },
     },
   },
+  teamAssignmentCard: {
+    title: "Team Assignment",
+    clientAcquisitioner: {
+      label: "Client Acquisitioner",
+    },
+    accountManagers: {
+      label: "Account Managers",
+    },
+  },
 } as const;

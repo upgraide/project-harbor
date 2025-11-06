@@ -329,4 +329,13 @@ export default {
       },
     },
   },
+  teamAssignmentCard: {
+    title: "Atribuição de Equipa",
+    clientAcquisitioner: {
+      label: "Adquiridor de Cliente",
+    },
+    accountManagers: {
+      label: "Gestores de Conta",
+    },
+  },
 } as const;

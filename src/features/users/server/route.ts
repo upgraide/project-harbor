@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { z } from "zod";
 import { PAGINATION, PASSWORD } from "@/config/constants";
+import { Role } from "@/generated/prisma";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { sendInviteEmail } from "@/lib/emails/send-invite";
@@ -168,6 +169,25 @@ export const usersRouter = createTRPCRouter({
       }
       return user.role;
     }),
+
+  getTeamAndAdminUsers: protectedProcedure.query(async () => {
+    const users = await prisma.user.findMany({
+      where: {
+        role: {
+          in: [Role.TEAM, Role.ADMIN],
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+    return users;
+  }),
 
   updateProfile: protectedProcedure
     .input(updateProfileSchema)

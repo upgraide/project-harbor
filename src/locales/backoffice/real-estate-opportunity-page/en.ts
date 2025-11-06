@@ -400,4 +400,13 @@ export default {
       units: "%",
     },
   },
+  teamAssignmentCard: {
+    title: "Team Assignment",
+    clientAcquisitioner: {
+      label: "Client Acquisitioner",
+    },
+    accountManagers: {
+      label: "Account Managers",
+    },
+  },
 } as const;

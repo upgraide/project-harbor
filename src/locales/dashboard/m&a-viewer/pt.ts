@@ -343,4 +343,13 @@ export default {
       "Por favor, diga-nos por que não está interessado nesta oportunidade. Isso ajuda-nos a melhorar as nossas ofertas.",
     placeholder: "Insira o seu motivo...",
   },
+  teamAssignmentCard: {
+    title: "Atribuição de Equipa",
+    clientAcquisitioner: {
+      label: "Adquiridor de Cliente",
+    },
+    accountManagers: {
+      label: "Gestores de Conta",
+    },
+  },
 } as const;

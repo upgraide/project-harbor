@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useCreateOpportunity } from "@/features/opportunities/hooks/use-m&a-opportunities";
+import { UserMultiSelect } from "@/features/users/components/user-multi-select";
+import { UserSelect } from "@/features/users/components/user-select";
 import {
   EbitdaRange,
   Industry,
@@ -74,6 +76,8 @@ const formSchema = z.object({
   entryMultiple: z.string().optional(),
   exitExpectedMultiple: z.string().optional(),
   holdPeriod: z.string().optional(),
+  clientAcquisitionerId: z.string().optional(),
+  accountManagerIds: z.string().array().optional(),
 });
 
 // Map industries to their allowed subsectors
@@ -133,12 +137,21 @@ export const Creator = () => {
       entryMultiple: "",
       exitExpectedMultiple: "",
       holdPeriod: "",
+      clientAcquisitionerId: "",
+      accountManagerIds: [],
     },
   });
 
   const handleSubmit = async (values: FormValues) => {
     try {
-      const newOpportunity = await createOpportunity.mutateAsync(values);
+      const submitValues = {
+        ...values,
+        clientAcquisitionerId: values.clientAcquisitionerId || undefined,
+        accountManagerIds: values.accountManagerIds?.length
+          ? values.accountManagerIds
+          : undefined,
+      };
+      const newOpportunity = await createOpportunity.mutateAsync(submitValues);
 
       toast.success("Opportunity created successfully!");
       router.push(
@@ -1373,6 +1386,68 @@ export const Creator = () => {
                           "coInvestmentCard.table.body.holdPeriod.description"
                         )}{" "}
                         ({t("coInvestmentCard.table.body.holdPeriod.units")})
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* Companion and Account Managers */}
+          <section>
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("teamAssignmentCard.title")}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="clientAcquisitionerId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t("teamAssignmentCard.clientAcquisitioner.label")}
+                      </FormLabel>
+                      <FormControl>
+                        <UserSelect
+                          onValueChange={field.onChange}
+                          placeholder={t(
+                            "teamAssignmentCard.clientAcquisitioner.placeholder"
+                          )}
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {t(
+                          "teamAssignmentCard.clientAcquisitioner.description"
+                        )}
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="accountManagerIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t("teamAssignmentCard.accountManagers.label")}
+                      </FormLabel>
+                      <FormControl>
+                        <UserMultiSelect
+                          action={field.onChange}
+                          placeholder={t(
+                            "teamAssignmentCard.accountManagers.placeholder"
+                          )}
+                          value={field.value}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {t("teamAssignmentCard.accountManagers.description")}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

@@ -37,6 +37,11 @@ model User {
   mergerAndAcquisitionInterests UserMergerAndAcquisitionInterest[] @relation("userMergerAndAcquisitions")
   realEstateInterests           UserRealEstateInterest[]           @relation("userRealEstates")
 
+  // Relations for opportunity assignments
+  clientAcquisitionerMergerAndAcquisitions MergerAndAcquisition[]            @relation("clientAcquisitionerMergerAndAcquisitions")
+  clientAcquisitionerRealEstates           RealEstate[]                      @relation("clientAcquisitionerRealEstates")
+  accountManagerAssignments      OpportunityAccountManager[]
+
   @@unique([email])
   @@map("user")
 }
@@ -165,6 +170,10 @@ model MergerAndAcquisition {
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
+  // Client Acquisitioner and Account Managers
+  clientAcquisitionerId String?
+  clientAcquisitioner   User?   @relation("clientAcquisitionerMergerAndAcquisitions", fields: [clientAcquisitionerId], references: [id], onDelete: SetNull)
+
   // Relations
   analytics     OpportunityAnalytics?
   userInterests UserMergerAndAcquisitionInterest[] @relation("mergerAndAcquisitionUsers")
@@ -245,6 +254,10 @@ model RealEstate {
   status    OpportunityStatus @default(ACTIVE)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
+
+  // Client Acquisitioner and Account Managers
+  clientAcquisitionerId String?
+  clientAcquisitioner   User?   @relation("clientAcquisitionerRealEstates", fields: [clientAcquisitionerId], references: [id], onDelete: SetNull)
 
   // Relations
   analytics     OpportunityAnalytics?
@@ -426,4 +439,21 @@ enum OpportunityStatus {
   ACTIVE
   INACTIVE
   CONCLUDED
+}
+
+enum OpportunityType {
+  MNA
+  REAL_ESTATE
+}
+
+model OpportunityAccountManager {
+  id             String          @id @default(cuid())
+  opportunityId  String
+  opportunityType OpportunityType
+  userId         String
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime        @default(now())
+
+  @@unique([opportunityId, opportunityType, userId])
+  @@map("opportunity_account_manager")
 }
