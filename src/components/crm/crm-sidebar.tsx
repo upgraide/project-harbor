@@ -1,6 +1,6 @@
 "use client";
 
-import { BookUserIcon, LayoutPanelLeft, LogOutIcon } from "lucide-react";
+import { BookUserIcon, LogOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { DynamicImage } from "@/components/dynamic-image";
@@ -29,8 +29,8 @@ const createMenuItems = (t: (key: string) => string) => [
     title: t("title"),
     items: [
       {
-        title: t("items.backoffice.title"),
-        icon: LayoutPanelLeft,
+        title: t("items.dashboard.title"),
+        icon: BookUserIcon,
         url: backofficePath(),
       },
     ],
@@ -38,7 +38,7 @@ const createMenuItems = (t: (key: string) => string) => [
 ];
 
 export const CrmSidebar = () => {
-  const t = useScopedI18n("backoffice.sidebar");
+  const t = useScopedI18n("crm.crmSidebar");
   const menuItems = createMenuItems(t);
   const pathname = usePathname();
   const router = useRouter();
@@ -87,7 +87,7 @@ export const CrmSidebar = () => {
           >
             <Link href={backofficePath()} prefetch>
               <BookUserIcon className="size-4" />
-              <span>Backoffice</span>
+              <span>{t("title")}</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
