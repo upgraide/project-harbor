@@ -88,7 +88,7 @@ export const EntityContainer = ({
   search,
   pagination,
 }: EntityContainerProps) => (
-  <div className="h-full p-4 md:px-10 md:py-6">
+  <div className="h-full w-full overflow-x-hidden p-4 md:px-10 md:py-6">
     <div className="mx-auto flex h-full w-full max-w-screen-xl flex-col gap-y-8 overflow-hidden">
       {header}
       <div className="flex h-full min-w-0 flex-col gap-y-4 overflow-hidden">

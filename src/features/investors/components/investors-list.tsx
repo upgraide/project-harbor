@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSidebar } from "@/components/ui/sidebar";
 import {
   Table,
   TableBody,
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import { useCurrentUserRole } from "@/features/users/hooks/use-current-user-role";
 import { Role } from "@/generated/prisma";
+import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
 import { useDeleteInvestor } from "../hooks/use-delete-investor";
 import { useSuspenseInvestors } from "../hooks/use-investors";
@@ -27,6 +29,7 @@ import { InvestorTableRow } from "./investor-table-row";
 import { InvestorsSearch } from "./investors-search";
 
 export const InvestorsList = () => {
+  const { open } = useSidebar();
   const investors = useSuspenseInvestors();
   const t = useScopedI18n("backoffice.investors");
   const [params, setParams] = useInvestorsParams();
@@ -48,8 +51,8 @@ export const InvestorsList = () => {
       {editingInvestorId && (
         <EditInvestorDialog
           investorId={editingInvestorId}
-          onOpenChangeAction={(open) => {
-            if (!open) {
+          onOpenChangeAction={(o) => {
+            if (!o) {
               setEditingInvestorId(null);
             }
           }}
@@ -143,11 +146,16 @@ export const InvestorsList = () => {
             <EmptyView message={t("emptyMessage")} title={t("emptyTitle")} />
           </div>
         ) : (
-          <div className="w-full overflow-x-auto rounded-lg border">
-            <Table className="min-w-max">
+          <div
+            className={cn(
+              "flex w-full items-center justify-center rounded-lg border",
+              open ? "max-w-3xl" : "max-w-5xl"
+            )}
+          >
+            <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="sticky left-0 z-10 min-w-[120px] bg-background">
+                  <TableHead className="sticky left-0 min-w-[120px] bg-background">
                     {t("table.name")}
                   </TableHead>
                   <TableHead className="min-w-[200px]">
@@ -247,7 +255,7 @@ export const InvestorsList = () => {
                     {t("table.interestSubcategories")}
                   </TableHead>
                   {isAdmin && (
-                    <TableHead className="sticky right-0 z-10 min-w-[100px] bg-background">
+                    <TableHead className="sticky right-0 min-w-[100px] bg-background">
                       {t("table.actions")}
                     </TableHead>
                   )}
