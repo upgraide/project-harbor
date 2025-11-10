@@ -1,11 +1,59 @@
 import { z } from "zod";
 import { PAGINATION } from "@/config/constants";
-import { InvestorType, Role } from "@/generated/prisma";
+import {
+  Department,
+  InvestorClientType,
+  InvestorSegment,
+  InvestorStrategy,
+  InvestorType,
+  Role,
+  TeamMember,
+} from "@/generated/prisma";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { sendInviteEmail } from "@/lib/emails/send-invite";
 import { generatePassword } from "@/lib/generate-password";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
+
+// Helper function to map investor type string to enum
+const mapInvestorTypeToEnum = (
+  investorType: "<€10M" | "€10M-€100M" | ">€100M" | undefined
+): InvestorType | null => {
+  if (investorType === "<€10M") {
+    return InvestorType.LESS_THAN_10M;
+  }
+  if (investorType === "€10M-€100M") {
+    return InvestorType.BETWEEN_10M_100M;
+  }
+  if (investorType === ">€100M") {
+    return InvestorType.GREATER_THAN_100M;
+  }
+  return null;
+};
+
+// Helper function to validate lead user
+const validateLeadUser = async (
+  userId: string | null | undefined,
+  fieldName: string
+): Promise<void> => {
+  if (!userId) {
+    return;
+  }
+  const leadUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (
+    !leadUser ||
+    (leadUser.role !== Role.TEAM && leadUser.role !== Role.ADMIN)
+  ) {
+    throw new Error(`${fieldName} must be a TEAM or ADMIN user`);
+  }
+};
 
 export const investorsRouter = createTRPCRouter({
   getMany: protectedProcedure
@@ -57,6 +105,47 @@ export const investorsRouter = createTRPCRouter({
           email: true,
           investorType: true,
           preferredLocation: true,
+          companyName: true,
+          representativeName: true,
+          phoneNumber: true,
+          type: true,
+          strategy1: true,
+          segment1: true,
+          strategy2: true,
+          segment2: true,
+          strategy3: true,
+          segment3: true,
+          location1: true,
+          location2: true,
+          location3: true,
+          minTicketSize: true,
+          maxTicketSize: true,
+          targetReturnIRR: true,
+          leadResponsibleId: true,
+          leadMainContactId: true,
+          leadResponsibleTeam: true,
+          leadMainContactTeam: true,
+          physicalAddress: true,
+          website: true,
+          lastContactDate: true,
+          acceptMarketingList: true,
+          otherFacts: true,
+          lastNotes: true,
+          department: true,
+          leadResponsible: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          leadMainContact: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
           mergerAndAcquisitionInterests: {
             where: { interested: true },
             include: {
@@ -248,6 +337,35 @@ export const investorsRouter = createTRPCRouter({
           preferredLocation,
           hasMAInterests,
           hasRealEstateInterests,
+          companyName: user.companyName,
+          representativeName: user.representativeName,
+          phoneNumber: user.phoneNumber,
+          type: user.type,
+          strategy1: user.strategy1,
+          segment1: user.segment1,
+          strategy2: user.strategy2,
+          segment2: user.segment2,
+          strategy3: user.strategy3,
+          segment3: user.segment3,
+          location1: user.location1,
+          location2: user.location2,
+          location3: user.location3,
+          minTicketSize: user.minTicketSize,
+          maxTicketSize: user.maxTicketSize,
+          targetReturnIRR: user.targetReturnIRR,
+          leadResponsibleId: user.leadResponsibleId,
+          leadMainContactId: user.leadMainContactId,
+          leadResponsible: user.leadResponsible,
+          leadMainContact: user.leadMainContact,
+          leadResponsibleTeam: user.leadResponsibleTeam,
+          leadMainContactTeam: user.leadMainContactTeam,
+          physicalAddress: user.physicalAddress,
+          website: user.website,
+          lastContactDate: user.lastContactDate,
+          acceptMarketingList: user.acceptMarketingList,
+          otherFacts: user.otherFacts,
+          lastNotes: user.lastNotes,
+          department: user.department,
           shouldIncludeBySegment: true,
           shouldIncludeByType: true,
           shouldIncludeByIndustry: true,
@@ -294,10 +412,70 @@ export const investorsRouter = createTRPCRouter({
         language: z.enum(["en", "pt"]),
         investorType: z.enum(["<€10M", "€10M-€100M", ">€100M"]).optional(),
         preferredLocation: z.string().optional(),
+        companyName: z.string().optional(),
+        representativeName: z.string().optional(),
+        phoneNumber: z.string().optional(),
+        type: z.nativeEnum(InvestorClientType).optional(),
+        strategy1: z.nativeEnum(InvestorStrategy).optional(),
+        segment1: z.nativeEnum(InvestorSegment).optional(),
+        strategy2: z.nativeEnum(InvestorStrategy).optional(),
+        segment2: z.nativeEnum(InvestorSegment).optional(),
+        strategy3: z.nativeEnum(InvestorStrategy).optional(),
+        segment3: z.nativeEnum(InvestorSegment).optional(),
+        location1: z.string().optional(),
+        location2: z.string().optional(),
+        location3: z.string().optional(),
+        minTicketSize: z.number().optional(),
+        maxTicketSize: z.number().optional(),
+        targetReturnIRR: z.number().optional(),
+        leadResponsibleId: z.string().optional(),
+        leadMainContactId: z.string().optional(),
+        leadResponsibleTeam: z.nativeEnum(TeamMember).optional(),
+        leadMainContactTeam: z.nativeEnum(TeamMember).optional(),
+        physicalAddress: z.string().optional(),
+        website: z.string().optional(),
+        lastContactDate: z.date().optional(),
+        acceptMarketingList: z.boolean().optional(),
+        otherFacts: z.string().optional(),
+        lastNotes: z.string().optional(),
+        department: z.nativeEnum(Department).optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const { email, name, language, investorType, preferredLocation } = input;
+      const {
+        email,
+        name,
+        language,
+        investorType,
+        preferredLocation,
+        companyName,
+        representativeName,
+        phoneNumber,
+        type,
+        strategy1,
+        segment1,
+        strategy2,
+        segment2,
+        strategy3,
+        segment3,
+        location1,
+        location2,
+        location3,
+        minTicketSize,
+        maxTicketSize,
+        targetReturnIRR,
+        leadResponsibleId,
+        leadMainContactId,
+        leadResponsibleTeam,
+        leadMainContactTeam,
+        physicalAddress,
+        website,
+        lastContactDate,
+        acceptMarketingList,
+        otherFacts,
+        lastNotes,
+        department,
+      } = input;
 
       // Check if user already exists
       const existingUser = await prisma.user.findUnique({
@@ -309,14 +487,11 @@ export const investorsRouter = createTRPCRouter({
       }
 
       // Map investor type string to enum
-      let investorTypeEnum: InvestorType | null = null;
-      if (investorType === "<€10M") {
-        investorTypeEnum = InvestorType.LESS_THAN_10M;
-      } else if (investorType === "€10M-€100M") {
-        investorTypeEnum = InvestorType.BETWEEN_10M_100M;
-      } else if (investorType === ">€100M") {
-        investorTypeEnum = InvestorType.GREATER_THAN_100M;
-      }
+      const investorTypeEnum = mapInvestorTypeToEnum(investorType);
+
+      // Validate lead users are TEAM or ADMIN
+      await validateLeadUser(leadResponsibleId, "Lead Responsible");
+      await validateLeadUser(leadMainContactId, "Lead Main Contact");
 
       // Generate a random password
       const generatedPassword = generatePassword();
@@ -341,6 +516,33 @@ export const investorsRouter = createTRPCRouter({
           data: {
             investorType: investorTypeEnum,
             preferredLocation,
+            companyName,
+            representativeName,
+            phoneNumber,
+            type,
+            strategy1,
+            segment1,
+            strategy2,
+            segment2,
+            strategy3,
+            segment3,
+            location1,
+            location2,
+            location3,
+            minTicketSize,
+            maxTicketSize,
+            targetReturnIRR,
+            leadResponsibleId,
+            leadMainContactId,
+            leadResponsibleTeam,
+            leadMainContactTeam,
+            physicalAddress,
+            website,
+            lastContactDate,
+            acceptMarketingList,
+            otherFacts,
+            lastNotes,
+            department,
           },
         });
 
@@ -365,5 +567,216 @@ export const investorsRouter = createTRPCRouter({
         }
         throw error;
       }
+    }),
+
+  update: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        email: z.string().email().optional(),
+        name: z.string().min(1).optional(),
+        investorType: z.enum(["<€10M", "€10M-€100M", ">€100M"]).optional(),
+        preferredLocation: z.string().optional(),
+        companyName: z.string().optional(),
+        representativeName: z.string().optional(),
+        phoneNumber: z.string().optional(),
+        type: z.nativeEnum(InvestorClientType).optional(),
+        strategy1: z.nativeEnum(InvestorStrategy).optional(),
+        segment1: z.nativeEnum(InvestorSegment).optional(),
+        strategy2: z.nativeEnum(InvestorStrategy).optional(),
+        segment2: z.nativeEnum(InvestorSegment).optional(),
+        strategy3: z.nativeEnum(InvestorStrategy).optional(),
+        segment3: z.nativeEnum(InvestorSegment).optional(),
+        location1: z.string().optional(),
+        location2: z.string().optional(),
+        location3: z.string().optional(),
+        minTicketSize: z.number().optional(),
+        maxTicketSize: z.number().optional(),
+        targetReturnIRR: z.number().optional(),
+        leadResponsibleId: z.string().nullable().optional(),
+        leadMainContactId: z.string().nullable().optional(),
+        leadResponsibleTeam: z.nativeEnum(TeamMember).optional(),
+        leadMainContactTeam: z.nativeEnum(TeamMember).optional(),
+        physicalAddress: z.string().optional(),
+        website: z.string().optional(),
+        lastContactDate: z.date().nullable().optional(),
+        acceptMarketingList: z.boolean().optional(),
+        otherFacts: z.string().optional(),
+        lastNotes: z.string().optional(),
+        department: z.nativeEnum(Department).optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, ...updateData } = input;
+
+      // Validate lead users are TEAM or ADMIN if provided
+      if (updateData.leadResponsibleId !== undefined) {
+        await validateLeadUser(
+          updateData.leadResponsibleId,
+          "Lead Responsible"
+        );
+      }
+
+      if (updateData.leadMainContactId !== undefined) {
+        await validateLeadUser(
+          updateData.leadMainContactId,
+          "Lead Main Contact"
+        );
+      }
+
+      // Map investor type string to enum if provided
+      const { investorType: investorTypeString, ...restData } = updateData;
+      const data: Record<string, unknown> = { ...restData };
+
+      if (investorTypeString !== undefined) {
+        data.investorType = mapInvestorTypeToEnum(investorTypeString);
+      }
+
+      const user = await prisma.user.update({
+        where: { id },
+        data: data as Parameters<typeof prisma.user.update>[0]["data"],
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      });
+
+      return user;
+    }),
+
+  delete: adminProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      const user = await prisma.user.delete({
+        where: { id: input.id },
+        select: {
+          name: true,
+          email: true,
+        },
+      });
+      return user;
+    }),
+
+  getNotes: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input }) => {
+      const notes = await prisma.userNote.findMany({
+        where: { userId: input.userId },
+        include: {
+          createdByUser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+      return notes;
+    }),
+
+  addNote: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        note: z.string().min(1),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { userId, note } = input;
+
+      // Create note
+      const newNote = await prisma.userNote.create({
+        data: {
+          userId,
+          note,
+          createdBy: ctx.auth.user.id,
+        },
+        include: {
+          createdByUser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      // Update lastNotes on user
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          lastNotes: note,
+        },
+      });
+
+      return newNote;
+    }),
+
+  getOne: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const user = await prisma.user.findUnique({
+        where: { id: input.id },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          investorType: true,
+          preferredLocation: true,
+          companyName: true,
+          representativeName: true,
+          phoneNumber: true,
+          type: true,
+          strategy1: true,
+          segment1: true,
+          strategy2: true,
+          segment2: true,
+          strategy3: true,
+          segment3: true,
+          location1: true,
+          location2: true,
+          location3: true,
+          minTicketSize: true,
+          maxTicketSize: true,
+          targetReturnIRR: true,
+          leadResponsibleId: true,
+          leadMainContactId: true,
+          leadResponsibleTeam: true,
+          leadMainContactTeam: true,
+          physicalAddress: true,
+          website: true,
+          lastContactDate: true,
+          acceptMarketingList: true,
+          otherFacts: true,
+          lastNotes: true,
+          department: true,
+          leadResponsible: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          leadMainContact: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      if (!user) {
+        throw new Error("Investor not found");
+      }
+
+      return user;
     }),
 });

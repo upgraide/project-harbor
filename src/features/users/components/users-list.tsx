@@ -19,7 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Role } from "@/generated/prisma";
 import { useScopedI18n } from "@/locales/client";
+import { useCurrentUserRole } from "../hooks/use-current-user-role";
 import { useDeleteUser } from "../hooks/use-delete-user";
 import { useSuspenseUsers } from "../hooks/use-users";
 
@@ -27,6 +29,8 @@ export const UsersList = () => {
   const users = useSuspenseUsers();
   const t = useScopedI18n("backoffice.users");
   const deleteUser = useDeleteUser();
+  const { data: currentUserRole } = useCurrentUserRole();
+  const isAdmin = currentUserRole === Role.ADMIN;
 
   if (users.data.items.length === 0) {
     return (
@@ -49,7 +53,9 @@ export const UsersList = () => {
           <TableRow>
             <TableHead>{t("table.name")}</TableHead>
             <TableHead>{t("table.email")}</TableHead>
-            <TableHead className="w-12">{t("table.actions")}</TableHead>
+            {isAdmin && (
+              <TableHead className="w-12">{t("table.actions")}</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -57,41 +63,43 @@ export const UsersList = () => {
             <TableRow key={user.id}>
               <TableCell className="font-medium">{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>
-              <TableCell>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      disabled={deleteUser.isPending}
-                      size="sm"
-                      variant="ghost"
-                    >
-                      <TrashIcon className="size-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogTitle>
-                      {t("deleteDialog.title")}
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {t("deleteDialog.description").replace(
-                        "{name}",
-                        user.name
-                      )}
-                    </AlertDialogDescription>
-                    <div className="flex justify-end gap-2">
-                      <AlertDialogCancel>
-                        {t("deleteDialog.cancel")}
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        onClick={() => handleDelete(user.id)}
+              {isAdmin && (
+                <TableCell>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        disabled={deleteUser.isPending}
+                        size="sm"
+                        variant="ghost"
                       >
-                        {t("deleteDialog.confirm")}
-                      </AlertDialogAction>
-                    </div>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </TableCell>
+                        <TrashIcon className="size-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogTitle>
+                        {t("deleteDialog.title")}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t("deleteDialog.description").replace(
+                          "{name}",
+                          user.name
+                        )}
+                      </AlertDialogDescription>
+                      <div className="flex justify-end gap-2">
+                        <AlertDialogCancel>
+                          {t("deleteDialog.cancel")}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          onClick={() => handleDelete(user.id)}
+                        >
+                          {t("deleteDialog.confirm")}
+                        </AlertDialogAction>
+                      </div>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

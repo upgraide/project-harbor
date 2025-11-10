@@ -33,6 +33,35 @@ model User {
   // Password management
   passwordChanged Boolean @default(false)
 
+  // Extended investor/client fields
+  companyName         String?
+  representativeName String?
+  phoneNumber         String?
+  type                InvestorClientType?
+  strategy1           InvestorStrategy?
+  segment1            InvestorSegment?
+  strategy2           InvestorStrategy?
+  segment2            InvestorSegment?
+  strategy3           InvestorStrategy?
+  segment3            InvestorSegment?
+  location1           String?
+  location2           String?
+  location3           String?
+  minTicketSize       Float?
+  maxTicketSize       Float?
+  targetReturnIRR     Float?
+  leadResponsibleId   String?
+  leadMainContactId   String?
+  leadResponsibleTeam TeamMember?
+  leadMainContactTeam TeamMember?
+  physicalAddress     String?
+  website             String?
+  lastContactDate     DateTime?
+  acceptMarketingList Boolean?
+  otherFacts          String?
+  lastNotes           String?
+  department          Department?
+
   // Relations for opportunity interactions
   mergerAndAcquisitionInterests UserMergerAndAcquisitionInterest[] @relation("userMergerAndAcquisitions")
   realEstateInterests           UserRealEstateInterest[]           @relation("userRealEstates")
@@ -41,6 +70,14 @@ model User {
   clientAcquisitionerMergerAndAcquisitions MergerAndAcquisition[]            @relation("clientAcquisitionerMergerAndAcquisitions")
   clientAcquisitionerRealEstates           RealEstate[]                      @relation("clientAcquisitionerRealEstates")
   accountManagerAssignments      OpportunityAccountManager[]
+
+  // Lead relations
+  leadResponsible   User?  @relation("LeadResponsibleUsers", fields: [leadResponsibleId], references: [id], onDelete: SetNull)
+  leadMainContact   User?  @relation("LeadMainContactUsers", fields: [leadMainContactId], references: [id], onDelete: SetNull)
+  leadResponsibleFor User[] @relation("LeadResponsibleUsers")
+  leadMainContactFor User[] @relation("LeadMainContactUsers")
+  notes             UserNote[]
+  createdNotes      UserNote[] @relation("NoteCreator")
 
   @@unique([email])
   @@map("user")
@@ -56,6 +93,110 @@ enum InvestorType {
   LESS_THAN_10M
   BETWEEN_10M_100M
   GREATER_THAN_100M
+}
+
+enum InvestorClientType {
+  ADVISOR
+  ANGEL_INVESTOR
+  BANK
+  BRAND
+  BROKER
+  BUSINESS
+  CLUB_DEAL_SYNDICATOR
+  DEBT_FUND
+  DEVELOPER
+  FAMILY_OFFICE
+  FUND_OF_FUND
+  SEARCH_FUND
+  INVESTOR
+  PENSION_FUND
+  PRIVATE_DEBT_INVESTOR
+  PRIVATE_EQUITY_FUND
+  SMALL_INVESTOR
+  START_UP
+  TEAM_MEMBER
+  VENTURE_CAPITAL_FUND
+  WEALTH_MANAGER
+  CONSTRUCTION_COMPANY
+  ASSET_MANAGER
+  PARTNER
+  ARCHITECT
+  CONSULTANT
+  PROMOTER
+  OTHER
+}
+
+enum InvestorStrategy {
+  AGNOSTIC
+  MAJORITY_STAKES
+  MINORITY_STAKES
+  GROWTH
+  BUSINESS_OPERATOR
+  BUY_AND_HOLD
+  CONSOLIDATION
+  LEASE_AND_OPERATE
+  SALE_AND_LEASEBACK
+  CORE
+  FIX_AND_FLIP
+  REFURBISHMENT
+  VALUE_ADD
+  OPPORTUNISTIC
+  DEVELOPMENT
+  LONG_TERM_DEBT
+  MEZZ_BRIDGE_DEBT
+}
+
+enum InvestorSegment {
+  AGNOSTIC
+  BUSINESS_SERVICES
+  CONSTRUCTION_AND_REAL_ESTATE
+  CONSTRUCTION_INDUSTRY
+  CONSUMER_AND_RETAIL
+  DATA_CENTER
+  ENERGY_AND_INFRASTRUCTURE
+  FINANCIAL_SERVICES
+  FITNESS
+  FOOD_INDUSTRY
+  FOOD_RETAIL
+  HEALTHCARE_AND_PHARMACEUTICALS
+  IT
+  TMT
+  TRADING
+  TRANSFORMATION_INDUSTRY
+  TRANSPORTS
+  MIXED
+  HOSPITALITY
+  LOGISTICS_AND_INDUSTRIAL
+  OFFICE
+  RESIDENTIAL
+  SENIOR_LIVING
+  SHOPPING_CENTERS
+  STREET_RETAIL
+  STUDENT_HOUSING
+  DEBT
+}
+
+enum TeamMember {
+  MAS
+  FB
+  FC
+  FRS
+  GBA
+  JV
+  JDV
+  JG
+  LM
+  RS
+  RA
+  SM
+  TE
+  JCM
+}
+
+enum Department {
+  MNA
+  CRE
+  MNA_AND_CRE
 }
 
 model Session {
@@ -456,4 +597,17 @@ model OpportunityAccountManager {
 
   @@unique([opportunityId, opportunityType, userId])
   @@map("opportunity_account_manager")
+}
+
+model UserNote {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  note      String
+  createdBy String
+  createdByUser User @relation("NoteCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_note")
 }

@@ -7,7 +7,11 @@ import prisma from "@/lib/db";
 import { sendInviteEmail } from "@/lib/emails/send-invite";
 import { generatePassword } from "@/lib/generate-password";
 import { deleteFromUploadthing } from "@/lib/uploadthing-server";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
 import { updateProfileSchema } from "../schemas/update-profile-schema";
 
 export const usersRouter = createTRPCRouter({
@@ -86,7 +90,7 @@ export const usersRouter = createTRPCRouter({
       };
     }),
 
-  delete: protectedProcedure
+  delete: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
       const user = await prisma.user.delete({
