@@ -91,8 +91,24 @@ type InviteInvestorDialogProps = {
   onOpenChangeAction: (open: boolean) => void;
 };
 
-const STRATEGY_SEGMENT_COUNT = 3;
-const LOCATION_COUNT = 3;
+const STRATEGY_SEGMENT_FIELDS = [
+  { strategy: "strategy1", segment: "segment1", labelSuffix: 1 },
+  { strategy: "strategy2", segment: "segment2", labelSuffix: 2 },
+  { strategy: "strategy3", segment: "segment3", labelSuffix: 3 },
+] as const satisfies ReadonlyArray<{
+  strategy: Extract<keyof InviteFormValues, `strategy${number}`>;
+  segment: Extract<keyof InviteFormValues, `segment${number}`>;
+  labelSuffix: number;
+}>;
+
+const LOCATION_FIELDS = [
+  "location1",
+  "location2",
+  "location3",
+] as const satisfies readonly Extract<
+  keyof InviteFormValues,
+  `location${number}`
+>[];
 
 export const InviteInvestorDialog = ({
   open,
@@ -340,107 +356,118 @@ export const InviteInvestorDialog = ({
 
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Strategies & Segments</h3>
-              {Array.from(
-                { length: STRATEGY_SEGMENT_COUNT },
-                (_, i) => i + 1
-              ).map((num) => (
-                <div className="grid grid-cols-2 gap-4" key={num}>
-                  <FormField
-                    control={form.control}
-                    name={`strategy${num}` as keyof InviteFormValues}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t(`labels.strategy${num}`)}</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(value as InvestorStrategy)
-                          }
-                          value={field.value as string}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                placeholder={t(
-                                  `labels.strategy${num}Placeholder`
-                                )}
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {investorStrategyOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`segment${num}` as keyof InviteFormValues}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t(`labels.segment${num}`)}</FormLabel>
-                        <Select
-                          onValueChange={(value) =>
-                            field.onChange(value as InvestorSegment)
-                          }
-                          value={field.value as string}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                placeholder={t(
-                                  `labels.segment${num}Placeholder`
-                                )}
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {investorSegmentOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              ))}
+              {STRATEGY_SEGMENT_FIELDS.map(
+                ({ strategy, segment, labelSuffix }) => (
+                  <div className="grid grid-cols-2 gap-4" key={strategy}>
+                    <FormField
+                      control={form.control}
+                      name={strategy}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t(`labels.strategy${labelSuffix}`)}
+                          </FormLabel>
+                          <Select
+                            onValueChange={(value) =>
+                              field.onChange(value as InvestorStrategy)
+                            }
+                            value={field.value ?? undefined}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  placeholder={t(
+                                    `labels.strategy${labelSuffix}Placeholder`
+                                  )}
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {investorStrategyOptions.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={segment}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            {t(`labels.segment${labelSuffix}`)}
+                          </FormLabel>
+                          <Select
+                            onValueChange={(value) =>
+                              field.onChange(value as InvestorSegment)
+                            }
+                            value={field.value ?? undefined}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  placeholder={t(
+                                    `labels.segment${labelSuffix}Placeholder`
+                                  )}
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {investorSegmentOptions.map((option) => (
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )
+              )}
             </div>
 
             <div className="space-y-4">
               <h3 className="font-semibold text-sm">Locations</h3>
-              {Array.from({ length: LOCATION_COUNT }, (_, i) => i + 1).map(
-                (num) => (
-                  <FormField
-                    control={form.control}
-                    key={num}
-                    name={`location${num}` as keyof InviteFormValues}
-                    render={({ field }) => (
+              {LOCATION_FIELDS.map((locationField, index) => (
+                <FormField
+                  control={form.control}
+                  key={locationField}
+                  name={locationField}
+                  render={({ field }) => {
+                    const { value, ...rest } = field;
+
+                    return (
                       <FormItem>
-                        <FormLabel>{t(`labels.location${num}`)}</FormLabel>
+                        <FormLabel>
+                          {t(`labels.location${index + 1}`)}
+                        </FormLabel>
                         <FormControl>
-                          <Input placeholder={`Location ${num}`} {...field} />
+                          <Input
+                            placeholder={`Location ${index + 1}`}
+                            {...rest}
+                            value={value ?? ""}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
-                    )}
-                  />
-                )
-              )}
+                    );
+                  }}
+                />
+              ))}
               <FormField
                 control={form.control}
                 name="preferredLocation"
