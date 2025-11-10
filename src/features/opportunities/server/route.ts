@@ -15,7 +15,11 @@ import {
 import { inngest } from "@/inngest/client";
 import prisma from "@/lib/db";
 import { deleteFromUploadthing } from "@/lib/uploadthing-server";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
 
 const CAGR_MIN = 0;
 const CAGR_MAX = 100;
@@ -184,14 +188,14 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
 
       return created;
     }),
-  remove: protectedProcedure
+  remove: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.delete({
         where: { id: input.id },
       })
     ),
-  updateName: protectedProcedure
+  updateName: adminProcedure
     .input(z.object({ id: z.string(), name: z.string().min(1) }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -199,7 +203,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { name: input.name },
       })
     ),
-  updateDescription: protectedProcedure
+  updateDescription: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -229,7 +233,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
 
       return updated;
     }),
-  updateType: protectedProcedure
+  updateType: adminProcedure
     .input(z.object({ id: z.string(), type: z.enum(Type) }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -237,7 +241,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { type: input.type },
       })
     ),
-  removeType: protectedProcedure
+  removeType: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -245,7 +249,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { type: null },
       })
     ),
-  updateTypeDetails: protectedProcedure
+  updateTypeDetails: adminProcedure
     .input(z.object({ id: z.string(), typeDetails: z.enum(TypeDetails) }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -253,7 +257,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { typeDetails: input.typeDetails },
       })
     ),
-  removeTypeDetails: protectedProcedure
+  removeTypeDetails: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -261,7 +265,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { typeDetails: null },
       })
     ),
-  updateIndustry: protectedProcedure
+  updateIndustry: adminProcedure
     .input(z.object({ id: z.string(), industry: z.enum(Industry) }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -269,7 +273,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { industry: input.industry },
       })
     ),
-  removeIndustry: protectedProcedure
+  removeIndustry: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -277,7 +281,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { industry: null },
       })
     ),
-  updateIndustrySubsector: protectedProcedure
+  updateIndustrySubsector: adminProcedure
     .input(
       z.object({ id: z.string(), industrySubsector: z.enum(IndustrySubsector) })
     )
@@ -287,7 +291,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { industrySubsector: input.industrySubsector },
       })
     ),
-  removeIndustrySubsector: protectedProcedure
+  removeIndustrySubsector: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -295,7 +299,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { industrySubsector: null },
       })
     ),
-  updateSales: protectedProcedure
+  updateSales: adminProcedure
     .input(z.object({ id: z.string(), sales: z.enum(SalesRange) }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -303,7 +307,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { sales: input.sales },
       })
     ),
-  removeSales: protectedProcedure
+  removeSales: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -311,7 +315,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { sales: null },
       })
     ),
-  updateEbitda: protectedProcedure
+  updateEbitda: adminProcedure
     .input(z.object({ id: z.string(), ebitda: z.enum(EbitdaRange) }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -319,7 +323,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { ebitda: input.ebitda },
       })
     ),
-  removeEbitda: protectedProcedure
+  removeEbitda: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -327,7 +331,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { ebitda: null },
       })
     ),
-  updateEbitdaNormalized: protectedProcedure
+  updateEbitdaNormalized: adminProcedure
     .input(z.object({ id: z.string(), ebitdaNormalized: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -335,7 +339,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { ebitdaNormalized: input.ebitdaNormalized },
       })
     ),
-  removeEbitdaNormalized: protectedProcedure
+  removeEbitdaNormalized: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -343,7 +347,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { ebitdaNormalized: null },
       })
     ),
-  updateNetDebt: protectedProcedure
+  updateNetDebt: adminProcedure
     .input(z.object({ id: z.string(), netDebt: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -351,7 +355,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { netDebt: input.netDebt },
       })
     ),
-  removeNetDebt: protectedProcedure
+  removeNetDebt: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -359,7 +363,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { netDebt: null },
       })
     ),
-  updateSalesCAGR: protectedProcedure
+  updateSalesCAGR: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -375,7 +379,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { salesCAGR: input.salesCAGR },
       })
     ),
-  removeSalesCAGR: protectedProcedure
+  removeSalesCAGR: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -383,7 +387,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { salesCAGR: null },
       })
     ),
-  updateEbitdaCAGR: protectedProcedure
+  updateEbitdaCAGR: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -399,7 +403,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { ebitdaCAGR: input.ebitdaCAGR },
       })
     ),
-  removeEbitdaCAGR: protectedProcedure
+  removeEbitdaCAGR: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -407,7 +411,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { ebitdaCAGR: null },
       })
     ),
-  updateAssetIncluded: protectedProcedure
+  updateAssetIncluded: adminProcedure
     .input(z.object({ id: z.string(), assetIncluded: z.boolean() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -415,7 +419,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { assetIncluded: input.assetIncluded },
       })
     ),
-  removeAssetIncluded: protectedProcedure
+  removeAssetIncluded: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -423,7 +427,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { assetIncluded: null },
       })
     ),
-  updateEstimatedAssetValue: protectedProcedure
+  updateEstimatedAssetValue: adminProcedure
     .input(z.object({ id: z.string(), estimatedAssetValue: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -431,7 +435,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { estimatedAssetValue: input.estimatedAssetValue },
       })
     ),
-  removeEstimatedAssetValue: protectedProcedure
+  removeEstimatedAssetValue: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -439,7 +443,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { estimatedAssetValue: null },
       })
     ),
-  updateGraphRows: protectedProcedure
+  updateGraphRows: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -459,7 +463,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { graphRows: input.graphRows },
       })
     ),
-  updateImages: protectedProcedure
+  updateImages: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -472,7 +476,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { images: input.images },
       })
     ),
-  removeImage: protectedProcedure
+  removeImage: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -492,7 +496,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { images: updatedImages },
       });
     }),
-  updateIm: protectedProcedure
+  updateIm: adminProcedure
     .input(z.object({ id: z.string(), im: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -500,7 +504,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { im: input.im },
       })
     ),
-  removeIm: protectedProcedure
+  removeIm: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -508,7 +512,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { im: null },
       })
     ),
-  updateEnterpriseValue: protectedProcedure
+  updateEnterpriseValue: adminProcedure
     .input(z.object({ id: z.string(), entrepriseValue: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -516,7 +520,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { entrepriseValue: input.entrepriseValue },
       })
     ),
-  removeEnterpriseValue: protectedProcedure
+  removeEnterpriseValue: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -524,7 +528,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { entrepriseValue: null },
       })
     ),
-  updateEquityValue: protectedProcedure
+  updateEquityValue: adminProcedure
     .input(z.object({ id: z.string(), equityValue: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -532,7 +536,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { equityValue: input.equityValue },
       })
     ),
-  removeEquityValue: protectedProcedure
+  removeEquityValue: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -540,7 +544,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { equityValue: null },
       })
     ),
-  updateEvDashEbitdaEntry: protectedProcedure
+  updateEvDashEbitdaEntry: adminProcedure
     .input(z.object({ id: z.string(), evDashEbitdaEntry: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -548,7 +552,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { evDashEbitdaEntry: input.evDashEbitdaEntry },
       })
     ),
-  removeEvDashEbitdaEntry: protectedProcedure
+  removeEvDashEbitdaEntry: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -556,7 +560,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { evDashEbitdaEntry: null },
       })
     ),
-  updateEvDashEbitdaExit: protectedProcedure
+  updateEvDashEbitdaExit: adminProcedure
     .input(z.object({ id: z.string(), evDashEbitdaExit: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -564,7 +568,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { evDashEbitdaExit: input.evDashEbitdaExit },
       })
     ),
-  removeEvDashEbitdaExit: protectedProcedure
+  removeEvDashEbitdaExit: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -572,7 +576,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { evDashEbitdaExit: null },
       })
     ),
-  updateEbitdaMargin: protectedProcedure
+  updateEbitdaMargin: adminProcedure
     .input(z.object({ id: z.string(), ebitdaMargin: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -580,7 +584,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { ebitdaMargin: input.ebitdaMargin },
       })
     ),
-  removeEbitdaMargin: protectedProcedure
+  removeEbitdaMargin: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -588,7 +592,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { ebitdaMargin: null },
       })
     ),
-  updateFcf: protectedProcedure
+  updateFcf: adminProcedure
     .input(z.object({ id: z.string(), fcf: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -596,7 +600,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { fcf: input.fcf },
       })
     ),
-  removeFcf: protectedProcedure
+  removeFcf: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -604,7 +608,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { fcf: null },
       })
     ),
-  updateNetDebtDashEbitda: protectedProcedure
+  updateNetDebtDashEbitda: adminProcedure
     .input(z.object({ id: z.string(), netDebtDashEbitda: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -612,7 +616,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { netDebtDashEbitda: input.netDebtDashEbitda },
       })
     ),
-  removeNetDebtDashEbitda: protectedProcedure
+  removeNetDebtDashEbitda: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -620,7 +624,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { netDebtDashEbitda: null },
       })
     ),
-  updateCapexItensity: protectedProcedure
+  updateCapexItensity: adminProcedure
     .input(z.object({ id: z.string(), capexItensity: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -628,7 +632,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { capexItensity: input.capexItensity },
       })
     ),
-  removeCapexItensity: protectedProcedure
+  removeCapexItensity: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -636,7 +640,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { capexItensity: null },
       })
     ),
-  updateWorkingCapitalNeeds: protectedProcedure
+  updateWorkingCapitalNeeds: adminProcedure
     .input(z.object({ id: z.string(), workingCapitalNeeds: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -644,7 +648,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { workingCapitalNeeds: input.workingCapitalNeeds },
       })
     ),
-  removeWorkingCapitalNeeds: protectedProcedure
+  removeWorkingCapitalNeeds: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -652,7 +656,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { workingCapitalNeeds: null },
       })
     ),
-  updateCoInvestment: protectedProcedure
+  updateCoInvestment: adminProcedure
     .input(z.object({ id: z.string(), coInvestment: z.boolean() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -660,7 +664,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { coInvestment: input.coInvestment },
       })
     ),
-  removeCoInvestment: protectedProcedure
+  removeCoInvestment: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -668,7 +672,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { coInvestment: null },
       })
     ),
-  updateEquityContribution: protectedProcedure
+  updateEquityContribution: adminProcedure
     .input(z.object({ id: z.string(), equityContribution: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -676,7 +680,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { equityContribution: input.equityContribution },
       })
     ),
-  removeEquityContribution: protectedProcedure
+  removeEquityContribution: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -684,7 +688,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { equityContribution: null },
       })
     ),
-  updateGrossIRR: protectedProcedure
+  updateGrossIRR: adminProcedure
     .input(z.object({ id: z.string(), grossIRR: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -692,7 +696,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { grossIRR: input.grossIRR },
       })
     ),
-  removeGrossIRR: protectedProcedure
+  removeGrossIRR: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -700,7 +704,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { grossIRR: null },
       })
     ),
-  updateNetIRR: protectedProcedure
+  updateNetIRR: adminProcedure
     .input(z.object({ id: z.string(), netIRR: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -708,7 +712,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { netIRR: input.netIRR },
       })
     ),
-  removeNetIRR: protectedProcedure
+  removeNetIRR: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -716,7 +720,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { netIRR: null },
       })
     ),
-  updateMoic: protectedProcedure
+  updateMoic: adminProcedure
     .input(z.object({ id: z.string(), moic: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -724,7 +728,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { moic: input.moic },
       })
     ),
-  removeMoic: protectedProcedure
+  removeMoic: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -732,7 +736,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { moic: null },
       })
     ),
-  updateCashOnCashReturn: protectedProcedure
+  updateCashOnCashReturn: adminProcedure
     .input(z.object({ id: z.string(), cashOnCashReturn: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -740,7 +744,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { cashOnCashReturn: input.cashOnCashReturn },
       })
     ),
-  removeCashOnCashReturn: protectedProcedure
+  removeCashOnCashReturn: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -748,7 +752,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { cashOnCashReturn: null },
       })
     ),
-  updateCashConvertion: protectedProcedure
+  updateCashConvertion: adminProcedure
     .input(z.object({ id: z.string(), cashConvertion: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -756,7 +760,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { cashConvertion: input.cashConvertion },
       })
     ),
-  removeCashConvertion: protectedProcedure
+  removeCashConvertion: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -764,7 +768,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { cashConvertion: null },
       })
     ),
-  updateEntryMultiple: protectedProcedure
+  updateEntryMultiple: adminProcedure
     .input(z.object({ id: z.string(), entryMultiple: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -772,7 +776,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { entryMultiple: input.entryMultiple },
       })
     ),
-  removeEntryMultiple: protectedProcedure
+  removeEntryMultiple: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -780,7 +784,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { entryMultiple: null },
       })
     ),
-  updateExitExpectedMultiple: protectedProcedure
+  updateExitExpectedMultiple: adminProcedure
     .input(z.object({ id: z.string(), exitExpectedMultiple: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -788,7 +792,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { exitExpectedMultiple: input.exitExpectedMultiple },
       })
     ),
-  removeExitExpectedMultiple: protectedProcedure
+  removeExitExpectedMultiple: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -796,7 +800,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { exitExpectedMultiple: null },
       })
     ),
-  updateHoldPeriod: protectedProcedure
+  updateHoldPeriod: adminProcedure
     .input(z.object({ id: z.string(), holdPeriod: z.number() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -804,7 +808,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { holdPeriod: input.holdPeriod },
       })
     ),
-  removeHoldPeriod: protectedProcedure
+  removeHoldPeriod: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.mergerAndAcquisition.update({
@@ -812,7 +816,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { holdPeriod: null },
       })
     ),
-  updateShareholderStructure: protectedProcedure
+  updateShareholderStructure: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -825,7 +829,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { shareholderStructure: input.shareholderStructure },
       })
     ),
-  removeShareholderStructure: protectedProcedure
+  removeShareholderStructure: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -1299,7 +1303,7 @@ export const realEstateRouter = createTRPCRouter({
         hasPreviousPage,
       };
     }),
-  remove: protectedProcedure
+  remove: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.delete({
@@ -1343,7 +1347,7 @@ export const realEstateRouter = createTRPCRouter({
         accountManagers: accountManagers.map((am) => am.user),
       };
     }),
-  updateName: protectedProcedure
+  updateName: adminProcedure
     .input(z.object({ id: z.string(), name: z.string().min(1) }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1351,7 +1355,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { name: input.name },
       })
     ),
-  updateDescription: protectedProcedure
+  updateDescription: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -1381,7 +1385,7 @@ export const realEstateRouter = createTRPCRouter({
 
       return updated;
     }),
-  updateImages: protectedProcedure
+  updateImages: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -1394,7 +1398,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { images: input.images },
       })
     ),
-  removeImage: protectedProcedure
+  removeImage: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -1415,7 +1419,7 @@ export const realEstateRouter = createTRPCRouter({
       });
     }),
   // Pre-NDA Update Mutations
-  updateAsset: protectedProcedure
+  updateAsset: adminProcedure
     .input(
       z.object({ id: z.string(), asset: z.nativeEnum(RealEstateAssetType) })
     )
@@ -1425,7 +1429,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { asset: input.asset },
       })
     ),
-  updateNRoomsLastYear: protectedProcedure
+  updateNRoomsLastYear: adminProcedure
     .input(z.object({ id: z.string(), nRoomsLastYear: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1433,7 +1437,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { nRoomsLastYear: input.nRoomsLastYear },
       })
     ),
-  updateNOI: protectedProcedure
+  updateNOI: adminProcedure
     .input(z.object({ id: z.string(), noi: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1441,7 +1445,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { noi: input.noi },
       })
     ),
-  updateOccupancyLastYear: protectedProcedure
+  updateOccupancyLastYear: adminProcedure
     .input(z.object({ id: z.string(), occupancyLastYear: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1449,7 +1453,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { occupancyLastYear: input.occupancyLastYear },
       })
     ),
-  updateWALT: protectedProcedure
+  updateWALT: adminProcedure
     .input(z.object({ id: z.string(), walt: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1457,7 +1461,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { walt: input.walt },
       })
     ),
-  updateNBeds: protectedProcedure
+  updateNBeds: adminProcedure
     .input(z.object({ id: z.string(), nBeds: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1465,7 +1469,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { nBeds: input.nBeds },
       })
     ),
-  updateInvestment: protectedProcedure
+  updateInvestment: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -1478,7 +1482,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { investment: input.investment },
       })
     ),
-  updateSubRent: protectedProcedure
+  updateSubRent: adminProcedure
     .input(z.object({ id: z.string(), subRent: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1486,7 +1490,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { subRent: input.subRent },
       })
     ),
-  updateRentPerSqm: protectedProcedure
+  updateRentPerSqm: adminProcedure
     .input(z.object({ id: z.string(), rentPerSqm: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1494,7 +1498,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { rentPerSqm: input.rentPerSqm },
       })
     ),
-  updateSubYield: protectedProcedure
+  updateSubYield: adminProcedure
     .input(z.object({ id: z.string(), subYield: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1502,7 +1506,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { subYield: input.subYield },
       })
     ),
-  updateCapex: protectedProcedure
+  updateCapex: adminProcedure
     .input(z.object({ id: z.string(), capex: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1510,7 +1514,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { capex: input.capex },
       })
     ),
-  updateCapexPerSqm: protectedProcedure
+  updateCapexPerSqm: adminProcedure
     .input(z.object({ id: z.string(), capexPerSqm: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1518,7 +1522,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { capexPerSqm: input.capexPerSqm },
       })
     ),
-  updateSale: protectedProcedure
+  updateSale: adminProcedure
     .input(z.object({ id: z.string(), sale: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1526,7 +1530,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { sale: input.sale },
       })
     ),
-  updateSalePerSqm: protectedProcedure
+  updateSalePerSqm: adminProcedure
     .input(z.object({ id: z.string(), salePerSqm: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1534,7 +1538,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { salePerSqm: input.salePerSqm },
       })
     ),
-  updateLocation: protectedProcedure
+  updateLocation: adminProcedure
     .input(z.object({ id: z.string(), location: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1542,7 +1546,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { location: input.location },
       })
     ),
-  updateArea: protectedProcedure
+  updateArea: adminProcedure
     .input(z.object({ id: z.string(), area: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1550,7 +1554,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { area: input.area },
       })
     ),
-  updateValue: protectedProcedure
+  updateValue: adminProcedure
     .input(z.object({ id: z.string(), value: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1558,7 +1562,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { value: input.value },
       })
     ),
-  updateYield: protectedProcedure
+  updateYield: adminProcedure
     .input(z.object({ id: z.string(), yield: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1566,7 +1570,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { yield: input.yield },
       })
     ),
-  updateRent: protectedProcedure
+  updateRent: adminProcedure
     .input(z.object({ id: z.string(), rent: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1574,7 +1578,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { rent: input.rent },
       })
     ),
-  updateGCAAboveGround: protectedProcedure
+  updateGCAAboveGround: adminProcedure
     .input(z.object({ id: z.string(), gcaAboveGround: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1582,7 +1586,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { gcaAboveGround: input.gcaAboveGround },
       })
     ),
-  updateGCABelowGround: protectedProcedure
+  updateGCABelowGround: adminProcedure
     .input(z.object({ id: z.string(), gcaBelowGround: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1591,7 +1595,7 @@ export const realEstateRouter = createTRPCRouter({
       })
     ),
   // Post-NDA Update Mutations
-  updateLicense: protectedProcedure
+  updateLicense: adminProcedure
     .input(z.object({ id: z.string(), license: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1599,7 +1603,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { license: input.license },
       })
     ),
-  updateLicenseStage: protectedProcedure
+  updateLicenseStage: adminProcedure
     .input(z.object({ id: z.string(), licenseStage: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1607,7 +1611,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { licenseStage: input.licenseStage },
       })
     ),
-  updateIRR: protectedProcedure
+  updateIRR: adminProcedure
     .input(z.object({ id: z.string(), irr: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1615,7 +1619,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { irr: input.irr },
       })
     ),
-  updateCOC: protectedProcedure
+  updateCOC: adminProcedure
     .input(z.object({ id: z.string(), coc: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1623,7 +1627,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { coc: input.coc },
       })
     ),
-  updateHoldingPeriod: protectedProcedure
+  updateHoldingPeriod: adminProcedure
     .input(z.object({ id: z.string(), holdingPeriod: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1631,7 +1635,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { holdingPeriod: input.holdingPeriod },
       })
     ),
-  updateBreakEvenOccupancy: protectedProcedure
+  updateBreakEvenOccupancy: adminProcedure
     .input(
       z.object({ id: z.string(), breakEvenOccupancy: z.number().nullable() })
     )
@@ -1641,7 +1645,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { breakEvenOccupancy: input.breakEvenOccupancy },
       })
     ),
-  updateVacancyRate: protectedProcedure
+  updateVacancyRate: adminProcedure
     .input(z.object({ id: z.string(), vacancyRate: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1649,7 +1653,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { vacancyRate: input.vacancyRate },
       })
     ),
-  updateEstimatedRentValue: protectedProcedure
+  updateEstimatedRentValue: adminProcedure
     .input(
       z.object({ id: z.string(), estimatedRentValue: z.number().nullable() })
     )
@@ -1659,7 +1663,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { estimatedRentValue: input.estimatedRentValue },
       })
     ),
-  updateOccupancyRate: protectedProcedure
+  updateOccupancyRate: adminProcedure
     .input(z.object({ id: z.string(), occupancyRate: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1667,7 +1671,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { occupancyRate: input.occupancyRate },
       })
     ),
-  updateMOIC: protectedProcedure
+  updateMOIC: adminProcedure
     .input(z.object({ id: z.string(), moic: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1675,7 +1679,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { moic: input.moic },
       })
     ),
-  updatePrice: protectedProcedure
+  updatePrice: adminProcedure
     .input(z.object({ id: z.string(), price: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1683,7 +1687,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { price: input.price },
       })
     ),
-  updateTotalInvestment: protectedProcedure
+  updateTotalInvestment: adminProcedure
     .input(z.object({ id: z.string(), totalInvestment: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1691,7 +1695,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { totalInvestment: input.totalInvestment },
       })
     ),
-  updateProfitOnCost: protectedProcedure
+  updateProfitOnCost: adminProcedure
     .input(z.object({ id: z.string(), profitOnCost: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1699,7 +1703,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { profitOnCost: input.profitOnCost },
       })
     ),
-  updateProfit: protectedProcedure
+  updateProfit: adminProcedure
     .input(z.object({ id: z.string(), profit: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1707,7 +1711,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { profit: input.profit },
       })
     ),
-  updateSofCosts: protectedProcedure
+  updateSofCosts: adminProcedure
     .input(z.object({ id: z.string(), sofCosts: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1715,7 +1719,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { sofCosts: input.sofCosts },
       })
     ),
-  updateSellPerSqm: protectedProcedure
+  updateSellPerSqm: adminProcedure
     .input(z.object({ id: z.string(), sellPerSqm: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1723,7 +1727,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { sellPerSqm: input.sellPerSqm },
       })
     ),
-  updateGDV: protectedProcedure
+  updateGDV: adminProcedure
     .input(z.object({ id: z.string(), gdv: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1731,7 +1735,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { gdv: input.gdv },
       })
     ),
-  updateWAULT: protectedProcedure
+  updateWAULT: adminProcedure
     .input(z.object({ id: z.string(), wault: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1739,7 +1743,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { wault: input.wault },
       })
     ),
-  updateDebtServiceCoverageRatio: protectedProcedure
+  updateDebtServiceCoverageRatio: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -1752,7 +1756,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { debtServiceCoverageRatio: input.debtServiceCoverageRatio },
       })
     ),
-  updateExpectedExitYield: protectedProcedure
+  updateExpectedExitYield: adminProcedure
     .input(z.object({ id: z.string(), expectedExitYield: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1760,7 +1764,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { expectedExitYield: input.expectedExitYield },
       })
     ),
-  updateLTV: protectedProcedure
+  updateLTV: adminProcedure
     .input(z.object({ id: z.string(), ltv: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1768,7 +1772,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { ltv: input.ltv },
       })
     ),
-  updateLTC: protectedProcedure
+  updateLTC: adminProcedure
     .input(z.object({ id: z.string(), ltc: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1776,7 +1780,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { ltc: input.ltc },
       })
     ),
-  updateYieldOnCost: protectedProcedure
+  updateYieldOnCost: adminProcedure
     .input(z.object({ id: z.string(), yieldOnCost: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1785,7 +1789,7 @@ export const realEstateRouter = createTRPCRouter({
       })
     ),
   // Limited Partner Update Mutations
-  updateCoInvestment: protectedProcedure
+  updateCoInvestment: adminProcedure
     .input(z.object({ id: z.string(), coInvestment: z.boolean() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1793,7 +1797,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { coInvestment: input.coInvestment },
       })
     ),
-  updateGPEquityValue: protectedProcedure
+  updateGPEquityValue: adminProcedure
     .input(z.object({ id: z.string(), gpEquityValue: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1801,7 +1805,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { gpEquityValue: input.gpEquityValue },
       })
     ),
-  updateGPEquityPercentage: protectedProcedure
+  updateGPEquityPercentage: adminProcedure
     .input(
       z.object({ id: z.string(), gpEquityPercentage: z.number().nullable() })
     )
@@ -1811,7 +1815,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { gpEquityPercentage: input.gpEquityPercentage },
       })
     ),
-  updateTotalEquityRequired: protectedProcedure
+  updateTotalEquityRequired: adminProcedure
     .input(
       z.object({ id: z.string(), totalEquityRequired: z.number().nullable() })
     )
@@ -1821,7 +1825,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { totalEquityRequired: input.totalEquityRequired },
       })
     ),
-  updateProjectIRR: protectedProcedure
+  updateProjectIRR: adminProcedure
     .input(z.object({ id: z.string(), projectIRR: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1829,7 +1833,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { projectIRR: input.projectIRR },
       })
     ),
-  updateInvestorIRR: protectedProcedure
+  updateInvestorIRR: adminProcedure
     .input(z.object({ id: z.string(), investorIRR: z.number() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1837,7 +1841,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { investorIRR: input.investorIRR },
       })
     ),
-  updateCoInvestmentHoldPeriod: protectedProcedure
+  updateCoInvestmentHoldPeriod: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -1850,7 +1854,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { coInvestmentHoldPeriod: input.coInvestmentHoldPeriod },
       })
     ),
-  updateCoInvestmentBreakEvenOccupancy: protectedProcedure
+  updateCoInvestmentBreakEvenOccupancy: adminProcedure
     .input(
       z.object({
         id: z.string(),
@@ -1865,7 +1869,7 @@ export const realEstateRouter = createTRPCRouter({
         },
       })
     ),
-  updateSponsorPresentation: protectedProcedure
+  updateSponsorPresentation: adminProcedure
     .input(z.object({ id: z.string(), sponsorPresentation: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1873,7 +1877,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { sponsorPresentation: input.sponsorPresentation },
       })
     ),
-  updatePromoteStructure: protectedProcedure
+  updatePromoteStructure: adminProcedure
     .input(z.object({ id: z.string(), promoteStructure: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1882,7 +1886,7 @@ export const realEstateRouter = createTRPCRouter({
       })
     ),
   // Pre-NDA Remove Mutations
-  removeAsset: protectedProcedure
+  removeAsset: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1890,7 +1894,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { asset: null },
       })
     ),
-  removeNRoomsLastYear: protectedProcedure
+  removeNRoomsLastYear: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1898,7 +1902,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { nRoomsLastYear: null },
       })
     ),
-  removeNOI: protectedProcedure
+  removeNOI: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1906,7 +1910,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { noi: null },
       })
     ),
-  removeOccupancyLastYear: protectedProcedure
+  removeOccupancyLastYear: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1914,7 +1918,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { occupancyLastYear: null },
       })
     ),
-  removeWALT: protectedProcedure
+  removeWALT: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1922,7 +1926,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { walt: null },
       })
     ),
-  removeNBeds: protectedProcedure
+  removeNBeds: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1930,7 +1934,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { nBeds: null },
       })
     ),
-  removeInvestment: protectedProcedure
+  removeInvestment: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1938,7 +1942,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { investment: null },
       })
     ),
-  removeSubRent: protectedProcedure
+  removeSubRent: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1946,7 +1950,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { subRent: null },
       })
     ),
-  removeRentPerSqm: protectedProcedure
+  removeRentPerSqm: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1954,7 +1958,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { rentPerSqm: null },
       })
     ),
-  removeSubYield: protectedProcedure
+  removeSubYield: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1962,7 +1966,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { subYield: null },
       })
     ),
-  removeCapex: protectedProcedure
+  removeCapex: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1970,7 +1974,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { capex: null },
       })
     ),
-  removeCapexPerSqm: protectedProcedure
+  removeCapexPerSqm: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1978,7 +1982,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { capexPerSqm: null },
       })
     ),
-  removeSale: protectedProcedure
+  removeSale: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1986,7 +1990,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { sale: null },
       })
     ),
-  removeSalePerSqm: protectedProcedure
+  removeSalePerSqm: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -1994,7 +1998,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { salePerSqm: null },
       })
     ),
-  removeLocation: protectedProcedure
+  removeLocation: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2002,7 +2006,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { location: null },
       })
     ),
-  removeArea: protectedProcedure
+  removeArea: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2010,7 +2014,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { area: null },
       })
     ),
-  removeValue: protectedProcedure
+  removeValue: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2018,7 +2022,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { value: null },
       })
     ),
-  removeYield: protectedProcedure
+  removeYield: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2026,7 +2030,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { yield: null },
       })
     ),
-  removeRent: protectedProcedure
+  removeRent: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2034,7 +2038,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { rent: null },
       })
     ),
-  removeGCAAboveGround: protectedProcedure
+  removeGCAAboveGround: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2042,7 +2046,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { gcaAboveGround: null },
       })
     ),
-  removeGCABelowGround: protectedProcedure
+  removeGCABelowGround: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2051,7 +2055,7 @@ export const realEstateRouter = createTRPCRouter({
       })
     ),
   // Post-NDA Remove Mutations
-  removeLicense: protectedProcedure
+  removeLicense: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2059,7 +2063,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { license: null },
       })
     ),
-  removeLicenseStage: protectedProcedure
+  removeLicenseStage: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2067,7 +2071,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { licenseStage: null },
       })
     ),
-  removeIRR: protectedProcedure
+  removeIRR: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2075,7 +2079,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { irr: null },
       })
     ),
-  removeCOC: protectedProcedure
+  removeCOC: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2083,7 +2087,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { coc: null },
       })
     ),
-  removeHoldingPeriod: protectedProcedure
+  removeHoldingPeriod: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2091,7 +2095,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { holdingPeriod: null },
       })
     ),
-  removeBreakEvenOccupancy: protectedProcedure
+  removeBreakEvenOccupancy: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2099,7 +2103,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { breakEvenOccupancy: null },
       })
     ),
-  removeVacancyRate: protectedProcedure
+  removeVacancyRate: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2107,7 +2111,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { vacancyRate: null },
       })
     ),
-  removeEstimatedRentValue: protectedProcedure
+  removeEstimatedRentValue: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2115,7 +2119,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { estimatedRentValue: null },
       })
     ),
-  removeOccupancyRate: protectedProcedure
+  removeOccupancyRate: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2123,7 +2127,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { occupancyRate: null },
       })
     ),
-  removeMOIC: protectedProcedure
+  removeMOIC: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2131,7 +2135,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { moic: null },
       })
     ),
-  removePrice: protectedProcedure
+  removePrice: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2139,7 +2143,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { price: null },
       })
     ),
-  removeTotalInvestment: protectedProcedure
+  removeTotalInvestment: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2147,7 +2151,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { totalInvestment: null },
       })
     ),
-  removeProfitOnCost: protectedProcedure
+  removeProfitOnCost: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2155,7 +2159,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { profitOnCost: null },
       })
     ),
-  removeProfit: protectedProcedure
+  removeProfit: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2163,7 +2167,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { profit: null },
       })
     ),
-  removeSofCosts: protectedProcedure
+  removeSofCosts: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2171,7 +2175,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { sofCosts: null },
       })
     ),
-  removeSellPerSqm: protectedProcedure
+  removeSellPerSqm: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2179,7 +2183,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { sellPerSqm: null },
       })
     ),
-  removeGDV: protectedProcedure
+  removeGDV: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2187,7 +2191,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { gdv: null },
       })
     ),
-  removeWAULT: protectedProcedure
+  removeWAULT: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2195,7 +2199,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { wault: null },
       })
     ),
-  removeDebtServiceCoverageRatio: protectedProcedure
+  removeDebtServiceCoverageRatio: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2203,7 +2207,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { debtServiceCoverageRatio: null },
       })
     ),
-  removeExpectedExitYield: protectedProcedure
+  removeExpectedExitYield: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2211,7 +2215,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { expectedExitYield: null },
       })
     ),
-  removeLTV: protectedProcedure
+  removeLTV: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2219,7 +2223,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { ltv: null },
       })
     ),
-  removeLTC: protectedProcedure
+  removeLTC: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2227,7 +2231,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { ltc: null },
       })
     ),
-  removeYieldOnCost: protectedProcedure
+  removeYieldOnCost: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2236,7 +2240,7 @@ export const realEstateRouter = createTRPCRouter({
       })
     ),
   // Limited Partner Remove Mutations
-  removeCoInvestment: protectedProcedure
+  removeCoInvestment: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2244,7 +2248,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { coInvestment: null },
       })
     ),
-  removeGPEquityValue: protectedProcedure
+  removeGPEquityValue: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2252,7 +2256,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { gpEquityValue: null },
       })
     ),
-  removeGPEquityPercentage: protectedProcedure
+  removeGPEquityPercentage: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2260,7 +2264,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { gpEquityPercentage: null },
       })
     ),
-  removeTotalEquityRequired: protectedProcedure
+  removeTotalEquityRequired: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2268,7 +2272,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { totalEquityRequired: null },
       })
     ),
-  removeProjectIRR: protectedProcedure
+  removeProjectIRR: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2276,7 +2280,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { projectIRR: null },
       })
     ),
-  removeInvestorIRR: protectedProcedure
+  removeInvestorIRR: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2284,7 +2288,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { investorIRR: null },
       })
     ),
-  removeCoInvestmentHoldPeriod: protectedProcedure
+  removeCoInvestmentHoldPeriod: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2292,7 +2296,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { coInvestmentHoldPeriod: null },
       })
     ),
-  removeCoInvestmentBreakEvenOccupancy: protectedProcedure
+  removeCoInvestmentBreakEvenOccupancy: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2300,7 +2304,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { coInvestmentBreakEvenOccupancy: null },
       })
     ),
-  removeSponsorPresentation: protectedProcedure
+  removeSponsorPresentation: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
@@ -2308,7 +2312,7 @@ export const realEstateRouter = createTRPCRouter({
         data: { sponsorPresentation: null },
       })
     ),
-  removePromoteStructure: protectedProcedure
+  removePromoteStructure: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ input }) =>
       prisma.realEstate.update({
