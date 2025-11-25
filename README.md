@@ -28,17 +28,17 @@ For a deeper architectural walk-through, see `docs/harbor-guide.md`.
 
 Create `.env.local` (and `.env` for production) with the following keys:
 
-| Name | Description |
-| --- | --- |
-| `DATABASE_URL` | PostgreSQL connection string |
-| `BETTER_AUTH_SECRET` | Secret used to sign Better Auth sessions |
-| `BETTER_AUTH_URL` | Public URL served by Better Auth (e.g., `https://harborpartners.app`) |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | API key for Gemini used by Inngest translation jobs |
-| `UPLOADTHING_TOKEN` | Uploadthing token for secure file uploads |
-| `RESEND_API_KEY` | Resend API key for transactional emails |
-| `INNGEST_EVENT_KEY` | Inngest event key for triggering background jobs |
-| `PUSHER_APP_ID` / `PUSHER_KEY` / `PUSHER_SECRET` / `PUSHER_CLUSTER` | Pusher credentials for real-time notifications |
-| `NEXT_PUBLIC_PUSHER_KEY` / `NEXT_PUBLIC_PUSHER_CLUSTER` | Public Pusher config exposed to the client |
+| Name                                                                | Description                                                           |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `DATABASE_URL`                                                      | PostgreSQL connection string                                          |
+| `BETTER_AUTH_SECRET`                                                | Secret used to sign Better Auth sessions                              |
+| `BETTER_AUTH_URL`                                                   | Public URL served by Better Auth (e.g., `https://harborpartners.app`) |
+| `GOOGLE_GENERATIVE_AI_API_KEY`                                      | API key for Gemini used by Inngest translation jobs                   |
+| `UPLOADTHING_TOKEN`                                                 | Uploadthing token for secure file uploads                             |
+| `RESEND_API_KEY`                                                    | Resend API key for transactional emails                               |
+| `INNGEST_EVENT_KEY`                                                 | Inngest event key for triggering background jobs                      |
+| `PUSHER_APP_ID` / `PUSHER_KEY` / `PUSHER_SECRET` / `PUSHER_CLUSTER` | Pusher credentials for real-time notifications                        |
+| `NEXT_PUBLIC_PUSHER_KEY` / `NEXT_PUBLIC_PUSHER_CLUSTER`             | Public Pusher config exposed to the client                            |
 
 ## Installation
 
@@ -72,16 +72,16 @@ bun dev:all
 
 ## Available Scripts
 
-| Command | Description |
-| --- | --- |
-| `bun dev` | Launch Next.js with Turbopack |
-| `bun build` | Production build |
-| `bun start` | Serve the production build |
-| `bun lint` | Run Biome checks (formatting, lint, type-aware rules) |
-| `bun format` | Apply Biome formatting fixes |
-| `bun inngest:dev` | Start Inngest local worker for background jobs |
-| `bun prisma:studio` | Open Prisma Studio |
-| `bun dev:all` | Run the multiprocess profile defined in `mprocs.yaml` |
+| Command             | Description                                           |
+| ------------------- | ----------------------------------------------------- |
+| `bun dev`           | Launch Next.js with Turbopack                         |
+| `bun build`         | Production build                                      |
+| `bun start`         | Serve the production build                            |
+| `bun lint`          | Run Biome checks (formatting, lint, type-aware rules) |
+| `bun format`        | Apply Biome formatting fixes                          |
+| `bun inngest:dev`   | Start Inngest local worker for background jobs        |
+| `bun prisma:studio` | Open Prisma Studio                                    |
+| `bun dev:all`       | Run the multiprocess profile defined in `mprocs.yaml` |
 
 ## Development Workflow
 
@@ -91,6 +91,21 @@ bun dev:all
 4. **Internationalization** – Content lives under `src/locales`. Use scoped dictionaries and the `getScopedI18n` helper for new copy.
 5. **File uploads** – Use the Uploadthing router under `src/app/api/uploadthing` and fetch config via `NextSSRPlugin`.
 6. **Background jobs** – All AI translation work is queued through Inngest (`src/inngest/functions.ts`). Ensure the worker runs when testing translations.
+
+## Backend Quickstart (First 48 Hours)
+
+1. **Prisma & Database**
+   - Inspect `prisma/schema.prisma` plus the latest `prisma/migrations/*` to understand core tables (`User`, `MergerAndAcquisition`, `RealEstate`, analytics, assignment join tables).
+   - Run `bunx prisma migrate dev` against your local Postgres and open Prisma Studio (`bun prisma:studio`) to verify seeded data or add sample records.
+2. **TRPC & Auth**
+   - Review `src/trpc/routers/_app.ts` and the feature routers under `src/features/**/server` to see how `protectedProcedure` and `adminProcedure` guard routes with Better Auth.
+   - Exercise the session flow by hitting `trpc.users.me` via the React Query hooks in `src/components/providers.tsx`.
+3. **Background Jobs**
+   - Start `bun inngest:dev` (or `bun dev:all`) and create an opportunity to watch the `opportunity/translate-description` event complete in logs.
+   - Read `src/inngest/functions.ts` to understand how Inngest steps wrap Gemini calls and how failures are reported to Sentry.
+4. **Operational Checklist**
+   - Confirm `.env.local` contains all backend secrets (Better Auth, Inngest, Uploadthing, Pusher, Resend).
+   - Skim `docs/harbor-guide.md` sections 2–7 for deeper architecture notes and bookmark the troubleshooting runbooks in section 13.
 
 ## Testing & Quality
 

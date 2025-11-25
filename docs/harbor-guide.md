@@ -11,6 +11,7 @@ This document explains how the Harbor Partners web application is structured, ho
 - **Technology stack:** Next.js 15 + React 19, TRPC, Prisma/Postgres, Better Auth, Inngest, Google Gemini, Uploadthing, Pusher, Resend, Sentry, Bun runtime, Biome + Ultracite linting.
 
 High-level request flow:
+
 1. A locale-aware Next.js UI (Portuguese default) renders dashboards and public pages.
 2. Client components talk to TRPC endpoints, which enforce Better Auth sessions and role checks.
 3. Data persists in Postgres via Prisma models (users, investors, opportunities, analytics, access requests, etc.).
@@ -22,79 +23,117 @@ High-level request flow:
 ## 2. Application Layers
 
 ### 2.1 Presentation (App Router)
+
 - Public marketing/auth flows live under `src/app/[locale]/(public)`.
 - Authenticated dashboards/backoffice reside under the `(protected)` segments (`dashboard`, `backoffice`, `crm`, `settings`).
 - `src/components/providers.tsx` wires global providers: language (`LanguageProvider`), theming (`next-themes`), TRPC, Uploadthing SSR, Sonner toasts, Nuqs query syncing, and the password-change watchdog.
 - `middleware.ts` uses `next-international` to rewrite URLs and persist the locale.
 
 ### 2.2 API Layer (TRPC)
+
 - `src/trpc/init.ts` builds the base router, adds `protectedProcedure` (Better Auth session) and `adminProcedure` (Role.ADMIN guard).
 - Routers live alongside features (e.g., `features/opportunities/server/route.ts`, `features/users/server/route.ts`) and are composed in `src/trpc/routers/_app.ts`.
 - Input validation relies on Zod schemas; responses inherit Prisma types thanks to TRPC’s end-to-end inference.
+- `createTRPCContext` centralizes Better Auth session lookup, locale, and Prisma client creation. Any new middleware should assume the context can run in both Node and edge runtimes.
+- React Query hooks from `@/trpc/react` hydrate on the server via `HydrateClient` to keep procedures type-safe across transport boundaries.
 
 ### 2.3 Data & Integrations
+
 - **Prisma models:** Defined in `prisma/schema.prisma`. Key tables include `User`, `Account`, `Session`, `MergerAndAcquisition`, `RealEstate`, `OpportunityAnalytics`, `OpportunityAccountManager`, `AccessRequest`, and multiple enums (roles, investor segments, opportunity types, etc.).
 - **Database access:** `src/lib/db.ts` exports a cached Prisma client for edge vs. node runtimes.
 - **Third parties:** Better Auth (identity), Uploadthing (files), Pusher (realtime), Resend (emails), Inngest + Google Gemini (AI tasks), Sentry (observability), Pusher (notifications).
+
+### 2.4 Request Lifecycle Essentials
+
+1. Client components call `trpc.<namespace>.<procedure>.useQuery|useMutation`, which bundle auth cookies and locale headers automatically.
+2. `createTRPCContext` validates the Better Auth session. Unauthenticated access is denied before the resolver executes domain logic.
+3. Procedure-specific middleware runs in order: auth guard, role guard, Zod validation, then Prisma/service execution. Always throw `new TRPCError` for predictable error codes.
+4. Mutations often emit domain events (Pusher or Inngest). Keep these side effects in a helper (e.g., `emitOpportunityTranslationEvent`) so both router and worker contracts stay discoverable.
+5. Responses serialize Prisma payloads directly; avoid `any` casting so clients benefit from end-to-end inference.
 
 ---
 
 ## 3. Domain Model Highlights
 
 ### 3.1 Users & Roles
+
 - Stored in `User` with core profile fields plus investor-specific metadata (ticket sizes, strategies, segments, locations).
 - Roles (`Role` enum) drive authorization: `USER` (default investors), `TEAM` (internal staff), `ADMIN` (platform owners).
 - Additional flags: `passwordChanged`, marketing consent, assignment relationships for leads and opportunities.
 
 ### 3.2 Investors & Leads
+
 - The CRM captures contact context (company, representative, phone, segments, strategies) and links them to team owners (`leadResponsibleId`, `leadMainContactId`).
 - Commission rates and notes are tracked on the `User` entity so that investor commission dashboards can reuse shared data.
 
 ### 3.3 Opportunities
+
 - **Merger & Acquisition (`MergerAndAcquisition`):** Contains multilingual descriptions, financial metrics (sales, EBITDA ranges, CAGR, EV/EBITDA), growth KPIs, asset notes, and co-investment terms.
 - **Real Estate (`RealEstate`):** Tracks asset metadata (location, area, NOI, yields, rents), licensing info, co-investment structure, and occupancy metrics.
 - Both models link to `OpportunityAnalytics` (view counters) and assignment tables (`OpportunityAccountManager`) for accountability.
 
 ### 3.4 Interests & Matching
+
 - `UserMergerAndAcquisitionInterest`, `UserRealEstateInterest`, and `UserOpportunityInterest` tables connect investors to specific deals, capturing status and rationale (e.g., “not interested” reasons).
 - Feature modules under `src/features/investment-interests` expose UI and API logic for tracking engagement.
 
 ### 3.5 Access Requests & Notifications
+
 - `AccessRequest` (managed by `features/auth/server/route.ts`) stores prospect data. Creation triggers Pusher events so admins receive instant notifications.
 - Admins can change statuses (pending, approved, rejected) via TRPC mutations, providing a lightweight onboarding pipeline.
+
+### 3.6 Schema & Migration Workflow
+
+- Authoritative contracts live in `prisma/schema.prisma`. Keep enums descriptive so TRPC unions stay readable.
+- Generate migrations with `bunx prisma migrate dev --name <change>`; inspect the SQL under `prisma/migrations/<timestamp>_<name>` before committing.
+- When migrations touch large tables, note expected downtime or locking behavior in the PR description so ops can schedule maintenance windows.
+- Update any Prisma payload helpers (e.g., `Prisma.MergerAndAcquisitionGetPayload`) and TRPC routers that rely on the modified fields to avoid silent runtime errors.
+- Production deploys must run `bunx prisma migrate deploy`. Never edit historical migration SQL—create a corrective follow-up migration instead.
 
 ---
 
 ## 4. Core Services & Workflows
 
 ### 4.1 Authentication & Password Hygiene
+
 - `src/lib/auth.ts` initializes Better Auth with the Prisma adapter and email/password strategy.
 - `protectedProcedure` reads the Better Auth session from request headers; `usersRouter.changePassword` and `PasswordChangeProvider` enforce mandatory password updates via dialog prompts and cookies.
 - Invitations create users through `auth.api.signUpEmail` and email credentials using Resend templates.
+- Add new TRPC procedures by composing middleware in `src/trpc/init.ts` so auth policies remain centralized.
+- Audit Better Auth callbacks (password reset, invite revoke, forced logout) and mirror their log format (`Sentry.captureMessage`) when introducing new flows to preserve traceability.
 
 ### 4.2 Internationalization
+
 - Localized copy lives in `src/locales` with dictionaries split by feature (`auth`, `backoffice`, `dashboard`, etc.).
 - Use `getScopedI18n` for server components and `useScopedI18n` for client components to avoid loading unused namespaces.
 - Middleware rewrites `/path` (Portuguese) and `/en/path` (English), ensuring SEO-friendly canonical URLs defined in `site.ts`.
 
 ### 4.3 File & Media Handling
+
 - Uploadthing routers under `src/app/api/uploadthing` set the rules. `NextSSRPlugin` injects the client-side config, while `usersRouter.updateAvatar` and opportunity forms manage uploads/deletions via `deleteFromUploadthing`.
 
 ### 4.4 Emails & Realtime Notifications
+
 - **Resend:** `src/lib/emails` contains templates (e.g., invite email) invoked after user creation.
 - **Pusher:** `src/lib/pusher.ts` broadcasts `access-request` events to a public `notifications` channel and per-user channels (`user-{email}`) for admin dashboards. Configure keys in the environment to avoid silent failures.
 
 ### 4.5 Background Jobs & AI Translations
+
 - `src/inngest/functions.ts` defines:
   - `execute/ai`: sample Gemini integration.
   - `opportunity/translate-description`: listens for events when a Portuguese description is saved, calls Gemini Flash via `step.ai.wrap`, and persists the English translation back to Prisma.
 - `features/opportunities/server/route.ts` emits events after create/update mutations, guaranteeing translations stay in sync.
 - Run `bun inngest:dev` locally to process events; production deployments should register the function via `inngest deploy`.
+- Functions follow a template: validate payloads, wrap external API calls in `step.ai.wrap` (for telemetry), and persist data via Prisma transactions when touching multiple tables.
+- Emit events only when relevant fields change (e.g., Portuguese description updated) to avoid redundant translations. Helper utilities such as `emitOpportunityTranslationEvent` keep this logic DRY.
+- For new jobs (e.g., real-estate translations), copy the retry + alerting pattern: exponential backoff via `step.sleep`, Sentry logging per attempt, and a final failure notification routed to the ops channel.
 
 ### 4.6 Analytics & Metrics
+
 - `src/lib/analytics.ts` offers helper functions to increment and fetch `OpportunityAnalytics` records, ensuring both historical deals and new ones expose the same interface. Integrate these helpers wherever a user views an opportunity detail page.
 
 ### 4.7 Observability & Error Handling
+
 - Sentry is configured in `sentry.server.config.ts` / `sentry.edge.config.ts`; background jobs log every translation step for traceability.
 - Follow the example logger usage in Inngest functions when adding new jobs.
 
@@ -102,21 +141,22 @@ High-level request flow:
 
 ## 5. Repository Layout & Developer Experience
 
-| Path | Purpose |
-| --- | --- |
-| `src/app` | Next.js routes grouped by locale + segment (public, dashboard, backoffice, crm, settings). Layout nesting mirrors access control boundaries. |
-| `src/features/*` | Feature-specific UI + server routers; keeps domain logic modular. Each folder typically contains components, hooks, params/prefetch helpers, and a TRPC router. |
-| `src/components` | Shared UI (headers, hero, CRM sidebar, index page, theme switcher, etc.). Client/server boundaries are explicit via the `"use client"` pragma. |
-| `src/components/ui` | Primitive design system built atop Radix UI + Tailwind utilities (buttons, inputs, dropdowns). |
-| `src/lib` | Cross-cutting libraries (auth, db, env validation, analytics, emails, pusher, uploadthing, utils). |
-| `src/trpc` | Router initialization, React Query provider, and shared TRPC client. |
-| `src/locales` | i18n dictionaries per feature plus helper utilities (`server.ts`, `client.ts`). |
-| `src/inngest` | Event client definition and background function implementations. |
-| `src/generated/prisma` | Generated Prisma client; do not hand-edit. |
-| `prisma` | Schema and migrations (history reflects recent opportunity enhancements). |
-| `docs` | Long-form documentation (this guide and onboarding supplements). |
+| Path                   | Purpose                                                                                                                                                         |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app`              | Next.js routes grouped by locale + segment (public, dashboard, backoffice, crm, settings). Layout nesting mirrors access control boundaries.                    |
+| `src/features/*`       | Feature-specific UI + server routers; keeps domain logic modular. Each folder typically contains components, hooks, params/prefetch helpers, and a TRPC router. |
+| `src/components`       | Shared UI (headers, hero, CRM sidebar, index page, theme switcher, etc.). Client/server boundaries are explicit via the `"use client"` pragma.                  |
+| `src/components/ui`    | Primitive design system built atop Radix UI + Tailwind utilities (buttons, inputs, dropdowns).                                                                  |
+| `src/lib`              | Cross-cutting libraries (auth, db, env validation, analytics, emails, pusher, uploadthing, utils).                                                              |
+| `src/trpc`             | Router initialization, React Query provider, and shared TRPC client.                                                                                            |
+| `src/locales`          | i18n dictionaries per feature plus helper utilities (`server.ts`, `client.ts`).                                                                                 |
+| `src/inngest`          | Event client definition and background function implementations.                                                                                                |
+| `src/generated/prisma` | Generated Prisma client; do not hand-edit.                                                                                                                      |
+| `prisma`               | Schema and migrations (history reflects recent opportunity enhancements).                                                                                       |
+| `docs`                 | Long-form documentation (this guide and onboarding supplements).                                                                                                |
 
 Tooling notes:
+
 - **Biome / Ultracite** enforce style rules defined in `biome.json`; git hooks are orchestrated via `lefthook.yml`.
 - **Bun** is the package manager and runtime. Prefer `bun`/`bunx` commands over `npm`/`pnpm`.
 - **mprocs** (`mprocs.yaml`) can run multiple long-lived processes (Next, Inngest, Prisma Studio) during development.
@@ -142,11 +182,15 @@ Tooling notes:
 ## 7. Operations & Deployment
 
 ### 7.1 Environments
+
 - **Development:** Local Bun runtime with Postgres (Docker or remote). Environment variables live in `.env.local`.
 - **Preview/Staging:** Vercel previews inherit environment variables from the Vercel dashboard; Prisma should point to a staging database with `prisma migrate deploy`.
 - **Production:** Hosted on Vercel (edge-friendly). Set all secrets in Vercel + Inngest dashboards. Prisma runs against the managed Postgres instance.
+- Whenever a new secret is introduced, update `.env.example` plus the Notion vault index so future engineers know where to request access.
+- Document the owner per integration (Better Auth, Inngest, Uploadthing, etc.) and escalation path in case credentials expire.
 
 ### 7.2 Release Checklist
+
 1. Ensure migrations are up-to-date (`bunx prisma migrate deploy`).
 2. Build the app (`bun build`) to catch compile errors.
 3. Deploy to Vercel (git push) and monitor `vercel build` logs.
@@ -154,15 +198,21 @@ Tooling notes:
 5. Smoke test critical flows: login, request access, opportunity creation, translation job completion, notification delivery.
 
 ### 7.3 Observability & Incident Response
+
 - **Sentry:** Check both server and edge DSNs; translation jobs use `Sentry.logger` extensively.
 - **Pusher / Inngest dashboards:** Validate event delivery if admins stop receiving alerts or translations stall.
 - **Prisma / Database:** For failed migrations, inspect the SQL under `prisma/migrations/*` to understand schema drift.
+- Maintain dashboards (Grafana/DataDog) for Postgres connection counts, error rates, and Inngest queue depth. Alert at 80% of agreed SLOs to leave room for remediation.
+- Store quick links to each vendor dashboard in the ops runbook so on-call engineers do not delay during incidents.
 
 ### 7.4 Security Considerations
+
 - Never log secrets. Use Bun’s `.env` loading plus the `@t3-oss/env-nextjs` validation in `src/lib/env.ts`.
 - Better Auth secrets must remain in secure storage; rotate regularly.
 - Uploadthing file deletion is enforced server-side to prevent orphaned files.
 - Password-change prompts rely on cookies; clear them upon success as implemented in `PasswordChangeProvider`.
+- During rotations, update Vercel + Inngest first, redeploy, and then invalidate old credentials. Announce rotations in #eng-ops to keep the team aligned.
+- Record which services require restarts (Inngest worker, Bun dev server) after secret updates to avoid stale credentials.
 
 ---
 
@@ -203,12 +253,18 @@ Tooling notes:
 5. **Knowledge ramp-up**
    - Read this guide plus `src/features` modules relevant to your squad (backoffice, investors, etc.).
    - Pair with an existing engineer to walk through TRPC router additions and deployment steps.
+6. **Backend mastery sprint (Week 1)**
+   - Trace a full TRPC mutation (e.g., `mergerAndAcquisition.create`) from React hook to Prisma write and document each middleware hop.
+   - Ship a trivial migration (adding/dropping a demo column) to learn the workflow, then roll it back locally.
+   - Trigger the translation Inngest job via CLI (`inngest trigger opportunity/translate-description --json …`) to become familiar with worker logging and retries.
+   - Review `src/lib/env.ts` and add a placeholder variable to understand how missing secrets fail the build early.
 
 ---
 
 ## 11. Example End-to-End Flows
 
 ### 11.1 Opportunity Creation → Translation → Analytics
+
 1. A TEAM/ADMIN user opens `/[locale]/backoffice/m&a/create` which renders `features/opportunities/components/m&a-opportunities.tsx`.
 2. The form submits via `trpc.mergerAndAcquisition.create`. `protectedProcedure` injects the Better Auth session and writes the record with Prisma.
 3. After the mutation, the router emits an Inngest event `opportunity/translate-description` whenever a Portuguese description exists.
@@ -216,12 +272,14 @@ Tooling notes:
 5. When any user views the opportunity page, the viewer component calls `incrementMnaViews` which lazily creates or updates `OpportunityAnalytics` rows to track engagement.
 
 ### 11.2 Access Request Intake
+
 1. Visitors land on `/[locale]/request-access` which renders `request-access-form.tsx`.
 2. The form hits `trpc.accessRequest.create` with validated data (Zod schema ensures E.164 phone format).
 3. Prisma inserts the record and `sendAccessRequestNotification` broadcasts two Pusher events: a general `notifications` channel and user-specific channels for known admin emails.
 4. Admins monitoring `/backoffice/notifications` receive the real-time update and can change the status via `trpc.accessRequest.updateStatus`.
 
 ### 11.3 Password Change Enforcement
+
 1. Newly invited users receive credentials via Resend and log in using Better Auth.
 2. `PasswordChangeProvider` runs on every protected page, calls `trpc.users.getPasswordChangedStatus`, and opens a dialog if the flag is `false`.
 3. Once the user successfully changes the password (`trpc.users.changePassword` + Better Auth API), the backend flips `passwordChanged` to `true`, and the provider clears the reminder cookie.
@@ -230,17 +288,18 @@ Tooling notes:
 
 ## 12. Third-Party Integrations & Secrets
 
-| Integration | Files / Modules | Notes |
-| --- | --- | --- |
-| **Better Auth** | `src/lib/auth.ts`, `src/features/users/server/route.ts` | Requires `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`. Session validation occurs per request; keep adapters aligned with Prisma schema changes. |
-| **Prisma / Postgres** | `prisma/schema.prisma`, `src/lib/db.ts` | `DATABASE_URL` must include `?connection_limit=` tuning for production. Use `prisma migrate deploy` in CI/CD. |
-| **Inngest + Gemini** | `src/inngest/*`, `src/features/opportunities/server/route.ts` | Needs `INNGEST_EVENT_KEY` and `GOOGLE_GENERATIVE_AI_API_KEY`. Gemini usage is wrapped inside `step.ai.wrap` for telemetry. |
-| **Uploadthing** | `src/app/api/uploadthing`, `src/components/providers.tsx`, `usersRouter.updateAvatar` | `UPLOADTHING_TOKEN` controls file storage; remember to delete files via `deleteFromUploadthing` when records change. |
-| **Pusher** | `src/lib/pusher.ts`, `features/auth/server/route.ts` | Requires both server and `NEXT_PUBLIC_*` keys. Channels follow `notifications` and `user-{email}` naming. |
-| **Resend** | `src/lib/emails/*`, invite flows | Emails come from `RESEND_API_KEY`. Make sure templates honor localization if needed. |
-| **Sentry** | `sentry.*.config.ts`, `src/inngest/functions.ts` | DSNs stored in hosting provider. Use `Sentry.logger` for structured logs inside background jobs. |
+| Integration           | Files / Modules                                                                       | Notes                                                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Better Auth**       | `src/lib/auth.ts`, `src/features/users/server/route.ts`                               | Requires `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`. Session validation occurs per request; keep adapters aligned with Prisma schema changes. |
+| **Prisma / Postgres** | `prisma/schema.prisma`, `src/lib/db.ts`                                               | `DATABASE_URL` must include `?connection_limit=` tuning for production. Use `prisma migrate deploy` in CI/CD.                                 |
+| **Inngest + Gemini**  | `src/inngest/*`, `src/features/opportunities/server/route.ts`                         | Needs `INNGEST_EVENT_KEY` and `GOOGLE_GENERATIVE_AI_API_KEY`. Gemini usage is wrapped inside `step.ai.wrap` for telemetry.                    |
+| **Uploadthing**       | `src/app/api/uploadthing`, `src/components/providers.tsx`, `usersRouter.updateAvatar` | `UPLOADTHING_TOKEN` controls file storage; remember to delete files via `deleteFromUploadthing` when records change.                          |
+| **Pusher**            | `src/lib/pusher.ts`, `features/auth/server/route.ts`                                  | Requires both server and `NEXT_PUBLIC_*` keys. Channels follow `notifications` and `user-{email}` naming.                                     |
+| **Resend**            | `src/lib/emails/*`, invite flows                                                      | Emails come from `RESEND_API_KEY`. Make sure templates honor localization if needed.                                                          |
+| **Sentry**            | `sentry.*.config.ts`, `src/inngest/functions.ts`                                      | DSNs stored in hosting provider. Use `Sentry.logger` for structured logs inside background jobs.                                              |
 
 Secrets handling guidelines:
+
 - Never commit `.env` files. Use Vercel’s environment variable dashboard plus Inngest’s secret storage.
 - Rotate keys quarterly; add reminders to the ops calendar.
 - For local development, use `direnv` or `doppler run -- bun dev` to avoid leaking credentials into shell history.
@@ -250,31 +309,44 @@ Secrets handling guidelines:
 ## 13. Troubleshooting & Runbooks
 
 ### 13.1 Translations Not Appearing
+
 1. Verify `bun inngest:dev` (or production worker) is running by checking Inngest logs.
 2. Confirm the event was emitted (`inngest events list --name opportunity/translate-description` locally).
 3. Check Sentry for translation errors (authentication issues, Gemini quota, etc.).
 4. Manually re-trigger by calling `inngest trigger opportunity/translate-description --json '{"opportunityId":"…","description":"…"}'`.
+5. If the job logs success but data is missing, open Prisma Studio and confirm `englishDescription` updated. Missing columns usually indicate the latest migration did not run.
 
 ### 13.2 Access Requests Not Notifying Admins
+
 1. Inspect the `access_request` table via Prisma Studio to confirm record creation.
 2. Tail server logs for Pusher errors (`sendAccessRequestNotification` catches and logs).
 3. Ensure `PUSHER_*` keys match the dashboard and the frontend subscribes to the correct cluster.
 4. Check browser console for blocked WebSocket connections (corporate firewalls).
+5. Use the Pusher dashboard (debug console) to confirm events reach the `notifications` channel; recurring 401s suggest stale credentials.
 
 ### 13.3 Prisma Migrations Failing
+
 1. Run `bunx prisma validate` to ensure schema syntax is correct.
 2. If a migration fails in production, use `prisma migrate resolve --applied <migration>` to sync state only after manual fixes.
 3. Avoid editing historical migration SQL; create a follow-up migration instead.
+4. Snapshot the database (`pg_dump`) before retrying destructive migrations so you can restore quickly.
+5. Diagnose schema drift with `bunx prisma migrate diff --from-schema-datamodel prisma/schema.prisma --to-url "$DATABASE_URL"` and include findings in the incident doc.
 
 ### 13.4 Authentication Failures
+
 1. Inspect Better Auth dashboards/logs for rate limits or secret mismatches.
 2. Ensure `BETTER_AUTH_URL` matches the deployed domain (needed for cookie scopes).
 3. If sessions randomly expire, check for reverse proxy domain mismatches causing cookie drops.
+4. Hit `/api/trpc/users.me` via `curl` plus auth cookies to confirm edge caches or CDNs are not stripping headers.
+5. Rotate `BETTER_AUTH_SECRET` as a last resort and recycle any long-lived Inngest workers so they pick up the new signing key.
 
 ### 13.5 File Upload Issues
+
 1. Confirm Uploadthing router exports match routes configured in `Providers`.
 2. Ensure the Uploadthing dashboard includes the local/dev domain as an allowed origin.
 3. Delete orphaned files by calling `trpc.users.deleteUploadedFile` or running a script that walks DB records vs. remote storage.
+4. If uploads stall, inspect the browser Network tab for CORS errors and add the missing origin in Uploadthing settings.
+5. For stuck deletions, log the result of `deleteFromUploadthing`; mismatched file keys are the most common culprit.
 
 ---
 
@@ -319,4 +391,3 @@ bun prisma:studio    # opens Prisma Studio
 ```
 
 For daily development, keep `bun dev`, `bun inngest:dev`, and `bun prisma:studio` in separate terminals or rely on `mprocs` once the commands are updated to Bun equivalents.
-
