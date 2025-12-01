@@ -2395,3 +2395,55 @@ export const useRemoveOpportunityPromoteStructure = () => {
     })
   );
 };
+
+/**
+ * Hook to update Real Estate opportunity status
+ */
+export const useUpdateRealEstateStatus = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.updateStatus.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Status updated successfully");
+        queryClient.invalidateQueries(trpc.realEstate.getMany.queryOptions({}));
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+        queryClient.invalidateQueries(
+          trpc.opportunities.getAll.queryOptions({})
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update status: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to update Real Estate opportunity final values
+ */
+export const useUpdateRealEstateFinalValues = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.realEstate.updateFinalValues.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Final values updated successfully");
+        queryClient.invalidateQueries(trpc.realEstate.getMany.queryOptions({}));
+        queryClient.invalidateQueries(
+          trpc.realEstate.getOne.queryOptions({ id: data.id })
+        );
+        queryClient.invalidateQueries(
+          trpc.opportunities.getAll.queryOptions({})
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update final values: ${error.message}`);
+      },
+    })
+  );
+};

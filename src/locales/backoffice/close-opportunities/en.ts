@@ -1,0 +1,57 @@
+export default {
+  title: "Close Opportunities",
+  description: "Manage opportunity status and close deals",
+  searchPlaceholder: "Search opportunities by name...",
+  errorMessage: "Failed to load opportunities. Please try again.",
+  emptyMessage: "No opportunities found.",
+  filters: {
+    type: "Type",
+    status: "Status",
+    all: "All",
+    mna: "M&A",
+    realEstate: "Real Estate",
+  },
+  status: {
+    ACTIVE: "Active",
+    INACTIVE: "Inactive",
+    CONCLUDED: "Concluded",
+  },
+  table: {
+    name: "Name",
+    type: "Type",
+    status: "Status",
+    updatedAt: "Last Updated",
+    actions: "Actions",
+  },
+  updateDialog: {
+    title: "Update Opportunity Status",
+    description: "Change the status and update final values for this opportunity",
+    labels: {
+      status: "New Status",
+      entrepriseValue: "Final Enterprise Value (M&A)",
+      equityValue: "Final Equity Value (M&A)",
+      price: "Final Price (Real Estate)",
+      totalInvestment: "Final Total Investment (Real Estate)",
+    },
+    placeholders: {
+      selectStatus: "Select new status",
+      entrepriseValue: "Enter final enterprise value",
+      equityValue: "Enter final equity value",
+      price: "Enter final price",
+      totalInvestment: "Enter final investment",
+    },
+    helper: {
+      values: "Update final values when closing the opportunity",
+      concluded: "Mark as concluded when the deal is finalized",
+    },
+    update: "Update Status",
+    updating: "Updating...",
+    cancel: "Cancel",
+  },
+  toast: {
+    updateSuccess: "Opportunity status updated successfully",
+    updateError: "Failed to update opportunity status",
+    valuesUpdateSuccess: "Final values updated successfully",
+    valuesUpdateError: "Failed to update final values",
+  },
+} as const;

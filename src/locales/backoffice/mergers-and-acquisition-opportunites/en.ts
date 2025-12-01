@@ -9,4 +9,15 @@ export default {
   searchPlaceholder: "Search opportunities",
   updatedAt: "Updated",
   createdAt: "Created",
+  statusFilter: {
+    all: "All Status",
+    active: "Active",
+    inactive: "Inactive",
+    concluded: "Concluded",
+  },
+  status: {
+    active: "Active",
+    inactive: "Inactive",
+    concluded: "Concluded",
+  },
 } as const;

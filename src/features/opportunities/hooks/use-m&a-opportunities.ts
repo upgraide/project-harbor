@@ -1897,3 +1897,59 @@ export const useGetMergerAndAcquisitionInterest = (opportunityId: string) => {
     })
   );
 };
+
+/**
+ * Hook to update M&A opportunity status
+ */
+export const useUpdateMergerAndAcquisitionStatus = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateStatus.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Status updated successfully");
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+        queryClient.invalidateQueries(
+          trpc.opportunities.getAll.queryOptions({})
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update status: ${error.message}`);
+      },
+    })
+  );
+};
+
+/**
+ * Hook to update M&A opportunity final values
+ */
+export const useUpdateMergerAndAcquisitionFinalValues = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateFinalValues.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Final values updated successfully");
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+        queryClient.invalidateQueries(
+          trpc.opportunities.getAll.queryOptions({})
+        );
+      },
+      onError: (error) => {
+        toast.error(`Failed to update final values: ${error.message}`);
+      },
+    })
+  );
+};

@@ -4,6 +4,7 @@ import {
   EbitdaRange,
   Industry,
   IndustrySubsector,
+  OpportunityStatus,
   OpportunityType,
   RealEstateAssetType,
   RealEstateInvestmentType,
@@ -849,6 +850,45 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { shareholderStructure: updatedImages },
       });
     }),
+  updateStatus: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        status: z.enum(["ACTIVE", "INACTIVE", "CONCLUDED"]),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { status: input.status },
+      });
+    }),
+  updateFinalValues: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        entrepriseValue: z.number().optional(),
+        equityValue: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const updateData: {
+        entrepriseValue?: number;
+        equityValue?: number;
+      } = {};
+      
+      if (input.entrepriseValue !== undefined) {
+        updateData.entrepriseValue = input.entrepriseValue;
+      }
+      if (input.equityValue !== undefined) {
+        updateData.equityValue = input.equityValue;
+      }
+
+      return await prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: updateData,
+      });
+    }),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
@@ -897,25 +937,31 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         search: z.string().default(""),
+        status: z.enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).default("ACTIVE"),
       })
     )
     .query(async ({ input }) => {
-      const { page, pageSize, search } = input;
+      const { page, pageSize, search, status } = input;
+      
+      const whereCondition: {
+        name: { contains: string; mode: "insensitive" };
+        status?: OpportunityStatus;
+      } = {
+        name: { contains: search, mode: "insensitive" },
+        ...(status !== "all" && { status: status as OpportunityStatus }),
+      };
+      
       const [items, totalCount] = await Promise.all([
         prisma.mergerAndAcquisition.findMany({
           skip: (page - 1) * pageSize,
           take: pageSize,
-          where: {
-            name: { contains: search, mode: "insensitive" },
-          },
+          where: whereCondition,
           orderBy: {
             updatedAt: "desc",
           },
         }),
         prisma.mergerAndAcquisition.count({
-          where: {
-            name: { contains: search, mode: "insensitive" },
-          },
+          where: whereCondition,
         }),
       ]);
 
@@ -947,20 +993,33 @@ export const opportunitiesRouter = createTRPCRouter({
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         type: z.enum(["all", "mna", "realEstate"]).default("all"),
         search: z.string().default(""),
+        status: z.enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).default("all").optional(),
       })
     )
     .query(async ({ input }) => {
-      const { page, pageSize, type, search } = input;
+      const { page, pageSize, type, search, status } = input;
 
       // Build where conditions for M&A
-      const mnaWhere = {
+      const mnaWhere: {
+        name: { contains: string; mode: "insensitive" };
+        status?: OpportunityStatus;
+      } = {
         name: { contains: search, mode: "insensitive" as const },
       };
+      if (status && status !== "all") {
+        mnaWhere.status = status as OpportunityStatus;
+      }
 
       // Build where conditions for Real Estate
-      const realEstateWhere = {
+      const realEstateWhere: {
+        name: { contains: string; mode: "insensitive" };
+        status?: OpportunityStatus;
+      } = {
         name: { contains: search, mode: "insensitive" as const },
       };
+      if (status && status !== "all") {
+        realEstateWhere.status = status as OpportunityStatus;
+      }
 
       // Fetch data based on type filter
       let mnaItems: Array<{
@@ -969,6 +1028,7 @@ export const opportunitiesRouter = createTRPCRouter({
         description: string | null;
         englishDescription: string | null;
         images: string[];
+        status: OpportunityStatus;
         createdAt: Date;
         updatedAt: Date;
       }> = [];
@@ -978,6 +1038,7 @@ export const opportunitiesRouter = createTRPCRouter({
         description: string | null;
         englishDescription: string | null;
         images: string[];
+        status: OpportunityStatus;
         createdAt: Date;
         updatedAt: Date;
       }> = [];
@@ -997,6 +1058,7 @@ export const opportunitiesRouter = createTRPCRouter({
               description: true,
               englishDescription: true,
               images: true,
+              status: true,
               createdAt: true,
               updatedAt: true,
             },
@@ -1018,6 +1080,7 @@ export const opportunitiesRouter = createTRPCRouter({
               description: true,
               englishDescription: true,
               images: true,
+              status: true,
               createdAt: true,
               updatedAt: true,
             },
@@ -1267,25 +1330,31 @@ export const realEstateRouter = createTRPCRouter({
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         search: z.string().default(""),
+        status: z.enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).default("ACTIVE"),
       })
     )
     .query(async ({ input }) => {
-      const { page, pageSize, search } = input;
+      const { page, pageSize, search, status } = input;
+      
+      const whereCondition: {
+        name: { contains: string; mode: "insensitive" };
+        status?: OpportunityStatus;
+      } = {
+        name: { contains: search, mode: "insensitive" },
+        ...(status !== "all" && { status: status as OpportunityStatus }),
+      };
+      
       const [items, totalCount] = await Promise.all([
         prisma.realEstate.findMany({
           skip: (page - 1) * pageSize,
           take: pageSize,
-          where: {
-            name: { contains: search, mode: "insensitive" },
-          },
+          where: whereCondition,
           orderBy: {
             updatedAt: "desc",
           },
         }),
         prisma.realEstate.count({
-          where: {
-            name: { contains: search, mode: "insensitive" },
-          },
+          where: whereCondition,
         }),
       ]);
 
@@ -2320,4 +2389,43 @@ export const realEstateRouter = createTRPCRouter({
         data: { promoteStructure: null },
       })
     ),
+  updateStatus: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        status: z.enum(["ACTIVE", "INACTIVE", "CONCLUDED"]),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await prisma.realEstate.update({
+        where: { id: input.id },
+        data: { status: input.status },
+      });
+    }),
+  updateFinalValues: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        price: z.number().optional(),
+        totalInvestment: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const updateData: {
+        price?: number;
+        totalInvestment?: number;
+      } = {};
+      
+      if (input.price !== undefined) {
+        updateData.price = input.price;
+      }
+      if (input.totalInvestment !== undefined) {
+        updateData.totalInvestment = input.totalInvestment;
+      }
+
+      return await prisma.realEstate.update({
+        where: { id: input.id },
+        data: updateData,
+      });
+    }),
 });

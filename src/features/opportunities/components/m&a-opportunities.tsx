@@ -15,7 +15,15 @@ import {
   ErrorView,
   LoadingView,
 } from "@/components/entity-components";
-import type { MergerAndAcquisition } from "@/generated/prisma";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import type { MergerAndAcquisition, OpportunityStatus } from "@/generated/prisma";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import {
   backofficeMergeAndAcquisitionOpportunityCreatePath,
@@ -28,6 +36,28 @@ import {
 } from "../hooks/use-m&a-opportunities";
 import { useOpportunitiesParams } from "../hooks/use-opportunities-params";
 
+export const OpportunitiesStatusFilter = () => {
+  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
+  const [params, setParams] = useOpportunitiesParams();
+
+  return (
+    <Select
+      value={params.status}
+      onValueChange={(value) => setParams({ ...params, status: value as "all" | "ACTIVE" | "INACTIVE" | "CONCLUDED" })}
+    >
+      <SelectTrigger className="w-[180px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">{t("statusFilter.all")}</SelectItem>
+        <SelectItem value="ACTIVE">{t("statusFilter.active")}</SelectItem>
+        <SelectItem value="INACTIVE">{t("statusFilter.inactive")}</SelectItem>
+        <SelectItem value="CONCLUDED">{t("statusFilter.concluded")}</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};
+
 export const OpportunitiesSearch = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunites");
   const [params, setParams] = useOpportunitiesParams();
@@ -36,11 +66,14 @@ export const OpportunitiesSearch = () => {
     setParams,
   });
   return (
-    <EntitySearch
-      onChange={onSearchChange}
-      placeholder={t("searchPlaceholder")}
-      value={searchValue}
-    />
+    <div className="flex gap-2">
+      <EntitySearch
+        onChange={onSearchChange}
+        placeholder={t("searchPlaceholder")}
+        value={searchValue}
+      />
+      <OpportunitiesStatusFilter />
+    </div>
   );
 };
 
@@ -125,6 +158,19 @@ export const OpportunityItem = ({ data }: { data: MergerAndAcquisition }) => {
     removeOpportunity.mutate({ id: data.id });
   };
 
+  const getStatusBadgeVariant = (status: OpportunityStatus) => {
+    switch (status) {
+      case "ACTIVE":
+        return "default";
+      case "INACTIVE":
+        return "secondary";
+      case "CONCLUDED":
+        return "outline";
+      default:
+        return "default";
+    }
+  };
+
   return (
     <EntityItem
       href={backofficeMergeAndAcquisitionOpportunityPath(data.id)}
@@ -136,18 +182,23 @@ export const OpportunityItem = ({ data }: { data: MergerAndAcquisition }) => {
       isRemoving={removeOpportunity.isPending}
       onRemove={handleRemove}
       subtitle={
-        <>
-          {t("updatedAt")}{" "}
-          {formatDistanceToNow(data.updatedAt, {
-            addSuffix: true,
-            locale: locale === "pt" ? pt : undefined,
-          })}{" "}
-          &bull; {t("createdAt")}{" "}
-          {formatDistanceToNow(data.createdAt, {
-            addSuffix: true,
-            locale: locale === "pt" ? pt : undefined,
-          })}
-        </>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Badge variant={getStatusBadgeVariant(data.status)}>
+            {t(`status.${data.status.toLowerCase()}`)}
+          </Badge>
+          <span className="text-muted-foreground">
+            {t("updatedAt")}{" "}
+            {formatDistanceToNow(data.updatedAt, {
+              addSuffix: true,
+              locale: locale === "pt" ? pt : undefined,
+            })}{" "}
+            &bull; {t("createdAt")}{" "}
+            {formatDistanceToNow(data.createdAt, {
+              addSuffix: true,
+              locale: locale === "pt" ? pt : undefined,
+            })}
+          </span>
+        </div>
       }
       title={data.name}
     />
