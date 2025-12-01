@@ -71,6 +71,19 @@ model User {
   clientAcquisitionerRealEstates           RealEstate[]                      @relation("clientAcquisitionerRealEstates")
   accountManagerAssignments      OpportunityAccountManager[]
 
+  // CRM-specific fields for lead management
+  leadSource          LeadSource?
+  leadStatus          LeadStatus?        @default(NEW)
+  leadPriority        LeadPriority?      @default(MEDIUM)
+  tags                String[]           @default([])
+  nextFollowUpDate    DateTime?
+  leadScore           Int?               @default(0)
+  convertedAt         DateTime?
+  lostReason          String?
+  lostAt              DateTime?
+  commissionRate      Float?
+  commissionNotes     String?
+
   // Lead relations
   leadResponsible   User?  @relation("LeadResponsibleUsers", fields: [leadResponsibleId], references: [id], onDelete: SetNull)
   leadMainContact   User?  @relation("LeadMainContactUsers", fields: [leadMainContactId], references: [id], onDelete: SetNull)
@@ -78,6 +91,7 @@ model User {
   leadMainContactFor User[] @relation("LeadMainContactUsers")
   notes             UserNote[]
   createdNotes      UserNote[] @relation("NoteCreator")
+  activities        LeadActivity[]
 
   @@unique([email])
   @@map("user")
@@ -610,4 +624,66 @@ model UserNote {
   updatedAt DateTime @updatedAt
 
   @@map("user_note")
+}
+
+model LeadActivity {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activityType  ActivityType
+  title         String
+  description   String?
+  relatedUserId String?
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+
+  @@map("lead_activity")
+}
+
+enum LeadSource {
+  WEBSITE
+  REFERRAL
+  COLD_OUTREACH
+  NETWORKING_EVENT
+  LINKEDIN
+  EMAIL_CAMPAIGN
+  PARTNER
+  EXISTING_CLIENT
+  ACCESS_REQUEST
+  OTHER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  MEETING_SCHEDULED
+  PROPOSAL_SENT
+  NEGOTIATION
+  CONVERTED
+  LOST
+  ON_HOLD
+  NURTURE
+}
+
+enum LeadPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ActivityType {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
+  TASK
+  DEAL_VIEWED
+  DEAL_INTERESTED
+  DEAL_NOT_INTERESTED
+  STATUS_CHANGE
+  ASSIGNMENT_CHANGE
+  FOLLOW_UP_SCHEDULED
+  OTHER
 }
