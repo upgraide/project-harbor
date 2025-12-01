@@ -24,6 +24,16 @@ import { useScopedI18n } from "@/locales/client";
 import { useCurrentUserRole } from "../hooks/use-current-user-role";
 import { useDeleteUser } from "../hooks/use-delete-user";
 import { useSuspenseUsers } from "../hooks/use-users";
+import { UsersPagination } from "./users-pagination";
+
+export const UsersContent = () => {
+  return (
+    <>
+      <UsersList />
+      <UsersPagination />
+    </>
+  );
+};
 
 export const UsersList = () => {
   const users = useSuspenseUsers();

@@ -3,8 +3,8 @@ import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import {
   OpportunitiesContainer,
+  OpportunitiesContent,
   OpportunitiesError,
-  OpportunitiesList,
   OpportunitiesLoading,
 } from "@/features/opportunities/components/real-estate-opportunities";
 import { opportunityParamsLoader } from "@/features/opportunities/server/params-loader";
@@ -25,7 +25,7 @@ const Page = async ({ searchParams }: Props) => {
       <HydrateClient>
         <ErrorBoundary fallback={<OpportunitiesError />}>
           <Suspense fallback={<OpportunitiesLoading />}>
-            <OpportunitiesList />
+            <OpportunitiesContent />
           </Suspense>
         </ErrorBoundary>
       </HydrateClient>

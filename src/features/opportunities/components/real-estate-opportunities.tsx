@@ -117,18 +117,29 @@ export const OpportunitiesPagination = () => {
   );
 };
 
+export const OpportunitiesContent = () => {
+  return (
+    <>
+      <OpportunitiesList />
+      <OpportunitiesPagination />
+    </>
+  );
+};
+
 export const OpportunitiesContainer = ({
   children,
 }: {
   children: React.ReactNode;
 }) => (
-  <EntityContainer
-    header={<OpportunitiesHeader />}
-    pagination={<OpportunitiesPagination />}
-    search={<OpportunitiesSearch />}
-  >
-    {children}
-  </EntityContainer>
+  <div className="h-full w-full overflow-x-hidden p-4 md:px-10 md:py-6">
+    <div className="mx-auto flex h-full w-full max-w-screen-xl flex-col gap-y-8 overflow-hidden">
+      <OpportunitiesHeader />
+      <div className="flex h-full min-w-0 flex-col gap-y-4 overflow-hidden">
+        <OpportunitiesSearch />
+        <div className="flex min-w-0 flex-col gap-y-4 overflow-hidden">{children}</div>
+      </div>
+    </div>
+  </div>
 );
 
 export const OpportunitiesLoading = () => <LoadingView />;

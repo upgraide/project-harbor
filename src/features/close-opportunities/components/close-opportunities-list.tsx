@@ -1,5 +1,7 @@
 "use client";
 
+import { Suspense, useEffect, useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useScopedI18n } from "@/locales/client";
@@ -10,10 +12,61 @@ import {
   useSuspenseCloseOpportunities,
 } from "./close-opportunities-container";
 
-export const CloseOpportunitiesList = () => {
+export const CloseOpportunitiesSearch = () => {
   const t = useScopedI18n("backoffice.closeOpportunities");
   const [params, setParams] = useCloseOpportunitiesParams();
+  const [localSearch, setLocalSearch] = useState(params.search);
+
+  // Debounce search
+  useEffect(() => {
+    if (localSearch === "" && params.search !== "") {
+      setParams({ ...params, search: "", page: "1" });
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (localSearch !== params.search) {
+        setParams({ ...params, search: localSearch, page: "1" });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [localSearch, params, setParams]);
+
+  // Sync with URL changes
+  useEffect(() => {
+    setLocalSearch(params.search);
+  }, [params.search]);
+
+  return (
+    <Input
+      placeholder={t("searchPlaceholder")}
+      value={localSearch}
+      onChange={(e) => setLocalSearch(e.target.value)}
+      className="max-w-sm"
+    />
+  );
+};
+
+export const CloseOpportunitiesContent = () => {
+  const t = useScopedI18n("backoffice.closeOpportunities");
   const opportunities = useSuspenseCloseOpportunities();
+
+  return (
+    <>
+      {opportunities.data.items.length === 0 ? (
+        <div className="flex flex-1 items-center justify-center py-12">
+          <p className="text-muted-foreground">{t("emptyMessage")}</p>
+        </div>
+      ) : (
+        <CloseOpportunitiesTable opportunities={opportunities.data.items} />
+      )}
+    </>
+  );
+};
+
+export const CloseOpportunitiesList = () => {
+  const [params, setParams] = useCloseOpportunitiesParams();
 
   const handleTypeChange = (value: string) => {
     setParams({ ...params, type: value as "all" | "mna" | "realEstate", page: "1" });
@@ -27,10 +80,6 @@ export const CloseOpportunitiesList = () => {
     });
   };
 
-  const handleSearchChange = (value: string) => {
-    setParams({ ...params, search: value, page: "1" });
-  };
-
   return (
     <div className="flex flex-col gap-6 p-6">
       <CloseOpportunitiesHeader
@@ -41,21 +90,14 @@ export const CloseOpportunitiesList = () => {
       />
 
       <div className="flex items-center gap-4">
-        <Input
-          placeholder={t("searchPlaceholder")}
-          value={params.search}
-          onChange={(e) => handleSearchChange(e.target.value)}
-          className="max-w-sm"
-        />
+        <CloseOpportunitiesSearch />
       </div>
 
-      {opportunities.data.items.length === 0 ? (
-        <div className="flex flex-1 items-center justify-center py-12">
-          <p className="text-muted-foreground">{t("emptyMessage")}</p>
-        </div>
-      ) : (
-        <CloseOpportunitiesTable opportunities={opportunities.data.items} />
-      )}
+      <ErrorBoundary fallback={<CloseOpportunitiesError />}>
+        <Suspense fallback={<CloseOpportunitiesLoading />}>
+          <CloseOpportunitiesContent />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 };

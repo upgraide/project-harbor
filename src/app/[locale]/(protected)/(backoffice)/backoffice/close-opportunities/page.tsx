@@ -2,6 +2,7 @@ import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import {
+  CloseOpportunitiesContent,
   CloseOpportunitiesError,
   CloseOpportunitiesList,
   CloseOpportunitiesLoading,
@@ -18,11 +19,7 @@ const Page = async ({ searchParams }: Props) => {
 
   return (
     <HydrateClient>
-      <ErrorBoundary fallback={<CloseOpportunitiesError />}>
-        <Suspense fallback={<CloseOpportunitiesLoading />}>
-          <CloseOpportunitiesList />
-        </Suspense>
-      </ErrorBoundary>
+      <CloseOpportunitiesList />
     </HydrateClient>
   );
 };
