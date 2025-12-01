@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import type { ClientUploadedFileData } from "uploadthing/types";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
@@ -22,12 +23,14 @@ export const StyledUploadButton = ({
   onClientUploadComplete,
   onUploadError,
 }: StyledUploadButtonProps) => {
-  const { resolvedTheme, theme } = useTheme();
-  const isDark =
-    resolvedTheme === "dark" ||
-    (theme === "system" &&
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const isDark = mounted && resolvedTheme === "dark";
 
   const buttonClasses = cn(
     "cursor-pointer bg-primary disabled:pointer-events-none disabled:opacity-50",
