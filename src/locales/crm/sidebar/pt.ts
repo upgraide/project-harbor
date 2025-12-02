@@ -1,8 +1,11 @@
 export default {
   title: "CRM",
   items: {
-    dashboard: {
-      title: "Painel",
+    crm: {
+      title: "CRM",
+    },
+    leads: {
+      title: "Leads",
     },
     logout: {
       title: "Sair",

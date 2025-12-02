@@ -12,7 +12,7 @@ import { getScopedI18n } from "@/locales/server";
 import { backofficeCloseOpportunitiesPath } from "@/paths";
 
 const Page = async () => {
-  const t = await getScopedI18n("backoffice.closeOpportunities");
+  const closeOpportunitiesT = await getScopedI18n("backoffice.closeOpportunities");
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -28,9 +28,9 @@ const Page = async () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ClipboardCheckIcon className="size-5" />
-              {t("title")}
+              {closeOpportunitiesT("title")}
             </CardTitle>
-            <CardDescription>{t("description")}</CardDescription>
+            <CardDescription>{closeOpportunitiesT("description")}</CardDescription>
           </CardHeader>
           <CardContent>
             <Link href={backofficeCloseOpportunitiesPath()}>

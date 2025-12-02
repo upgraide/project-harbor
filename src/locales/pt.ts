@@ -15,6 +15,8 @@ import realEstateOpportunities from "./backoffice/real-estate-opportunities/pt";
 import realEstateOpportunityPage from "./backoffice/real-estate-opportunity-page/pt";
 import sidebar from "./backoffice/sidebar/pt";
 import users from "./backoffice/users/pt";
+import crmLeads from "./crm/leads/pt";
+import crmMain from "./crm/main/pt";
 import crmSidebar from "./crm/sidebar/pt";
 import mAndAViewer from "./dashboard/m&a-viewer/pt";
 import navigation from "./dashboard/naviagation/pt";
@@ -58,6 +60,8 @@ export default {
     settings,
   },
   crm: {
-    crmSidebar,
+    sidebar: crmSidebar,
+    leads: crmLeads,
+    main: crmMain,
   },
 } as const;
