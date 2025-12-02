@@ -32,7 +32,7 @@ const Page = async () => {
           </CardHeader>
           <CardContent>
             <Link href={crmLeadsPath()}>
-              <Button className="w-full">{t("features.leads.action")}</Button>
+              <Button className="w-full">{t("accessButton")}</Button>
             </Link>
           </CardContent>
         </Card>

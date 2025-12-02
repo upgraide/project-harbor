@@ -5,6 +5,7 @@ import analytics from "./backoffice/analytics/en";
 import closeOpportunities from "./backoffice/close-opportunities/en";
 import entityComponents from "./backoffice/entity-components/en";
 import investmentInterests from "./backoffice/investment-interests/en";
+import backofficeMain from "./backoffice/main/en";
 import investors from "./backoffice/investors/en";
 import mergersAndAcquisitionOpportunites from "./backoffice/mergers-and-acquisition-opportunites/en";
 import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitions-create-page/en";
@@ -15,6 +16,7 @@ import realEstateOpportunities from "./backoffice/real-estate-opportunities/en";
 import realEstateOpportunityPage from "./backoffice/real-estate-opportunity-page/en";
 import sidebar from "./backoffice/sidebar/en";
 import users from "./backoffice/users/en";
+import crmLeadDetails from "./crm/lead-details/en";
 import crmLeads from "./crm/leads/en";
 import crmMain from "./crm/main/en";
 import crmSidebar from "./crm/sidebar/en";
@@ -38,6 +40,7 @@ export default {
   },
   backoffice: {
     sidebar,
+    main: backofficeMain,
     mergersAndAcquisitionOpportunites,
     entityComponents,
     mergersAndAcquisitionOpportunityPage,
@@ -62,6 +65,7 @@ export default {
   crm: {
     sidebar: crmSidebar,
     leads: crmLeads,
+    leadDetails: crmLeadDetails,
     main: crmMain,
   },
 } as const;

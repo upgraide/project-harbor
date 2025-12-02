@@ -26,7 +26,7 @@ export const leadsRouter = createTRPCRouter({
         assignedTo,
         department,
         status,
-        priority,
+        priorities,
         lastContactDateFrom,
         lastContactDateTo,
         sortBy,
@@ -68,8 +68,8 @@ export const leadsRouter = createTRPCRouter({
         where.leadStatus = status;
       }
 
-      if (priority) {
-        where.leadPriority = priority;
+      if (priorities && priorities.length > 0) {
+        where.leadPriority = { in: priorities };
       }
 
       if (lastContactDateFrom || lastContactDateTo) {

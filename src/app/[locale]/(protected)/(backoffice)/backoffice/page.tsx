@@ -1,4 +1,13 @@
-import { ClipboardCheckIcon } from "lucide-react";
+import {
+  BellIcon,
+  BriefcaseBusinessIcon,
+  ChartBarIcon,
+  ClipboardCheckIcon,
+  HeartIcon,
+  HomeIcon,
+  UsersIcon,
+  WalletIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,10 +18,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getScopedI18n } from "@/locales/server";
-import { backofficeCloseOpportunitiesPath } from "@/paths";
+import {
+  backofficeAnalyticsPath,
+  backofficeCloseOpportunitiesPath,
+  backofficeInvestmentInterestsPath,
+  backofficeInvestorsPath,
+  backofficeMergeAndAcquisitionPath,
+  backofficeNotificationsPath,
+  backofficeRealEstatePath,
+  backofficeUsersPath,
+} from "@/paths";
 
 const Page = async () => {
-  const closeOpportunitiesT = await getScopedI18n("backoffice.closeOpportunities");
+  const t = await getScopedI18n("backoffice.main");
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -24,17 +42,136 @@ const Page = async () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Close Opportunities */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ClipboardCheckIcon className="size-5" />
-              {closeOpportunitiesT("title")}
+              {t("closeOpportunities.title")}
             </CardTitle>
-            <CardDescription>{closeOpportunitiesT("description")}</CardDescription>
+            <CardDescription>
+              {t("closeOpportunities.description")}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Link href={backofficeCloseOpportunitiesPath()}>
-              <Button className="w-full">Access Feature</Button>
+              <Button className="w-full">{t("accessButton")}</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Mergers and Acquisitions */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BriefcaseBusinessIcon className="size-5" />
+              {t("mergersAndAcquisitions.title")}
+            </CardTitle>
+            <CardDescription>
+              {t("mergersAndAcquisitions.description")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href={backofficeMergeAndAcquisitionPath()}>
+              <Button className="w-full">{t("accessButton")}</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Real Estate */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <HomeIcon className="size-5" />
+              {t("realEstate.title")}
+            </CardTitle>
+            <CardDescription>{t("realEstate.description")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href={backofficeRealEstatePath()}>
+              <Button className="w-full">{t("accessButton")}</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Users */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <UsersIcon className="size-5" />
+              {t("users.title")}
+            </CardTitle>
+            <CardDescription>{t("users.description")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href={backofficeUsersPath()}>
+              <Button className="w-full">{t("accessButton")}</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Investors */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <WalletIcon className="size-5" />
+              {t("investors.title")}
+            </CardTitle>
+            <CardDescription>{t("investors.description")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href={backofficeInvestorsPath()}>
+              <Button className="w-full">{t("accessButton")}</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Analytics */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ChartBarIcon className="size-5" />
+              {t("analytics.title")}
+            </CardTitle>
+            <CardDescription>{t("analytics.description")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href={backofficeAnalyticsPath()}>
+              <Button className="w-full">{t("accessButton")}</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Investment Interests */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <HeartIcon className="size-5" />
+              {t("investmentInterests.title")}
+            </CardTitle>
+            <CardDescription>
+              {t("investmentInterests.description")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href={backofficeInvestmentInterestsPath()}>
+              <Button className="w-full">{t("accessButton")}</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Notifications */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BellIcon className="size-5" />
+              {t("notifications.title")}
+            </CardTitle>
+            <CardDescription>{t("notifications.description")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href={backofficeNotificationsPath()}>
+              <Button className="w-full">{t("accessButton")}</Button>
             </Link>
           </CardContent>
         </Card>

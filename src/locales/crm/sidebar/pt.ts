@@ -1,6 +1,9 @@
 export default {
   title: "CRM",
   items: {
+    backoffice: {
+      title: "Backoffice",
+    },
     crm: {
       title: "CRM",
     },

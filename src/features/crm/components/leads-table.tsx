@@ -95,17 +95,19 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
     }
   };
 
-  const getPriorityBadgeVariant = (priority: LeadPriority | null) => {
+  const getPriorityBadgeVariant = (
+    priority: LeadPriority | null
+  ): "default" | "destructive" | "secondary" | "outline" => {
     if (!priority) return "outline";
     switch (priority) {
       case "URGENT":
-        return "destructive";
+        return "destructive"; // Red for urgent/critical
       case "HIGH":
-        return "default";
+        return "destructive"; // Red for high priority
       case "MEDIUM":
-        return "secondary";
+        return "default"; // Blue for medium priority
       case "LOW":
-        return "outline";
+        return "secondary"; // Gray for low priority
       default:
         return "outline";
     }
@@ -186,7 +188,16 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
                 </TableCell>
                 <TableCell>
                   {lead.priority && (
-                    <Badge variant={getPriorityBadgeVariant(lead.priority)}>
+                    <Badge
+                      variant={getPriorityBadgeVariant(lead.priority)}
+                      className={
+                        lead.priority === "MEDIUM"
+                          ? "bg-yellow-500/10 text-yellow-700 hover:bg-yellow-500/20 dark:text-yellow-400"
+                          : lead.priority === "LOW"
+                          ? "bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
+                          : ""
+                      }
+                    >
                       {t(`leadPriority.${lead.priority}`)}
                     </Badge>
                   )}

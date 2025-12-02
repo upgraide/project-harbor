@@ -34,7 +34,7 @@ export const leadListInputSchema = z.object({
   assignedTo: z.string().optional(), // User ID
   department: z.nativeEnum(Department).optional(),
   status: z.nativeEnum(LeadStatus).optional(),
-  priority: z.nativeEnum(LeadPriority).optional(),
+  priorities: z.array(z.nativeEnum(LeadPriority)).optional(), // Array for checkbox filtering
   lastContactDateFrom: z.coerce.date().optional(),
   lastContactDateTo: z.coerce.date().optional(),
   

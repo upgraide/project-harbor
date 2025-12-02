@@ -3,6 +3,7 @@
 import { FilterIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,7 +33,7 @@ export type LeadFilters = {
   assignedTo?: string;
   department?: Department;
   status?: LeadStatus;
-  priority?: LeadPriority;
+  priorities?: LeadPriority[];
   lastContactDateFrom?: string;
   lastContactDateTo?: string;
 };
@@ -82,8 +83,8 @@ export const LeadsFilters = ({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80">
-        <DropdownMenuLabel className="flex items-center justify-between">
+      <DropdownMenuContent align="end" className="w-80 max-h-[600px] overflow-y-auto">
+        <DropdownMenuLabel className="flex items-center justify-between sticky top-0 bg-popover z-10">
           {t("filters.title")}
           {activeFiltersCount > 0 && (
             <Button
@@ -103,16 +104,16 @@ export const LeadsFilters = ({
           <div className="grid gap-2">
             <Label htmlFor="leadSource">{t("filters.leadSource")}</Label>
             <Select
-              value={filters.leadSource || ""}
+              value={filters.leadSource || "__all__"}
               onValueChange={(value) =>
-                updateFilter("leadSource", value as LeadSource)
+                updateFilter("leadSource", value === "__all__" ? undefined : (value as LeadSource))
               }
             >
               <SelectTrigger id="leadSource">
                 <SelectValue placeholder={t("filters.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">
+                <SelectItem value="__all__">
                   {t("filters.all")}
                 </SelectItem>
                 <SelectItem value="WEBSITE">
@@ -153,16 +154,16 @@ export const LeadsFilters = ({
           <div className="grid gap-2">
             <Label htmlFor="status">{t("filters.status")}</Label>
             <Select
-              value={filters.status || ""}
+              value={filters.status || "__all__"}
               onValueChange={(value) =>
-                updateFilter("status", value as LeadStatus)
+                updateFilter("status", value === "__all__" ? undefined : (value as LeadStatus))
               }
             >
               <SelectTrigger id="status">
                 <SelectValue placeholder={t("filters.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">
+                <SelectItem value="__all__">
                   {t("filters.all")}
                 </SelectItem>
                 <SelectItem value="NEW">{t("leadStatus.NEW")}</SelectItem>
@@ -195,48 +196,60 @@ export const LeadsFilters = ({
             </Select>
           </div>
 
-          {/* Priority */}
+          {/* Priority - Checkboxes */}
           <div className="grid gap-2">
-            <Label htmlFor="priority">{t("filters.priority")}</Label>
-            <Select
-              value={filters.priority || ""}
-              onValueChange={(value) =>
-                updateFilter("priority", value as LeadPriority)
-              }
-            >
-              <SelectTrigger id="priority">
-                <SelectValue placeholder={t("filters.all")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">
-                  {t("filters.all")}
-                </SelectItem>
-                <SelectItem value="URGENT">
-                  {t("leadPriority.URGENT")}
-                </SelectItem>
-                <SelectItem value="HIGH">{t("leadPriority.HIGH")}</SelectItem>
-                <SelectItem value="MEDIUM">
-                  {t("leadPriority.MEDIUM")}
-                </SelectItem>
-                <SelectItem value="LOW">{t("leadPriority.LOW")}</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label>{t("filters.priority")}</Label>
+            <div className="space-y-2">
+              {(["URGENT", "HIGH", "MEDIUM", "LOW"] as LeadPriority[]).map(
+                (priority) => {
+                  const isChecked = filters.priorities?.includes(priority) ?? false;
+                  return (
+                    <div key={priority} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`priority-${priority}`}
+                        checked={isChecked}
+                        onCheckedChange={(checked) => {
+                          const currentPriorities = filters.priorities || [];
+                          if (checked) {
+                            updateFilter("priorities", [
+                              ...currentPriorities,
+                              priority,
+                            ]);
+                          } else {
+                            updateFilter(
+                              "priorities",
+                              currentPriorities.filter((p) => p !== priority)
+                            );
+                          }
+                        }}
+                      />
+                      <label
+                        htmlFor={`priority-${priority}`}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        {t(`leadPriority.${priority}`)}
+                      </label>
+                    </div>
+                  );
+                }
+              )}
+            </div>
           </div>
 
           {/* Department */}
           <div className="grid gap-2">
             <Label htmlFor="department">{t("filters.department")}</Label>
             <Select
-              value={filters.department || ""}
+              value={filters.department || "__all__"}
               onValueChange={(value) =>
-                updateFilter("department", value as Department)
+                updateFilter("department", value === "__all__" ? undefined : (value as Department))
               }
             >
               <SelectTrigger id="department">
                 <SelectValue placeholder={t("filters.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">
+                <SelectItem value="__all__">
                   {t("filters.all")}
                 </SelectItem>
                 <SelectItem value="MNA">{t("department.MNA")}</SelectItem>
@@ -252,14 +265,14 @@ export const LeadsFilters = ({
           <div className="grid gap-2">
             <Label htmlFor="assignedTo">{t("filters.assignedTo")}</Label>
             <Select
-              value={filters.assignedTo || ""}
-              onValueChange={(value) => updateFilter("assignedTo", value)}
+              value={filters.assignedTo || "__all__"}
+              onValueChange={(value) => updateFilter("assignedTo", value === "__all__" ? undefined : value)}
             >
               <SelectTrigger id="assignedTo">
                 <SelectValue placeholder={t("filters.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">
+                <SelectItem value="__all__">
                   {t("filters.all")}
                 </SelectItem>
                 {teamMembers.map((member) => (
