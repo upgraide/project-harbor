@@ -50,7 +50,7 @@ export const LeadsListContainer = () => {
 
   // Fetch data
   const { data, isLoading, error } = useQuery(
-    trpc.crm.leads.getMany.queryOptions(queryParams as any)
+    trpc.crm.leads.getLeads.queryOptions(queryParams as any)
   );
 
   const { data: teamMembers } = useQuery(

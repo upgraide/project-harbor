@@ -867,25 +867,21 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        entrepriseValue: z.number().optional(),
-        equityValue: z.number().optional(),
+        final_amount: z.number().optional(),
+        closed_at: z.date().optional(),
       })
     )
     .mutation(async ({ input }) => {
       const updateData: {
-        entrepriseValue?: number;
-        equityValue?: number;
+        final_amount?: number;
+        closed_at?: Date;
       } = {};
       
-      if (input.entrepriseValue !== undefined) {
-        updateData.entrepriseValue = input.entrepriseValue;
-      }
-      if (input.equityValue !== undefined) {
-        updateData.equityValue = input.equityValue;
-      }
+      if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
+      if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
 
-      return await prisma.mergerAndAcquisition.update({
-        where: { id: input.id },
+      return await prisma.opportunityAnalytics.update({
+        where: { mergerAndAcquisitionId: input.id },
         data: updateData,
       });
     }),
@@ -902,6 +898,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
               email: true,
             },
           },
+          analytics: true,
         },
       });
 
@@ -1392,6 +1389,7 @@ export const realEstateRouter = createTRPCRouter({
               email: true,
             },
           },
+          analytics: true,
         },
       });
 
@@ -2406,25 +2404,21 @@ export const realEstateRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        price: z.number().optional(),
-        totalInvestment: z.number().optional(),
+        final_amount: z.number().optional(),
+        closed_at: z.date().optional(),
       })
     )
     .mutation(async ({ input }) => {
       const updateData: {
-        price?: number;
-        totalInvestment?: number;
+        final_amount?: number;
+        closed_at?: Date;
       } = {};
       
-      if (input.price !== undefined) {
-        updateData.price = input.price;
-      }
-      if (input.totalInvestment !== undefined) {
-        updateData.totalInvestment = input.totalInvestment;
-      }
+      if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
+      if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
 
-      return await prisma.realEstate.update({
-        where: { id: input.id },
+      return await prisma.opportunityAnalytics.update({
+        where: { realEstateId: input.id },
         data: updateData,
       });
     }),

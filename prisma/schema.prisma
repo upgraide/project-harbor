@@ -434,6 +434,10 @@ model OpportunityAnalytics {
   // Analytics metrics
   views Int @default(0)
 
+  // Final Deal Values (when CONCLUDED)
+  closed_at    DateTime?
+  final_amount Float?
+
   // Future analytics fields can be added here:
   // uniqueViews Int @default(0)
   // downloads Int @default(0)

@@ -43,7 +43,7 @@ const Page = async () => {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {/* Close Opportunities */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ClipboardCheckIcon className="size-5" />
@@ -53,7 +53,7 @@ const Page = async () => {
               {t("closeOpportunities.description")}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-auto">
             <Link href={backofficeCloseOpportunitiesPath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>
@@ -61,7 +61,7 @@ const Page = async () => {
         </Card>
 
         {/* Mergers and Acquisitions */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BriefcaseBusinessIcon className="size-5" />
@@ -71,7 +71,7 @@ const Page = async () => {
               {t("mergersAndAcquisitions.description")}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-auto">
             <Link href={backofficeMergeAndAcquisitionPath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>
@@ -79,7 +79,7 @@ const Page = async () => {
         </Card>
 
         {/* Real Estate */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <HomeIcon className="size-5" />
@@ -87,7 +87,7 @@ const Page = async () => {
             </CardTitle>
             <CardDescription>{t("realEstate.description")}</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-auto">
             <Link href={backofficeRealEstatePath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>
@@ -95,7 +95,7 @@ const Page = async () => {
         </Card>
 
         {/* Users */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <UsersIcon className="size-5" />
@@ -103,7 +103,7 @@ const Page = async () => {
             </CardTitle>
             <CardDescription>{t("users.description")}</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-auto">
             <Link href={backofficeUsersPath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>
@@ -111,7 +111,7 @@ const Page = async () => {
         </Card>
 
         {/* Investors */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <WalletIcon className="size-5" />
@@ -119,7 +119,7 @@ const Page = async () => {
             </CardTitle>
             <CardDescription>{t("investors.description")}</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-auto">
             <Link href={backofficeInvestorsPath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>
@@ -127,7 +127,7 @@ const Page = async () => {
         </Card>
 
         {/* Analytics */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <ChartBarIcon className="size-5" />
@@ -135,7 +135,7 @@ const Page = async () => {
             </CardTitle>
             <CardDescription>{t("analytics.description")}</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-auto">
             <Link href={backofficeAnalyticsPath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>
@@ -143,7 +143,7 @@ const Page = async () => {
         </Card>
 
         {/* Investment Interests */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <HeartIcon className="size-5" />
@@ -153,7 +153,7 @@ const Page = async () => {
               {t("investmentInterests.description")}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-auto">
             <Link href={backofficeInvestmentInterestsPath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>
@@ -161,7 +161,7 @@ const Page = async () => {
         </Card>
 
         {/* Notifications */}
-        <Card>
+        <Card className="flex flex-col">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BellIcon className="size-5" />
@@ -169,7 +169,7 @@ const Page = async () => {
             </CardTitle>
             <CardDescription>{t("notifications.description")}</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="mt-auto">
             <Link href={backofficeNotificationsPath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>

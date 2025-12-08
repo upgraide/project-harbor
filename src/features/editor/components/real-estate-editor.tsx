@@ -358,8 +358,32 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const removePromoteStructure = useRemoveOpportunityPromoteStructure();
 
   return (
-    <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
+    <main className="flex max-w-screen-xs flex-1 flex-col space-y-6 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
+
+      {opportunity.status === "CONCLUDED" && opportunity.analytics && (
+        <Card className="border-green-500/50 bg-green-500/10">
+          <CardHeader>
+            <CardTitle className="text-green-700 dark:text-green-400">
+              Concluded Deal Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Final Amount</p>
+              <p className="text-2xl font-bold">
+                {opportunity.analytics.final_amount ? new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(opportunity.analytics.final_amount) : "N/A"}
+              </p>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Closing Date</p>
+              <p className="text-lg">
+                {opportunity.analytics.closed_at ? new Date(opportunity.analytics.closed_at).toLocaleDateString(locale) : "N/A"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <section>
         <Card className="border-none bg-transparent shadow-none">

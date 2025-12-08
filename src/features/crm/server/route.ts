@@ -15,7 +15,7 @@ import {
 
 export const leadsRouter = createTRPCRouter({
   // Get paginated list of leads with filters
-  getMany: adminProcedure
+  getLeads: adminProcedure
     .input(leadListInputSchema)
     .query(async ({ input }): Promise<LeadListResponse> => {
       const {
@@ -389,7 +389,7 @@ export const leadsRouter = createTRPCRouter({
     }),
 
   // Update lead status
-  updateStatus: adminProcedure
+  updateLeadStatus: adminProcedure
     .input(updateLeadStatusSchema)
     .mutation(async ({ input }) => {
       const { leadId, status, priority } = input;

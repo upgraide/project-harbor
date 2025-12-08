@@ -42,7 +42,7 @@ export const ScheduleFollowUpDialog = ({
       onSuccess: () => {
         toast.success(t("success"));
         queryClient.invalidateQueries(
-          trpc.crm.leads.getMany.queryOptions({} as any)
+          trpc.crm.leads.getLeads.queryOptions({} as any)
         );
         if (leadId) {
           queryClient.invalidateQueries(

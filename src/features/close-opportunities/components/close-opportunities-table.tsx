@@ -63,10 +63,10 @@ const UpdateStatusDialog = ({
 }: UpdateDialogProps) => {
   const t = useScopedI18n("backoffice.closeOpportunities.updateDialog");
   const [status, setStatus] = useState<OpportunityStatus | "">("");
-  const [entrepriseValue, setEntrepriseValue] = useState("");
-  const [equityValue, setEquityValue] = useState("");
-  const [price, setPrice] = useState("");
-  const [totalInvestment, setTotalInvestment] = useState("");
+  
+  // Simplified fields for CONCLUDED status
+  const [finalAmount, setFinalAmount] = useState("");
+  const [closingDate, setClosingDate] = useState("");
 
   const updateMnaStatus = useUpdateMergerAndAcquisitionStatus();
   const updateMnaValues = useUpdateMergerAndAcquisitionFinalValues();
@@ -84,12 +84,12 @@ const UpdateStatusDialog = ({
           status: status as OpportunityStatus,
         });
 
-        // Update final values if provided
-        if (entrepriseValue || equityValue) {
+        // Update final values if provided and status is CONCLUDED
+        if (status === "CONCLUDED") {
           await updateMnaValues.mutateAsync({
             id: opportunity.id,
-            entrepriseValue: entrepriseValue ? Number.parseFloat(entrepriseValue) : undefined,
-            equityValue: equityValue ? Number.parseFloat(equityValue) : undefined,
+            final_amount: finalAmount ? Number.parseFloat(finalAmount) : undefined,
+            closed_at: closingDate ? new Date(closingDate) : undefined,
           });
         }
       } else {
@@ -98,22 +98,20 @@ const UpdateStatusDialog = ({
           status: status as OpportunityStatus,
         });
 
-        // Update final values if provided
-        if (price || totalInvestment) {
+        // Update final values if provided and status is CONCLUDED
+        if (status === "CONCLUDED") {
           await updateReValues.mutateAsync({
             id: opportunity.id,
-            price: price ? Number.parseFloat(price) : undefined,
-            totalInvestment: totalInvestment ? Number.parseFloat(totalInvestment) : undefined,
+            final_amount: finalAmount ? Number.parseFloat(finalAmount) : undefined,
+            closed_at: closingDate ? new Date(closingDate) : undefined,
           });
         }
       }
 
       // Reset form and close dialog
       setStatus("");
-      setEntrepriseValue("");
-      setEquityValue("");
-      setPrice("");
-      setTotalInvestment("");
+      setFinalAmount("");
+      setClosingDate("");
       onOpenChange(false);
     } catch (error) {
       console.error("Error updating opportunity:", error);
@@ -150,59 +148,27 @@ const UpdateStatusDialog = ({
             </Select>
           </div>
 
-          {/* Final Values - M&A */}
-          {opportunity?.opportunityType === "mna" && (
+          {/* Final Values - Only when CONCLUDED */}
+          {status === "CONCLUDED" && (
             <>
               <div className="grid gap-2">
-                <Label htmlFor="entrepriseValue">
-                  {t("labels.entrepriseValue")}
-                </Label>
+                <Label htmlFor="finalAmount">{t("labels.finalAmount")}</Label>
                 <Input
-                  id="entrepriseValue"
+                  id="finalAmount"
                   type="number"
-                  placeholder={t("placeholders.entrepriseValue")}
-                  value={entrepriseValue}
-                  onChange={(e) => setEntrepriseValue(e.target.value)}
+                  placeholder={t("placeholders.finalAmount")}
+                  value={finalAmount}
+                  onChange={(e) => setFinalAmount(e.target.value)}
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="equityValue">{t("labels.equityValue")}</Label>
+                <Label htmlFor="closingDate">{t("labels.closingDate")}</Label>
                 <Input
-                  id="equityValue"
-                  type="number"
-                  placeholder={t("placeholders.equityValue")}
-                  value={equityValue}
-                  onChange={(e) => setEquityValue(e.target.value)}
-                />
-              </div>
-            </>
-          )}
-
-          {/* Final Values - Real Estate */}
-          {opportunity?.opportunityType === "realEstate" && (
-            <>
-              <div className="grid gap-2">
-                <Label htmlFor="price">{t("labels.price")}</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  placeholder={t("placeholders.price")}
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="totalInvestment">
-                  {t("labels.totalInvestment")}
-                </Label>
-                <Input
-                  id="totalInvestment"
-                  type="number"
-                  placeholder={t("placeholders.totalInvestment")}
-                  value={totalInvestment}
-                  onChange={(e) => setTotalInvestment(e.target.value)}
+                  id="closingDate"
+                  type="date"
+                  value={closingDate}
+                  onChange={(e) => setClosingDate(e.target.value)}
                 />
               </div>
             </>
