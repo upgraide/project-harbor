@@ -41,6 +41,7 @@ import {
   useUpdateRealEstateFinalValues,
   useUpdateRealEstateStatus,
 } from "@/features/opportunities/hooks/use-real-estate-opportunities";
+import { UserSelect } from "@/features/users/components/user-select";
 
 type OpportunityItem = {
   id: string;
@@ -67,6 +68,8 @@ const UpdateStatusDialog = ({
   // Simplified fields for CONCLUDED status
   const [finalAmount, setFinalAmount] = useState("");
   const [closingDate, setClosingDate] = useState("");
+  const [investedPersonId, setInvestedPersonId] = useState("");
+  const [followupPersonId, setFollowupPersonId] = useState("");
 
   const updateMnaStatus = useUpdateMergerAndAcquisitionStatus();
   const updateMnaValues = useUpdateMergerAndAcquisitionFinalValues();
@@ -90,6 +93,8 @@ const UpdateStatusDialog = ({
             id: opportunity.id,
             final_amount: finalAmount ? Number.parseFloat(finalAmount) : undefined,
             closed_at: closingDate ? new Date(closingDate) : undefined,
+            invested_person_id: investedPersonId || null,
+            followup_person_id: followupPersonId || null,
           });
         }
       } else {
@@ -104,6 +109,8 @@ const UpdateStatusDialog = ({
             id: opportunity.id,
             final_amount: finalAmount ? Number.parseFloat(finalAmount) : undefined,
             closed_at: closingDate ? new Date(closingDate) : undefined,
+            invested_person_id: investedPersonId || null,
+            followup_person_id: followupPersonId || null,
           });
         }
       }
@@ -112,6 +119,8 @@ const UpdateStatusDialog = ({
       setStatus("");
       setFinalAmount("");
       setClosingDate("");
+      setInvestedPersonId("");
+      setFollowupPersonId("");
       onOpenChange(false);
     } catch (error) {
       console.error("Error updating opportunity:", error);
@@ -170,6 +179,26 @@ const UpdateStatusDialog = ({
                   value={closingDate}
                   onChange={(e) => setClosingDate(e.target.value)}
                 />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="investedPerson">{t("labels.investedPerson")}</Label>
+                <UserSelect
+                  value={investedPersonId}
+                  onValueChange={setInvestedPersonId}
+                  placeholder={t("placeholders.investedPerson")}
+                />
+                <p className="text-xs text-muted-foreground">{t("helper.investedPerson")}</p>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="followupPerson">{t("labels.followupPerson")}</Label>
+                <UserSelect
+                  value={followupPersonId}
+                  onValueChange={setFollowupPersonId}
+                  placeholder={t("placeholders.followupPerson")}
+                />
+                <p className="text-xs text-muted-foreground">{t("helper.followupPerson")}</p>
               </div>
             </>
           )}

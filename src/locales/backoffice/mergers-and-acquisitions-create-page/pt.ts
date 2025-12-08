@@ -314,7 +314,7 @@ export default {
       label: "Gestores de Conta",
       placeholder: "Selecione gestores de conta",
       description:
-        "Selecione um ou mais gestores de conta para esta oportunidade (devem ser utilizadores Team ou Admin)",
+        "Selecione 1 a 2 gestores de conta para esta oportunidade (devem ser utilizadores Team ou Admin)",
     },
   },
 } as const;

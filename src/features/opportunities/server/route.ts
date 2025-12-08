@@ -869,16 +869,22 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         id: z.string(),
         final_amount: z.number().optional(),
         closed_at: z.date().optional(),
+        invested_person_id: z.string().nullable().optional(),
+        followup_person_id: z.string().nullable().optional(),
       })
     )
     .mutation(async ({ input }) => {
       const updateData: {
         final_amount?: number;
         closed_at?: Date;
+        invested_person_id?: string | null;
+        followup_person_id?: string | null;
       } = {};
       
       if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
       if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
+      if (input.invested_person_id !== undefined) updateData.invested_person_id = input.invested_person_id;
+      if (input.followup_person_id !== undefined) updateData.followup_person_id = input.followup_person_id;
 
       return await prisma.opportunityAnalytics.update({
         where: { mergerAndAcquisitionId: input.id },
@@ -898,7 +904,24 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
               email: true,
             },
           },
-          analytics: true,
+          analytics: {
+            include: {
+              invested_person: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+              followup_person: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -1389,7 +1412,24 @@ export const realEstateRouter = createTRPCRouter({
               email: true,
             },
           },
-          analytics: true,
+          analytics: {
+            include: {
+              invested_person: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+              followup_person: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -2406,16 +2446,22 @@ export const realEstateRouter = createTRPCRouter({
         id: z.string(),
         final_amount: z.number().optional(),
         closed_at: z.date().optional(),
+        invested_person_id: z.string().nullable().optional(),
+        followup_person_id: z.string().nullable().optional(),
       })
     )
     .mutation(async ({ input }) => {
       const updateData: {
         final_amount?: number;
         closed_at?: Date;
+        invested_person_id?: string | null;
+        followup_person_id?: string | null;
       } = {};
       
       if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
       if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
+      if (input.invested_person_id !== undefined) updateData.invested_person_id = input.invested_person_id;
+      if (input.followup_person_id !== undefined) updateData.followup_person_id = input.followup_person_id;
 
       return await prisma.opportunityAnalytics.update({
         where: { realEstateId: input.id },

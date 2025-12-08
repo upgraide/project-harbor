@@ -70,6 +70,10 @@ model User {
   clientAcquisitionerMergerAndAcquisitions MergerAndAcquisition[]            @relation("clientAcquisitionerMergerAndAcquisitions")
   clientAcquisitionerRealEstates           RealEstate[]                      @relation("clientAcquisitionerRealEstates")
   accountManagerAssignments      OpportunityAccountManager[]
+  
+  // Relations for deal closing persons
+  investedPersonDeals  OpportunityAnalytics[] @relation("InvestedPersonDeals")
+  followupPersonDeals  OpportunityAnalytics[] @relation("FollowupPersonDeals")
 
   // CRM-specific fields for lead management
   leadSource          LeadSource?
@@ -437,6 +441,12 @@ model OpportunityAnalytics {
   // Final Deal Values (when CONCLUDED)
   closed_at    DateTime?
   final_amount Float?
+  
+  // Optional persons involved in deal closing
+  invested_person_id String?
+  invested_person    User?   @relation("InvestedPersonDeals", fields: [invested_person_id], references: [id], onDelete: SetNull)
+  followup_person_id String?
+  followup_person    User?   @relation("FollowupPersonDeals", fields: [followup_person_id], references: [id], onDelete: SetNull)
 
   // Future analytics fields can be added here:
   // uniqueViews Int @default(0)

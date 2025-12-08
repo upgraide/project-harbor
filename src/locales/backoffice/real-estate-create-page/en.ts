@@ -334,7 +334,7 @@ export default {
       label: "Account Managers",
       placeholder: "Select account managers",
       description:
-        "Select one or more account managers for this opportunity (must be Team or Admin users)",
+        "Select 1 to 2 account managers for this opportunity (must be Team or Admin users)",
     },
   },
 } as const;

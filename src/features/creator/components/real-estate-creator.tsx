@@ -94,7 +94,7 @@ const formSchema = z.object({
   coInvestmentHoldPeriod: z.string().optional(),
   coInvestmentBreakEvenOccupancy: z.string().optional(),
   clientAcquisitionerId: z.string().optional(),
-  accountManagerIds: z.string().array().optional(),
+  accountManagerIds: z.string().array().min(1, "At least 1 account manager is required").max(2, "Maximum 2 account managers allowed"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -1781,9 +1781,9 @@ export const Creator = () => {
 
           {/* Companion and Account Managers */}
           <section>
-            <Card>
+            <Card className="border-none bg-transparent shadow-none">
               <CardHeader>
-                <CardTitle>{t("teamAssignmentCard.title")}</CardTitle>
+                <CardTitle className="font-bold text-lg">{t("teamAssignmentCard.title")}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField
