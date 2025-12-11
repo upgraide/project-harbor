@@ -159,8 +159,8 @@ export default {
       body: {
         im: {
           label: "IM",
-          placeholder: "Digite o valor de IM",
-          description: "Digite o IM da oportunidade",
+          placeholder: "Digite o link do IM (ex: URL do Google Drive)",
+          description: "Digite o link/URL do Memorando de Informação",
         },
         enterpriseValue: {
           label: "Valor da Empresa (EV)",
@@ -301,6 +301,13 @@ export default {
         },
       },
     },
+  },
+  imagesCard: {
+    title: "Imagens",
+    uploadButtonText: "Carregar Imagens",
+    uploadSuccess: "Imagens carregadas com sucesso",
+    maxImagesError: "Não pode exceder 10 imagens no total",
+    noImages: "Nenhuma imagem carregada ainda",
   },
   teamAssignmentCard: {
     title: "Atribuição de Equipa",

@@ -322,6 +322,13 @@ export default {
       description: "Porcentagem de ocupação de equilíbrio para co-investidores",
     },
   },
+  imagesCard: {
+    title: "Imagens",
+    uploadButtonText: "Carregar Imagens",
+    uploadSuccess: "Imagens carregadas com sucesso",
+    maxImagesError: "Não pode exceder 10 imagens no total",
+    noImages: "Nenhuma imagem carregada ainda",
+  },
   teamAssignmentCard: {
     title: "Atribuição de Equipa",
     clientAcquisitioner: {

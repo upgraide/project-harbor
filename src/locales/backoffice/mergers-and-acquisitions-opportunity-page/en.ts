@@ -182,8 +182,8 @@ export default {
       body: {
         im: {
           label: "IM",
-          description: "Enter the IM of the opportunity",
-          placeholder: "Enter the IM value ",
+          description: "Enter the Information Memorandum link/URL",
+          placeholder: "Enter the IM link (e.g., Google Drive URL)",
         },
         enterpriseValue: {
           label: "Enterprise Value (EV)",

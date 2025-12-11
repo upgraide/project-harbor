@@ -18,7 +18,7 @@ import { LocationMap } from "./location-map";
 export const ViewerLoading = () => {
   const t = useScopedI18n("dashboard.realEstateViewer");
   return (
-    <div className="m-4 flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 md:mx-auto md:max-w-screen-xl">
+    <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <LoadingView message={t("loadingMessage")} />
     </div>
   );
@@ -27,7 +27,7 @@ export const ViewerLoading = () => {
 export const ViewerError = () => {
   const t = useScopedI18n("dashboard.realEstateViewer");
   return (
-    <div className="m-4 flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 md:mx-auto md:max-w-screen-xl">
+    <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <ErrorView message={t("errorMessage")} />
     </div>
   );
@@ -135,7 +135,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
     opportunity.images != null && opportunity.images.length > 0;
 
   return (
-    <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
+    <main className="flex max-w-screen-xs flex-1 flex-col space-y-6 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
 
       {hasImages() && (

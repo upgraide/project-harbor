@@ -1,12 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { XIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { StyledUploadButton } from "@/features/editor/components/styled-upload-button";
+import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -55,7 +60,7 @@ const formSchema = z.object({
   assetIncluded: z.enum(["yes", "no"]).optional(),
   estimatedAssetValue: z.string().optional(),
   preNDANotes: z.string().optional(),
-  im: z.string().optional(),
+  im: z.string().url("Please enter a valid URL").optional().or(z.literal("")),
   entrepriseValue: z.string().optional(),
   equityValue: z.string().optional(),
   evDashEbitdaEntry: z.string().optional(),
@@ -78,6 +83,7 @@ const formSchema = z.object({
   holdPeriod: z.string().optional(),
   clientAcquisitionerId: z.string().optional(),
   accountManagerIds: z.string().array().min(1, "At least 1 account manager is required").max(2, "Maximum 2 account managers allowed"),
+  images: z.string().array().optional(),
 });
 
 // Map industries to their allowed subsectors
@@ -105,6 +111,7 @@ export const Creator = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionCreatePage");
   const createOpportunity = useCreateOpportunity();
   const router = useRouter();
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -150,6 +157,7 @@ export const Creator = () => {
         accountManagerIds: values.accountManagerIds?.length
           ? values.accountManagerIds
           : undefined,
+        images: uploadedImages.length > 0 ? uploadedImages : undefined,
       };
       const newOpportunity = await createOpportunity.mutateAsync(submitValues);
 
@@ -161,8 +169,12 @@ export const Creator = () => {
       toast.error("Failed to create opportunity");
     }
   };
+
+  const handleRemoveImage = (imageUrl: string) => {
+    setUploadedImages((prev) => prev.filter((url) => url !== imageUrl));
+  };
   return (
-    <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
+    <main className="flex max-w-screen-xs flex-1 flex-col space-y-6 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <h1 className="font-bold text-2xl md:text-4xl">{t("title")}</h1>
 
       <Form {...form}>
@@ -1391,6 +1403,81 @@ export const Creator = () => {
                     </FormItem>
                   )}
                 />
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* Images Upload Section */}
+          <section>
+            <Card className="border-none bg-transparent shadow-none">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-bold text-lg">
+                  {t("imagesCard.title")}
+                </CardTitle>
+                <StyledUploadButton
+                  buttonText={t("imagesCard.uploadButtonText")}
+                  endpoint="imageUploader"
+                  onClientUploadComplete={async (res) => {
+                    const imageUrls = res.map((file) => file.url);
+                    const totalImages = uploadedImages.length + imageUrls.length;
+
+                    if (totalImages > 10) {
+                      toast.error(t("imagesCard.maxImagesError"));
+                      return;
+                    }
+
+                    setUploadedImages((prev) => [...prev, ...imageUrls]);
+                    toast.success(t("imagesCard.uploadSuccess"));
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error(error.message);
+                  }}
+                />
+              </CardHeader>
+              <CardContent>
+                {uploadedImages.length > 0 ? (
+                  <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    {uploadedImages.map((imageUrl) => (
+                      <div
+                        className="group relative aspect-square overflow-hidden rounded-lg bg-muted"
+                        key={imageUrl}
+                      >
+                        <Image
+                          alt="Opportunity image"
+                          className="object-cover"
+                          fill
+                          src={imageUrl}
+                        />
+                        <button
+                          className={cn(
+                            "absolute inset-0",
+                            "flex items-center justify-center",
+                            "bg-black/50",
+                            "opacity-0 group-hover:opacity-100",
+                            "transition-opacity"
+                          )}
+                          onClick={() => handleRemoveImage(imageUrl)}
+                          title="Remove image"
+                          type="button"
+                        >
+                          <XIcon className="size-6 text-white" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    className={cn(
+                      "border border-dashed",
+                      "flex min-h-[200px] items-center justify-center",
+                      "rounded-lg"
+                    )}
+                  >
+                    <p className="text-muted-foreground text-sm">
+                      {t("imagesCard.noImages")}
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </section>

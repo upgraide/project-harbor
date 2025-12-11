@@ -57,7 +57,7 @@ import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 export const ViewerLoading = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
   return (
-    <div className="m-4 flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 md:mx-auto md:max-w-screen-xl">
+    <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <LoadingView message={t("loadingMessage")} />
     </div>
   );
@@ -66,7 +66,7 @@ export const ViewerLoading = () => {
 export const ViewerError = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
   return (
-    <div className="m-4 flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 md:mx-auto md:max-w-screen-xl">
+    <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <ErrorView message={t("errorMessage")} />
     </div>
   );
@@ -207,7 +207,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   }, [preloadedInterest]);
 
   return (
-    <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
+    <main className="flex max-w-screen-xs flex-1 flex-col space-y-6 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
 
       {hasImages() && (
@@ -653,7 +653,14 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                         {t("postNDACard.table.body.im.label")}
                       </TableCell>
                       <TableCell className="px-6 py-4">
-                        {opportunity.im}
+                        <a
+                          href={opportunity.im}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {opportunity.im}
+                        </a>
                       </TableCell>
                     </TableRow>
                   )}

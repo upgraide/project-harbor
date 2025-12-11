@@ -182,8 +182,8 @@ export default {
       body: {
         im: {
           label: "IM",
-          description: "Insira o valor do IM da oportunidade",
-          placeholder: "Insira o valor do IM (exemplo: 3.2)",
+          description: "Insira o link/URL do Memorando de Informação",
+          placeholder: "Insira o link do IM (ex: URL do Google Drive)",
         },
         enterpriseValue: {
           label: "Valor da Empresa",

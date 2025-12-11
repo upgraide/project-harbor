@@ -1803,7 +1803,18 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     {t("postNDACard.table.body.im.label")}
                   </TableCell>
                   <TableCell className="px-6 py-4">
-                    {opportunity.im != null ? opportunity.im : "N/A"}
+                    {opportunity.im != null ? (
+                      <a
+                        href={opportunity.im}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline"
+                      >
+                        {opportunity.im}
+                      </a>
+                    ) : (
+                      "N/A"
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
@@ -1824,7 +1835,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                               "postNDACard.table.body.im.description"
                             )}
                             fieldName="im"
-                            inputType="text"
+                            inputType="url"
                             onSaveAction={async (value) => {
                               await updateIm.mutateAsync({
                                 id: opportunityId,
@@ -3327,7 +3338,7 @@ const GraphRowTableRow = ({
   );
 };
 
-type EditorEditButtonInputType = "text" | "textarea";
+type EditorEditButtonInputType = "text" | "textarea" | "url";
 type SelectOption = {
   label: string;
   value: string;
@@ -3429,6 +3440,19 @@ export const EditorEditButton = ({
           placeholder={placeholder}
           step="0.01"
           type="number"
+          value={editedValue}
+        />
+      );
+    }
+
+    if (inputType === "url") {
+      return (
+        <Input
+          aria-label={fieldName}
+          disabled={isSaving}
+          onChange={(e) => setEditedValue(e.target.value)}
+          placeholder={placeholder}
+          type="url"
           value={editedValue}
         />
       );

@@ -160,8 +160,8 @@ export default {
       body: {
         im: {
           label: "IM",
-          placeholder: "Enter the IM value",
-          description: "Enter the IM of the opportunity",
+          placeholder: "Enter the IM link (e.g., Google Drive URL)",
+          description: "Enter the Information Memorandum link/URL",
         },
         enterpriseValue: {
           label: "Enterprise Value (EV)",
@@ -298,6 +298,13 @@ export default {
         },
       },
     },
+  },
+  imagesCard: {
+    title: "Images",
+    uploadButtonText: "Upload Images",
+    uploadSuccess: "Images uploaded successfully",
+    maxImagesError: "Cannot exceed 10 images total",
+    noImages: "No images uploaded yet",
   },
   teamAssignmentCard: {
     title: "Team Assignment",
