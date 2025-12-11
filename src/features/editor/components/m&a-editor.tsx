@@ -301,47 +301,6 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
         </Card>
       )}
 
-      {(opportunity.clientAcquisitioner ||
-        (opportunity.accountManagers &&
-          opportunity.accountManagers.length > 0)) && (
-        <section>
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-bold text-lg">
-                {t("teamAssignmentCard.title")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {opportunity.clientAcquisitioner && (
-                <div>
-                  <h3 className="mb-1 font-medium text-muted-foreground text-sm">
-                    {t("teamAssignmentCard.clientAcquisitioner.label")}
-                  </h3>
-                  <p className="text-base">
-                    {opportunity.clientAcquisitioner.name} ({opportunity.clientAcquisitioner.email})
-                  </p>
-                </div>
-              )}
-              {opportunity.accountManagers &&
-                opportunity.accountManagers.length > 0 && (
-                  <div>
-                    <h3 className="mb-2 font-medium text-muted-foreground text-sm">
-                      {t("teamAssignmentCard.accountManagers.label")}
-                    </h3>
-                    <ul className="space-y-1">
-                      {opportunity.accountManagers.map((manager) => (
-                        <li className="text-base" key={manager.id}>
-                          {manager.name} ({manager.email})
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-            </CardContent>
-          </Card>
-        </section>
-      )}
-
       <section>
         <Card className="border-none bg-transparent shadow-none">
           <CardHeader className="flex flex-row items-center justify-between">
