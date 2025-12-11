@@ -44,15 +44,9 @@ export const usersRouter = createTRPCRouter({
             id: true,
             name: true,
             email: true,
+            role: true,
+            disabled: true,
             createdAt: true,
-            sessions: {
-              orderBy: { createdAt: "desc" },
-              take: 1,
-              select: {
-                createdAt: true,
-                expiresAt: true,
-              },
-            },
           },
           orderBy: {
             createdAt: "desc",
@@ -77,6 +71,8 @@ export const usersRouter = createTRPCRouter({
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
+        isActive: !user.disabled,
       }));
 
       return {
@@ -90,6 +86,29 @@ export const usersRouter = createTRPCRouter({
       };
     }),
 
+  getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input }) => {
+      const user = await prisma.user.findUnique({
+        where: { id: input.id },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          emailVerified: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return user;
+    }),
+
   delete: adminProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
@@ -101,6 +120,169 @@ export const usersRouter = createTRPCRouter({
         },
       });
       return user;
+    }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1).optional(),
+        email: z.string().email().optional(),
+        role: z.nativeEnum(Role).optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { id, ...data } = input;
+      
+      const currentUser = ctx.auth;
+      if (!currentUser) {
+        throw new Error("Unauthorized");
+      }
+
+      // Get current user's role
+      const caller = await prisma.user.findUnique({
+        where: { id: currentUser.user.id },
+        select: { role: true },
+      });
+
+      // Get target user's role
+      const targetUser = await prisma.user.findUnique({
+        where: { id: input.id },
+        select: { role: true },
+      });
+
+      if (!caller || !targetUser) {
+        throw new Error("User not found");
+      }
+
+      // Only admins can change roles
+      if (data.role && caller.role !== Role.ADMIN) {
+        throw new Error("Only admins can change user roles");
+      }
+
+      // Team members can only edit USER role users
+      if (caller.role === Role.TEAM && targetUser.role !== Role.USER) {
+        throw new Error("Team members can only edit regular users");
+      }
+
+      // Regular users can't edit anyone
+      if (caller.role === Role.USER) {
+        throw new Error("Insufficient permissions");
+      }
+      
+      // Check if email is being changed and if it's already in use
+      if (data.email) {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: data.email },
+        });
+        
+        if (existingUser && existingUser.id !== id) {
+          throw new Error("Email is already in use");
+        }
+      }
+      
+      const user = await prisma.user.update({
+        where: { id },
+        data,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      });
+      
+      return user;
+    }),
+
+  deactivate: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const currentUser = ctx.auth;
+      if (!currentUser) {
+        throw new Error("Unauthorized");
+      }
+
+      // Get current user's role
+      const caller = await prisma.user.findUnique({
+        where: { id: currentUser.user.id },
+        select: { role: true },
+      });
+
+      // Get target user's role
+      const targetUser = await prisma.user.findUnique({
+        where: { id: input.id },
+        select: { role: true },
+      });
+
+      if (!caller || !targetUser) {
+        throw new Error("User not found");
+      }
+
+      // Check permissions: Admin can deactivate anyone, Team can deactivate USER only
+      if (caller.role === Role.TEAM && targetUser.role !== Role.USER) {
+        throw new Error("Insufficient permissions");
+      }
+
+      if (caller.role === Role.USER) {
+        throw new Error("Insufficient permissions");
+      }
+
+      // Deactivate by setting disabled flag and expiring all sessions
+      await Promise.all([
+        prisma.user.update({
+          where: { id: input.id },
+          data: { disabled: true },
+        }),
+        prisma.session.updateMany({
+          where: { userId: input.id },
+          data: { expiresAt: new Date() },
+        }),
+      ]);
+
+      return { success: true };
+    }),
+
+  activate: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const currentUser = ctx.auth;
+      if (!currentUser) {
+        throw new Error("Unauthorized");
+      }
+
+      // Get current user's role
+      const caller = await prisma.user.findUnique({
+        where: { id: currentUser.user.id },
+        select: { role: true },
+      });
+
+      // Get target user's role
+      const targetUser = await prisma.user.findUnique({
+        where: { id: input.id },
+        select: { role: true },
+      });
+
+      if (!caller || !targetUser) {
+        throw new Error("User not found");
+      }
+
+      // Check permissions: Admin can activate anyone, Team can activate USER only
+      if (caller.role === Role.TEAM && targetUser.role !== Role.USER) {
+        throw new Error("Insufficient permissions");
+      }
+
+      if (caller.role === Role.USER) {
+        throw new Error("Insufficient permissions");
+      }
+
+      // Activate by removing the disabled flag
+      await prisma.user.update({
+        where: { id: input.id },
+        data: { disabled: false },
+      });
+
+      return { success: true, message: "User can now log in again" };
     }),
 
   invite: protectedProcedure

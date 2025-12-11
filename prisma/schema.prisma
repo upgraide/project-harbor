@@ -25,6 +25,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   role          Role      @default(USER)
+  disabled      Boolean   @default(false)
 
   // Investor-specific fields
   investorType      InvestorType?
