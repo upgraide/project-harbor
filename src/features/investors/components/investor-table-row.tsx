@@ -125,10 +125,10 @@ export const InvestorTableRow = ({
   return (
     <TableRow key={investor.id}>
       <TableCell className="sticky left-0 bg-background font-medium">
-        {investor.name}
+        {investor.companyName || "-"}
       </TableCell>
+      <TableCell>{investor.name}</TableCell>
       <TableCell>{investor.email}</TableCell>
-      <TableCell>{investor.companyName || "-"}</TableCell>
       <TableCell>{investor.representativeName || "-"}</TableCell>
       <TableCell>{investor.phoneNumber || "-"}</TableCell>
       <TableCell>
