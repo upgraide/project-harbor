@@ -56,12 +56,20 @@ import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 export const ViewerLoading = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
-  return <LoadingView message={t("loadingMessage")} />;
+  return (
+    <div className="m-4 flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 md:mx-auto md:max-w-screen-xl">
+      <LoadingView message={t("loadingMessage")} />
+    </div>
+  );
 };
 
 export const ViewerError = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
-  return <ErrorView message={t("errorMessage")} />;
+  return (
+    <div className="m-4 flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 md:mx-auto md:max-w-screen-xl">
+      <ErrorView message={t("errorMessage")} />
+    </div>
+  );
 };
 
 const chartConfig = (t: (key: string) => string, isDark: boolean) =>

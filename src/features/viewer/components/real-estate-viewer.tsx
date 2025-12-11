@@ -17,12 +17,20 @@ import { LocationMap } from "./location-map";
 
 export const ViewerLoading = () => {
   const t = useScopedI18n("dashboard.realEstateViewer");
-  return <LoadingView message={t("loadingMessage")} />;
+  return (
+    <div className="m-4 flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 md:mx-auto md:max-w-screen-xl">
+      <LoadingView message={t("loadingMessage")} />
+    </div>
+  );
 };
 
 export const ViewerError = () => {
   const t = useScopedI18n("dashboard.realEstateViewer");
-  return <ErrorView message={t("errorMessage")} />;
+  return (
+    <div className="m-4 flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 md:mx-auto md:max-w-screen-xl">
+      <ErrorView message={t("errorMessage")} />
+    </div>
+  );
 };
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component
