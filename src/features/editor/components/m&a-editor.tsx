@@ -4,7 +4,6 @@
 
 import { EditIcon, EllipsisVerticalIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
-import { useTheme } from "next-themes";
 import { useState } from "react";
 import {
   Bar,
@@ -144,11 +143,14 @@ import {
 import { cn } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
-const chartConfig = (t: (key: string) => string, isDark: boolean) =>
+const chartConfig = (t: (key: string) => string) =>
   ({
     revenue: {
       label: t("graphCard.table.header.revenue"),
-      color: isDark ? "#BECED7" : "#113152",
+      theme: {
+        light: "#113152",
+        dark: "#BECED7",
+      },
     },
     ebitda: {
       label: t("graphCard.table.header.ebitda"),
@@ -175,12 +177,6 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
   const locale = useCurrentLocale();
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
-  const { theme, resolvedTheme } = useTheme();
-  const isDark =
-    resolvedTheme === "dark" ||
-    (theme === "system" &&
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
 
   // Update operations
   const updateDescription = useUpdateOpportunityDescription();
@@ -1494,7 +1490,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             <CardTitle className="font-bold text-lg" />
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig(t, isDark)}>
+            <ChartContainer config={chartConfig(t)}>
               <ComposedChart
                 accessibilityLayer
                 data={opportunity.graphRows ?? []}
@@ -1539,12 +1535,12 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                 />
                 <Bar
                   dataKey="revenue"
-                  fill={isDark ? "#BECED7" : "#113152"}
+                  fill="var(--color-revenue)"
                   label={{
                     position: "top",
                     fontSize: 12,
                     fontWeight: 600,
-                    fill: isDark ? "#FFFFFF" : "#000000",
+                    fill: "hsl(var(--foreground))",
                     formatter: (value: number) => value.toFixed(2),
                   }}
                   radius={[4, 4, 0, 0]}

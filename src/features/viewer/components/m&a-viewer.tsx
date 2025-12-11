@@ -4,7 +4,6 @@
 
 import { CheckCircle2, XCircle } from "lucide-react";
 import Image from "next/image";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import {
   Bar,
@@ -72,11 +71,14 @@ export const ViewerError = () => {
   );
 };
 
-const chartConfig = (t: (key: string) => string, isDark: boolean) =>
+const chartConfig = (t: (key: string) => string) =>
   ({
     revenue: {
       label: t("graphCard.table.header.revenue"),
-      color: isDark ? "#BECED7" : "#113152",
+      theme: {
+        light: "#113152",
+        dark: "#BECED7",
+      },
     },
     ebitda: {
       label: t("graphCard.table.header.ebitda"),
@@ -92,12 +94,6 @@ const chartConfig = (t: (key: string) => string, isDark: boolean) =>
 export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("dashboard.mAndAViewer");
   const locale = useCurrentLocale();
-  const { theme, resolvedTheme } = useTheme();
-  const isDark =
-    resolvedTheme === "dark" ||
-    (theme === "system" &&
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
 
   const { data: preloadedInterest } =
@@ -529,7 +525,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
               <CardContent className="h-full p-2 md:p-4">
                 <ChartContainer
                   className="h-full w-full"
-                  config={chartConfig(t, isDark)}
+                  config={chartConfig(t)}
                 >
                   <ComposedChart
                     accessibilityLayer
@@ -578,12 +574,12 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                     />
                     <Bar
                       dataKey="revenue"
-                      fill={isDark ? "#BECED7" : "#113152"}
+                      fill="var(--color-revenue)"
                       label={{
                         position: "top",
                         fontSize: 12,
                         fontWeight: 600,
-                        fill: isDark ? "#FFFFFF" : "#000000",
+                        fill: "hsl(var(--foreground))",
                         formatter: (value: number) => value.toFixed(2),
                       }}
                       radius={[4, 4, 0, 0]}
