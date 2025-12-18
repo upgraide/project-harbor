@@ -22,6 +22,7 @@ export const env = createEnv({
     UPLOADTHING_TOKEN: z.string().min(1),
     RESEND_API_KEY: z.string().min(1),
     INNGEST_EVENT_KEY: z.string(),
+    INNGEST_SIGNING_KEY: z.string(),
     PUSHER_APP_ID: z.string().min(1),
     PUSHER_KEY: z.string().min(1),
     PUSHER_SECRET: z.string().min(1),
