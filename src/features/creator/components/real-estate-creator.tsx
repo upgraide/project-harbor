@@ -267,6 +267,81 @@ export const Creator = () => {
 
       <Form {...form}>
         <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+          {/* Images Upload Section */}
+          <section>
+            <Card className="border-none bg-transparent shadow-none">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-bold text-lg">
+                  {t("imagesCard.title")}
+                </CardTitle>
+                <StyledUploadButton
+                  buttonText={t("imagesCard.uploadButtonText")}
+                  endpoint="imageUploader"
+                  onClientUploadComplete={async (res) => {
+                    const imageUrls = res.map((file) => file.url);
+                    const totalImages = uploadedImages.length + imageUrls.length;
+
+                    if (totalImages > 10) {
+                      toast.error(t("imagesCard.maxImagesError"));
+                      return;
+                    }
+
+                    setUploadedImages((prev) => [...prev, ...imageUrls]);
+                    toast.success(t("imagesCard.uploadSuccess"));
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error(error.message);
+                  }}
+                />
+              </CardHeader>
+              <CardContent>
+                {uploadedImages.length > 0 ? (
+                  <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    {uploadedImages.map((imageUrl) => (
+                      <div
+                        className="group relative aspect-square overflow-hidden rounded-lg bg-muted"
+                        key={imageUrl}
+                      >
+                        <Image
+                          alt="Opportunity image"
+                          className="object-cover"
+                          fill
+                          src={imageUrl}
+                        />
+                        <button
+                          className={cn(
+                            "absolute inset-0",
+                            "flex items-center justify-center",
+                            "bg-black/50",
+                            "opacity-0 group-hover:opacity-100",
+                            "transition-opacity"
+                          )}
+                          onClick={() => handleRemoveImage(imageUrl)}
+                          title="Remove image"
+                          type="button"
+                        >
+                          <XIcon className="size-6 text-white" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    className={cn(
+                      "border border-dashed",
+                      "flex min-h-[200px] items-center justify-center",
+                      "rounded-lg"
+                    )}
+                  >
+                    <p className="text-muted-foreground text-sm">
+                      {t("imagesCard.noImages")}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </section>
+
           {/* Basic Information Card */}
           <section>
             <Card className="border-none bg-transparent shadow-none">
@@ -1810,81 +1885,6 @@ export const Creator = () => {
                     </FormItem>
                   )}
                 />
-              </CardContent>
-            </Card>
-          </section>
-
-          {/* Images Upload Section */}
-          <section>
-            <Card className="border-none bg-transparent shadow-none">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="font-bold text-lg">
-                  {t("imagesCard.title")}
-                </CardTitle>
-                <StyledUploadButton
-                  buttonText={t("imagesCard.uploadButtonText")}
-                  endpoint="imageUploader"
-                  onClientUploadComplete={async (res) => {
-                    const imageUrls = res.map((file) => file.url);
-                    const totalImages = uploadedImages.length + imageUrls.length;
-
-                    if (totalImages > 10) {
-                      toast.error(t("imagesCard.maxImagesError"));
-                      return;
-                    }
-
-                    setUploadedImages((prev) => [...prev, ...imageUrls]);
-                    toast.success(t("imagesCard.uploadSuccess"));
-                  }}
-                  onUploadError={(error: Error) => {
-                    toast.error(error.message);
-                  }}
-                />
-              </CardHeader>
-              <CardContent>
-                {uploadedImages.length > 0 ? (
-                  <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    {uploadedImages.map((imageUrl) => (
-                      <div
-                        className="group relative aspect-square overflow-hidden rounded-lg bg-muted"
-                        key={imageUrl}
-                      >
-                        <Image
-                          alt="Opportunity image"
-                          className="object-cover"
-                          fill
-                          src={imageUrl}
-                        />
-                        <button
-                          className={cn(
-                            "absolute inset-0",
-                            "flex items-center justify-center",
-                            "bg-black/50",
-                            "opacity-0 group-hover:opacity-100",
-                            "transition-opacity"
-                          )}
-                          onClick={() => handleRemoveImage(imageUrl)}
-                          title="Remove image"
-                          type="button"
-                        >
-                          <XIcon className="size-6 text-white" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div
-                    className={cn(
-                      "border border-dashed",
-                      "flex min-h-[200px] items-center justify-center",
-                      "rounded-lg"
-                    )}
-                  >
-                    <p className="text-muted-foreground text-sm">
-                      {t("imagesCard.noImages")}
-                    </p>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </section>

@@ -309,6 +309,31 @@ export default {
     maxImagesError: "Não pode exceder 10 imagens no total",
     noImages: "Nenhuma imagem carregada ainda",
   },
+  graphCard: {
+    title: "Dados do Gráfico",
+    addRowButtonText: "Adicionar Linha",
+    table: {
+      header: {
+        year: "Ano",
+        revenue: "Vendas (M€)",
+        ebitda: "EBITDA (M€)",
+        ebitdaMargin: "Margem EBITDA (%)",
+        actions: "Ações",
+      },
+    },
+    noDataMessage: "Ainda não há dados do gráfico. Clique em 'Adicionar Linha' para começar.",
+    openMenuText: "Abrir menu",
+    editButtonText: "Editar",
+    editGraphRowTitle: "Editar Linha do Gráfico",
+    cancelButtonText: "Cancelar",
+    saveButtonText: "Guardar",
+    year: "Ano",
+    revenue: "Vendas (M€)",
+    ebitda: "EBITDA (M€)",
+    ebitdaMargin: "Margem EBITDA (%)",
+    actions: "Ações",
+    deleteButtonText: "Eliminar",
+  },
   teamAssignmentCard: {
     title: "Atribuição de Equipa",
     clientAcquisitioner: {

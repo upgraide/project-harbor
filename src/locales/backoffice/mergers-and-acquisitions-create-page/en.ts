@@ -306,6 +306,31 @@ export default {
     maxImagesError: "Cannot exceed 10 images total",
     noImages: "No images uploaded yet",
   },
+  graphCard: {
+    title: "Graph Data",
+    addRowButtonText: "Add Row",
+    table: {
+      header: {
+        year: "Year",
+        revenue: "Revenue (M€)",
+        ebitda: "EBITDA (M€)",
+        ebitdaMargin: "EBITDA Margin (%)",
+        actions: "Actions",
+      },
+    },
+    noDataMessage: "No graph data yet. Click 'Add Row' to get started.",
+    openMenuText: "Open menu",
+    editButtonText: "Edit",
+    editGraphRowTitle: "Edit Graph Row",
+    cancelButtonText: "Cancel",
+    saveButtonText: "Save",
+    year: "Year",
+    revenue: "Revenue (M€)",
+    ebitda: "EBITDA (M€)",
+    ebitdaMargin: "EBITDA Margin (%)",
+    actions: "Actions",
+    deleteButtonText: "Delete",
+  },
   teamAssignmentCard: {
     title: "Team Assignment",
     clientAcquisitioner: {

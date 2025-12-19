@@ -72,6 +72,14 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         clientAcquisitionerId: z.string().optional(),
         accountManagerIds: z.string().array().optional(),
         images: z.string().array().optional(),
+        graphRows: z.array(
+          z.object({
+            year: z.string(),
+            revenue: z.number(),
+            ebitda: z.number(),
+            ebitdaMargin: z.number(),
+          })
+        ).optional(),
       })
     )
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex mutation
@@ -155,6 +163,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         holdPeriod: parseOptionalFloat(input.holdPeriod),
         clientAcquisitionerId: input.clientAcquisitionerId || null,
         images: input.images || [],
+        graphRows: input.graphRows || [],
       };
 
       // Create the opportunity with analytics

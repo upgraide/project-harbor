@@ -1,15 +1,53 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { XIcon } from "lucide-react";
+import { EditIcon, EllipsisVerticalIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import {
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Line,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { toast } from "sonner";
 import z from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { StyledUploadButton } from "@/features/editor/components/styled-upload-button";
 import { cn } from "@/lib/utils";
 import {
@@ -43,6 +81,25 @@ import {
 } from "@/generated/prisma";
 import { useScopedI18n } from "@/locales/client";
 import { backofficeMergeAndAcquisitionPath } from "@/paths";
+
+const chartConfig = (t: (key: string) => string) =>
+  ({
+    revenue: {
+      label: t("graphCard.table.header.revenue"),
+      theme: {
+        light: "#113152",
+        dark: "#BECED7",
+      },
+    },
+    ebitda: {
+      label: t("graphCard.table.header.ebitda"),
+      color: "#4F565A",
+    },
+    ebitdaMargin: {
+      label: t("graphCard.table.header.ebitdaMargin"),
+      color: "#9C3E11",
+    },
+  }) satisfies ChartConfig;
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -84,6 +141,14 @@ const formSchema = z.object({
   clientAcquisitionerId: z.string().optional(),
   accountManagerIds: z.string().array().min(1, "At least 1 account manager is required").max(2, "Maximum 2 account managers allowed"),
   images: z.string().array().optional(),
+  graphRows: z.array(
+    z.object({
+      year: z.string(),
+      revenue: z.number(),
+      ebitda: z.number(),
+      ebitdaMargin: z.number(),
+    })
+  ).optional(),
 });
 
 // Map industries to their allowed subsectors
@@ -112,6 +177,9 @@ export const Creator = () => {
   const createOpportunity = useCreateOpportunity();
   const router = useRouter();
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [graphRows, setGraphRows] = useState<
+    { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[]
+  >([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -158,6 +226,7 @@ export const Creator = () => {
           ? values.accountManagerIds
           : undefined,
         images: uploadedImages.length > 0 ? uploadedImages : undefined,
+        graphRows: graphRows.length > 0 ? graphRows : undefined,
       };
       const newOpportunity = await createOpportunity.mutateAsync(submitValues);
 
@@ -179,6 +248,81 @@ export const Creator = () => {
 
       <Form {...form}>
         <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+          {/* Images Upload Section */}
+          <section>
+            <Card className="border-none bg-transparent shadow-none">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-bold text-lg">
+                  {t("imagesCard.title")}
+                </CardTitle>
+                <StyledUploadButton
+                  buttonText={t("imagesCard.uploadButtonText")}
+                  endpoint="imageUploader"
+                  onClientUploadComplete={async (res) => {
+                    const imageUrls = res.map((file) => file.url);
+                    const totalImages = uploadedImages.length + imageUrls.length;
+
+                    if (totalImages > 10) {
+                      toast.error(t("imagesCard.maxImagesError"));
+                      return;
+                    }
+
+                    setUploadedImages((prev) => [...prev, ...imageUrls]);
+                    toast.success(t("imagesCard.uploadSuccess"));
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error(error.message);
+                  }}
+                />
+              </CardHeader>
+              <CardContent>
+                {uploadedImages.length > 0 ? (
+                  <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    {uploadedImages.map((imageUrl) => (
+                      <div
+                        className="group relative aspect-square overflow-hidden rounded-lg bg-muted"
+                        key={imageUrl}
+                      >
+                        <Image
+                          alt="Opportunity image"
+                          className="object-cover"
+                          fill
+                          src={imageUrl}
+                        />
+                        <button
+                          className={cn(
+                            "absolute inset-0",
+                            "flex items-center justify-center",
+                            "bg-black/50",
+                            "opacity-0 group-hover:opacity-100",
+                            "transition-opacity"
+                          )}
+                          onClick={() => handleRemoveImage(imageUrl)}
+                          title="Remove image"
+                          type="button"
+                        >
+                          <XIcon className="size-6 text-white" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    className={cn(
+                      "border border-dashed",
+                      "flex min-h-[200px] items-center justify-center",
+                      "rounded-lg"
+                    )}
+                  >
+                    <p className="text-muted-foreground text-sm">
+                      {t("imagesCard.noImages")}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </section>
+
           {/* Basic Information Card */}
           <section>
             <Card className="border-none bg-transparent shadow-none">
@@ -760,6 +904,172 @@ export const Creator = () => {
                     </FormItem>
                   )}
                 />
+              </CardContent>
+            </Card>
+          </section>
+
+          {/* Graph Data Section */}
+          <section>
+            {graphRows.length > 0 && (
+              <Card className="border-none bg-transparent shadow-none">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="font-bold text-lg">
+                    {t("graphCard.title")}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={chartConfig(t)}>
+                    <ComposedChart
+                      accessibilityLayer
+                      data={graphRows}
+                      margin={{
+                        left: 50,
+                        right: 50,
+                        top: 20,
+                      }}
+                    >
+                      <CartesianGrid horizontal={false} vertical={false} />
+                      <XAxis
+                        axisLine={false}
+                        dataKey="year"
+                        tickFormatter={(value) => `${value.slice(0, 5)}H`}
+                        tickLine={false}
+                        tickMargin={8}
+                      />
+                      <YAxis
+                        domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.3)]}
+                        hide={true}
+                        stroke="#113152"
+                        yAxisId="left"
+                      />
+                      <YAxis
+                        domain={[0, 30]}
+                        hide={true}
+                        orientation="right"
+                        stroke="#679A85"
+                        tickFormatter={(value) => `${value}M`}
+                        yAxisId="right"
+                      />
+                      <YAxis
+                        domain={[-750, 100]}
+                        hide={true}
+                        orientation="right"
+                        stroke="#9C3E11"
+                        yAxisId="margin"
+                      />
+                      <ChartTooltip
+                        content={<ChartTooltipContent indicator="line" />}
+                        cursor={false}
+                      />
+                      <Bar
+                        dataKey="revenue"
+                        fill="var(--color-revenue)"
+                        label={{
+                          position: "top",
+                          fontSize: 12,
+                          fontWeight: 600,
+                          fill: "hsl(var(--foreground))",
+                          formatter: (value: number) => value.toFixed(2),
+                        }}
+                        radius={[4, 4, 0, 0]}
+                        yAxisId="left"
+                      />
+                      <Line
+                        dataKey="ebitda"
+                        dot={false}
+                        label={{
+                          position: "top",
+                          fontSize: 12,
+                          formatter: (value: number) => value.toFixed(2),
+                        }}
+                        stroke="#4F565A"
+                        strokeWidth={2}
+                        type="monotone"
+                        yAxisId="right"
+                      />
+                      <Line
+                        dataKey="ebitdaMargin"
+                        dot={{ fill: "#9C3E11", r: 6 }}
+                        label={{
+                          position: "top",
+                          formatter: (value: number) => `${value}%`,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          offset: 10,
+                        }}
+                        stroke="#9C3E11"
+                        strokeWidth={0}
+                        type="monotone"
+                        yAxisId="margin"
+                      />
+                      <ChartLegend content={<ChartLegendContent />} />
+                    </ComposedChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+            )}
+
+            <Card className="border-none bg-transparent shadow-none">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="font-bold text-lg">
+                  {graphRows.length > 0 ? t("graphCard.table.header.year") + " / " + t("graphCard.table.header.revenue") + " / " + t("graphCard.table.header.ebitda") + " / " + t("graphCard.table.header.ebitdaMargin") : t("graphCard.title")}
+                </CardTitle>
+                <Button
+                  onClick={() => {
+                    const newRow = {
+                      year: new Date().getFullYear().toString(),
+                      revenue: 0,
+                      ebitda: 0,
+                      ebitdaMargin: 0,
+                    };
+                    setGraphRows([...graphRows, newRow]);
+                  }}
+                  size="sm"
+                  type="button"
+                  variant="outline"
+                >
+                  {t("graphCard.addRowButtonText")}
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {graphRows.length > 0 ? (
+                  <Table>
+                    <TableHeader className="bg-muted">
+                      <TableRow>
+                        <TableHead>{t("graphCard.table.header.year")}</TableHead>
+                        <TableHead className="px-6 py-4 text-right">
+                          {t("graphCard.table.header.revenue")}
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-right">
+                          {t("graphCard.table.header.ebitda")}
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-right">
+                          {t("graphCard.table.header.ebitdaMargin")}
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-right">
+                          {t("graphCard.table.header.actions")}
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {graphRows.map((row, index) => (
+                        <GraphRowTableRow
+                          allRows={graphRows}
+                          key={`${row.year}-${index}`}
+                          onUpdate={(updatedRows) => {
+                            setGraphRows(updatedRows);
+                          }}
+                          row={row}
+                          rowIndex={index}
+                        />
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="py-8 text-center text-muted-foreground text-sm">
+                    {t("graphCard.noDataMessage")}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </section>
@@ -1407,81 +1717,6 @@ export const Creator = () => {
             </Card>
           </section>
 
-          {/* Images Upload Section */}
-          <section>
-            <Card className="border-none bg-transparent shadow-none">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="font-bold text-lg">
-                  {t("imagesCard.title")}
-                </CardTitle>
-                <StyledUploadButton
-                  buttonText={t("imagesCard.uploadButtonText")}
-                  endpoint="imageUploader"
-                  onClientUploadComplete={async (res) => {
-                    const imageUrls = res.map((file) => file.url);
-                    const totalImages = uploadedImages.length + imageUrls.length;
-
-                    if (totalImages > 10) {
-                      toast.error(t("imagesCard.maxImagesError"));
-                      return;
-                    }
-
-                    setUploadedImages((prev) => [...prev, ...imageUrls]);
-                    toast.success(t("imagesCard.uploadSuccess"));
-                  }}
-                  onUploadError={(error: Error) => {
-                    toast.error(error.message);
-                  }}
-                />
-              </CardHeader>
-              <CardContent>
-                {uploadedImages.length > 0 ? (
-                  <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    {uploadedImages.map((imageUrl) => (
-                      <div
-                        className="group relative aspect-square overflow-hidden rounded-lg bg-muted"
-                        key={imageUrl}
-                      >
-                        <Image
-                          alt="Opportunity image"
-                          className="object-cover"
-                          fill
-                          src={imageUrl}
-                        />
-                        <button
-                          className={cn(
-                            "absolute inset-0",
-                            "flex items-center justify-center",
-                            "bg-black/50",
-                            "opacity-0 group-hover:opacity-100",
-                            "transition-opacity"
-                          )}
-                          onClick={() => handleRemoveImage(imageUrl)}
-                          title="Remove image"
-                          type="button"
-                        >
-                          <XIcon className="size-6 text-white" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div
-                    className={cn(
-                      "border border-dashed",
-                      "flex min-h-[200px] items-center justify-center",
-                      "rounded-lg"
-                    )}
-                  >
-                    <p className="text-muted-foreground text-sm">
-                      {t("imagesCard.noImages")}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </section>
-
           {/* Companion and Account Managers */}
           <section>
             <Card className="border-none bg-transparent shadow-none">
@@ -1562,5 +1797,187 @@ export const Creator = () => {
         </form>
       </Form>
     </main>
+  );
+};
+
+type GraphRowTableRowProps = {
+  row: {
+    year: string;
+    revenue: number;
+    ebitda: number;
+    ebitdaMargin: number;
+  };
+  rowIndex: number;
+  allRows: {
+    year: string;
+    revenue: number;
+    ebitda: number;
+    ebitdaMargin: number;
+  }[];
+  onUpdate: (
+    updatedRows: {
+      year: string;
+      revenue: number;
+      ebitda: number;
+      ebitdaMargin: number;
+    }[]
+  ) => void;
+};
+
+const GraphRowTableRow = ({
+  row,
+  rowIndex,
+  allRows,
+  onUpdate,
+}: GraphRowTableRowProps) => {
+  const t = useScopedI18n(
+    "backoffice.mergersAndAcquisitionCreatePage.graphCard"
+  );
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editedRow, setEditedRow] = useState(row);
+
+  const handleSaveEdit = () => {
+    const updatedRows = [...allRows];
+    updatedRows[rowIndex] = editedRow;
+    onUpdate(updatedRows);
+    setIsEditOpen(false);
+  };
+
+  const handleDelete = () => {
+    const updatedRows = allRows.filter((_, index) => index !== rowIndex);
+    onUpdate(updatedRows);
+  };
+
+  return (
+    <TableRow>
+      <TableCell className="font-medium">{row.year}</TableCell>
+      <TableCell className="text-right">{row.revenue.toFixed(2)}</TableCell>
+      <TableCell className="text-right">{row.ebitda.toFixed(2)}</TableCell>
+      <TableCell className="text-right">
+        {row.ebitdaMargin.toFixed(2)}%
+      </TableCell>
+      <TableCell className="text-right">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="ghost">
+              <EllipsisVerticalIcon className="h-4 w-4" />
+              <span className="sr-only">{t("openMenuText")}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Dialog onOpenChange={setIsEditOpen} open={isEditOpen}>
+                <DialogTrigger asChild>
+                  <button
+                    className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent"
+                    onClick={(e) => e.stopPropagation()}
+                    type="button"
+                  >
+                    <EditIcon className="mr-2 h-4 w-4" />
+                    {t("editButtonText")}
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{t("editGraphRowTitle")}</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <label className="font-medium text-sm" htmlFor="year">
+                        {t("year")}
+                      </label>
+                      <Input
+                        id="year"
+                        onChange={(e) =>
+                          setEditedRow({
+                            ...editedRow,
+                            year: e.target.value,
+                          })
+                        }
+                        type="text"
+                        value={editedRow.year}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="font-medium text-sm" htmlFor="revenue">
+                        {t("revenue")}
+                      </label>
+                      <Input
+                        id="revenue"
+                        onChange={(e) =>
+                          setEditedRow({
+                            ...editedRow,
+                            revenue: Number.parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        step="0.01"
+                        type="number"
+                        value={editedRow.revenue}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="font-medium text-sm" htmlFor="ebitda">
+                        {t("ebitda")}
+                      </label>
+                      <Input
+                        id="ebitda"
+                        onChange={(e) =>
+                          setEditedRow({
+                            ...editedRow,
+                            ebitda: Number.parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        step="0.01"
+                        type="number"
+                        value={editedRow.ebitda}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label
+                        className="font-medium text-sm"
+                        htmlFor="ebitdaMargin"
+                      >
+                        {t("ebitdaMargin")}
+                      </label>
+                      <Input
+                        id="ebitdaMargin"
+                        onChange={(e) =>
+                          setEditedRow({
+                            ...editedRow,
+                            ebitdaMargin:
+                              Number.parseFloat(e.target.value) || 0,
+                          })
+                        }
+                        step="0.01"
+                        type="number"
+                        value={editedRow.ebitdaMargin}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      onClick={() => setIsEditOpen(false)}
+                      variant="outline"
+                    >
+                      {t("cancelButtonText")}
+                    </Button>
+                    <Button onClick={handleSaveEdit}>
+                      {t("saveButtonText")}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-red-600 hover:bg-red-50 hover:text-red-700"
+              onClick={handleDelete}
+            >
+              <TrashIcon className="mr-2 h-4 w-4" />
+              {t("deleteButtonText")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </TableCell>
+    </TableRow>
   );
 };
