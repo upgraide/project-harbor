@@ -12,6 +12,7 @@ import z from "zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StyledUploadButton } from "@/features/editor/components/styled-upload-button";
+import { LocationMapPreview } from "@/features/creator/components/location-map-preview";
 import { cn } from "@/lib/utils";
 import {
   Form,
@@ -116,6 +117,7 @@ export const Creator = () => {
   const createOpportunity = useCreateRealEstateOpportunity();
   const router = useRouter();
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [showLocationMap, setShowLocationMap] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -422,18 +424,39 @@ export const Creator = () => {
                       <FormLabel>
                         {t("assetInformationCard.location.label")}
                       </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "assetInformationCard.location.placeholder"
-                          )}
-                          {...field}
-                        />
-                      </FormControl>
+                      <div className="flex gap-2">
+                        <FormControl>
+                          <Input
+                            placeholder={t(
+                              "assetInformationCard.location.placeholder"
+                            )}
+                            {...field}
+                          />
+                        </FormControl>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            if (field.value) {
+                              setShowLocationMap(!showLocationMap);
+                            }
+                          }}
+                          disabled={!field.value}
+                        >
+                          {showLocationMap
+                            ? t("assetInformationCard.location.hideMapButton")
+                            : t(
+                                "assetInformationCard.location.checkLocationButton"
+                              )}
+                        </Button>
+                      </div>
                       <FormDescription>
                         {t("assetInformationCard.location.description")}
                       </FormDescription>
                       <FormMessage />
+                      {showLocationMap && field.value && (
+                        <LocationMapPreview location={field.value} />
+                      )}
                     </FormItem>
                   )}
                 />

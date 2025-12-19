@@ -622,7 +622,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
         )}
       </div>
 
-      {hasPostNDAData() && userInterest?.ndaSigned === true && (
+      {userInterest?.ndaSigned === true && (
         <section>
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader>
@@ -643,12 +643,12 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {opportunity.im != null && (
-                    <TableRow key="im">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.im.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
+                  <TableRow key="im">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.im.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.im ? (
                         <a
                           href={opportunity.im}
                           target="_blank"
@@ -657,111 +657,120 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                         >
                           {opportunity.im}
                         </a>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.entrepriseValue != null && (
-                    <TableRow key="enterpriseValue">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.enterpriseValue.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.enterpriseValue.prefix") +
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="enterpriseValue">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.enterpriseValue.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.entrepriseValue != null
+                        ? t("postNDACard.table.body.enterpriseValue.prefix") +
                           opportunity.entrepriseValue +
-                          t("postNDACard.table.body.enterpriseValue.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.equityValue != null && (
-                    <TableRow key="equityValue">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.equityValue.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.equityValue.prefix") +
+                          t("postNDACard.table.body.enterpriseValue.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="equityValue">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.equityValue.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.equityValue != null
+                        ? t("postNDACard.table.body.equityValue.prefix") +
                           opportunity.equityValue +
-                          t("postNDACard.table.body.equityValue.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.evDashEbitdaEntry != null && (
-                    <TableRow key="evDashEbitdaEntry">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.evDashEbitdaEntry.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.evDashEbitdaEntry +
-                          t("postNDACard.table.body.evDashEbitdaEntry.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.evDashEbitdaExit != null && (
-                    <TableRow key="evDashEbitdaExit">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.evDashEbitdaExit.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.evDashEbitdaExit +
-                          t("postNDACard.table.body.evDashEbitdaExit.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.ebitdaMargin != null && (
-                    <TableRow key="ebitdaMargin">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.ebitdaMargin.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.ebitdaMargin +
-                          t("postNDACard.table.body.ebitdaMargin.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.fcf != null && (
-                    <TableRow key="fcf">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.fcf.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.fcf.prefix") +
+                          t("postNDACard.table.body.equityValue.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="evDashEbitdaEntry">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.evDashEbitdaEntry.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.evDashEbitdaEntry != null
+                        ? opportunity.evDashEbitdaEntry +
+                          t("postNDACard.table.body.evDashEbitdaEntry.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="evDashEbitdaExit">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.evDashEbitdaExit.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.evDashEbitdaExit != null
+                        ? opportunity.evDashEbitdaExit +
+                          t("postNDACard.table.body.evDashEbitdaExit.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="ebitdaMargin">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.ebitdaMargin.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.ebitdaMargin != null
+                        ? opportunity.ebitdaMargin +
+                          t("postNDACard.table.body.ebitdaMargin.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="fcf">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.fcf.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.fcf != null
+                        ? t("postNDACard.table.body.fcf.prefix") +
                           opportunity.fcf +
-                          t("postNDACard.table.body.fcf.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.netDebtDashEbitda != null && (
-                    <TableRow key="netDebtDashEbitda">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.netDebtDashEbitda.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.netDebtDashEbitda +
-                          t("postNDACard.table.body.netDebtDashEbitda.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.capexItensity != null && (
-                    <TableRow key="capexItensity">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.capexItensity.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.capexItensity +
-                          t("postNDACard.table.body.capexItensity.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.workingCapitalNeeds != null && (
-                    <TableRow key="workingCapitalNeeds">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.workingCapitalNeeds.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.workingCapitalNeeds +
-                          t("postNDACard.table.body.workingCapitalNeeds.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("postNDACard.table.body.fcf.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="netDebtDashEbitda">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.netDebtDashEbitda.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.netDebtDashEbitda != null
+                        ? opportunity.netDebtDashEbitda +
+                          t("postNDACard.table.body.netDebtDashEbitda.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="capexItensity">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.capexItensity.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.capexItensity != null
+                        ? opportunity.capexItensity +
+                          t("postNDACard.table.body.capexItensity.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="workingCapitalNeeds">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.workingCapitalNeeds.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.workingCapitalNeeds != null
+                        ? opportunity.workingCapitalNeeds +
+                          t("postNDACard.table.body.workingCapitalNeeds.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </CardContent>

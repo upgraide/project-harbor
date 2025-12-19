@@ -1,8 +1,21 @@
 "use client";
 
+import { CheckCircle2 } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { ErrorView, LoadingView } from "@/components/entity-components";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -11,6 +24,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  useGetRealEstateInterest,
+  useMarkRealEstateInterest,
+  useMarkRealEstateNoInterest,
+  useSignRealEstateNDA,
+} from "@/features/opportunities/hooks/use-real-estate-interest";
 import { useSuspenseOpportunity } from "@/features/opportunities/hooks/use-real-estate-opportunities";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import { LocationMap } from "./location-map";
@@ -38,6 +58,35 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("dashboard.realEstateViewer");
   const locale = useCurrentLocale();
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
+  const { data: preloadedInterest } = useGetRealEstateInterest(opportunityId);
+
+  const [showNotInterestedDialog, setShowNotInterestedDialog] = useState(false);
+  const [notInterestedReason, setNotInterestedReason] = useState("");
+  const [userInterest, setUserInterest] = useState<{
+    interested: boolean;
+    ndaSigned: boolean;
+  }>({
+    interested: preloadedInterest?.interested ?? false,
+    ndaSigned: preloadedInterest?.ndaSigned ?? false,
+  });
+
+  const handleMarkInterest = useMarkRealEstateInterest(() =>
+    setUserInterest((prev) => ({ ...prev, interested: true }))
+  );
+  const handleMarkNoInterest = useMarkRealEstateNoInterest(() =>
+    setUserInterest((prev) => ({ ...prev, interested: false }))
+  );
+  const handleSignNDA = useSignRealEstateNDA(() =>
+    setUserInterest((prev) => ({ ...prev, ndaSigned: true }))
+  );
+
+  useEffect(() => {
+    setUserInterest((prev) => ({
+      ...prev,
+      interested: preloadedInterest?.interested ?? false,
+      ndaSigned: preloadedInterest?.ndaSigned ?? false,
+    }));
+  }, [preloadedInterest]);
 
   const getDisplayAsset = (value: string | null | undefined) => {
     if (!value) {
@@ -497,7 +546,63 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
         </section>
       )}
 
-      {hasPostNDAData() && (
+      <section className="flex flex-wrap gap-4">
+        <Button
+          disabled={
+            handleMarkInterest.isPending || userInterest?.interested === true
+          }
+          onClick={() => handleMarkInterest.mutate({ opportunityId })}
+          type="button"
+          variant={userInterest?.interested ? "default" : "secondary"}
+        >
+          {handleMarkInterest.isPending ? (
+            <Spinner className="mr-2" />
+          ) : userInterest?.interested ? (
+            <CheckCircle2 className="mr-2 h-4 w-4" />
+          ) : null}
+          {userInterest?.interested
+            ? t("buttons.markInterestedDone")
+            : t("buttons.markInterested")}
+        </Button>
+
+        <Button
+          disabled={
+            handleMarkNoInterest.isPending || userInterest?.interested === false
+          }
+          onClick={() => setShowNotInterestedDialog(true)}
+          type="button"
+          variant={
+            userInterest?.interested === false ? "destructive" : "secondary"
+          }
+        >
+          {handleMarkNoInterest.isPending ? (
+            <Spinner className="mr-2" />
+          ) : userInterest?.interested === false ? (
+            <CheckCircle2 className="mr-2 h-4 w-4" />
+          ) : null}
+          {userInterest?.interested === false
+            ? t("buttons.notInterestedDone")
+            : t("buttons.notInterested")}
+        </Button>
+
+        <Button
+          disabled={handleSignNDA.isPending || userInterest?.ndaSigned === true}
+          onClick={() => handleSignNDA.mutate({ opportunityId })}
+          type="button"
+          variant={userInterest?.ndaSigned ? "default" : "secondary"}
+        >
+          {handleSignNDA.isPending ? (
+            <Spinner className="mr-2" />
+          ) : userInterest?.ndaSigned ? (
+            <CheckCircle2 className="mr-2 h-4 w-4" />
+          ) : null}
+          {userInterest?.ndaSigned
+            ? t("buttons.signNDADone")
+            : t("buttons.signNDA")}
+        </Button>
+      </section>
+
+      {userInterest?.ndaSigned === true && (
         <section>
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader>
@@ -518,282 +623,276 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {opportunity.license != null &&
-                    opportunity.license !== "" && (
-                      <TableRow key="license">
-                        <TableCell className="px-6 py-4">
-                          {t("postNDACard.license.label")}
-                        </TableCell>
-                        <TableCell className="px-6 py-4">
-                          {opportunity.license || "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    )}
+                  <TableRow key="license">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.license.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.license || "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.licenseStage != null &&
-                    opportunity.licenseStage !== "" && (
-                      <TableRow key="licenseStage">
-                        <TableCell className="px-6 py-4">
-                          {t("postNDACard.licenseStage.label")}
-                        </TableCell>
-                        <TableCell className="px-6 py-4">
-                          {opportunity.licenseStage || "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    )}
+                  <TableRow key="licenseStage">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.licenseStage.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.licenseStage || "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.irr != null && (
-                    <TableRow key="irr">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.irr.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.irr + t("postNDACard.irr.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="irr">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.irr.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.irr != null
+                        ? opportunity.irr + t("postNDACard.irr.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.coc != null && (
-                    <TableRow key="coc">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.coc.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.coc + t("postNDACard.coc.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="coc">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.coc.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.coc != null
+                        ? opportunity.coc + t("postNDACard.coc.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.holdingPeriod != null && (
-                    <TableRow key="holdingPeriod">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.holdingPeriod.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.holdingPeriod +
-                          t("postNDACard.holdingPeriod.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="holdingPeriod">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.holdingPeriod.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.holdingPeriod != null
+                        ? opportunity.holdingPeriod +
+                          t("postNDACard.holdingPeriod.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.breakEvenOccupancy != null && (
-                    <TableRow key="breakEvenOccupancy">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.breakEvenOccupancy.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.breakEvenOccupancy +
-                          t("postNDACard.breakEvenOccupancy.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="breakEvenOccupancy">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.breakEvenOccupancy.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.breakEvenOccupancy != null
+                        ? opportunity.breakEvenOccupancy +
+                          t("postNDACard.breakEvenOccupancy.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.vacancyRate != null && (
-                    <TableRow key="vacancyRate">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.vacancyRate.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.vacancyRate +
-                          t("postNDACard.vacancyRate.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="vacancyRate">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.vacancyRate.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.vacancyRate != null
+                        ? opportunity.vacancyRate +
+                          t("postNDACard.vacancyRate.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.estimatedRentValue != null && (
-                    <TableRow key="estimatedRentValue">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.estimatedRentValue.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.estimatedRentValue.prefix") +
+                  <TableRow key="estimatedRentValue">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.estimatedRentValue.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.estimatedRentValue != null
+                        ? t("postNDACard.estimatedRentValue.prefix") +
                           opportunity.estimatedRentValue +
-                          t("postNDACard.estimatedRentValue.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("postNDACard.estimatedRentValue.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.occupancyRate != null && (
-                    <TableRow key="occupancyRate">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.occupancyRate.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.occupancyRate +
-                          t("postNDACard.occupancyRate.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="occupancyRate">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.occupancyRate.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.occupancyRate != null
+                        ? opportunity.occupancyRate +
+                          t("postNDACard.occupancyRate.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.moic != null && (
-                    <TableRow key="moic">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.moic.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.moic + t("postNDACard.moic.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="moic">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.moic.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.moic != null
+                        ? opportunity.moic + t("postNDACard.moic.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.price != null && (
-                    <TableRow key="price">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.price.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.price.prefix") +
+                  <TableRow key="price">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.price.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.price != null
+                        ? t("postNDACard.price.prefix") +
                           opportunity.price +
-                          t("postNDACard.price.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("postNDACard.price.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.totalInvestment != null && (
-                    <TableRow key="totalInvestment">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.totalInvestment.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.totalInvestment.prefix") +
+                  <TableRow key="totalInvestment">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.totalInvestment.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.totalInvestment != null
+                        ? t("postNDACard.totalInvestment.prefix") +
                           opportunity.totalInvestment +
-                          t("postNDACard.totalInvestment.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("postNDACard.totalInvestment.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.profitOnCost != null && (
-                    <TableRow key="profitOnCost">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.profitOnCost.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.profitOnCost +
-                          t("postNDACard.profitOnCost.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="profitOnCost">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.profitOnCost.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.profitOnCost != null
+                        ? opportunity.profitOnCost +
+                          t("postNDACard.profitOnCost.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.profit != null && (
-                    <TableRow key="profit">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.profit.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.profit.prefix") +
+                  <TableRow key="profit">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.profit.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.profit != null
+                        ? t("postNDACard.profit.prefix") +
                           opportunity.profit +
-                          t("postNDACard.profit.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("postNDACard.profit.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.sofCosts != null && (
-                    <TableRow key="sofCosts">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.sofCosts.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.sofCosts.prefix") +
+                  <TableRow key="sofCosts">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.sofCosts.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.sofCosts != null
+                        ? t("postNDACard.sofCosts.prefix") +
                           opportunity.sofCosts +
-                          t("postNDACard.sofCosts.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("postNDACard.sofCosts.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.sellPerSqm != null && (
-                    <TableRow key="sellPerSqm">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.sellPerSqm.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.sellPerSqm.prefix") +
+                  <TableRow key="sellPerSqm">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.sellPerSqm.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.sellPerSqm != null
+                        ? t("postNDACard.sellPerSqm.prefix") +
                           opportunity.sellPerSqm +
-                          t("postNDACard.sellPerSqm.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("postNDACard.sellPerSqm.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.gdv != null && (
-                    <TableRow key="gdv">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.gdv.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.gdv.prefix") +
+                  <TableRow key="gdv">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.gdv.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.gdv != null
+                        ? t("postNDACard.gdv.prefix") +
                           opportunity.gdv +
-                          t("postNDACard.gdv.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("postNDACard.gdv.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.wault != null && (
-                    <TableRow key="wault">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.wault.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.wault + t("postNDACard.wault.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="wault">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.wault.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.wault != null
+                        ? opportunity.wault + t("postNDACard.wault.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.debtServiceCoverageRatio != null && (
-                    <TableRow key="debtServiceCoverageRatio">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.debtServiceCoverageRatio.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.debtServiceCoverageRatio +
-                          t("postNDACard.debtServiceCoverageRatio.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="debtServiceCoverageRatio">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.debtServiceCoverageRatio.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.debtServiceCoverageRatio != null
+                        ? opportunity.debtServiceCoverageRatio +
+                          t("postNDACard.debtServiceCoverageRatio.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.expectedExitYield != null && (
-                    <TableRow key="expectedExitYield">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.expectedExitYield.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.expectedExitYield +
-                          t("postNDACard.expectedExitYield.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="expectedExitYield">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.expectedExitYield.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.expectedExitYield != null
+                        ? opportunity.expectedExitYield +
+                          t("postNDACard.expectedExitYield.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.ltv != null && (
-                    <TableRow key="ltv">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.ltv.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.ltv + t("postNDACard.ltv.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="ltv">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.ltv.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.ltv != null
+                        ? opportunity.ltv + t("postNDACard.ltv.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.ltc != null && (
-                    <TableRow key="ltc">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.ltc.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.ltc + t("postNDACard.ltc.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="ltc">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.ltc.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.ltc != null
+                        ? opportunity.ltc + t("postNDACard.ltc.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.yieldOnCost != null && (
-                    <TableRow key="yieldOnCost">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.yieldOnCost.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.yieldOnCost +
-                          t("postNDACard.yieldOnCost.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="yieldOnCost">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.yieldOnCost.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.yieldOnCost != null
+                        ? opportunity.yieldOnCost +
+                          t("postNDACard.yieldOnCost.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </CardContent>
@@ -801,7 +900,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
         </section>
       )}
 
-      {hasLimitedPartnerData() && (
+      {userInterest?.ndaSigned === true && (
         <section>
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader>
@@ -822,125 +921,163 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {opportunity.gpEquityValue != null && (
-                    <TableRow key="gpEquityValue">
-                      <TableCell className="px-6 py-4">
-                        {t("limitedPartnerCard.gpEquityValue.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("limitedPartnerCard.gpEquityValue.prefix") +
+                  <TableRow key="gpEquityValue">
+                    <TableCell className="px-6 py-4">
+                      {t("limitedPartnerCard.gpEquityValue.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.gpEquityValue != null
+                        ? t("limitedPartnerCard.gpEquityValue.prefix") +
                           opportunity.gpEquityValue +
-                          t("limitedPartnerCard.gpEquityValue.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("limitedPartnerCard.gpEquityValue.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.gpEquityPercentage != null && (
-                    <TableRow key="gpEquityPercentage">
-                      <TableCell className="px-6 py-4">
-                        {t("limitedPartnerCard.gpEquityPercentage.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.gpEquityPercentage +
-                          t("limitedPartnerCard.gpEquityPercentage.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="gpEquityPercentage">
+                    <TableCell className="px-6 py-4">
+                      {t("limitedPartnerCard.gpEquityPercentage.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.gpEquityPercentage != null
+                        ? opportunity.gpEquityPercentage +
+                          t("limitedPartnerCard.gpEquityPercentage.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.totalEquityRequired != null && (
-                    <TableRow key="totalEquityRequired">
-                      <TableCell className="px-6 py-4">
-                        {t("limitedPartnerCard.totalEquityRequired.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("limitedPartnerCard.totalEquityRequired.prefix") +
+                  <TableRow key="totalEquityRequired">
+                    <TableCell className="px-6 py-4">
+                      {t("limitedPartnerCard.totalEquityRequired.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.totalEquityRequired != null
+                        ? t("limitedPartnerCard.totalEquityRequired.prefix") +
                           opportunity.totalEquityRequired +
-                          t("limitedPartnerCard.totalEquityRequired.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("limitedPartnerCard.totalEquityRequired.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.projectIRR != null && (
-                    <TableRow key="projectIRR">
-                      <TableCell className="px-6 py-4">
-                        {t("limitedPartnerCard.projectIRR.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.projectIRR +
-                          t("limitedPartnerCard.projectIRR.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="projectIRR">
+                    <TableCell className="px-6 py-4">
+                      {t("limitedPartnerCard.projectIRR.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.projectIRR != null
+                        ? opportunity.projectIRR +
+                          t("limitedPartnerCard.projectIRR.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.investorIRR != null && (
-                    <TableRow key="investorIRR">
-                      <TableCell className="px-6 py-4">
-                        {t("limitedPartnerCard.investorIRR.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.investorIRR +
-                          t("limitedPartnerCard.investorIRR.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="investorIRR">
+                    <TableCell className="px-6 py-4">
+                      {t("limitedPartnerCard.investorIRR.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.investorIRR != null
+                        ? opportunity.investorIRR +
+                          t("limitedPartnerCard.investorIRR.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.coInvestmentHoldPeriod != null && (
-                    <TableRow key="coInvestmentHoldPeriod">
-                      <TableCell className="px-6 py-4">
-                        {t("limitedPartnerCard.coInvestmentHoldPeriod.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.coInvestmentHoldPeriod +
-                          t("limitedPartnerCard.coInvestmentHoldPeriod.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  <TableRow key="coInvestmentHoldPeriod">
+                    <TableCell className="px-6 py-4">
+                      {t("limitedPartnerCard.coInvestmentHoldPeriod.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.coInvestmentHoldPeriod != null
+                        ? opportunity.coInvestmentHoldPeriod +
+                          t("limitedPartnerCard.coInvestmentHoldPeriod.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.coInvestmentBreakEvenOccupancy != null && (
-                    <TableRow key="coInvestmentBreakEvenOccupancy">
-                      <TableCell className="px-6 py-4">
-                        {t(
-                          "limitedPartnerCard.coInvestmentBreakEvenOccupancy.label"
-                        )}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.coInvestmentBreakEvenOccupancy +
+                  <TableRow key="coInvestmentBreakEvenOccupancy">
+                    <TableCell className="px-6 py-4">
+                      {t(
+                        "limitedPartnerCard.coInvestmentBreakEvenOccupancy.label"
+                      )}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.coInvestmentBreakEvenOccupancy != null
+                        ? opportunity.coInvestmentBreakEvenOccupancy +
                           t(
                             "limitedPartnerCard.coInvestmentBreakEvenOccupancy.units"
-                          )}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          )
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.sponsorPresentation != null &&
-                    opportunity.sponsorPresentation !== "" && (
-                      <TableRow key="sponsorPresentation">
-                        <TableCell className="px-6 py-4">
-                          {t("limitedPartnerCard.sponsorPresentation.label")}
-                        </TableCell>
-                        <TableCell className="px-6 py-4">
-                          {opportunity.sponsorPresentation || "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    )}
+                  <TableRow key="sponsorPresentation">
+                    <TableCell className="px-6 py-4">
+                      {t("limitedPartnerCard.sponsorPresentation.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.sponsorPresentation || "-"}
+                    </TableCell>
+                  </TableRow>
 
-                  {opportunity.promoteStructure != null &&
-                    opportunity.promoteStructure !== "" && (
-                      <TableRow key="promoteStructure">
-                        <TableCell className="px-6 py-4">
-                          {t("limitedPartnerCard.promoteStructure.label")}
-                        </TableCell>
-                        <TableCell className="px-6 py-4">
-                          {opportunity.promoteStructure || "N/A"}
-                        </TableCell>
-                      </TableRow>
-                    )}
+                  <TableRow key="promoteStructure">
+                    <TableCell className="px-6 py-4">
+                      {t("limitedPartnerCard.promoteStructure.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.promoteStructure || "-"}
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </CardContent>
           </Card>
         </section>
       )}
+
+      <AlertDialog
+        open={showNotInterestedDialog}
+        onOpenChange={setShowNotInterestedDialog}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t("notInterestedDialog.title")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("notInterestedDialog.description")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Textarea
+            className="mt-4"
+            onChange={(e) => setNotInterestedReason(e.target.value)}
+            placeholder={t("notInterestedDialog.placeholder")}
+            rows={4}
+            value={notInterestedReason}
+          />
+          <div className="flex justify-end gap-3 mt-4">
+            <AlertDialogCancel disabled={handleMarkNoInterest.isPending}>
+              {t("notInterestedDialog.cancel")}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={handleMarkNoInterest.isPending}
+              onClick={() => {
+                handleMarkNoInterest.mutate({
+                  opportunityId,
+                  reason: notInterestedReason,
+                });
+                setShowNotInterestedDialog(false);
+                setNotInterestedReason("");
+              }}
+            >
+              {handleMarkNoInterest.isPending ? (
+                <Spinner className="mr-2" />
+              ) : null}
+              {t("notInterestedDialog.confirm")}
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 };

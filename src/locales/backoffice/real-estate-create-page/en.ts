@@ -54,6 +54,8 @@ export default {
       label: "Location",
       placeholder: "Enter the property location",
       description: "Specify the geographic location of the property",
+      checkLocationButton: "Check location",
+      hideMapButton: "Hide map",
     },
     area: {
       label: "Area (sqm)",

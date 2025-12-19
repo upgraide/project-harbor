@@ -408,4 +408,20 @@ export default {
       label: "Account Managers",
     },
   },
+  buttons: {
+    markInterested: "Mark as Interested",
+    markInterestedDone: "Interested",
+    notInterested: "Not Interested",
+    notInterestedDone: "Not Interested",
+    signNDA: "Sign NDA",
+    signNDADone: "NDA Signed",
+    submit: "Submit",
+    cancel: "Cancel",
+  },
+  notInterestedDialog: {
+    title: "Why are you not interested?",
+    description:
+      "Please tell us why you're not interested in this opportunity. This helps us improve our offerings.",
+    placeholder: "Enter your reason...",
+  },
 } as const;

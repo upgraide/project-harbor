@@ -54,6 +54,8 @@ export default {
       label: "Localização",
       placeholder: "Digite a localização do imóvel",
       description: "Especifique a localização geográfica do imóvel",
+      checkLocationButton: "Verificar localização",
+      hideMapButton: "Ocultar mapa",
     },
     area: {
       label: "Área (m²)",
