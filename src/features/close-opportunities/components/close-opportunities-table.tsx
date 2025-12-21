@@ -70,6 +70,8 @@ const UpdateStatusDialog = ({
   const [closingDate, setClosingDate] = useState("");
   const [investedPersonId, setInvestedPersonId] = useState("");
   const [followupPersonId, setFollowupPersonId] = useState("");
+  const [profitAmount, setProfitAmount] = useState("");
+  const [commissionableAmount, setCommissionableAmount] = useState("");
 
   const updateMnaStatus = useUpdateMergerAndAcquisitionStatus();
   const updateMnaValues = useUpdateMergerAndAcquisitionFinalValues();
@@ -95,6 +97,8 @@ const UpdateStatusDialog = ({
             closed_at: closingDate ? new Date(closingDate) : undefined,
             invested_person_id: investedPersonId || null,
             followup_person_id: followupPersonId || null,
+            profit_amount: profitAmount ? Number.parseFloat(profitAmount) : undefined,
+            commissionable_amount: commissionableAmount ? Number.parseFloat(commissionableAmount) : undefined,
           });
         }
       } else {
@@ -111,6 +115,8 @@ const UpdateStatusDialog = ({
             closed_at: closingDate ? new Date(closingDate) : undefined,
             invested_person_id: investedPersonId || null,
             followup_person_id: followupPersonId || null,
+            profit_amount: profitAmount ? Number.parseFloat(profitAmount) : undefined,
+            commissionable_amount: commissionableAmount ? Number.parseFloat(commissionableAmount) : undefined,
           });
         }
       }
@@ -121,6 +127,8 @@ const UpdateStatusDialog = ({
       setClosingDate("");
       setInvestedPersonId("");
       setFollowupPersonId("");
+      setProfitAmount("");
+      setCommissionableAmount("");
       onOpenChange(false);
     } catch (error) {
       console.error("Error updating opportunity:", error);
@@ -199,6 +207,28 @@ const UpdateStatusDialog = ({
                   placeholder={t("placeholders.followupPerson")}
                 />
                 <p className="text-xs text-muted-foreground">{t("helper.followupPerson")}</p>
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="profitAmount">{t("labels.profitAmount")}</Label>
+                <Input
+                  id="profitAmount"
+                  type="number"
+                  placeholder={t("placeholders.profitAmount")}
+                  value={profitAmount}
+                  onChange={(e) => setProfitAmount(e.target.value)}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="commissionableAmount">{t("labels.commissionableAmount")}</Label>
+                <Input
+                  id="commissionableAmount"
+                  type="number"
+                  placeholder={t("placeholders.commissionableAmount")}
+                  value={commissionableAmount}
+                  onChange={(e) => setCommissionableAmount(e.target.value)}
+                />
               </div>
             </>
           )}

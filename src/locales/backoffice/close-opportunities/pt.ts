@@ -32,12 +32,16 @@ export default {
       closingDate: "Data de Fecho",
       investedPerson: "Pessoa Investidora",
       followupPerson: "Pessoa de Acompanhamento",
+      profitAmount: "Lucro",
+      commissionableAmount: "Valor Comissionável",
     },
     placeholders: {
       selectStatus: "Selecione o novo estado",
       finalAmount: "Insira o valor final",
       investedPerson: "Selecione a pessoa que investiu/comprou",
       followupPerson: "Selecione a pessoa para acompanhamento",
+      profitAmount: "Insira o valor do lucro",
+      commissionableAmount: "Insira o valor comissionável",
     },
     helper: {
       values: "Atualize o valor final ao fechar a oportunidade",

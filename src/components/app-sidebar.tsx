@@ -26,6 +26,7 @@ import {
   backofficeRealEstatePath,
   backofficeUsersPath,
   crmPath,
+  dashboardPath,
   indexPath,
 } from "@/paths";
 import { DynamicImage } from "./dynamic-image";
@@ -108,7 +109,7 @@ export const AppSidebar = () => {
             asChild
             className="flex h-10 items-center justify-center gap-x-4 px-4"
           >
-            <Link href={backofficePath()} prefetch>
+            <Link href={dashboardPath()} prefetch>
               <DynamicImage
                 alt="Harbor"
                 darkSrc={

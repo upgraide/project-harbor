@@ -894,6 +894,8 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         closed_at: z.date().optional(),
         invested_person_id: z.string().nullable().optional(),
         followup_person_id: z.string().nullable().optional(),
+        profit_amount: z.number().optional(),
+        commissionable_amount: z.number().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -902,12 +904,16 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         closed_at?: Date;
         invested_person_id?: string | null;
         followup_person_id?: string | null;
+        profit_amount?: number;
+        commissionable_amount?: number;
       } = {};
       
       if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
       if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
       if (input.invested_person_id !== undefined) updateData.invested_person_id = input.invested_person_id;
       if (input.followup_person_id !== undefined) updateData.followup_person_id = input.followup_person_id;
+      if (input.profit_amount !== undefined) updateData.profit_amount = input.profit_amount;
+      if (input.commissionable_amount !== undefined) updateData.commissionable_amount = input.commissionable_amount;
 
       return await prisma.opportunityAnalytics.update({
         where: { mergerAndAcquisitionId: input.id },
@@ -2473,6 +2479,8 @@ export const realEstateRouter = createTRPCRouter({
         closed_at: z.date().optional(),
         invested_person_id: z.string().nullable().optional(),
         followup_person_id: z.string().nullable().optional(),
+        profit_amount: z.number().optional(),
+        commissionable_amount: z.number().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -2481,12 +2489,16 @@ export const realEstateRouter = createTRPCRouter({
         closed_at?: Date;
         invested_person_id?: string | null;
         followup_person_id?: string | null;
+        profit_amount?: number;
+        commissionable_amount?: number;
       } = {};
       
       if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
       if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
       if (input.invested_person_id !== undefined) updateData.invested_person_id = input.invested_person_id;
       if (input.followup_person_id !== undefined) updateData.followup_person_id = input.followup_person_id;
+      if (input.profit_amount !== undefined) updateData.profit_amount = input.profit_amount;
+      if (input.commissionable_amount !== undefined) updateData.commissionable_amount = input.commissionable_amount;
 
       return await prisma.opportunityAnalytics.update({
         where: { realEstateId: input.id },

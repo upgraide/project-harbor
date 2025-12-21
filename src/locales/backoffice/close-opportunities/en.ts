@@ -32,12 +32,16 @@ export default {
       closingDate: "Closing Date",
       investedPerson: "Invested Person",
       followupPerson: "Follow-up Person",
+      profitAmount: "Profit",
+      commissionableAmount: "Commissionable Amount",
     },
     placeholders: {
       selectStatus: "Select new status",
       finalAmount: "Enter final amount",
       investedPerson: "Select person who invested/bought",
       followupPerson: "Select person for follow-up",
+      profitAmount: "Enter profit amount",
+      commissionableAmount: "Enter commissionable amount",
     },
     helper: {
       values: "Update final amount when closing the opportunity",

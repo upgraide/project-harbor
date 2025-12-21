@@ -440,8 +440,10 @@ model OpportunityAnalytics {
   views Int @default(0)
 
   // Final Deal Values (when CONCLUDED)
-  closed_at    DateTime?
-  final_amount Float?
+  closed_at              DateTime?
+  final_amount           Float?
+  profit_amount          Float?
+  commissionable_amount  Float?
   
   // Optional persons involved in deal closing
   invested_person_id String?
