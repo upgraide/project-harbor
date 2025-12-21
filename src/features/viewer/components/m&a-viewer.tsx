@@ -131,14 +131,16 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
     opportunity.netDebt != null;
 
   const showCAGRs = () =>
-    opportunity.salesCAGR != null || opportunity.ebitdaCAGR != null;
+    opportunity.graphRows != null && 
+    opportunity.graphRows.length >= 3 &&
+    (opportunity.salesCAGR != null || opportunity.ebitdaCAGR != null);
 
   const showAsset = () =>
     opportunity.assetIncluded != null ||
     opportunity.estimatedAssetValue != null;
 
   const hasGraphData = () =>
-    opportunity.graphRows != null && opportunity.graphRows.length > 0;
+    opportunity.graphRows != null && opportunity.graphRows.length >= 3;
 
   const hasCoInvestmentData = () => {
     if (!opportunity.coInvestment) {

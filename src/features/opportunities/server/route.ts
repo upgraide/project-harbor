@@ -14,6 +14,7 @@ import {
   TypeDetails,
 } from "@/generated/prisma";
 import { inngest } from "@/inngest/client";
+import { calculateCAGR } from "@/lib/cagr-calculator";
 import prisma from "@/lib/db";
 import { deleteFromUploadthing } from "@/lib/uploadthing-server";
 import {
@@ -122,6 +123,10 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         }
       }
 
+      // Calculate CAGR values from graph rows if provided
+      const graphRows = input.graphRows || [];
+      const { salesCAGR, ebitdaCAGR } = calculateCAGR(graphRows as any);
+
       // Convert string numbers to floats where needed
       const data = {
         userId: ctx.auth.user.id,
@@ -135,8 +140,8 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         ebitda: input.ebitda,
         ebitdaNormalized: parseOptionalFloat(input.ebitdaNormalized),
         netDebt: parseOptionalFloat(input.netDebt),
-        salesCAGR: parseOptionalFloat(input.salesCAGR),
-        ebitdaCAGR: parseOptionalFloat(input.ebitdaCAGR),
+        salesCAGR: salesCAGR,
+        ebitdaCAGR: ebitdaCAGR,
         assetIncluded: input.assetIncluded === "yes",
         estimatedAssetValue: parseOptionalFloat(input.estimatedAssetValue),
         preNDANotes: input.preNDANotes,
@@ -163,7 +168,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         holdPeriod: parseOptionalFloat(input.holdPeriod),
         clientAcquisitionerId: input.clientAcquisitionerId || null,
         images: input.images || [],
-        graphRows: input.graphRows || [],
+        graphRows: graphRows,
       };
 
       // Create the opportunity with analytics
@@ -469,12 +474,19 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         ),
       })
     )
-    .mutation(({ input }) =>
-      prisma.mergerAndAcquisition.update({
+    .mutation(({ input }) => {
+      // Calculate CAGR values from graph rows
+      const { salesCAGR, ebitdaCAGR } = calculateCAGR(input.graphRows as any);
+      
+      return prisma.mergerAndAcquisition.update({
         where: { id: input.id },
-        data: { graphRows: input.graphRows },
-      })
-    ),
+        data: { 
+          graphRows: input.graphRows,
+          salesCAGR: salesCAGR,
+          ebitdaCAGR: ebitdaCAGR,
+        },
+      });
+    }),
   updateImages: adminProcedure
     .input(
       z.object({
