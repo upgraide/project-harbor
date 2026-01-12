@@ -1,5 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
+import { useAnalyticsFilters } from "@/features/opportunities/context/analytics-filters";
+
+/**
+ * Hook to get available years from actual data
+ */
+export const useAvailableYears = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getAvailableYears.queryOptions());
+};
 
 /**
  * Hook to get analytics for a Merger & Acquisition opportunity
@@ -100,11 +109,33 @@ export const useBackofficeKPIs = () => {
 };
 
 /**
+ * Hook to get backoffice KPIs with quarter-over-quarter trends
+ */
+export const useBackofficeKPIsWithTrends = () => {
+  const trpc = useTRPC();
+  const { filters } = useAnalyticsFilters();
+  return useQuery(
+    trpc.analytics.getBackofficeKPIsWithTrends.queryOptions({
+      year: filters.year,
+      period: filters.period,
+      opportunityType: filters.opportunityType,
+    })
+  );
+};
+
+/**
  * Hook to get assets transacted growth by month (last 12 months)
  */
 export const useAssetsTransactedByMonth = () => {
   const trpc = useTRPC();
-  return useQuery(trpc.analytics.getAssetsTransactedByMonth.queryOptions());
+  const { filters } = useAnalyticsFilters();
+  return useQuery(
+    trpc.analytics.getAssetsTransactedByMonth.queryOptions({
+      year: filters.year,
+      period: filters.period,
+      opportunityType: filters.opportunityType,
+    })
+  );
 };
 
 /**
@@ -112,7 +143,14 @@ export const useAssetsTransactedByMonth = () => {
  */
 export const useAumByMonth = () => {
   const trpc = useTRPC();
-  return useQuery(trpc.analytics.getAumByMonth.queryOptions());
+  const { filters } = useAnalyticsFilters();
+  return useQuery(
+    trpc.analytics.getAumByMonth.queryOptions({
+      year: filters.year,
+      period: filters.period,
+      opportunityType: filters.opportunityType,
+    })
+  );
 };
 
 /**
@@ -120,7 +158,14 @@ export const useAumByMonth = () => {
  */
 export const usePipelineFunnel = () => {
   const trpc = useTRPC();
-  return useQuery(trpc.analytics.getPipelineFunnel.queryOptions());
+  const { filters } = useAnalyticsFilters();
+  return useQuery(
+    trpc.analytics.getPipelineFunnel.queryOptions({
+      year: filters.year,
+      period: filters.period,
+      opportunityType: filters.opportunityType,
+    })
+  );
 };
 
 /**
@@ -128,7 +173,14 @@ export const usePipelineFunnel = () => {
  */
 export const useClientSegmentation = () => {
   const trpc = useTRPC();
-  return useQuery(trpc.analytics.getClientSegmentation.queryOptions());
+  const { filters } = useAnalyticsFilters();
+  return useQuery(
+    trpc.analytics.getClientSegmentation.queryOptions({
+      year: filters.year,
+      period: filters.period,
+      opportunityType: filters.opportunityType,
+    })
+  );
 };
 
 /**
@@ -136,5 +188,45 @@ export const useClientSegmentation = () => {
  */
 export const useSectorBreakdown = () => {
   const trpc = useTRPC();
-  return useQuery(trpc.analytics.getSectorBreakdown.queryOptions());
+  const { filters } = useAnalyticsFilters();
+  return useQuery(
+    trpc.analytics.getSectorBreakdown.queryOptions({
+      year: filters.year,
+      period: filters.period,
+      opportunityType: filters.opportunityType,
+    })
+  );
 };
+
+/**
+ * Hook to get pipeline value (deals in progress)
+ */
+export const usePipelineValue = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getPipelineValue.queryOptions());
+};
+
+/**
+ * Hook to get average deal size
+ */
+export const useAverageDealSize = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getAverageDealSize.queryOptions());
+};
+
+/**
+ * Hook to get client activity (no contact for >30 days)
+ */
+export const useClientActivity = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getClientActivity.queryOptions());
+};
+
+/**
+ * Hook to get advisor performance metrics
+ */
+export const useAdvisorPerformance = () => {
+  const trpc = useTRPC();
+  return useQuery(trpc.analytics.getAdvisorPerformance.queryOptions());
+};
+

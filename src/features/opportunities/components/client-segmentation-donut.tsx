@@ -11,11 +11,11 @@ import { useClientSegmentation } from "@/features/opportunities/hooks/use-analyt
 import { useScopedI18n } from "@/locales/client";
 
 const COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
+  "#3b82f6", // blue
+  "#10b981", // green
+  "#f59e0b", // amber
+  "#ef4444", // red
+  "#8b5cf6", // violet
 ];
 
 const formatNumber = (value: number): string => value.toLocaleString("en-US");

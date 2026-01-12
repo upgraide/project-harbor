@@ -1,7 +1,7 @@
 "use client";
 
 import { BriefcaseIcon, BuildingIcon } from "lucide-react";
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
 import {
   EntityContainer,
   ErrorView,
@@ -19,6 +19,14 @@ import { useScopedI18n } from "@/locales/client";
 const EMPTY_ARRAY_LENGTH = 0;
 const TOP_OPPORTUNITIES_LIMIT = 5;
 const DEFAULT_SUM = 0;
+
+const COLORS = [
+  "#3b82f6", // blue
+  "#10b981", // green
+  "#f59e0b", // amber
+  "#ef4444", // red
+  "#8b5cf6", // violet
+];
 
 type OpportunityWithViews = {
   views: number;
@@ -83,6 +91,9 @@ export { AumLineChart } from "./aum-line";
 export { ClientSegmentationDonutChart } from "./client-segmentation-donut";
 export { PipelineFunnelChart } from "./pipeline-funnel";
 export { SectorBreakdownBarChart } from "./sector-breakdown-bar";
+export { ClientActivityCard } from "./client-activity";
+export { AdvisorPerformanceChart } from "./advisor-performance";
+export { AnalyticsFilters } from "./analytics-filters";
 
 export const AnalyticsList = () => {
   const t = useScopedI18n("backoffice.analytics");
@@ -112,17 +123,18 @@ export const AnalyticsList = () => {
 
   const validOpportunities = topViewed.filter(hasOpportunity);
 
-  const chartData = validOpportunities.map((item) => ({
+  const chartData = validOpportunities.map((item, index) => ({
     name: item.opportunity.name,
     views: item.views,
     type: item.type,
     icon: item.type === "mna" ? BriefcaseIcon : BuildingIcon,
+    fill: COLORS[index % COLORS.length],
   }));
 
   const chartConfig = {
     views: {
       label: t("chart.views"),
-      color: "hsl(var(--chart-1))",
+      color: "#3b82f6",
     },
   };
 
@@ -164,13 +176,20 @@ export const AnalyticsList = () => {
             />
             <Bar
               dataKey="views"
-              fill="var(--color-views)"
               layout="vertical"
               radius={4}
-            />
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>
     </Card>
   );
 };
+
+// Export new analytics components not in the original barrel export
+export { ClientInsightsFilters } from "./client-insights-filters";
+export { ClientInsights } from "./client-insights";
