@@ -665,27 +665,6 @@ export const investorsRouter = createTRPCRouter({
       return user;
     }),
 
-  getNotes: protectedProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
-      const notes = await prisma.userNote.findMany({
-        where: { userId: input.userId },
-        include: {
-          createdByUser: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-      return notes;
-    }),
-
   addNote: protectedProcedure
     .input(
       z.object({
