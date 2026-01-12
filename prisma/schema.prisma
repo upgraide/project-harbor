@@ -327,6 +327,7 @@ model MergerAndAcquisition {
 
   userId    String // Who created the Merger and Acquisition
   status    OpportunityStatus @default(ACTIVE)
+  hidden    Boolean           @default(false)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -412,6 +413,7 @@ model RealEstate {
 
   createdBy String
   status    OpportunityStatus @default(ACTIVE)
+  hidden    Boolean           @default(false)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 

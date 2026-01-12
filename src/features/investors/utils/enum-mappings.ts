@@ -4,6 +4,9 @@ import type {
   InvestorSegment,
   InvestorStrategy,
   TeamMember,
+  LeadStatus,
+  LeadPriority,
+  LeadSource,
 } from "@/generated/prisma";
 
 export const investorClientTypeLabels: Record<InvestorClientType, string> = {
@@ -108,6 +111,39 @@ export const departmentLabels: Record<Department, string> = {
   MNA: "M&A",
   CRE: "CRE",
   MNA_AND_CRE: "M&A + CRE",
+};
+
+export const leadStatusLabels: Record<LeadStatus, string> = {
+  NEW: "New",
+  CONTACTED: "Contacted",
+  QUALIFIED: "Qualified",
+  MEETING_SCHEDULED: "Meeting Scheduled",
+  PROPOSAL_SENT: "Proposal Sent",
+  NEGOTIATION: "Negotiation",
+  CONVERTED: "Converted",
+  LOST: "Lost",
+  ON_HOLD: "On Hold",
+  NURTURE: "Nurture",
+};
+
+export const leadPriorityLabels: Record<LeadPriority, string> = {
+  LOW: "Low",
+  MEDIUM: "Medium",
+  HIGH: "High",
+  URGENT: "Urgent",
+};
+
+export const leadSourceLabels: Record<LeadSource, string> = {
+  WEBSITE: "Website",
+  REFERRAL: "Referral",
+  COLD_OUTREACH: "Cold Outreach",
+  NETWORKING_EVENT: "Networking Event",
+  LINKEDIN: "LinkedIn",
+  EMAIL_CAMPAIGN: "Email Campaign",
+  PARTNER: "Partner",
+  EXISTING_CLIENT: "Existing Client",
+  ACCESS_REQUEST: "Access Request",
+  OTHER: "Other",
 };
 
 export const investorClientTypeOptions = Object.entries(

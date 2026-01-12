@@ -12,6 +12,7 @@ import {
   Line,
   XAxis,
   YAxis,
+  Cell,
 } from "recharts";
 import { toast } from "sonner";
 import { ErrorView, LoadingView } from "@/components/entity-components";
@@ -152,6 +153,13 @@ const chartConfig = (t: (key: string) => string) =>
         dark: "#BECED7",
       },
     },
+    revenueFuture: {
+      label: t("graphCard.table.header.revenue"),
+      theme: {
+        light: "#87CEEB",
+        dark: "#87CEEB",
+      },
+    },
     ebitda: {
       label: t("graphCard.table.header.ebitda"),
       color: "#4F565A",
@@ -161,6 +169,21 @@ const chartConfig = (t: (key: string) => string) =>
       color: "#9C3E11",
     },
   }) satisfies ChartConfig;
+
+// Helper to determine if a year is future (projected)
+const getYearType = (year: string, currentYear: number = new Date().getFullYear()) => {
+  const yearNum = Number.parseInt(year);
+  return yearNum >= currentYear ? 'future' : 'historical';
+};
+
+// Helper to get CAGR label with dynamic years
+const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[], t: (key: string) => string) => {
+  if (!graphRows || graphRows.length < 3) return null;
+  const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
+  const firstYear = sortedRows[0].year.slice(0, 4);
+  const lastYear = sortedRows[sortedRows.length - 1].year.slice(0, 4);
+  return `CAGR Sales ${firstYear}\u2013${lastYear}`;
+};
 
 export const EditorLoading = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
@@ -1049,10 +1072,12 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.ebitdaNormalized != null
-                      ? opportunity.ebitdaNormalized +
-                        t(
-                          "financialInformationCard.table.body.ebitdaNormalized.units"
-                        )
+                      ? new Intl.NumberFormat('pt-PT', { 
+                          style: 'currency', 
+                          currency: 'EUR',
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0
+                        }).format(opportunity.ebitdaNormalized)
                       : "N/A"}
                   </TableCell>
                   <TableCell className="text-right">
@@ -1176,6 +1201,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
+                {/* CAGR rows hidden - now auto-calculated from graph data
                 <TableRow key={"CAGRs"}>
                   <TableCell className="bg-muted px-6 py-4 font-medium">
                     {t("financialInformationCard.table.body.CAGRs.label")}
@@ -1315,6 +1341,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
+                */}
                 <TableRow key={"asset"}>
                   <TableCell className="bg-muted px-6 py-4 font-medium">
                     {t("financialInformationCard.table.body.asset.label")}
@@ -1498,6 +1525,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   left: 50,
                   right: 50,
                   top: 20,
+                  bottom: 40,
                 }}
               >
                 <CartesianGrid horizontal={false} vertical={false} />
@@ -1535,17 +1563,30 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                 />
                 <Bar
                   dataKey="revenue"
-                  fill="var(--color-revenue)"
+                  fill="#1E3A8A"
                   label={{
                     position: "top",
                     fontSize: 12,
                     fontWeight: 600,
-                    fill: "hsl(var(--foreground))",
+                    fill: ((entry: any) => {
+                      const yearType = getYearType(String((entry as any)?.year || ''));
+                      return yearType === 'future' ? '#A89F91' : '#1E3A8A';
+                    }) as any,
                     formatter: (value: number) => value.toFixed(2),
                   }}
                   radius={[4, 4, 0, 0]}
                   yAxisId="left"
-                />
+                >
+                  {opportunity.graphRows?.map((entry, index) => {
+                    const yearType = getYearType(String((entry as any)?.year || ''));
+                    return (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={yearType === 'future' ? '#A89F91' : '#1E3A8A'}
+                      />
+                    );
+                  })}
+                </Bar>
                 <Line
                   dataKey="ebitda"
                   dot={false}
@@ -1554,7 +1595,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     fontSize: 12,
                     formatter: (value: number) => value.toFixed(2),
                   }}
-                  stroke="#4F565A"
+                  stroke="#9CA3AF"
                   strokeWidth={2}
                   type="monotone"
                   yAxisId="right"
@@ -1577,6 +1618,11 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                 <ChartLegend content={<ChartLegendContent />} />
               </ComposedChart>
             </ChartContainer>
+            {opportunity.graphRows && opportunity.graphRows.length >= 3 && (
+              <div className="mt-2 text-right text-muted-foreground text-xs">
+                {getCAGRLabel(opportunity.graphRows as any, t)}
+              </div>
+            )}
           </CardContent>
         </Card>
 

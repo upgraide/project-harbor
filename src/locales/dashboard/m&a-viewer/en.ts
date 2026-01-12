@@ -89,9 +89,9 @@ export default {
         },
         ebitdaNormalized: {
           label: "EBITDA (Normalized)",
-          placeholder: "Enter the EBITDA (Normalized) value (example: 1.5)",
-          description: "Enter the EBITDA (Normalized) value of the opportunity",
-          units: "x",
+          placeholder: "Enter the EBITDA (Normalized) value in euros (example: 150000)",
+          description: "Enter the absolute EBITDA (Normalized) value of the opportunity",
+          units: "€",
         },
         dimension: {
           label: "Dimension",

@@ -92,9 +92,9 @@ export default {
         },
         ebitdaNormalized: {
           label: "EBITDA (Ajustado)",
-          placeholder: "Insira o valor de EBITDA (Ajustado)",
-          description: "Insira o valor de EBITDA (Ajustado) da oportunidade",
-          units: "x",
+          placeholder: "Insira o valor de EBITDA (Ajustado) em euros (exemplo: 150000)",
+          description: "Insira o valor absoluto de EBITDA (Ajustado) da oportunidade",
+          units: "€",
         },
         netDebt: {
           label: "Net Debt",

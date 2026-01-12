@@ -13,6 +13,7 @@ import {
   Line,
   XAxis,
   YAxis,
+  Cell,
 } from "recharts";
 import { toast } from "sonner";
 import z from "zod";
@@ -91,6 +92,13 @@ const chartConfig = (t: (key: string) => string) =>
         dark: "#BECED7",
       },
     },
+    revenueFuture: {
+      label: t("graphCard.table.header.revenue"),
+      theme: {
+        light: "#87CEEB",
+        dark: "#87CEEB",
+      },
+    },
     ebitda: {
       label: t("graphCard.table.header.ebitda"),
       color: "#4F565A",
@@ -100,6 +108,21 @@ const chartConfig = (t: (key: string) => string) =>
       color: "#9C3E11",
     },
   }) satisfies ChartConfig;
+
+// Helper to determine if a year is future (projected)
+const getYearType = (year: string, currentYear: number = new Date().getFullYear()) => {
+  const yearNum = Number.parseInt(year);
+  return yearNum >= currentYear ? 'future' : 'historical';
+};
+
+// Helper to get CAGR label with dynamic years
+const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[], t: (key: string) => string) => {
+  if (!graphRows || graphRows.length < 3) return null;
+  const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
+  const firstYear = sortedRows[0].year.slice(0, 4);
+  const lastYear = sortedRows[sortedRows.length - 1].year.slice(0, 4);
+  return `CAGR Sales ${firstYear}–${lastYear}`;
+};
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -112,8 +135,7 @@ const formSchema = z.object({
   ebitda: z.enum(EbitdaRange).optional(),
   ebitdaNormalized: z.string().optional(),
   netDebt: z.string().optional(),
-  salesCAGR: z.string().optional(),
-  ebitdaCAGR: z.string().optional(),
+  // salesCAGR and ebitdaCAGR removed - now auto-calculated from graph data
   assetIncluded: z.enum(["yes", "no"]).optional(),
   estimatedAssetValue: z.string().optional(),
   preNDANotes: z.string().optional(),
@@ -177,9 +199,16 @@ export const Creator = () => {
   const createOpportunity = useCreateOpportunity();
   const router = useRouter();
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  
+  // Initialize with 3 predefined years: current-2, current-1, current year
+  const currentYear = new Date().getFullYear();
   const [graphRows, setGraphRows] = useState<
     { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[]
-  >([]);
+  >([
+    { year: `${currentYear - 2}`, revenue: 0, ebitda: 0, ebitdaMargin: 0 },
+    { year: `${currentYear - 1}`, revenue: 0, ebitda: 0, ebitdaMargin: 0 },
+    { year: `${currentYear}`, revenue: 0, ebitda: 0, ebitdaMargin: 0 },
+  ]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -188,8 +217,7 @@ export const Creator = () => {
       description: "",
       ebitdaNormalized: "",
       netDebt: "",
-      salesCAGR: "",
-      ebitdaCAGR: "",
+      // salesCAGR and ebitdaCAGR removed - now auto-calculated
       estimatedAssetValue: "",
       preNDANotes: "",
       im: "",
@@ -727,75 +755,7 @@ export const Creator = () => {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="salesCAGR"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t(
-                          "financialInformationCard.table.body.salesCAGR.label"
-                        )}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "financialInformationCard.table.body.salesCAGR.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t(
-                          "financialInformationCard.table.body.salesCAGR.description"
-                        )}{" "}
-                        (
-                        {t(
-                          "financialInformationCard.table.body.salesCAGR.units"
-                        )}
-                        )
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="ebitdaCAGR"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t(
-                          "financialInformationCard.table.body.ebitdaCAGR.label"
-                        )}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t(
-                            "financialInformationCard.table.body.ebitdaCAGR.placeholder"
-                          )}
-                          step="0.01"
-                          type="number"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t(
-                          "financialInformationCard.table.body.ebitdaCAGR.description"
-                        )}{" "}
-                        (
-                        {t(
-                          "financialInformationCard.table.body.ebitdaCAGR.units"
-                        )}
-                        )
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* CAGR fields removed - now auto-calculated from graph data */}
 
                 <FormField
                   control={form.control}
@@ -926,6 +886,7 @@ export const Creator = () => {
                         left: 50,
                         right: 50,
                         top: 20,
+                        bottom: 40,
                       }}
                     >
                       <CartesianGrid horizontal={false} vertical={false} />
@@ -963,17 +924,30 @@ export const Creator = () => {
                       />
                       <Bar
                         dataKey="revenue"
-                        fill="var(--color-revenue)"
+                        fill="#1E3A8A"
                         label={{
                           position: "top",
                           fontSize: 12,
                           fontWeight: 600,
-                          fill: "hsl(var(--foreground))",
+                          fill: ((entry: any) => {
+                            const yearType = getYearType(String((entry as any)?.year || ''));
+                            return yearType === 'future' ? '#A89F91' : '#1E3A8A';
+                          }) as any,
                           formatter: (value: number) => value.toFixed(2),
                         }}
                         radius={[4, 4, 0, 0]}
                         yAxisId="left"
-                      />
+                      >
+                        {graphRows?.map((entry, index) => {
+                          const yearType = getYearType(String((entry as any)?.year || ''));
+                          return (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={yearType === 'future' ? '#A89F91' : '#1E3A8A'}
+                            />
+                          );
+                        })}
+                      </Bar>
                       <Line
                         dataKey="ebitda"
                         dot={false}
@@ -982,7 +956,7 @@ export const Creator = () => {
                           fontSize: 12,
                           formatter: (value: number) => value.toFixed(2),
                         }}
-                        stroke="#4F565A"
+                        stroke="#9CA3AF"
                         strokeWidth={2}
                         type="monotone"
                         yAxisId="right"
@@ -1005,6 +979,11 @@ export const Creator = () => {
                       <ChartLegend content={<ChartLegendContent />} />
                     </ComposedChart>
                   </ChartContainer>
+                  {graphRows.length >= 3 && (
+                    <div className="mt-2 text-right text-muted-foreground text-xs">
+                      {getCAGRLabel(graphRows, t)}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}

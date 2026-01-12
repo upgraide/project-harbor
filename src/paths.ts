@@ -33,6 +33,8 @@ export const backofficeAnalyticsPath = () => "/backoffice/analytics";
 export const backofficeInvestmentInterestsPath = () =>
   "/backoffice/investment-interests";
 export const backofficeInvestorsPath = () => "/backoffice/investors";
+export const backofficeInvestorDetailPath = (id: string) =>
+  `/backoffice/investors/${id}`;
 export const backofficeNotificationsPath = () => "/backoffice/notifications";
 export const backofficeCloseOpportunitiesPath = () =>
   "/backoffice/close-opportunities";

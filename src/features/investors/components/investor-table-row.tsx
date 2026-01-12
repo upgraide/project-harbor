@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import { EditIcon, TrashIcon } from "lucide-react";
+import Link from "next/link";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useScopedI18n } from "@/locales/client";
+import { backofficeInvestorDetailPath } from "@/paths";
 import {
   departmentLabels,
   investorClientTypeLabels,
@@ -239,11 +241,13 @@ export const InvestorTableRow = ({
           <div className="flex gap-2">
             <Button
               disabled={isDeleting}
-              onClick={() => onEdit(investor.id)}
+              asChild
               size="sm"
               variant="ghost"
             >
-              <EditIcon className="size-4" />
+              <Link href={backofficeInvestorDetailPath(investor.id)}>
+                <EditIcon className="size-4" />
+              </Link>
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
