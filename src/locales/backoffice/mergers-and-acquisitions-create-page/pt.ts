@@ -103,9 +103,9 @@ export default {
         },
         ebitdaNormalized: {
           label: "EBITDA (Normalizado)",
-          placeholder: "Digite o valor de EBITDA Normalizado (exemplo: 1,5)",
-          description: "Digite o valor de EBITDA Normalizado da oportunidade",
-          units: "x",
+          placeholder: "Digite o valor de EBITDA Normalizado em euros (exemplo: 150000)",
+          description: "Digite o valor absoluto de EBITDA Normalizado da oportunidade",
+          units: "€",
         },
         netDebt: {
           label: "Dívida Líquida",
@@ -159,8 +159,8 @@ export default {
       body: {
         im: {
           label: "IM",
-          placeholder: "Digite o valor de IM",
-          description: "Digite o IM da oportunidade",
+          placeholder: "Digite o link do IM (ex: URL do Google Drive)",
+          description: "Digite o link/URL do Memorando de Informação",
         },
         enterpriseValue: {
           label: "Valor da Empresa (EV)",
@@ -302,6 +302,38 @@ export default {
       },
     },
   },
+  imagesCard: {
+    title: "Imagens",
+    uploadButtonText: "Carregar Imagens",
+    uploadSuccess: "Imagens carregadas com sucesso",
+    maxImagesError: "Não pode exceder 10 imagens no total",
+    noImages: "Nenhuma imagem carregada ainda",
+  },
+  graphCard: {
+    title: "Dados do Gráfico",
+    addRowButtonText: "Adicionar Linha",
+    table: {
+      header: {
+        year: "Ano",
+        revenue: "Vendas (M€)",
+        ebitda: "EBITDA (M€)",
+        ebitdaMargin: "Margem EBITDA (%)",
+        actions: "Ações",
+      },
+    },
+    noDataMessage: "Ainda não há dados do gráfico. Clique em 'Adicionar Linha' para começar.",
+    openMenuText: "Abrir menu",
+    editButtonText: "Editar",
+    editGraphRowTitle: "Editar Linha do Gráfico",
+    cancelButtonText: "Cancelar",
+    saveButtonText: "Guardar",
+    year: "Ano",
+    revenue: "Vendas (M€)",
+    ebitda: "EBITDA (M€)",
+    ebitdaMargin: "Margem EBITDA (%)",
+    actions: "Ações",
+    deleteButtonText: "Eliminar",
+  },
   teamAssignmentCard: {
     title: "Atribuição de Equipa",
     clientAcquisitioner: {
@@ -314,7 +346,7 @@ export default {
       label: "Gestores de Conta",
       placeholder: "Selecione gestores de conta",
       description:
-        "Selecione um ou mais gestores de conta para esta oportunidade (devem ser utilizadores Team ou Admin)",
+        "Selecione 1 a 2 gestores de conta para esta oportunidade (devem ser utilizadores Team ou Admin)",
     },
   },
 } as const;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
+import { LanguageProvider } from "@/components/language/language-provider";
 import { Providers } from "@/components/providers";
 import { siteConfig } from "@/config/site";
 
@@ -47,8 +48,11 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
-        <Providers locale={locale}>{children}</Providers>
+        <LanguageProvider locale={locale}>
+          <Providers locale={locale}>{children}</Providers>
+        </LanguageProvider>
       </body>
     </html>
   );

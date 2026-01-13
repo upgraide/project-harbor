@@ -12,4 +12,7 @@ export const opportunityParams = {
   type: parseAsStringEnum(["all", "mna", "realEstate"])
     .withDefault("all")
     .withOptions({ clearOnDefault: true }),
+  status: parseAsStringEnum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"])
+    .withDefault("ACTIVE")
+    .withOptions({ clearOnDefault: true }),
 };

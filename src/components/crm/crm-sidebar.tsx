@@ -1,6 +1,6 @@
 "use client";
 
-import { BookUserIcon, LogOutIcon } from "lucide-react";
+import { BookUserIcon, LayoutPanelLeft, LogOutIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { DynamicImage } from "@/components/dynamic-image";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { useScopedI18n } from "@/locales/client";
-import { backofficePath, indexPath } from "@/paths";
+import { backofficePath, crmPath, crmLeadsPath, indexPath } from "@/paths";
 
 const LOGO_EXPANDED_SIZE = 175;
 const LOGO_COLLAPSED_SIZE = 64;
@@ -29,16 +29,21 @@ const createMenuItems = (t: (key: string) => string) => [
     title: t("title"),
     items: [
       {
-        title: t("items.dashboard.title"),
+        title: t("items.crm.title"),
         icon: BookUserIcon,
-        url: backofficePath(),
+        url: crmPath(),
+      },
+      {
+        title: t("items.leads.title"),
+        icon: BookUserIcon,
+        url: crmLeadsPath(),
       },
     ],
   },
 ];
 
 export const CrmSidebar = () => {
-  const t = useScopedI18n("crm.crmSidebar");
+  const t = useScopedI18n("crm.sidebar");
   const menuItems = createMenuItems(t);
   const pathname = usePathname();
   const router = useRouter();
@@ -51,7 +56,7 @@ export const CrmSidebar = () => {
             asChild
             className="flex h-10 items-center justify-center gap-x-4 px-4"
           >
-            <Link href={backofficePath()} prefetch>
+            <Link href={crmPath()} prefetch>
               <DynamicImage
                 alt="Harbor"
                 darkSrc={
@@ -82,12 +87,12 @@ export const CrmSidebar = () => {
           <SidebarMenuButton
             asChild
             className="mt-4 h-10 gap-x-4 bg-primary px-4 text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground"
-            tooltip="Backoffice"
+            tooltip={t("items.backoffice.title")}
             variant="default"
           >
             <Link href={backofficePath()} prefetch>
-              <BookUserIcon className="size-4" />
-              <span>{t("title")}</span>
+              <LayoutPanelLeft className="size-4" />
+              <span>{t("items.backoffice.title")}</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -103,8 +108,8 @@ export const CrmSidebar = () => {
                       asChild
                       className="h-10 gap-x-4 px-4"
                       isActive={
-                        item.url === backofficePath()
-                          ? pathname === backofficePath()
+                        item.url === crmPath()
+                          ? pathname === crmPath()
                           : pathname.startsWith(item.url)
                       }
                       tooltip={item.title}

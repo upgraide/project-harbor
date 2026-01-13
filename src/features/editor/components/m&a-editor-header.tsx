@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { Users } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,6 +10,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   useSuspenseOpportunity,
@@ -119,6 +121,12 @@ export const EditorHeader = ({ opportunityId }: { opportunityId: string }) => (
   <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
     <div className="flex w-full flex-row items-center justify-between gap-x-4">
       <EditorBreadcrumbs opportunityId={opportunityId} />
+      <Link href={`${backofficeMergeAndAcquisitionPath()}/${opportunityId}/interests`}>
+        <Button variant="outline" size="sm">
+          <Users className="mr-2 h-4 w-4" />
+          View Interests
+        </Button>
+      </Link>
     </div>
   </header>
 );

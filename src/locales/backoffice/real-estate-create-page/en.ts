@@ -54,6 +54,8 @@ export default {
       label: "Location",
       placeholder: "Enter the property location",
       description: "Specify the geographic location of the property",
+      checkLocationButton: "Check location",
+      hideMapButton: "Hide map",
     },
     area: {
       label: "Area (sqm)",
@@ -322,6 +324,13 @@ export default {
       description: "Break-even occupancy percentage for co-investors",
     },
   },
+  imagesCard: {
+    title: "Images",
+    uploadButtonText: "Upload Images",
+    uploadSuccess: "Images uploaded successfully",
+    maxImagesError: "Cannot exceed 10 images total",
+    noImages: "No images uploaded yet",
+  },
   teamAssignmentCard: {
     title: "Team Assignment",
     clientAcquisitioner: {
@@ -334,7 +343,7 @@ export default {
       label: "Account Managers",
       placeholder: "Select account managers",
       description:
-        "Select one or more account managers for this opportunity (must be Team or Admin users)",
+        "Select 1 to 2 account managers for this opportunity (must be Team or Admin users)",
     },
   },
 } as const;

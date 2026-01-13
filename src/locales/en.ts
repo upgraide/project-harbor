@@ -2,8 +2,10 @@ import changePasswordDialog from "./auth/change-password-dialog/en";
 import loginForm from "./auth/login-form/en";
 import requestAccessForm from "./auth/request-access-form/en";
 import analytics from "./backoffice/analytics/en";
+import closeOpportunities from "./backoffice/close-opportunities/en";
 import entityComponents from "./backoffice/entity-components/en";
 import investmentInterests from "./backoffice/investment-interests/en";
+import backofficeMain from "./backoffice/main/en";
 import investors from "./backoffice/investors/en";
 import mergersAndAcquisitionOpportunites from "./backoffice/mergers-and-acquisition-opportunites/en";
 import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitions-create-page/en";
@@ -14,6 +16,9 @@ import realEstateOpportunities from "./backoffice/real-estate-opportunities/en";
 import realEstateOpportunityPage from "./backoffice/real-estate-opportunity-page/en";
 import sidebar from "./backoffice/sidebar/en";
 import users from "./backoffice/users/en";
+import crmLeadDetails from "./crm/lead-details/en";
+import crmLeads from "./crm/leads/en";
+import crmMain from "./crm/main/en";
 import crmSidebar from "./crm/sidebar/en";
 import mAndAViewer from "./dashboard/m&a-viewer/en";
 import navigation from "./dashboard/naviagation/en";
@@ -35,6 +40,7 @@ export default {
   },
   backoffice: {
     sidebar,
+    main: backofficeMain,
     mergersAndAcquisitionOpportunites,
     entityComponents,
     mergersAndAcquisitionOpportunityPage,
@@ -47,6 +53,7 @@ export default {
     "investment-interests": investmentInterests,
     investors,
     notifications,
+    closeOpportunities,
   },
   dashboard: {
     navigation,
@@ -56,6 +63,9 @@ export default {
     settings,
   },
   crm: {
-    crmSidebar,
+    sidebar: crmSidebar,
+    leads: crmLeads,
+    leadDetails: crmLeadDetails,
+    main: crmMain,
   },
 } as const;

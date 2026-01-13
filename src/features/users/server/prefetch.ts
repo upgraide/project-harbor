@@ -8,3 +8,9 @@ type Input = inferInput<typeof trpc.users.getMany>;
  */
 export const prefetchUsers = (params: Input) =>
   prefetch(trpc.users.getMany.queryOptions(params));
+
+/**
+ * Prefetch a single User by ID
+ */
+export const prefetchUser = (id: string) =>
+  prefetch(trpc.users.getById.queryOptions({ id }));

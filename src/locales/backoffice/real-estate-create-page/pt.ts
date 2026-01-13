@@ -54,6 +54,8 @@ export default {
       label: "Localização",
       placeholder: "Digite a localização do imóvel",
       description: "Especifique a localização geográfica do imóvel",
+      checkLocationButton: "Verificar localização",
+      hideMapButton: "Ocultar mapa",
     },
     area: {
       label: "Área (m²)",
@@ -322,6 +324,13 @@ export default {
       description: "Porcentagem de ocupação de equilíbrio para co-investidores",
     },
   },
+  imagesCard: {
+    title: "Imagens",
+    uploadButtonText: "Carregar Imagens",
+    uploadSuccess: "Imagens carregadas com sucesso",
+    maxImagesError: "Não pode exceder 10 imagens no total",
+    noImages: "Nenhuma imagem carregada ainda",
+  },
   teamAssignmentCard: {
     title: "Atribuição de Equipa",
     clientAcquisitioner: {
@@ -334,7 +343,7 @@ export default {
       label: "Gestores de Conta",
       placeholder: "Selecione gestores de conta",
       description:
-        "Selecione um ou mais gestores de conta para esta oportunidade (devem ser utilizadores Team ou Admin)",
+        "Selecione 1 a 2 gestores de conta para esta oportunidade (devem ser utilizadores Team ou Admin)",
     },
   },
 } as const;

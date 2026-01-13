@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { Role } from "@/generated/prisma";
 import prisma from "@/lib/db";
-import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const userInterestRouter = createTRPCRouter({
   /**
@@ -213,6 +214,78 @@ export const userInterestRouter = createTRPCRouter({
           realEstateId: input.opportunityId,
           ndaSigned: true,
           interested: true,
+        },
+      });
+    }),
+
+  /**
+   * Get all user interests for an M&A opportunity (Team/Admin only)
+   */
+  getAllMergerAndAcquisitionInterests: protectedProcedure
+    .input(z.object({ opportunityId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      // Fetch user's role from database
+      const user = await prisma.user.findUnique({
+        where: { id: ctx.auth.user.id },
+        select: { role: true },
+      });
+
+      // Check if user is team or admin
+      if (!user || (user.role !== Role.TEAM && user.role !== Role.ADMIN)) {
+        throw new Error("Unauthorized: Team or Admin access required");
+      }
+
+      return await prisma.userMergerAndAcquisitionInterest.findMany({
+        where: {
+          mergerAndAcquisitionId: input.opportunityId,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+    }),
+
+  /**
+   * Get all user interests for a Real Estate opportunity (Team/Admin only)
+   */
+  getAllRealEstateInterests: protectedProcedure
+    .input(z.object({ opportunityId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      // Fetch user's role from database
+      const user = await prisma.user.findUnique({
+        where: { id: ctx.auth.user.id },
+        select: { role: true },
+      });
+
+      // Check if user is team or admin
+      if (!user || (user.role !== Role.TEAM && user.role !== Role.ADMIN)) {
+        throw new Error("Unauthorized: Team or Admin access required");
+      }
+
+      return await prisma.userRealEstateInterest.findMany({
+        where: {
+          realEstateId: input.opportunityId,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
         },
       });
     }),

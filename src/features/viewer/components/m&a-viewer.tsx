@@ -4,7 +4,6 @@
 
 import { CheckCircle2, XCircle } from "lucide-react";
 import Image from "next/image";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import {
   Bar,
@@ -13,6 +12,7 @@ import {
   Line,
   XAxis,
   YAxis,
+  Cell,
 } from "recharts";
 import { ErrorView, LoadingView } from "@/components/entity-components";
 import {
@@ -56,19 +56,37 @@ import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 export const ViewerLoading = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
-  return <LoadingView message={t("loadingMessage")} />;
+  return (
+    <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
+      <LoadingView message={t("loadingMessage")} />
+    </div>
+  );
 };
 
 export const ViewerError = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
-  return <ErrorView message={t("errorMessage")} />;
+  return (
+    <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
+      <ErrorView message={t("errorMessage")} />
+    </div>
+  );
 };
 
-const chartConfig = (t: (key: string) => string, isDark: boolean) =>
+const chartConfig = (t: (key: string) => string) =>
   ({
     revenue: {
       label: t("graphCard.table.header.revenue"),
-      color: isDark ? "#BECED7" : "#113152",
+      theme: {
+        light: "#113152",
+        dark: "#BECED7",
+      },
+    },
+    revenueFuture: {
+      label: t("graphCard.table.header.revenue"),
+      theme: {
+        light: "#87CEEB",
+        dark: "#87CEEB",
+      },
     },
     ebitda: {
       label: t("graphCard.table.header.ebitda"),
@@ -80,16 +98,25 @@ const chartConfig = (t: (key: string) => string, isDark: boolean) =>
     },
   }) satisfies ChartConfig;
 
+// Helper to determine if a year is future (projected)
+const getYearType = (year: string, currentYear: number = new Date().getFullYear()) => {
+  const yearNum = Number.parseInt(year);
+  return yearNum >= currentYear ? 'future' : 'historical';
+};
+
+// Helper to get CAGR label with dynamic years
+const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[], t: (key: string) => string) => {
+  if (!graphRows || graphRows.length < 3) return null;
+  const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
+  const firstYear = sortedRows[0].year.slice(0, 4);
+  const lastYear = sortedRows[sortedRows.length - 1].year.slice(0, 4);
+  return `CAGR Sales ${firstYear}\u2013${lastYear}`;
+};
+
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component
 export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("dashboard.mAndAViewer");
   const locale = useCurrentLocale();
-  const { theme, resolvedTheme } = useTheme();
-  const isDark =
-    resolvedTheme === "dark" ||
-    (theme === "system" &&
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
 
   const { data: preloadedInterest } =
@@ -127,14 +154,16 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
     opportunity.netDebt != null;
 
   const showCAGRs = () =>
-    opportunity.salesCAGR != null || opportunity.ebitdaCAGR != null;
+    opportunity.graphRows != null && 
+    opportunity.graphRows.length >= 3 &&
+    (opportunity.salesCAGR != null || opportunity.ebitdaCAGR != null);
 
   const showAsset = () =>
     opportunity.assetIncluded != null ||
     opportunity.estimatedAssetValue != null;
 
   const hasGraphData = () =>
-    opportunity.graphRows != null && opportunity.graphRows.length > 0;
+    opportunity.graphRows != null && opportunity.graphRows.length >= 3;
 
   const hasCoInvestmentData = () => {
     if (!opportunity.coInvestment) {
@@ -199,7 +228,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   }, [preloadedInterest]);
 
   return (
-    <main className="m-4 flex max-w-screen-xs flex-1 flex-col space-y-6 md:mx-auto md:max-w-screen-xl">
+    <main className="flex max-w-screen-xs flex-1 flex-col space-y-6 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
 
       {hasImages() && (
@@ -273,48 +302,6 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                     : opportunity.description}
                 </p>
               )}
-            </CardContent>
-          </Card>
-        </section>
-      )}
-
-      {(opportunity.clientAcquisitioner ||
-        (opportunity.accountManagers &&
-          opportunity.accountManagers.length > 0)) && (
-        <section>
-          <Card className="border-none bg-transparent shadow-none">
-            <CardHeader>
-              <CardTitle className="font-bold text-lg">
-                {t("teamAssignmentCard.title")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {opportunity.clientAcquisitioner && (
-                <div>
-                  <h3 className="mb-1 font-medium text-muted-foreground text-sm">
-                    {t("teamAssignmentCard.clientAcquisitioner.label")}
-                  </h3>
-                  <p className="text-base">
-                    {opportunity.clientAcquisitioner.name} (
-                    {opportunity.clientAcquisitioner.email})
-                  </p>
-                </div>
-              )}
-              {opportunity.accountManagers &&
-                opportunity.accountManagers.length > 0 && (
-                  <div>
-                    <h3 className="mb-2 font-medium text-muted-foreground text-sm">
-                      {t("teamAssignmentCard.accountManagers.label")}
-                    </h3>
-                    <ul className="space-y-1">
-                      {opportunity.accountManagers.map((manager) => (
-                        <li className="text-base" key={manager.id}>
-                          {manager.name} ({manager.email})
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
             </CardContent>
           </Card>
         </section>
@@ -447,10 +434,12 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                           )}
                         </TableCell>
                         <TableCell className="px-6 py-4">
-                          {opportunity.ebitdaNormalized +
-                            t(
-                              "financialInformationCard.table.body.ebitdaNormalized.units"
-                            )}
+                          {new Intl.NumberFormat('pt-PT', { 
+                            style: 'currency', 
+                            currency: 'EUR',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                          }).format(opportunity.ebitdaNormalized)}
                         </TableCell>
                       </TableRow>
                     )}
@@ -563,7 +552,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
               <CardContent className="h-full p-2 md:p-4">
                 <ChartContainer
                   className="h-full w-full"
-                  config={chartConfig(t, isDark)}
+                  config={chartConfig(t)}
                 >
                   <ComposedChart
                     accessibilityLayer
@@ -572,6 +561,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                       left: 30,
                       right: 30,
                       top: 20,
+                      bottom: 40,
                     }}
                   >
                     <CartesianGrid horizontal={false} vertical={false} />
@@ -612,17 +602,30 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                     />
                     <Bar
                       dataKey="revenue"
-                      fill={isDark ? "#BECED7" : "#113152"}
+                      fill="#1E3A8A"
                       label={{
                         position: "top",
                         fontSize: 12,
                         fontWeight: 600,
-                        fill: isDark ? "#FFFFFF" : "#000000",
+                        fill: ((entry: any) => {
+                          const yearType = getYearType(String((entry as any)?.year || ''));
+                          return yearType === 'future' ? '#A89F91' : '#1E3A8A';
+                        }) as any,
                         formatter: (value: number) => value.toFixed(2),
                       }}
                       radius={[4, 4, 0, 0]}
                       yAxisId="left"
-                    />
+                    >
+                      {opportunity.graphRows?.map((entry, index) => {
+                        const yearType = getYearType(String((entry as any)?.year || ''));
+                        return (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={yearType === 'future' ? '#A89F91' : '#1E3A8A'}
+                          />
+                        );
+                      })}
+                    </Bar>
                     <Line
                       dataKey="ebitda"
                       dot={false}
@@ -631,7 +634,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                         fontSize: 12,
                         formatter: (value: number) => value.toFixed(2),
                       }}
-                      stroke="#4F565A"
+                      stroke="#9CA3AF"
                       strokeWidth={2}
                       type="monotone"
                       yAxisId="right"
@@ -654,13 +657,18 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                     <ChartLegend content={<ChartLegendContent />} />
                   </ComposedChart>
                 </ChartContainer>
+                {opportunity.graphRows && opportunity.graphRows.length >= 3 && (
+                  <div className="mt-2 text-right text-muted-foreground text-xs">
+                    {getCAGRLabel(opportunity.graphRows as any, t)}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
         )}
       </div>
 
-      {hasPostNDAData() && userInterest?.ndaSigned === true && (
+      {userInterest?.ndaSigned === true && (
         <section>
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader>
@@ -681,118 +689,134 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {opportunity.im != null && (
-                    <TableRow key="im">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.im.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.im}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.entrepriseValue != null && (
-                    <TableRow key="enterpriseValue">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.enterpriseValue.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.enterpriseValue.prefix") +
+                  <TableRow key="im">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.im.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.im ? (
+                        <a
+                          href={opportunity.im}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {opportunity.im}
+                        </a>
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="enterpriseValue">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.enterpriseValue.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.entrepriseValue != null
+                        ? t("postNDACard.table.body.enterpriseValue.prefix") +
                           opportunity.entrepriseValue +
-                          t("postNDACard.table.body.enterpriseValue.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.equityValue != null && (
-                    <TableRow key="equityValue">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.equityValue.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.equityValue.prefix") +
+                          t("postNDACard.table.body.enterpriseValue.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="equityValue">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.equityValue.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.equityValue != null
+                        ? t("postNDACard.table.body.equityValue.prefix") +
                           opportunity.equityValue +
-                          t("postNDACard.table.body.equityValue.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.evDashEbitdaEntry != null && (
-                    <TableRow key="evDashEbitdaEntry">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.evDashEbitdaEntry.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.evDashEbitdaEntry +
-                          t("postNDACard.table.body.evDashEbitdaEntry.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.evDashEbitdaExit != null && (
-                    <TableRow key="evDashEbitdaExit">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.evDashEbitdaExit.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.evDashEbitdaExit +
-                          t("postNDACard.table.body.evDashEbitdaExit.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.ebitdaMargin != null && (
-                    <TableRow key="ebitdaMargin">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.ebitdaMargin.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.ebitdaMargin +
-                          t("postNDACard.table.body.ebitdaMargin.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.fcf != null && (
-                    <TableRow key="fcf">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.fcf.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.fcf.prefix") +
+                          t("postNDACard.table.body.equityValue.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="evDashEbitdaEntry">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.evDashEbitdaEntry.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.evDashEbitdaEntry != null
+                        ? opportunity.evDashEbitdaEntry +
+                          t("postNDACard.table.body.evDashEbitdaEntry.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="evDashEbitdaExit">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.evDashEbitdaExit.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.evDashEbitdaExit != null
+                        ? opportunity.evDashEbitdaExit +
+                          t("postNDACard.table.body.evDashEbitdaExit.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="ebitdaMargin">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.ebitdaMargin.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.ebitdaMargin != null
+                        ? opportunity.ebitdaMargin +
+                          t("postNDACard.table.body.ebitdaMargin.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow key="fcf">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.fcf.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.fcf != null
+                        ? t("postNDACard.table.body.fcf.prefix") +
                           opportunity.fcf +
-                          t("postNDACard.table.body.fcf.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.netDebtDashEbitda != null && (
-                    <TableRow key="netDebtDashEbitda">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.netDebtDashEbitda.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.netDebtDashEbitda +
-                          t("postNDACard.table.body.netDebtDashEbitda.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.capexItensity != null && (
-                    <TableRow key="capexItensity">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.capexItensity.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.capexItensity +
-                          t("postNDACard.table.body.capexItensity.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {opportunity.workingCapitalNeeds != null && (
-                    <TableRow key="workingCapitalNeeds">
-                      <TableCell className="px-6 py-4">
-                        {t("postNDACard.table.body.workingCapitalNeeds.label")}
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        {opportunity.workingCapitalNeeds +
-                          t("postNDACard.table.body.workingCapitalNeeds.units")}
-                      </TableCell>
-                    </TableRow>
-                  )}
+                          t("postNDACard.table.body.fcf.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="netDebtDashEbitda">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.netDebtDashEbitda.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.netDebtDashEbitda != null
+                        ? opportunity.netDebtDashEbitda +
+                          t("postNDACard.table.body.netDebtDashEbitda.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="capexItensity">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.capexItensity.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.capexItensity != null
+                        ? opportunity.capexItensity +
+                          t("postNDACard.table.body.capexItensity.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+
+                  <TableRow key="workingCapitalNeeds">
+                    <TableCell className="px-6 py-4">
+                      {t("postNDACard.table.body.workingCapitalNeeds.label")}
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      {opportunity.workingCapitalNeeds != null
+                        ? opportunity.workingCapitalNeeds +
+                          t("postNDACard.table.body.workingCapitalNeeds.units")
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
             </CardContent>

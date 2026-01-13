@@ -1,21 +1,14 @@
-import { AppHeader } from "@/components/app-header";
+import { ReactNode } from "react";
+import ClientI18nLayout from "./client-i18n-layout";
 import { requireTeam } from "@/lib/auth-utils";
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
+export default async function Layout({ children, params }: { children: ReactNode; params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const { user } = await requireTeam();
 
   return (
-    <>
-      <AppHeader
-        user={{
-          name: user.name,
-          email: user.email,
-          image: user.image ?? "",
-        }}
-      />
-      <main className="flex-1">{children}</main>
-    </>
+    <ClientI18nLayout locale={locale} user={{ ...user, image: user.image ?? null }}>
+      {children}
+    </ClientI18nLayout>
   );
-};
-
-export default Layout;
+}

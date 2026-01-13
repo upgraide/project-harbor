@@ -65,6 +65,7 @@ export const InvestorsList = () => {
             <Select
               onValueChange={(value) => {
                 setParams({
+                  ...params,
                   investorType: value as
                     | "all"
                     | "<€10M"
@@ -99,6 +100,7 @@ export const InvestorsList = () => {
             <Select
               onValueChange={(value) => {
                 setParams({
+                  ...params,
                   interestSegment: value as "all" | "CRE" | "M&A",
                   page: 1,
                 });
@@ -125,7 +127,7 @@ export const InvestorsList = () => {
 
             <Select
               onValueChange={(value) => {
-                setParams({ industry: value, page: 1 });
+                setParams({ ...params, industry: value, page: 1 });
               }}
               value={params.industry}
             >
@@ -148,21 +150,21 @@ export const InvestorsList = () => {
         ) : (
           <div
             className={cn(
-              "flex w-full items-center justify-center rounded-lg border",
-              open ? "max-w-3xl" : "max-w-5xl"
+              "w-full overflow-x-auto rounded-lg border",
+              open ? "max-w-6xl" : "max-w-full"
             )}
           >
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="sticky left-0 min-w-[120px] bg-background">
+                  <TableHead className="sticky left-0 min-w-[150px] bg-background">
+                    {t("table.companyName")}
+                  </TableHead>
+                  <TableHead className="min-w-[120px]">
                     {t("table.name")}
                   </TableHead>
                   <TableHead className="min-w-[200px]">
                     {t("table.email")}
-                  </TableHead>
-                  <TableHead className="min-w-[120px]">
-                    {t("table.companyName")}
                   </TableHead>
                   <TableHead className="min-w-[150px]">
                     {t("table.representativeName")}

@@ -103,9 +103,9 @@ export default {
         },
         ebitdaNormalized: {
           label: "EBITDA (Normalized)",
-          placeholder: "Enter the EBITDA (Normalized) value (example: 1.5)",
-          description: "Enter the EBITDA (Normalized) value of the opportunity",
-          units: "x",
+          placeholder: "Enter the EBITDA (Normalized) value in euros (example: 150000)",
+          description: "Enter the absolute EBITDA (Normalized) value of the opportunity",
+          units: "€",
         },
         netDebt: {
           label: "Net Debt",
@@ -160,8 +160,8 @@ export default {
       body: {
         im: {
           label: "IM",
-          placeholder: "Enter the IM value",
-          description: "Enter the IM of the opportunity",
+          placeholder: "Enter the IM link (e.g., Google Drive URL)",
+          description: "Enter the Information Memorandum link/URL",
         },
         enterpriseValue: {
           label: "Enterprise Value (EV)",
@@ -299,6 +299,38 @@ export default {
       },
     },
   },
+  imagesCard: {
+    title: "Images",
+    uploadButtonText: "Upload Images",
+    uploadSuccess: "Images uploaded successfully",
+    maxImagesError: "Cannot exceed 10 images total",
+    noImages: "No images uploaded yet",
+  },
+  graphCard: {
+    title: "Graph Data",
+    addRowButtonText: "Add Row",
+    table: {
+      header: {
+        year: "Year",
+        revenue: "Revenue (M€)",
+        ebitda: "EBITDA (M€)",
+        ebitdaMargin: "EBITDA Margin (%)",
+        actions: "Actions",
+      },
+    },
+    noDataMessage: "No graph data yet. Click 'Add Row' to get started.",
+    openMenuText: "Open menu",
+    editButtonText: "Edit",
+    editGraphRowTitle: "Edit Graph Row",
+    cancelButtonText: "Cancel",
+    saveButtonText: "Save",
+    year: "Year",
+    revenue: "Revenue (M€)",
+    ebitda: "EBITDA (M€)",
+    ebitdaMargin: "EBITDA Margin (%)",
+    actions: "Actions",
+    deleteButtonText: "Delete",
+  },
   teamAssignmentCard: {
     title: "Team Assignment",
     clientAcquisitioner: {
@@ -311,7 +343,7 @@ export default {
       label: "Account Managers",
       placeholder: "Select account managers",
       description:
-        "Select one or more account managers for this opportunity (must be Team or Admin users)",
+        "Select 1 to 2 account managers for this opportunity (must be Team or Admin users)",
     },
   },
 } as const;

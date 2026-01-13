@@ -92,9 +92,9 @@ export default {
         },
         ebitdaNormalized: {
           label: "EBITDA (Ajustado)",
-          placeholder: "Insira o valor de EBITDA (Ajustado)",
-          description: "Insira o valor de EBITDA (Ajustado) da oportunidade",
-          units: "x",
+          placeholder: "Insira o valor de EBITDA (Ajustado) em euros (exemplo: 150000)",
+          description: "Insira o valor absoluto de EBITDA (Ajustado) da oportunidade",
+          units: "€",
         },
         netDebt: {
           label: "Net Debt",
@@ -181,8 +181,8 @@ export default {
       body: {
         im: {
           label: "IM",
-          description: "Insira o valor do IM da oportunidade",
-          placeholder: "Insira o valor do IM (exemplo: 3.2)",
+          description: "Insira o link/URL do Memorando de Informação",
+          placeholder: "Insira o link do IM (ex: URL do Google Drive)",
         },
         enterpriseValue: {
           label: "Valor da Empresa",

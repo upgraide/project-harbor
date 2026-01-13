@@ -8,4 +8,15 @@ export default {
   searchPlaceholder: "Pesquisar oportunidades",
   updatedAt: "Atualizado",
   createdAt: "Criado",
+  statusFilter: {
+    all: "Todos os Estados",
+    active: "Ativo",
+    inactive: "Inativo",
+    concluded: "Concluído",
+  },
+  status: {
+    active: "Ativo",
+    inactive: "Inativo",
+    concluded: "Concluído",
+  },
 } as const;

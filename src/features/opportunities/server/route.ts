@@ -4,6 +4,7 @@ import {
   EbitdaRange,
   Industry,
   IndustrySubsector,
+  OpportunityStatus,
   OpportunityType,
   RealEstateAssetType,
   RealEstateInvestmentType,
@@ -13,6 +14,7 @@ import {
   TypeDetails,
 } from "@/generated/prisma";
 import { inngest } from "@/inngest/client";
+import { calculateCAGR } from "@/lib/cagr-calculator";
 import prisma from "@/lib/db";
 import { deleteFromUploadthing } from "@/lib/uploadthing-server";
 import {
@@ -70,6 +72,15 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         holdPeriod: z.string().optional(),
         clientAcquisitionerId: z.string().optional(),
         accountManagerIds: z.string().array().optional(),
+        images: z.string().array().optional(),
+        graphRows: z.array(
+          z.object({
+            year: z.string(),
+            revenue: z.number(),
+            ebitda: z.number(),
+            ebitdaMargin: z.number(),
+          })
+        ).optional(),
       })
     )
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex mutation
@@ -112,6 +123,10 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         }
       }
 
+      // Calculate CAGR values from graph rows if provided
+      const graphRows = input.graphRows || [];
+      const { salesCAGR, ebitdaCAGR } = calculateCAGR(graphRows as any);
+
       // Convert string numbers to floats where needed
       const data = {
         userId: ctx.auth.user.id,
@@ -125,8 +140,8 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         ebitda: input.ebitda,
         ebitdaNormalized: parseOptionalFloat(input.ebitdaNormalized),
         netDebt: parseOptionalFloat(input.netDebt),
-        salesCAGR: parseOptionalFloat(input.salesCAGR),
-        ebitdaCAGR: parseOptionalFloat(input.ebitdaCAGR),
+        salesCAGR: salesCAGR,
+        ebitdaCAGR: ebitdaCAGR,
         assetIncluded: input.assetIncluded === "yes",
         estimatedAssetValue: parseOptionalFloat(input.estimatedAssetValue),
         preNDANotes: input.preNDANotes,
@@ -152,6 +167,8 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         exitExpectedMultiple: parseOptionalFloat(input.exitExpectedMultiple),
         holdPeriod: parseOptionalFloat(input.holdPeriod),
         clientAcquisitionerId: input.clientAcquisitionerId || null,
+        images: input.images || [],
+        graphRows: graphRows,
       };
 
       // Create the opportunity with analytics
@@ -457,12 +474,19 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         ),
       })
     )
-    .mutation(({ input }) =>
-      prisma.mergerAndAcquisition.update({
+    .mutation(({ input }) => {
+      // Calculate CAGR values from graph rows
+      const { salesCAGR, ebitdaCAGR } = calculateCAGR(input.graphRows as any);
+      
+      return prisma.mergerAndAcquisition.update({
         where: { id: input.id },
-        data: { graphRows: input.graphRows },
-      })
-    ),
+        data: { 
+          graphRows: input.graphRows,
+          salesCAGR: salesCAGR,
+          ebitdaCAGR: ebitdaCAGR,
+        },
+      });
+    }),
   updateImages: adminProcedure
     .input(
       z.object({
@@ -849,6 +873,53 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { shareholderStructure: updatedImages },
       });
     }),
+  updateStatus: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        status: z.enum(["ACTIVE", "INACTIVE", "CONCLUDED"]),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { status: input.status },
+      });
+    }),
+  updateFinalValues: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        final_amount: z.number().optional(),
+        closed_at: z.date().optional(),
+        invested_person_id: z.string().nullable().optional(),
+        followup_person_id: z.string().nullable().optional(),
+        profit_amount: z.number().optional(),
+        commissionable_amount: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const updateData: {
+        final_amount?: number;
+        closed_at?: Date;
+        invested_person_id?: string | null;
+        followup_person_id?: string | null;
+        profit_amount?: number;
+        commissionable_amount?: number;
+      } = {};
+      
+      if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
+      if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
+      if (input.invested_person_id !== undefined) updateData.invested_person_id = input.invested_person_id;
+      if (input.followup_person_id !== undefined) updateData.followup_person_id = input.followup_person_id;
+      if (input.profit_amount !== undefined) updateData.profit_amount = input.profit_amount;
+      if (input.commissionable_amount !== undefined) updateData.commissionable_amount = input.commissionable_amount;
+
+      return await prisma.opportunityAnalytics.update({
+        where: { mergerAndAcquisitionId: input.id },
+        data: updateData,
+      });
+    }),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input }) => {
@@ -860,6 +931,24 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
               id: true,
               name: true,
               email: true,
+            },
+          },
+          analytics: {
+            include: {
+              invested_person: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+              followup_person: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
             },
           },
         },
@@ -897,25 +986,31 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         search: z.string().default(""),
+        status: z.enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).default("ACTIVE"),
       })
     )
     .query(async ({ input }) => {
-      const { page, pageSize, search } = input;
+      const { page, pageSize, search, status } = input;
+      
+      const whereCondition: {
+        name: { contains: string; mode: "insensitive" };
+        status?: OpportunityStatus;
+      } = {
+        name: { contains: search, mode: "insensitive" },
+        ...(status !== "all" && { status: status as OpportunityStatus }),
+      };
+      
       const [items, totalCount] = await Promise.all([
         prisma.mergerAndAcquisition.findMany({
           skip: (page - 1) * pageSize,
           take: pageSize,
-          where: {
-            name: { contains: search, mode: "insensitive" },
-          },
+          where: whereCondition,
           orderBy: {
             updatedAt: "desc",
           },
         }),
         prisma.mergerAndAcquisition.count({
-          where: {
-            name: { contains: search, mode: "insensitive" },
-          },
+          where: whereCondition,
         }),
       ]);
 
@@ -947,20 +1042,33 @@ export const opportunitiesRouter = createTRPCRouter({
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         type: z.enum(["all", "mna", "realEstate"]).default("all"),
         search: z.string().default(""),
+        status: z.enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).default("all").optional(),
       })
     )
     .query(async ({ input }) => {
-      const { page, pageSize, type, search } = input;
+      const { page, pageSize, type, search, status } = input;
 
       // Build where conditions for M&A
-      const mnaWhere = {
+      const mnaWhere: {
+        name: { contains: string; mode: "insensitive" };
+        status?: OpportunityStatus;
+      } = {
         name: { contains: search, mode: "insensitive" as const },
       };
+      if (status && status !== "all") {
+        mnaWhere.status = status as OpportunityStatus;
+      }
 
       // Build where conditions for Real Estate
-      const realEstateWhere = {
+      const realEstateWhere: {
+        name: { contains: string; mode: "insensitive" };
+        status?: OpportunityStatus;
+      } = {
         name: { contains: search, mode: "insensitive" as const },
       };
+      if (status && status !== "all") {
+        realEstateWhere.status = status as OpportunityStatus;
+      }
 
       // Fetch data based on type filter
       let mnaItems: Array<{
@@ -969,6 +1077,7 @@ export const opportunitiesRouter = createTRPCRouter({
         description: string | null;
         englishDescription: string | null;
         images: string[];
+        status: OpportunityStatus;
         createdAt: Date;
         updatedAt: Date;
       }> = [];
@@ -978,6 +1087,7 @@ export const opportunitiesRouter = createTRPCRouter({
         description: string | null;
         englishDescription: string | null;
         images: string[];
+        status: OpportunityStatus;
         createdAt: Date;
         updatedAt: Date;
       }> = [];
@@ -997,6 +1107,7 @@ export const opportunitiesRouter = createTRPCRouter({
               description: true,
               englishDescription: true,
               images: true,
+              status: true,
               createdAt: true,
               updatedAt: true,
             },
@@ -1018,6 +1129,7 @@ export const opportunitiesRouter = createTRPCRouter({
               description: true,
               englishDescription: true,
               images: true,
+              status: true,
               createdAt: true,
               updatedAt: true,
             },
@@ -1125,6 +1237,7 @@ export const realEstateRouter = createTRPCRouter({
         promoteStructure: z.string().optional(),
         clientAcquisitionerId: z.string().optional(),
         accountManagerIds: z.string().array().optional(),
+        images: z.string().array().optional(),
       })
     )
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex mutation
@@ -1227,6 +1340,7 @@ export const realEstateRouter = createTRPCRouter({
           promoteStructure: input.promoteStructure,
           createdBy: ctx.auth.user.id,
           clientAcquisitionerId: input.clientAcquisitionerId || null,
+          images: input.images || [],
           analytics: {
             create: {},
           },
@@ -1267,25 +1381,31 @@ export const realEstateRouter = createTRPCRouter({
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         search: z.string().default(""),
+        status: z.enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).default("ACTIVE"),
       })
     )
     .query(async ({ input }) => {
-      const { page, pageSize, search } = input;
+      const { page, pageSize, search, status } = input;
+      
+      const whereCondition: {
+        name: { contains: string; mode: "insensitive" };
+        status?: OpportunityStatus;
+      } = {
+        name: { contains: search, mode: "insensitive" },
+        ...(status !== "all" && { status: status as OpportunityStatus }),
+      };
+      
       const [items, totalCount] = await Promise.all([
         prisma.realEstate.findMany({
           skip: (page - 1) * pageSize,
           take: pageSize,
-          where: {
-            name: { contains: search, mode: "insensitive" },
-          },
+          where: whereCondition,
           orderBy: {
             updatedAt: "desc",
           },
         }),
         prisma.realEstate.count({
-          where: {
-            name: { contains: search, mode: "insensitive" },
-          },
+          where: whereCondition,
         }),
       ]);
 
@@ -1321,6 +1441,24 @@ export const realEstateRouter = createTRPCRouter({
               id: true,
               name: true,
               email: true,
+            },
+          },
+          analytics: {
+            include: {
+              invested_person: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+              followup_person: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
             },
           },
         },
@@ -2320,4 +2458,51 @@ export const realEstateRouter = createTRPCRouter({
         data: { promoteStructure: null },
       })
     ),
+  updateStatus: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        status: z.enum(["ACTIVE", "INACTIVE", "CONCLUDED"]),
+      })
+    )
+    .mutation(async ({ input }) => {
+      return await prisma.realEstate.update({
+        where: { id: input.id },
+        data: { status: input.status },
+      });
+    }),
+  updateFinalValues: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        final_amount: z.number().optional(),
+        closed_at: z.date().optional(),
+        invested_person_id: z.string().nullable().optional(),
+        followup_person_id: z.string().nullable().optional(),
+        profit_amount: z.number().optional(),
+        commissionable_amount: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const updateData: {
+        final_amount?: number;
+        closed_at?: Date;
+        invested_person_id?: string | null;
+        followup_person_id?: string | null;
+        profit_amount?: number;
+        commissionable_amount?: number;
+      } = {};
+      
+      if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
+      if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
+      if (input.invested_person_id !== undefined) updateData.invested_person_id = input.invested_person_id;
+      if (input.followup_person_id !== undefined) updateData.followup_person_id = input.followup_person_id;
+      if (input.profit_amount !== undefined) updateData.profit_amount = input.profit_amount;
+      if (input.commissionable_amount !== undefined) updateData.commissionable_amount = input.commissionable_amount;
+
+      return await prisma.opportunityAnalytics.update({
+        where: { realEstateId: input.id },
+        data: updateData,
+      });
+    }),
 });

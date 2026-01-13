@@ -8,6 +8,9 @@ import {
   InvestorType,
   Role,
   TeamMember,
+  LeadStatus,
+  LeadPriority,
+  LeadSource,
 } from "@/generated/prisma";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
@@ -604,6 +607,10 @@ export const investorsRouter = createTRPCRouter({
         otherFacts: z.string().optional(),
         lastNotes: z.string().optional(),
         department: z.nativeEnum(Department).optional(),
+        leadStatus: z.nativeEnum(LeadStatus).optional(),
+        leadPriority: z.nativeEnum(LeadPriority).optional(),
+        leadSource: z.nativeEnum(LeadSource).optional(),
+        nextFollowUpDate: z.date().nullable().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -656,27 +663,6 @@ export const investorsRouter = createTRPCRouter({
         },
       });
       return user;
-    }),
-
-  getNotes: protectedProcedure
-    .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
-      const notes = await prisma.userNote.findMany({
-        where: { userId: input.userId },
-        include: {
-          createdByUser: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      });
-      return notes;
     }),
 
   addNote: protectedProcedure
@@ -755,7 +741,14 @@ export const investorsRouter = createTRPCRouter({
           acceptMarketingList: true,
           otherFacts: true,
           lastNotes: true,
+          personalNotes: true,
           department: true,
+          leadStatus: true,
+          leadPriority: true,
+          leadSource: true,
+          leadScore: true,
+          nextFollowUpDate: true,
+          tags: true,
           leadResponsible: {
             select: {
               id: true,
@@ -778,5 +771,124 @@ export const investorsRouter = createTRPCRouter({
       }
 
       return user;
+    }),
+  
+  getInterests: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input }) => {
+      const [mnaInterests, reInterests] = await Promise.all([
+        prisma.userMergerAndAcquisitionInterest.findMany({
+          where: { userId: input.userId },
+          select: {
+            id: true,
+            interested: true,
+            notInterestedReason: true,
+            ndaSigned: true,
+            updatedAt: true,
+            mergerAndAcquisition: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+          orderBy: { updatedAt: "desc" },
+        }),
+        prisma.userRealEstateInterest.findMany({
+          where: { userId: input.userId },
+          select: {
+            id: true,
+            interested: true,
+            notInterestedReason: true,
+            ndaSigned: true,
+            updatedAt: true,
+            realEstate: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+          orderBy: { updatedAt: "desc" },
+        }),
+      ]);
+
+      return [
+        ...mnaInterests.map((i) => ({
+          id: i.id,
+          interested: i.interested,
+          notInterestedReason: i.notInterestedReason,
+          ndaSigned: i.ndaSigned,
+          updatedAt: i.updatedAt,
+          opportunityId: i.mergerAndAcquisition.id,
+          opportunityName: i.mergerAndAcquisition.name,
+          opportunityType: "mna" as const,
+        })),
+        ...reInterests.map((i) => ({
+          id: i.id,
+          interested: i.interested,
+          notInterestedReason: i.notInterestedReason,
+          ndaSigned: i.ndaSigned,
+          updatedAt: i.updatedAt,
+          opportunityId: i.realEstate.id,
+          opportunityName: i.realEstate.name,
+          opportunityType: "realEstate" as const,
+        })),
+      ];
+    }),
+
+  getNotes: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input }) => {
+      return prisma.userNote.findMany({
+        where: { userId: input.userId },
+        select: {
+          id: true,
+          note: true,
+          createdAt: true,
+          createdByUser: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }),
+
+  getActivities: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input }) => {
+      return prisma.leadActivity.findMany({
+        where: { userId: input.userId },
+        select: {
+          id: true,
+          activityType: true,
+          title: true,
+          description: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+    }),
+
+  updatePersonalNotes: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        personalNotes: z.string().nullable(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { userId, personalNotes } = input;
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { personalNotes },
+      });
+
+      return { success: true };
     }),
 });

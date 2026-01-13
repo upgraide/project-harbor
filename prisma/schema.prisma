@@ -25,6 +25,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   role          Role      @default(USER)
+  disabled      Boolean   @default(false)
 
   // Investor-specific fields
   investorType      InvestorType?
@@ -60,6 +61,7 @@ model User {
   acceptMarketingList Boolean?
   otherFacts          String?
   lastNotes           String?
+  personalNotes       String?
   department          Department?
 
   // Relations for opportunity interactions
@@ -70,6 +72,23 @@ model User {
   clientAcquisitionerMergerAndAcquisitions MergerAndAcquisition[]            @relation("clientAcquisitionerMergerAndAcquisitions")
   clientAcquisitionerRealEstates           RealEstate[]                      @relation("clientAcquisitionerRealEstates")
   accountManagerAssignments      OpportunityAccountManager[]
+  
+  // Relations for deal closing persons
+  investedPersonDeals  OpportunityAnalytics[] @relation("InvestedPersonDeals")
+  followupPersonDeals  OpportunityAnalytics[] @relation("FollowupPersonDeals")
+
+  // CRM-specific fields for lead management
+  leadSource          LeadSource?
+  leadStatus          LeadStatus?        @default(NEW)
+  leadPriority        LeadPriority?      @default(MEDIUM)
+  tags                String[]           @default([])
+  nextFollowUpDate    DateTime?
+  leadScore           Int?               @default(0)
+  convertedAt         DateTime?
+  lostReason          String?
+  lostAt              DateTime?
+  commissionRate      Float?
+  commissionNotes     String?
 
   // Lead relations
   leadResponsible   User?  @relation("LeadResponsibleUsers", fields: [leadResponsibleId], references: [id], onDelete: SetNull)
@@ -78,6 +97,7 @@ model User {
   leadMainContactFor User[] @relation("LeadMainContactUsers")
   notes             UserNote[]
   createdNotes      UserNote[] @relation("NoteCreator")
+  activities        LeadActivity[]
 
   @@unique([email])
   @@map("user")
@@ -308,6 +328,7 @@ model MergerAndAcquisition {
 
   userId    String // Who created the Merger and Acquisition
   status    OpportunityStatus @default(ACTIVE)
+  hidden    Boolean           @default(false)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -393,6 +414,7 @@ model RealEstate {
 
   createdBy String
   status    OpportunityStatus @default(ACTIVE)
+  hidden    Boolean           @default(false)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -419,6 +441,18 @@ model OpportunityAnalytics {
 
   // Analytics metrics
   views Int @default(0)
+
+  // Final Deal Values (when CONCLUDED)
+  closed_at              DateTime?
+  final_amount           Float?
+  profit_amount          Float?
+  commissionable_amount  Float?
+  
+  // Optional persons involved in deal closing
+  invested_person_id String?
+  invested_person    User?   @relation("InvestedPersonDeals", fields: [invested_person_id], references: [id], onDelete: SetNull)
+  followup_person_id String?
+  followup_person    User?   @relation("FollowupPersonDeals", fields: [followup_person_id], references: [id], onDelete: SetNull)
 
   // Future analytics fields can be added here:
   // uniqueViews Int @default(0)
@@ -610,4 +644,66 @@ model UserNote {
   updatedAt DateTime @updatedAt
 
   @@map("user_note")
+}
+
+model LeadActivity {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activityType  ActivityType
+  title         String
+  description   String?
+  relatedUserId String?
+  metadata      Json?
+  createdAt     DateTime     @default(now())
+
+  @@map("lead_activity")
+}
+
+enum LeadSource {
+  WEBSITE
+  REFERRAL
+  COLD_OUTREACH
+  NETWORKING_EVENT
+  LINKEDIN
+  EMAIL_CAMPAIGN
+  PARTNER
+  EXISTING_CLIENT
+  ACCESS_REQUEST
+  OTHER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  MEETING_SCHEDULED
+  PROPOSAL_SENT
+  NEGOTIATION
+  CONVERTED
+  LOST
+  ON_HOLD
+  NURTURE
+}
+
+enum LeadPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ActivityType {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
+  TASK
+  DEAL_VIEWED
+  DEAL_INTERESTED
+  DEAL_NOT_INTERESTED
+  STATUS_CHANGE
+  ASSIGNMENT_CHANGE
+  FOLLOW_UP_SCHEDULED
+  OTHER
 }

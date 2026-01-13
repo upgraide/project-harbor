@@ -1,8 +1,10 @@
+import { email } from "zod";
+
 export const siteConfig = {
   name: "Harbor Partners | Web Application",
   applicationName: "Harbor Partners",
   template: "%s | Harbor Partners",
-  url: "https://harborpartners.app",
+  url: "https://harbor001-iota.vercel.app",
   generator: "Next.js",
   description:
     "Harbor Partners is a Lisbon based, Investment Advisory Firm, dedicated to providing holistic and integrated services to institutional and high net worth individual clients.",
@@ -15,11 +17,15 @@ export const siteConfig = {
       name: "Rodrigo Santos",
       url: "https://rodrigosantos.dev",
     },
+    {
+      name: "Diogo Babo",
+      email: "diogo.babo@gmail.com",
+    },
   ],
   alternates: {
-    canonical: "https://harborpartners.app",
+    canonical: "https://harbor001-iota.vercel.app",
     languages: {
-      "en-US": "https://harborpartners.app/en",
+      "en-US": "https://harbor001-iota.vercel.app/en",
     },
   },
   icons: {
@@ -31,13 +37,13 @@ export const siteConfig = {
     title: "Harbor Partners | Web Application",
     description:
       "Harbor Partners is a Lisbon based, Investment Advisory Firm, dedicated to providing holistic and integrated services to institutional and high net worth individual clients.",
-    url: "https://harborpartners.app",
+    url: "https://harbor001-iota.vercel.app",
     siteName: "Harbor Partners | Web Application",
     locale: "pt_PT",
     type: "website",
     images: [
       {
-        url: "https://harborpartners.app/assets/logo-dark.png",
+        url: "https://harbor001-iota.vercel.app/assets/logo-dark.png",
         width: 4501,
         height: 4501,
         alt: "Harbor Partners | Web Application",
@@ -49,9 +55,9 @@ export const siteConfig = {
     title: "Harbor Partners | Web Application",
     description:
       "Harbor Partners is a Lisbon based, Investment Advisory Firm, dedicated to providing holistic and integrated services to institutional and high net worth individual clients.",
-    images: ["https://harborpartners.app/assets/logo-dark.png"],
+    images: ["https://harbor001-iota.vercel.app/assets/logo-dark.png"],
   },
-  manifest: "https://harborpartners.app/site.webmanifest",
+  manifest: "/site.webmanifest",
   robots: {
     index: true,
     follow: true,

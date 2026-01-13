@@ -89,9 +89,9 @@ export default {
         },
         ebitdaNormalized: {
           label: "EBITDA (Normalized)",
-          placeholder: "Enter the EBITDA (Normalized) value (example: 1.5)",
-          description: "Enter the EBITDA (Normalized) value of the opportunity",
-          units: "x",
+          placeholder: "Enter the EBITDA (Normalized) value in euros (example: 150000)",
+          description: "Enter the absolute EBITDA (Normalized) value of the opportunity",
+          units: "€",
         },
         dimension: {
           label: "Dimension",
@@ -182,8 +182,8 @@ export default {
       body: {
         im: {
           label: "IM",
-          description: "Enter the IM of the opportunity",
-          placeholder: "Enter the IM value ",
+          description: "Enter the Information Memorandum link/URL",
+          placeholder: "Enter the IM link (e.g., Google Drive URL)",
         },
         enterpriseValue: {
           label: "Enterprise Value (EV)",
