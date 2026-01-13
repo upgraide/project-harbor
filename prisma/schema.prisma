@@ -61,6 +61,7 @@ model User {
   acceptMarketingList Boolean?
   otherFacts          String?
   lastNotes           String?
+  personalNotes       String?
   department          Department?
 
   // Relations for opportunity interactions

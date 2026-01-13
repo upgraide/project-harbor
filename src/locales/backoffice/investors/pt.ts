@@ -166,4 +166,18 @@ export default {
     add: "Adicionar Nota",
     adding: "A adicionar...",
   },
+  detail: {
+    personalNotes: {
+      title: "Notas Pessoais",
+      description: "Notas privadas sobre este investidor (Apenas Admin)",
+      placeholder: "Introduza notas pessoais...",
+      edit: "Editar Notas Pessoais",
+      save: "Guardar",
+      saving: "A guardar...",
+      cancel: "Cancelar",
+      editButton: "Editar",
+      empty: "Ainda não há notas pessoais",
+      visibleToTeam: "Visível para equipa e admin, editável apenas por admin",
+    },
+  },
 } as const;

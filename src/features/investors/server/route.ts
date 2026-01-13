@@ -741,6 +741,7 @@ export const investorsRouter = createTRPCRouter({
           acceptMarketingList: true,
           otherFacts: true,
           lastNotes: true,
+          personalNotes: true,
           department: true,
           leadStatus: true,
           leadPriority: true,
@@ -871,5 +872,23 @@ export const investorsRouter = createTRPCRouter({
         },
         orderBy: { createdAt: "desc" },
       });
+    }),
+
+  updatePersonalNotes: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        personalNotes: z.string().nullable(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { userId, personalNotes } = input;
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: { personalNotes },
+      });
+
+      return { success: true };
     }),
 });

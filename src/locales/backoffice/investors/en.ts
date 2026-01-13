@@ -166,4 +166,18 @@ export default {
     add: "Add Note",
     adding: "Adding...",
   },
+  detail: {
+    personalNotes: {
+      title: "Personal Notes",
+      description: "Private notes about this investor (Admin only)",
+      placeholder: "Enter personal notes...",
+      edit: "Edit Personal Notes",
+      save: "Save",
+      saving: "Saving...",
+      cancel: "Cancel",
+      editButton: "Edit",
+      empty: "No personal notes yet",
+      visibleToTeam: "Visible to team and admin, editable by admin only",
+    },
+  },
 } as const;

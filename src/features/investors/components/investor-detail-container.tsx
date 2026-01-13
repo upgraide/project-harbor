@@ -12,7 +12,8 @@ import {
   FileText,
   TrendingUp,
   Users,
-  Star
+  Star,
+  Lock
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -26,9 +27,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Role } from "@/generated/prisma";
 import { useTRPC } from "@/trpc/client";
 import { useScopedI18n } from "@/locales/client";
 import { backofficeInvestorsPath } from "@/paths";
+import { useCurrentUserRole } from "@/features/users/hooks/use-current-user-role";
 import {
   departmentLabels,
   investorClientTypeLabels,
@@ -58,6 +61,9 @@ export const InvestorDetailContainer = ({
   const { data: investor } = useSuspenseQuery(
     trpc.investors.getOne.queryOptions({ id: investorId })
   );
+
+  const { data: currentUserRole } = useCurrentUserRole();
+  const isTeamOrAdmin = currentUserRole === Role.TEAM || currentUserRole === Role.ADMIN;
 
   const formatTicketSize = (value: number | null | undefined): string => {
     if (value === null || value === undefined) return "-";
@@ -412,20 +418,30 @@ export const InvestorDetailContainer = ({
               )}
 
               {/* Additional Notes */}
-              {(investor.otherFacts || investor.lastNotes) && (
+              {(investor.otherFacts || investor.lastNotes || (isTeamOrAdmin && investor.personalNotes)) && (
                 <Card className="md:col-span-2">
                   <CardHeader>
                     <CardTitle>Additional Information</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {investor.otherFacts && (
+                    {isTeamOrAdmin && investor.personalNotes && (
                       <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Lock className="h-4 w-4 text-muted-foreground" />
+                          <p className="text-sm font-medium">{t("personalNotes.title")}</p>
+                          <Badge variant="secondary" className="text-xs">Admin Only</Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{investor.personalNotes}</p>
+                      </div>
+                    )}
+                    {investor.otherFacts && (
+                      <div className={(isTeamOrAdmin && investor.personalNotes) ? "border-t pt-3" : ""}>
                         <p className="text-sm font-medium">Other Facts</p>
                         <p className="text-sm text-muted-foreground whitespace-pre-wrap">{investor.otherFacts}</p>
                       </div>
                     )}
                     {investor.lastNotes && (
-                      <div>
+                      <div className={(isTeamOrAdmin && investor.personalNotes) || investor.otherFacts ? "border-t pt-3" : ""}>
                         <p className="text-sm font-medium">Last Notes</p>
                         <p className="text-sm text-muted-foreground whitespace-pre-wrap">{investor.lastNotes}</p>
                       </div>
