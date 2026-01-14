@@ -43,3 +43,5 @@ export const backofficeCloseOpportunitiesPath = () =>
 export const crmPath = () => "/crm";
 export const crmLeadsPath = () => "/crm/leads";
 export const crmLeadDetailsPath = (id: string) => `/crm/leads/${id}`;
+export const crmCommissionsPath = () => "/crm/commissions";
+export const crmCommissionDetailPath = (id: string) => `/crm/commissions/${id}`;

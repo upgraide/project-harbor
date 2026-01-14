@@ -10,6 +10,9 @@ export default {
     leads: {
       title: "Leads",
     },
+    commissions: {
+      title: "Commissions",
+    },
     logout: {
       title: "Logout",
     },

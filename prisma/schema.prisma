@@ -99,6 +99,9 @@ model User {
   createdNotes      UserNote[] @relation("NoteCreator")
   activities        LeadActivity[]
 
+  // Commission relations
+  commissions Commission[]
+
   @@unique([email])
   @@map("user")
 }
@@ -706,4 +709,70 @@ enum ActivityType {
   ASSIGNMENT_CHANGE
   FOLLOW_UP_SCHEDULED
   OTHER
+}
+
+// Commission Management
+model Commission {
+  id                    String         @id @default(cuid())
+  userId                String
+  user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleType              CommissionRole
+  commissionPercentage  Float          @default(0)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  // Relations to commission values
+  commissionValues      CommissionValue[] @relation("CommissionToCommissionValue")
+
+  @@unique([userId, roleType])
+  @@map("commission")
+}
+
+model CommissionValue {
+  id                    String              @id @default(cuid())
+  
+  // Project reference (polymorphic)
+  opportunityId         String
+  opportunityType       OpportunityType
+  
+  // Calculated commission value
+  totalCommissionValue  Float?
+  
+  // Commission entries involved (many-to-many through relation)
+  commissionId          String
+  commission            Commission          @relation("CommissionToCommissionValue", fields: [commissionId], references: [id], onDelete: Cascade)
+  
+  // Payment schedule
+  payments              CommissionPayment[]
+  
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  @@unique([opportunityId, opportunityType, commissionId])
+  @@map("commission_value")
+}
+
+model CommissionPayment {
+  id                    String           @id @default(cuid())
+  commissionValueId     String
+  commissionValue       CommissionValue  @relation(fields: [commissionValueId], references: [id], onDelete: Cascade)
+  
+  // Payment installment (1, 2, or 3)
+  installmentNumber     Int
+  
+  // Payment details (null until admin sets them)
+  paymentDate           DateTime?
+  paymentAmount         Float?
+  
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  @@unique([commissionValueId, installmentNumber])
+  @@map("commission_payment")
+}
+
+enum CommissionRole {
+  ACCOUNT_MANAGER
+  CLIENT_ACQUISITION
+  DEAL_SUPPORT
 }
