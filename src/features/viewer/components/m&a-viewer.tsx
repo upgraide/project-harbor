@@ -568,7 +568,13 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                     <XAxis
                       axisLine={false}
                       dataKey="year"
-                      tickFormatter={(value) => `${value.slice(0, 5)}H`}
+                      tickFormatter={(value) => {
+                        const year = String(value);
+                        const yearNum = Number.parseInt(year);
+                        const currentYear = new Date().getFullYear();
+                        const suffix = yearNum >= currentYear ? 'F' : 'H';
+                        return `${year.slice(0, 4)}${suffix}`;
+                      }}
                       tickLine={false}
                       tickMargin={8}
                     />
@@ -609,7 +615,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                         fontWeight: 600,
                         fill: ((entry: any) => {
                           const yearType = getYearType(String((entry as any)?.year || ''));
-                          return yearType === 'future' ? '#A89F91' : '#1E3A8A';
+                          return yearType === 'future' ? '#909090' : '#1E3A8A';
                         }) as any,
                         formatter: (value: number) => value.toFixed(2),
                       }}
@@ -621,7 +627,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                         return (
                           <Cell
                             key={`cell-${index}`}
-                            fill={yearType === 'future' ? '#A89F91' : '#1E3A8A'}
+                            fill={yearType === 'future' ? '#909090' : '#1E3A8A'}
                           />
                         );
                       })}
@@ -634,7 +640,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                         fontSize: 12,
                         formatter: (value: number) => value.toFixed(2),
                       }}
-                      stroke="#9CA3AF"
+                      stroke="#9C3E11"
                       strokeWidth={2}
                       type="monotone"
                       yAxisId="right"
@@ -658,8 +664,28 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   </ComposedChart>
                 </ChartContainer>
                 {opportunity.graphRows && opportunity.graphRows.length >= 3 && (
-                  <div className="mt-2 text-right text-muted-foreground text-xs">
-                    {getCAGRLabel(opportunity.graphRows as any, t)}
+                  <div className="mt-4 space-y-2">
+                    <div className="text-right text-muted-foreground text-xs">
+                      {getCAGRLabel(opportunity.graphRows as any, t)}
+                    </div>
+                    <div className="flex justify-end gap-3">
+                      {opportunity.salesCAGR != null && (
+                        <div className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5">
+                          <span className="text-xs font-medium text-primary">Sales CAGR:</span>
+                          <span className="text-sm font-semibold text-muted-foreground">
+                            {opportunity.salesCAGR.toFixed(2)}%
+                          </span>
+                        </div>
+                      )}
+                      {opportunity.ebitdaCAGR != null && (
+                        <div className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5">
+                          <span className="text-xs font-medium text-primary">EBITDA CAGR:</span>
+                          <span className="text-sm font-semibold text-muted-foreground">
+                            {opportunity.ebitdaCAGR.toFixed(2)}%
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </CardContent>

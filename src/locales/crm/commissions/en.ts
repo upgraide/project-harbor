@@ -23,8 +23,14 @@ export default {
 
   projects: {
     title: "Commission-Eligible Projects",
+    tabs: {
+      pending: "Pending Projects",
+      concluded: "Concluded Projects",
+    },
     emptyState: "No commission-eligible projects",
     emptyStateDescription: "Projects where you have commission roles will appear here",
+    noConcludedProjects: "No concluded projects with commissions",
+    noConcludedProjectsDescription: "Concluded projects with configured commissions will appear here",
     
     card: {
       role: "Role",

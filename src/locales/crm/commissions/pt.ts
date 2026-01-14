@@ -23,8 +23,14 @@ export default {
 
   projects: {
     title: "Projetos Elegíveis para Comissão",
+    tabs: {
+      pending: "Projetos Pendentes",
+      concluded: "Projetos Concluídos",
+    },
     emptyState: "Sem projetos elegíveis para comissão",
     emptyStateDescription: "Os projetos onde tem funções de comissão aparecerão aqui",
+    noConcludedProjects: "Sem projetos concluídos com comissões",
+    noConcludedProjectsDescription: "Projetos concluídos com comissões configuradas aparecerão aqui",
     
     card: {
       role: "Função",

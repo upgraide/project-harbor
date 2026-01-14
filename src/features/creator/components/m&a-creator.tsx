@@ -893,7 +893,13 @@ export const Creator = () => {
                       <XAxis
                         axisLine={false}
                         dataKey="year"
-                        tickFormatter={(value) => `${value.slice(0, 5)}H`}
+                        tickFormatter={(value) => {
+                          const year = String(value);
+                          const yearNum = Number.parseInt(year);
+                          const currentYear = new Date().getFullYear();
+                          const suffix = yearNum >= currentYear ? 'F' : 'H';
+                          return `${year.slice(0, 4)}${suffix}`;
+                        }}
                         tickLine={false}
                         tickMargin={8}
                       />
@@ -931,7 +937,7 @@ export const Creator = () => {
                           fontWeight: 600,
                           fill: ((entry: any) => {
                             const yearType = getYearType(String((entry as any)?.year || ''));
-                            return yearType === 'future' ? '#A89F91' : '#1E3A8A';
+                            return yearType === 'future' ? '#909090' : '#1E3A8A';
                           }) as any,
                           formatter: (value: number) => value.toFixed(2),
                         }}
@@ -943,7 +949,7 @@ export const Creator = () => {
                           return (
                             <Cell
                               key={`cell-${index}`}
-                              fill={yearType === 'future' ? '#A89F91' : '#1E3A8A'}
+                              fill={yearType === 'future' ? '#909090' : '#1E3A8A'}
                             />
                           );
                         })}
@@ -956,7 +962,7 @@ export const Creator = () => {
                           fontSize: 12,
                           formatter: (value: number) => value.toFixed(2),
                         }}
-                        stroke="#9CA3AF"
+                        stroke="#9C3E11"
                         strokeWidth={2}
                         type="monotone"
                         yAxisId="right"

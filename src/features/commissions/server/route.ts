@@ -1,8 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { CommissionRole, Role, OpportunityStatus } from "@/generated/prisma";
+import { CommissionRole, Role, OpportunityStatus, OpportunityType } from "@/generated/prisma";
 import prisma from "@/lib/db";
 import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { calculateOpportunityCommissions } from "./calculations";
 
 export const commissionsRouter = createTRPCRouter({
   // Get commissions for the current logged-in user (team member view)
@@ -136,12 +137,115 @@ export const commissionsRouter = createTRPCRouter({
       },
     });
 
+    // Fetch assignments where user is deal support (invested_person or followup_person)
+    const dealSupportAnalytics = await prisma.opportunityAnalytics.findMany({
+      where: {
+        OR: [
+          { invested_person_id: userId },
+          { followup_person_id: userId },
+        ],
+      },
+      select: {
+        mergerAndAcquisitionId: true,
+        realEstateId: true,
+        closed_at: true,
+        final_amount: true,
+        commissionable_amount: true,
+      },
+    });
+
+    const dealSupportMNAIds = dealSupportAnalytics
+      .filter((a) => a.mergerAndAcquisitionId)
+      .map((a) => a.mergerAndAcquisitionId as string);
+
+    const dealSupportREIds = dealSupportAnalytics
+      .filter((a) => a.realEstateId)
+      .map((a) => a.realEstateId as string);
+
+    const dealSupportMNA = await prisma.mergerAndAcquisition.findMany({
+      where: {
+        id: { in: dealSupportMNAIds },
+        status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+      },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        analytics: {
+          select: {
+            closed_at: true,
+            final_amount: true,
+            commissionable_amount: true,
+          },
+        },
+      },
+    });
+
+    const dealSupportRE = await prisma.realEstate.findMany({
+      where: {
+        id: { in: dealSupportREIds },
+        status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+      },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        analytics: {
+          select: {
+            closed_at: true,
+            final_amount: true,
+            commissionable_amount: true,
+          },
+        },
+      },
+    });
+
+    // Fetch all commission values for this user's projects
+    const allOpportunityIds = [
+      ...clientAcquisitionMNA.map(p => p.id),
+      ...clientAcquisitionRE.map(p => p.id),
+      ...accountManagerMNA.map(p => p.id),
+      ...accountManagerRE.map(p => p.id),
+      ...dealSupportMNA.map(p => p.id),
+      ...dealSupportRE.map(p => p.id),
+    ];
+
+    const commissionValues = await prisma.commissionValue.findMany({
+      where: {
+        opportunityId: { in: allOpportunityIds },
+        commission: {
+          userId: userId,
+        },
+      },
+      select: {
+        id: true,
+        opportunityId: true,
+        opportunityType: true,
+        totalCommissionValue: true,
+        commission: {
+          select: {
+            roleType: true,
+          },
+        },
+      },
+    });
+
+    // Create a map for easy lookup: `${opportunityId}-${roleType}` -> commissionValue
+    const commissionValueMap = new Map(
+      commissionValues.map(cv => [
+        `${cv.opportunityId}-${cv.commission.roleType}`,
+        cv.totalCommissionValue,
+      ])
+    );
+
     return {
       commissions,
       commissionValues: commissions.flatMap((c) => c.commissionValues),
+      commissionValueMap: Object.fromEntries(commissionValueMap),
       projects: {
         clientAcquisition: [...clientAcquisitionMNA, ...clientAcquisitionRE],
         accountManager: [...accountManagerMNA, ...accountManagerRE],
+        dealSupport: [...dealSupportMNA, ...dealSupportRE],
       },
     };
   }),
@@ -295,12 +399,115 @@ export const commissionsRouter = createTRPCRouter({
         },
       });
 
+      // Fetch assignments where user is deal support (invested_person or followup_person)
+      const dealSupportAnalytics = await prisma.opportunityAnalytics.findMany({
+        where: {
+          OR: [
+            { invested_person_id: input.userId },
+            { followup_person_id: input.userId },
+          ],
+        },
+        select: {
+          mergerAndAcquisitionId: true,
+          realEstateId: true,
+          closed_at: true,
+          final_amount: true,
+          commissionable_amount: true,
+        },
+      });
+
+      const dealSupportMNAIds = dealSupportAnalytics
+        .filter((a) => a.mergerAndAcquisitionId)
+        .map((a) => a.mergerAndAcquisitionId as string);
+
+      const dealSupportREIds = dealSupportAnalytics
+        .filter((a) => a.realEstateId)
+        .map((a) => a.realEstateId as string);
+
+      const dealSupportMNA = await prisma.mergerAndAcquisition.findMany({
+        where: {
+          id: { in: dealSupportMNAIds },
+          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          analytics: {
+            select: {
+              closed_at: true,
+              final_amount: true,
+              commissionable_amount: true,
+            },
+          },
+        },
+      });
+
+      const dealSupportRE = await prisma.realEstate.findMany({
+        where: {
+          id: { in: dealSupportREIds },
+          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          analytics: {
+            select: {
+              closed_at: true,
+              final_amount: true,
+              commissionable_amount: true,
+            },
+          },
+        },
+      });
+
+      // Fetch all commission values for this user's projects
+      const allOpportunityIds = [
+        ...clientAcquisitionMNA.map(p => p.id),
+        ...clientAcquisitionRE.map(p => p.id),
+        ...accountManagerMNA.map(p => p.id),
+        ...accountManagerRE.map(p => p.id),
+        ...dealSupportMNA.map(p => p.id),
+        ...dealSupportRE.map(p => p.id),
+      ];
+
+      const commissionValues = await prisma.commissionValue.findMany({
+        where: {
+          opportunityId: { in: allOpportunityIds },
+          commission: {
+            userId: input.userId,
+          },
+        },
+        select: {
+          id: true,
+          opportunityId: true,
+          opportunityType: true,
+          totalCommissionValue: true,
+          commission: {
+            select: {
+              roleType: true,
+            },
+          },
+        },
+      });
+
+      // Create a map for easy lookup: `${opportunityId}-${roleType}` -> commissionValue
+      const commissionValueMap = new Map(
+        commissionValues.map(cv => [
+          `${cv.opportunityId}-${cv.commission.roleType}`,
+          cv.totalCommissionValue,
+        ])
+      );
+
       return {
         user,
         commissions,
+        commissionValueMap: Object.fromEntries(commissionValueMap),
         projects: {
           clientAcquisition: [...clientAcquisitionMNA, ...clientAcquisitionRE],
           accountManager: [...accountManagerMNA, ...accountManagerRE],
+          dealSupport: [...dealSupportMNA, ...dealSupportRE],
         },
       };
     }),
@@ -890,5 +1097,53 @@ export const commissionsRouter = createTRPCRouter({
       );
 
       return updatedPayments;
+    }),
+
+  // Recalculate commissions for a specific opportunity (admin only)
+  recalculateCommissions: adminProcedure
+    .input(
+      z.object({
+        opportunityId: z.string(),
+        opportunityType: z.nativeEnum(OpportunityType),
+      })
+    )
+    .mutation(async ({ input }) => {
+      // Validate that the opportunity exists
+      if (input.opportunityType === OpportunityType.MNA) {
+        const opportunity = await prisma.mergerAndAcquisition.findUnique({
+          where: { id: input.opportunityId },
+          select: { id: true, name: true, status: true },
+        });
+
+        if (!opportunity) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "M&A opportunity not found",
+          });
+        }
+      } else {
+        const opportunity = await prisma.realEstate.findUnique({
+          where: { id: input.opportunityId },
+          select: { id: true, name: true, status: true },
+        });
+
+        if (!opportunity) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Real Estate opportunity not found",
+          });
+        }
+      }
+
+      // Trigger recalculation
+      const results = await calculateOpportunityCommissions({
+        opportunityId: input.opportunityId,
+        opportunityType: input.opportunityType,
+      });
+
+      return {
+        success: true,
+        calculatedCommissions: results?.length || 0,
+      };
     }),
 });

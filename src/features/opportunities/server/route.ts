@@ -22,6 +22,7 @@ import {
   createTRPCRouter,
   protectedProcedure,
 } from "@/trpc/init";
+import { triggerCommissionCalculations } from "@/features/commissions/server/calculations";
 
 const CAGR_MIN = 0;
 const CAGR_MAX = 100;
@@ -881,10 +882,17 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      return await prisma.mergerAndAcquisition.update({
+      const result = await prisma.mergerAndAcquisition.update({
         where: { id: input.id },
         data: { status: input.status },
       });
+
+      // Trigger commission calculations when status changes to CONCLUDED
+      if (input.status === "CONCLUDED") {
+        await triggerCommissionCalculations(input.id, OpportunityType.MNA);
+      }
+
+      return result;
     }),
   updateFinalValues: adminProcedure
     .input(
@@ -915,10 +923,16 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
       if (input.profit_amount !== undefined) updateData.profit_amount = input.profit_amount;
       if (input.commissionable_amount !== undefined) updateData.commissionable_amount = input.commissionable_amount;
 
-      return await prisma.opportunityAnalytics.update({
+      const result = await prisma.opportunityAnalytics.update({
         where: { mergerAndAcquisitionId: input.id },
         data: updateData,
       });
+
+      // Trigger commission calculations when final values are updated
+      // (in case opportunity was already CONCLUDED before final values were set)
+      await triggerCommissionCalculations(input.id, OpportunityType.MNA);
+
+      return result;
     }),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -2466,10 +2480,17 @@ export const realEstateRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      return await prisma.realEstate.update({
+      const result = await prisma.realEstate.update({
         where: { id: input.id },
         data: { status: input.status },
       });
+
+      // Trigger commission calculations when status changes to CONCLUDED
+      if (input.status === "CONCLUDED") {
+        await triggerCommissionCalculations(input.id, OpportunityType.REAL_ESTATE);
+      }
+
+      return result;
     }),
   updateFinalValues: adminProcedure
     .input(
@@ -2500,9 +2521,15 @@ export const realEstateRouter = createTRPCRouter({
       if (input.profit_amount !== undefined) updateData.profit_amount = input.profit_amount;
       if (input.commissionable_amount !== undefined) updateData.commissionable_amount = input.commissionable_amount;
 
-      return await prisma.opportunityAnalytics.update({
+      const result = await prisma.opportunityAnalytics.update({
         where: { realEstateId: input.id },
         data: updateData,
       });
+
+      // Trigger commission calculations when final values are updated
+      // (in case opportunity was already CONCLUDED before final values were set)
+      await triggerCommissionCalculations(input.id, OpportunityType.REAL_ESTATE);
+
+      return result;
     }),
 });
