@@ -1,9 +1,11 @@
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 import { useTRPC } from "@/trpc/client";
 import { useOpportunitiesParams } from "./use-opportunities-params";
 
@@ -1890,12 +1892,14 @@ export const useSignMergerAndAcquisitionNDA = (onSuccess?: () => void) => {
  */
 export const useGetMergerAndAcquisitionInterest = (opportunityId: string) => {
   const trpc = useTRPC();
+  const { data: session } = authClient.useSession();
 
-  return useSuspenseQuery(
-    trpc.userInterest.getMergerAndAcquisitionInterest.queryOptions({
+  return useQuery({
+    ...trpc.userInterest.getMergerAndAcquisitionInterest.queryOptions({
       opportunityId,
-    })
-  );
+    }),
+    enabled: !!session?.user?.id,
+  });
 };
 
 /**

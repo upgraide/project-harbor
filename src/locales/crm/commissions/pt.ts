@@ -18,6 +18,7 @@ export default {
   roles: {
     ACCOUNT_MANAGER: "Gestor de Conta",
     CLIENT_ACQUISITION: "Angariação de Cliente",
+    CLIENT_ORIGINATOR: "Adquiridor do Cliente",
     DEAL_SUPPORT: "Apoio ao Negócio",
   },
 
@@ -44,6 +45,7 @@ export default {
       pending: "Pendente",
       concluded: "Concluído",
       notFinished: "Projeto não concluído",
+      notSetUp: "Não Configurado",
     },
 
     details: {
@@ -54,6 +56,7 @@ export default {
       commissionPercentage: "Percentagem de Comissão",
       estimatedCommission: "Comissão Estimada",
       closedAt: "Fechado Em",
+      myCommission: "A Minha Comissão",
     },
   },
 
@@ -64,8 +67,8 @@ export default {
       table: {
         employee: "Colaborador",
         totalProjects: "Total de Projetos",
-        commissionRoles: "Funções de Comissão",
-        actions: "Ações",
+        commissionRoles: "Funções de Comissão",        totalReceived: "Total Recebido",
+        totalYetToReceive: "A Receber",        actions: "Ações",
         viewDetails: "Ver Detalhes",
       },
     },
@@ -166,5 +169,106 @@ export default {
       emptyState: "Plano de pagamento não configurado",
       emptyStateDescription: "Os administradores podem configurar o plano de pagamento após conclusão do projeto",
     },
+  },
+
+  resolution: {
+    title: "Resolver Comissões",
+    backButton: "Voltar",
+    alreadyResolved: "Já Resolvido",
+    loadingDetails: "A carregar detalhes da comissão...",
+    
+    opportunityDetails: {
+      title: "Detalhes da Oportunidade",
+      status: "Estado",
+      finalAmount: "Valor Final",
+      commissionableAmount: "Valor Comissionável",
+    },
+    
+    recipients: {
+      title: "Destinatários de Comissão",
+      description: "Comissões calculadas com base nas taxas atuais",
+      emptyState: "Nenhum destinatário de comissão encontrado. Certifique-se de que os utilizadores têm taxas de comissão configuradas.",
+      totalCommission: "Comissão Total",
+      rate: "Taxa",
+      amount: "Valor",
+      grandTotal: "Total Geral",
+      halvedTooltip: "Percentagem reduzida a metade devido a 2 Gestores de Conta nesta oportunidade",
+    },
+    
+    paymentSchedule: {
+      title: "Plano de Pagamento",
+      description: "Definir datas e percentagens de pagamento. O mesmo plano aplicar-se-á a todos os {count} destinatário{plural}.",
+      editDescription: "Editar o plano de pagamento para esta oportunidade",
+      addPayment: "Adicionar Pagamento",
+      installment: "Pagamento {number}",
+      percentage: "Percentagem",
+      paymentDate: "Data de Pagamento",
+      total: "Total",
+      mustEqual100: "(deve ser igual a 100%)",
+      cancel: "Cancelar",
+      save: "Resolver Comissões",
+      update: "Atualizar Plano de Comissão",
+      saving: "A guardar...",
+      updating: "A atualizar...",
+    },
+    
+    toasts: {
+      resolveSuccess: "Comissões resolvidas com sucesso!",
+      resolveFailed: "Falha ao resolver comissões",
+    },
+  },
+  
+  pendingResolution: {
+    title: "Oportunidades Pendentes de Resolução de Comissão",
+    description: "Oportunidades concluídas que precisam de planos de comissão configurados",
+    emptyState: "Todas as oportunidades concluídas têm as suas comissões resolvidas",
+    table: {
+      name: "Nome",
+      type: "Tipo",
+      finalAmount: "Valor Final",
+      commissionable: "Comissionável",
+      actions: "Ações",
+      setupButton: "Configurar Comissões",
+    },
+  },
+  
+  resolvedList: {
+    title: "Comissões Resolvidas",
+    description: "Todas as oportunidades com planos de comissão resolvidos",
+    emptyTitle: "Ainda sem comissões resolvidas",
+    emptyMessage: "Resolva comissões para oportunidades concluídas para as ver aqui",
+    table: {
+      name: "Nome",
+      type: "Tipo",
+      recipients: "Destinatários",
+      finalAmount: "Valor Final",
+      commissionable: "Comissionável",
+      resolvedDate: "Resolvido",
+      actions: "Ações",
+      viewButton: "Ver",
+    },
+  },
+  
+  tabs: {
+    pendingResolution: "Resolução Pendente",
+    resolvedCommissions: "Comissões Resolvidas",
+    teamMembers: "Membros da Equipa",
+    commissionRates: "Taxas de Comissão",
+  },
+  
+  loading: {
+    commissionData: "A carregar dados de comissão...",
+  },
+  
+  errorPage: {
+    title: "Comissão Não Configurada",
+    description: "O plano de comissão desta oportunidade ainda não foi configurado.",
+    message: "Apenas os administradores podem configurar planos de comissão. Uma vez configurados, os detalhes da comissão estarão visíveis aqui.",
+    backButton: "Voltar às Comissões",
+  },
+  
+  opportunityTypes: {
+    MNA: "F&A",
+    REAL_ESTATE: "Imobiliário",
   },
 } as const;

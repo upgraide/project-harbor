@@ -57,6 +57,10 @@ export const MyCommissions = () => {
       ...p,
       role: CommissionRole.CLIENT_ACQUISITION,
     })),
+    ...(data.projects.clientOriginator || []).map((p) => ({
+      ...p,
+      role: CommissionRole.CLIENT_ORIGINATOR,
+    })),
     ...data.projects.accountManager.map((p) => ({
       ...p,
       role: CommissionRole.ACCOUNT_MANAGER,
@@ -75,19 +79,14 @@ export const MyCommissions = () => {
     (p) => p.status === OpportunityStatus.CONCLUDED
   );
 
-  // For concluded projects, only show those that have a commission configured
-  const concludedProjectsWithCommissions = concludedProjects.filter((project) => {
-    const commission = data.commissions.find(c => c.roleType === project.role);
-    return commission !== undefined;
-  });
-
   return (
     <div className="space-y-6">
       {/* Commission Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {[
           CommissionRole.ACCOUNT_MANAGER,
           CommissionRole.CLIENT_ACQUISITION,
+          CommissionRole.CLIENT_ORIGINATOR,
           CommissionRole.DEAL_SUPPORT,
         ].map((role) => {
           const roleProjects = allProjects.filter((p) => p.role === role);
@@ -123,7 +122,7 @@ export const MyCommissions = () => {
                 {t("projects.tabs.pending")} ({pendingProjects.length})
               </TabsTrigger>
               <TabsTrigger value="concluded">
-                {t("projects.tabs.concluded")} ({concludedProjectsWithCommissions.length})
+                {t("projects.tabs.concluded")} ({concludedProjects.length})
               </TabsTrigger>
             </TabsList>
 
@@ -136,30 +135,16 @@ export const MyCommissions = () => {
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {pendingProjects.map((project) => {
-                    const commissionId = data.commissions.find(c => c.roleType === project.role)?.id;
-                    
+                    // For now, pending projects show "-" since commissions aren't resolved yet
                     return (
-                      <Link 
-                        key={`${project.id}-${project.role}`}
-                        href={commissionId ? `/crm/commissions/detail?opportunityId=${project.id}&commissionId=${commissionId}` : '#'}
-                        className="block"
-                      >
-                    <Card className="overflow-hidden flex flex-col hover:shadow-lg transition-shadow cursor-pointer">
+                      <Card key={`${project.id}-${project.role}`} className="overflow-hidden flex flex-col">
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
                         <CardTitle className="text-base line-clamp-1">
                           {project.name}
                         </CardTitle>
-                        <Badge
-                          variant={
-                            project.status === OpportunityStatus.CONCLUDED
-                              ? "default"
-                              : "secondary"
-                          }
-                        >
-                          {project.status === OpportunityStatus.CONCLUDED
-                            ? t("projects.status.concluded")
-                            : t("projects.status.pending")}
+                        <Badge variant="secondary">
+                          {t("projects.status.pending")}
                         </Badge>
                       </div>
                       <CardDescription className="text-xs">
@@ -168,10 +153,54 @@ export const MyCommissions = () => {
                     </CardHeader>
                     <CardContent className="flex-1">
                       <div className="space-y-2 text-sm">
-                        {project.status === OpportunityStatus.CONCLUDED &&
-                        project.analytics ? (
-                          <>
-                            {project.analytics.final_amount && (
+                        <div className="text-center text-muted-foreground">
+                          {t("projects.details.projectNotFinished")}
+                        </div>
+                      </div>
+                    </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="concluded">
+              {concludedProjects.length === 0 ? (
+                <EmptyView
+                  title={t("projects.noConcludedProjects")}
+                  message={t("projects.noConcludedProjectsDescription")}
+                />
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {concludedProjects.map((project) => {
+                    // Find the commission value for this project and role
+                    const commissionValue = data.commissionValues.find(
+                      cv => cv.opportunityId === project.id && cv.commission.roleType === project.role
+                    );
+
+                    // Check if commission is resolved by checking the schedule
+                    const schedule = data.scheduleMap?.[project.id];
+                    const isResolved = schedule?.isResolved === true;
+
+                    const cardContent = (
+                      <Card className={`overflow-hidden flex flex-col ${isResolved ? 'hover:shadow-lg transition-shadow cursor-pointer' : 'opacity-75'}`}>
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start justify-between">
+                            <CardTitle className="text-base line-clamp-1">
+                              {project.name}
+                            </CardTitle>
+                            <Badge variant={isResolved ? "default" : "secondary"}>
+                              {isResolved ? t("projects.status.concluded") : t("projects.status.notSetUp")}
+                            </Badge>
+                          </div>
+                          <CardDescription className="text-xs">
+                            {getRoleLabel(project.role)}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                          <div className="space-y-2 text-sm">
+                            {project.analytics?.final_amount ? (
                               <div className="flex justify-between">
                                 <span className="text-muted-foreground">
                                   {t("projects.details.finalAmount")}:
@@ -180,187 +209,54 @@ export const MyCommissions = () => {
                                   {formatCurrency(project.analytics.final_amount)}
                                 </span>
                               </div>
-                            )}
-                            {project.analytics.commissionable_amount && (
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">
-                                  {t("projects.details.commissionableAmount")}:
-                                </span>
-                                <span className="font-medium">
-                                  {formatCurrency(
-                                    project.analytics.commissionable_amount
-                                  )}
-                                </span>
-                              </div>
-                            )}
-                            <div className="flex justify-between border-t pt-2">
-                              <span className="text-muted-foreground">
-                                {t("projects.details.commissionPercentage")}:
-                              </span>
-                              <span className="font-bold">
-                                {(() => {
-                                  const effectivePercentage = getEffectiveCommissionPercentage(
-                                    project.id,
-                                    project.role,
-                                    project.analytics.commissionable_amount
-                                  );
-                                  if (effectivePercentage != null) {
-                                    return `${effectivePercentage.toFixed(2)}%`;
-                                  }
-                                  return `${getCommissionPercentage(project.role)}%`;
-                                })()}
-                              </span>
-                            </div>
-                          </>
-                        ) : (
-                          <div className="text-center text-muted-foreground">
-                            {t("projects.details.projectNotFinished")}
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                      </Card>
-                    </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="concluded">
-              {concludedProjectsWithCommissions.length === 0 ? (
-                <EmptyView
-                  title={t("projects.noConcludedProjects")}
-                  message={t("projects.noConcludedProjectsDescription")}
-                />
-              ) : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {concludedProjectsWithCommissions.map((project) => {
-                    const commission = data.commissions.find(c => c.roleType === project.role);
-                    const commissionId = commission?.id;
-                    const hasCommission = commission !== undefined;
-
-                    // If concluded but no commission configured, show non-clickable card with '-'
-                    if (!hasCommission) {
-                      return (
-                        <Card key={`${project.id}-${project.role}`} className="overflow-hidden flex flex-col opacity-60">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between">
-                              <CardTitle className="text-base line-clamp-1">
-                                {project.name}
-                              </CardTitle>
-                              <Badge variant="default">
-                                {t("projects.status.concluded")}
-                              </Badge>
-                            </div>
-                            <CardDescription className="text-xs">
-                              {getRoleLabel(project.role)}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent className="flex-1">
-                            <div className="space-y-2 text-sm">
+                            ) : (
                               <div className="flex justify-between">
                                 <span className="text-muted-foreground">
                                   {t("projects.details.finalAmount")}:
                                 </span>
                                 <span className="font-medium">-</span>
                               </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">
-                                  {t("projects.details.commissionableAmount")}:
-                                </span>
-                                <span className="font-medium">-</span>
-                              </div>
+                            )}
+                            {commissionValue?.totalCommissionValue ? (
                               <div className="flex justify-between border-t pt-2">
                                 <span className="text-muted-foreground">
-                                  {t("projects.details.commissionPercentage")}:
+                                  {t("projects.details.myCommission")}:
                                 </span>
-                                <span className="font-bold">-</span>
+                                <span className="font-bold text-primary">
+                                  {formatCurrency(commissionValue.totalCommissionValue)}
+                                </span>
                               </div>
-                            </div>
-                          </CardContent>
-                        </Card>
+                            ) : (
+                              <div className="flex justify-between border-t pt-2">
+                                <span className="text-muted-foreground">
+                                  {t("projects.details.myCommission")}:
+                                </span>
+                                <span className="font-medium text-amber-600">{t("projects.status.notSetUp")}</span>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+
+                    // Only wrap in Link if commission is resolved
+                    if (isResolved && commissionValue) {
+                      return (
+                        <Link 
+                          key={`${project.id}-${project.role}`}
+                          href={`/crm/commissions/${commissionValue.id}`}
+                          className="block"
+                        >
+                          {cardContent}
+                        </Link>
                       );
                     }
 
+                    // Not resolved - just show card without link
                     return (
-                      <Link 
-                        key={`${project.id}-${project.role}`}
-                        href={`/crm/commissions/detail?opportunityId=${project.id}&commissionId=${commissionId}`}
-                        className="block"
-                      >
-                        <Card className="overflow-hidden flex flex-col hover:shadow-lg transition-shadow cursor-pointer">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between">
-                              <CardTitle className="text-base line-clamp-1">
-                                {project.name}
-                              </CardTitle>
-                              <Badge variant="default">
-                                {t("projects.status.concluded")}
-                              </Badge>
-                            </div>
-                            <CardDescription className="text-xs">
-                              {getRoleLabel(project.role)}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent className="flex-1">
-                            <div className="space-y-2 text-sm">
-                              {project.analytics?.final_amount ? (
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">
-                                    {t("projects.details.finalAmount")}:
-                                  </span>
-                                  <span className="font-medium">
-                                    {formatCurrency(project.analytics.final_amount)}
-                                  </span>
-                                </div>
-                              ) : (
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">
-                                    {t("projects.details.finalAmount")}:
-                                  </span>
-                                  <span className="font-medium">-</span>
-                                </div>
-                              )}
-                              {project.analytics?.commissionable_amount ? (
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">
-                                    {t("projects.details.commissionableAmount")}:
-                                  </span>
-                                  <span className="font-medium">
-                                    {formatCurrency(project.analytics.commissionable_amount)}
-                                  </span>
-                                </div>
-                              ) : (
-                                <div className="flex justify-between">
-                                  <span className="text-muted-foreground">
-                                    {t("projects.details.commissionableAmount")}:
-                                  </span>
-                                  <span className="font-medium">-</span>
-                                </div>
-                              )}
-                              <div className="flex justify-between border-t pt-2">
-                                <span className="text-muted-foreground">
-                                  {t("projects.details.commissionPercentage")}:
-                                </span>
-                                <span className="font-bold">
-                                  {(() => {
-                                    const effectivePercentage = getEffectiveCommissionPercentage(
-                                      project.id,
-                                      project.role,
-                                      project.analytics?.commissionable_amount
-                                    );
-                                    if (effectivePercentage != null) {
-                                      return `${effectivePercentage.toFixed(2)}%`;
-                                    }
-                                    return `${getCommissionPercentage(project.role)}%`;
-                                  })()}
-                                </span>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
+                      <div key={`${project.id}-${project.role}`}>
+                        {cardContent}
+                      </div>
                     );
                   })}
                 </div>

@@ -68,9 +68,9 @@ const UpdateStatusDialog = ({
   // Simplified fields for CONCLUDED status
   const [finalAmount, setFinalAmount] = useState("");
   const [closingDate, setClosingDate] = useState("");
+  const [clientOriginatorId, setClientOriginatorId] = useState("");
   const [investedPersonId, setInvestedPersonId] = useState("");
   const [followupPersonId, setFollowupPersonId] = useState("");
-  const [profitAmount, setProfitAmount] = useState("");
   const [commissionableAmount, setCommissionableAmount] = useState("");
 
   const updateMnaStatus = useUpdateMergerAndAcquisitionStatus();
@@ -95,9 +95,9 @@ const UpdateStatusDialog = ({
             id: opportunity.id,
             final_amount: finalAmount ? Number.parseFloat(finalAmount) : undefined,
             closed_at: closingDate ? new Date(closingDate) : undefined,
+            client_originator_id: clientOriginatorId || null,
             invested_person_id: investedPersonId || null,
             followup_person_id: followupPersonId || null,
-            profit_amount: profitAmount ? Number.parseFloat(profitAmount) : undefined,
             commissionable_amount: commissionableAmount ? Number.parseFloat(commissionableAmount) : undefined,
           });
         }
@@ -113,9 +113,9 @@ const UpdateStatusDialog = ({
             id: opportunity.id,
             final_amount: finalAmount ? Number.parseFloat(finalAmount) : undefined,
             closed_at: closingDate ? new Date(closingDate) : undefined,
+            client_originator_id: clientOriginatorId || null,
             invested_person_id: investedPersonId || null,
             followup_person_id: followupPersonId || null,
-            profit_amount: profitAmount ? Number.parseFloat(profitAmount) : undefined,
             commissionable_amount: commissionableAmount ? Number.parseFloat(commissionableAmount) : undefined,
           });
         }
@@ -124,10 +124,10 @@ const UpdateStatusDialog = ({
       // Reset form and close dialog
       setStatus("");
       setFinalAmount("");
+      setClientOriginatorId("");
       setClosingDate("");
       setInvestedPersonId("");
       setFollowupPersonId("");
-      setProfitAmount("");
       setCommissionableAmount("");
       onOpenChange(false);
     } catch (error) {
@@ -190,6 +190,16 @@ const UpdateStatusDialog = ({
               </div>
 
               <div className="grid gap-2">
+                <Label htmlFor="clientOriginator">{t("labels.clientOriginator")}</Label>
+                <UserSelect
+                  value={clientOriginatorId}
+                  onValueChange={setClientOriginatorId}
+                  placeholder={t("placeholders.clientOriginator")}
+                />
+                <p className="text-xs text-muted-foreground">{t("helper.clientOriginator")}</p>
+              </div>
+
+              <div className="grid gap-2">
                 <Label htmlFor="investedPerson">{t("labels.investedPerson")}</Label>
                 <UserSelect
                   value={investedPersonId}
@@ -207,17 +217,6 @@ const UpdateStatusDialog = ({
                   placeholder={t("placeholders.followupPerson")}
                 />
                 <p className="text-xs text-muted-foreground">{t("helper.followupPerson")}</p>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="profitAmount">{t("labels.profitAmount")}</Label>
-                <Input
-                  id="profitAmount"
-                  type="number"
-                  placeholder={t("placeholders.profitAmount")}
-                  value={profitAmount}
-                  onChange={(e) => setProfitAmount(e.target.value)}
-                />
               </div>
 
               <div className="grid gap-2">

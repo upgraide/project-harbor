@@ -1,20 +1,25 @@
-"use client";
-
-import { use } from "react";
 import { EmployeeCommissions } from "@/features/commissions/components/employee-commissions";
+import { HydrateClient, trpc, prefetch } from "@/trpc/server";
+import { requireAdmin } from "@/lib/auth-utils";
 
 interface EmployeeCommissionsPageProps {
   params: Promise<{ userId: string }>;
 }
 
-export default function EmployeeCommissionsPage({
+export default async function EmployeeCommissionsPage({
   params,
 }: EmployeeCommissionsPageProps) {
-  const { userId } = use(params);
+  await requireAdmin();
+  const { userId } = await params;
+
+  // Prefetch employee commissions data
+  prefetch(trpc.commissions.getEmployeeCommissions.queryOptions({ userId }));
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <EmployeeCommissions userId={userId} />
-    </div>
+    <HydrateClient>
+      <div className="flex flex-col gap-6 p-6">
+        <EmployeeCommissions userId={userId} />
+      </div>
+    </HydrateClient>
   );
 }

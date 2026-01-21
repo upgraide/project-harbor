@@ -19,6 +19,7 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.url(),
     GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1),
+    GOOGLE_API: z.string().min(1),
     UPLOADTHING_TOKEN: z.string().min(1),
     RESEND_API_KEY: z.string().min(1),
     INNGEST_EVENT_KEY: z.string(),
@@ -36,6 +37,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_PUSHER_KEY: z.string().min(1),
     NEXT_PUBLIC_PUSHER_CLUSTER: z.string().min(1),
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: z.string().min(1),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -44,6 +46,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_PUSHER_KEY: process.env.NEXT_PUBLIC_PUSHER_KEY,
     NEXT_PUBLIC_PUSHER_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   },
   skipValidation:
     !!process.env.CI ||

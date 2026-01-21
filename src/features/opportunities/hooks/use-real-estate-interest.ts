@@ -1,5 +1,6 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 import { useTRPC } from "@/trpc/client";
 
 /**
@@ -7,10 +8,12 @@ import { useTRPC } from "@/trpc/client";
  */
 export const useGetRealEstateInterest = (opportunityId: string) => {
   const trpc = useTRPC();
+  const { data: session } = authClient.useSession();
 
-  return useSuspenseQuery(
-    trpc.userInterest.getRealEstateInterest.queryOptions({ opportunityId })
-  );
+  return useQuery({
+    ...trpc.userInterest.getRealEstateInterest.queryOptions({ opportunityId }),
+    enabled: !!session?.user?.id,
+  });
 };
 
 /**

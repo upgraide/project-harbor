@@ -107,6 +107,7 @@ export const CommissionManagement = () => {
   const allRoles = [
     CommissionRole.ACCOUNT_MANAGER,
     CommissionRole.CLIENT_ACQUISITION,
+    CommissionRole.CLIENT_ORIGINATOR,
     CommissionRole.DEAL_SUPPORT,
   ];
 

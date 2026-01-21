@@ -7,6 +7,7 @@ import { calculateOpportunityCommissions } from "./calculations";
 
 export const commissionsRouter = createTRPCRouter({
   // Get commissions for the current logged-in user (team member view)
+  // Only shows CONCLUDED opportunities where commissions have been resolved
   getMyCommissions: protectedProcedure.query(async ({ ctx }) => {
     // Check if user has TEAM or ADMIN role
     const user = await prisma.user.findUnique({
@@ -35,6 +36,9 @@ export const commissionsRouter = createTRPCRouter({
           },
         },
         commissionValues: {
+          where: {
+            totalCommissionValue: { not: null }, // Only show resolved commissions
+          },
           include: {
             payments: true,
           },
@@ -42,11 +46,28 @@ export const commissionsRouter = createTRPCRouter({
       },
     });
 
-    // Fetch assignments where user is client acquisitioner
+    // Get only commission values that have been resolved
+    const resolvedCommissionValues = await prisma.commissionValue.findMany({
+      where: {
+        commission: {
+          userId: userId,
+        },
+        totalCommissionValue: { not: null },
+      },
+      select: {
+        opportunityId: true,
+        opportunityType: true,
+      },
+    });
+
+    const resolvedOpportunityIds = resolvedCommissionValues.map(cv => cv.opportunityId);
+
+    // Fetch only CONCLUDED opportunities where commissions have been resolved
     const clientAcquisitionMNA = await prisma.mergerAndAcquisition.findMany({
       where: {
         clientAcquisitionerId: userId,
-        status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        status: OpportunityStatus.CONCLUDED,
+        id: { in: resolvedOpportunityIds },
       },
       select: {
         id: true,
@@ -65,7 +86,49 @@ export const commissionsRouter = createTRPCRouter({
     const clientAcquisitionRE = await prisma.realEstate.findMany({
       where: {
         clientAcquisitionerId: userId,
-        status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        status: OpportunityStatus.CONCLUDED,
+        id: { in: resolvedOpportunityIds },
+      },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        analytics: {
+          select: {
+            closed_at: true,
+            final_amount: true,
+            commissionable_amount: true,
+          },
+        },
+      },
+    });
+
+    // Fetch opportunities where user is client originator
+    const clientOriginatorMNA = await prisma.mergerAndAcquisition.findMany({
+      where: {
+        clientOriginatorId: userId,
+        status: OpportunityStatus.CONCLUDED,
+        id: { in: resolvedOpportunityIds },
+      },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        analytics: {
+          select: {
+            closed_at: true,
+            final_amount: true,
+            commissionable_amount: true,
+          },
+        },
+      },
+    });
+
+    const clientOriginatorRE = await prisma.realEstate.findMany({
+      where: {
+        clientOriginatorId: userId,
+        status: OpportunityStatus.CONCLUDED,
+        id: { in: resolvedOpportunityIds },
       },
       select: {
         id: true,
@@ -90,19 +153,20 @@ export const commissionsRouter = createTRPCRouter({
       },
     });
 
-    // Fetch the actual opportunities for account manager role
     const accountManagerMNAIds = accountManagerAssignments
       .filter((a) => a.opportunityType === "MNA")
-      .map((a) => a.opportunityId);
+      .map((a) => a.opportunityId)
+      .filter(id => resolvedOpportunityIds.includes(id));
 
     const accountManagerREIds = accountManagerAssignments
       .filter((a) => a.opportunityType === "REAL_ESTATE")
-      .map((a) => a.opportunityId);
+      .map((a) => a.opportunityId)
+      .filter(id => resolvedOpportunityIds.includes(id));
 
     const accountManagerMNA = await prisma.mergerAndAcquisition.findMany({
       where: {
         id: { in: accountManagerMNAIds },
-        status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        status: OpportunityStatus.CONCLUDED,
       },
       select: {
         id: true,
@@ -121,7 +185,7 @@ export const commissionsRouter = createTRPCRouter({
     const accountManagerRE = await prisma.realEstate.findMany({
       where: {
         id: { in: accountManagerREIds },
-        status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        status: OpportunityStatus.CONCLUDED,
       },
       select: {
         id: true,
@@ -137,7 +201,7 @@ export const commissionsRouter = createTRPCRouter({
       },
     });
 
-    // Fetch assignments where user is deal support (invested_person or followup_person)
+    // Fetch assignments where user is deal support
     const dealSupportAnalytics = await prisma.opportunityAnalytics.findMany({
       where: {
         OR: [
@@ -156,16 +220,18 @@ export const commissionsRouter = createTRPCRouter({
 
     const dealSupportMNAIds = dealSupportAnalytics
       .filter((a) => a.mergerAndAcquisitionId)
-      .map((a) => a.mergerAndAcquisitionId as string);
+      .map((a) => a.mergerAndAcquisitionId as string)
+      .filter(id => resolvedOpportunityIds.includes(id));
 
     const dealSupportREIds = dealSupportAnalytics
       .filter((a) => a.realEstateId)
-      .map((a) => a.realEstateId as string);
+      .map((a) => a.realEstateId as string)
+      .filter(id => resolvedOpportunityIds.includes(id));
 
     const dealSupportMNA = await prisma.mergerAndAcquisition.findMany({
       where: {
         id: { in: dealSupportMNAIds },
-        status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        status: OpportunityStatus.CONCLUDED,
       },
       select: {
         id: true,
@@ -184,7 +250,7 @@ export const commissionsRouter = createTRPCRouter({
     const dealSupportRE = await prisma.realEstate.findMany({
       where: {
         id: { in: dealSupportREIds },
-        status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        status: OpportunityStatus.CONCLUDED,
       },
       select: {
         id: true,
@@ -200,19 +266,38 @@ export const commissionsRouter = createTRPCRouter({
       },
     });
 
-    // Fetch all commission values for this user's projects
+    // Fetch all commission values for this user's projects (only resolved ones)
     const allOpportunityIds = [
       ...clientAcquisitionMNA.map(p => p.id),
       ...clientAcquisitionRE.map(p => p.id),
+      ...clientOriginatorMNA.map(p => p.id),
+      ...clientOriginatorRE.map(p => p.id),
       ...accountManagerMNA.map(p => p.id),
       ...accountManagerRE.map(p => p.id),
       ...dealSupportMNA.map(p => p.id),
       ...dealSupportRE.map(p => p.id),
     ];
 
-    const commissionValues = await prisma.commissionValue.findMany({
+    // Fetch commission schedules to check if they are resolved
+    const commissionSchedules = await prisma.opportunityCommissionSchedule.findMany({
       where: {
         opportunityId: { in: allOpportunityIds },
+        isResolved: true,
+      },
+      select: {
+        id: true,
+        opportunityId: true,
+        opportunityType: true,
+        isResolved: true,
+        resolvedAt: true,
+      },
+    });
+
+    const resolvedScheduleOpportunityIds = commissionSchedules.map(s => s.opportunityId);
+
+    const commissionValues = await prisma.commissionValue.findMany({
+      where: {
+        opportunityId: { in: resolvedScheduleOpportunityIds },
         commission: {
           userId: userId,
         },
@@ -238,12 +323,22 @@ export const commissionsRouter = createTRPCRouter({
       ])
     );
 
+    // Create schedule map for isResolved check
+    const scheduleMap = new Map(
+      commissionSchedules.map(s => [
+        s.opportunityId,
+        { isResolved: s.isResolved, resolvedAt: s.resolvedAt },
+      ])
+    );
+
     return {
       commissions,
-      commissionValues: commissions.flatMap((c) => c.commissionValues),
+      commissionValues: commissionValues, // Use the correctly structured query results
       commissionValueMap: Object.fromEntries(commissionValueMap),
+      scheduleMap: Object.fromEntries(scheduleMap),
       projects: {
         clientAcquisition: [...clientAcquisitionMNA, ...clientAcquisitionRE],
+        clientOriginator: [...clientOriginatorMNA, ...clientOriginatorRE],
         accountManager: [...accountManagerMNA, ...accountManagerRE],
         dealSupport: [...dealSupportMNA, ...dealSupportRE],
       },
@@ -329,6 +424,45 @@ export const commissionsRouter = createTRPCRouter({
       const clientAcquisitionRE = await prisma.realEstate.findMany({
         where: {
           clientAcquisitionerId: input.userId,
+          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          analytics: {
+            select: {
+              closed_at: true,
+              final_amount: true,
+              commissionable_amount: true,
+            },
+          },
+        },
+      });
+
+      // Fetch opportunities where user is client originator
+      const clientOriginatorMNA = await prisma.mergerAndAcquisition.findMany({
+        where: {
+          clientOriginatorId: input.userId,
+          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          analytics: {
+            select: {
+              closed_at: true,
+              final_amount: true,
+              commissionable_amount: true,
+            },
+          },
+        },
+      });
+
+      const clientOriginatorRE = await prisma.realEstate.findMany({
+        where: {
+          clientOriginatorId: input.userId,
           status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
         },
         select: {
@@ -466,11 +600,27 @@ export const commissionsRouter = createTRPCRouter({
       const allOpportunityIds = [
         ...clientAcquisitionMNA.map(p => p.id),
         ...clientAcquisitionRE.map(p => p.id),
+        ...clientOriginatorMNA.map(p => p.id),
+        ...clientOriginatorRE.map(p => p.id),
         ...accountManagerMNA.map(p => p.id),
         ...accountManagerRE.map(p => p.id),
         ...dealSupportMNA.map(p => p.id),
         ...dealSupportRE.map(p => p.id),
       ];
+
+      // Fetch commission schedules
+      const commissionSchedules = await prisma.opportunityCommissionSchedule.findMany({
+        where: {
+          opportunityId: { in: allOpportunityIds },
+        },
+        select: {
+          id: true,
+          opportunityId: true,
+          opportunityType: true,
+          isResolved: true,
+          resolvedAt: true,
+        },
+      });
 
       const commissionValues = await prisma.commissionValue.findMany({
         where: {
@@ -500,12 +650,23 @@ export const commissionsRouter = createTRPCRouter({
         ])
       );
 
+      // Create schedule map for isResolved check
+      const scheduleMap = new Map(
+        commissionSchedules.map(s => [
+          s.opportunityId,
+          { isResolved: s.isResolved, resolvedAt: s.resolvedAt },
+        ])
+      );
+
       return {
         user,
         commissions,
+        commissionValues: commissionValues, // Add this for consistency
         commissionValueMap: Object.fromEntries(commissionValueMap),
+        scheduleMap: Object.fromEntries(scheduleMap),
         projects: {
           clientAcquisition: [...clientAcquisitionMNA, ...clientAcquisitionRE],
+          clientOriginator: [...clientOriginatorMNA, ...clientOriginatorRE],
           accountManager: [...accountManagerMNA, ...accountManagerRE],
           dealSupport: [...dealSupportMNA, ...dealSupportRE],
         },
@@ -540,34 +701,34 @@ export const commissionsRouter = createTRPCRouter({
           where: { userId: user.id },
         });
 
-        // Count client acquisition projects
-        const clientAcqCount = await Promise.all([
-          prisma.mergerAndAcquisition.count({
-            where: {
-              clientAcquisitionerId: user.id,
-              status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+        // Get all commission values for this user
+        const commissionValues = await prisma.commissionValue.findMany({
+          where: {
+            commission: {
+              userId: user.id,
             },
-          }),
-          prisma.realEstate.count({
-            where: {
-              clientAcquisitionerId: user.id,
-              status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
-            },
-          }),
-        ]);
-
-        // Count account manager projects
-        const accountManagerAssignments = await prisma.opportunityAccountManager.count({
-          where: { userId: user.id },
+            totalCommissionValue: { not: null },
+          },
+          select: {
+            totalCommissionValue: true,
+          },
         });
 
-        const totalProjects =
-          clientAcqCount[0] + clientAcqCount[1] + accountManagerAssignments;
+        // For now, all commissions are considered "received" since there's no tracking of pending payments
+        // Total received = sum of all commission values
+        const totalReceived = commissionValues.reduce(
+          (sum, cv) => sum + (cv.totalCommissionValue || 0),
+          0
+        );
+
+        // Yet to receive is 0 for now (will be implemented later with payment tracking)
+        const totalYetToReceive = 0;
 
         return {
           ...user,
           commissionCount,
-          totalProjects,
+          totalReceived,
+          totalYetToReceive,
         };
       })
     );
@@ -660,72 +821,16 @@ export const commissionsRouter = createTRPCRouter({
   }),
 
   // Get commission detail for a specific commission value
+  // Now only retrieves existing data - no auto-creation
   getCommissionDetail: protectedProcedure
     .input(z.object({ 
-      commissionValueId: z.string().optional(),
-      opportunityId: z.string().optional(),
-      commissionId: z.string().optional(),
-      roleType: z.string().optional(),
-      userId: z.string().optional(),
+      commissionValueId: z.string(),
     }))
-    .query(async ({ ctx, input }: { ctx: any; input: { commissionValueId?: string; opportunityId?: string; commissionId?: string; roleType?: string; userId?: string } }) => {
-      let commissionValue;
-      
-      // If commissionValueId provided, use it directly
-      if (input.commissionValueId) {
-        commissionValue = await prisma.commissionValue.findUnique({
-          where: { id: input.commissionValueId },
-          include: {
-            commission: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                  },
-                },
-              },
-            },
-            payments: {
-              orderBy: {
-                installmentNumber: "asc",
-              },
-            },
-          },
-        });
-      }
-      // Otherwise, find or create based on opportunityId and commissionId
-      else if (input.opportunityId && input.commissionId) {
-        // Handle special case: commission doesn't exist yet, create it on-the-fly
-        if (input.commissionId === 'create' && input.roleType && input.userId) {
-          // First check if user is admin
-          const currentUser = await prisma.user.findUnique({
-            where: { id: ctx.auth.user.id },
-            select: { role: true },
-          });
-
-          if (currentUser?.role !== Role.ADMIN) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message: "Only admins can create commissions",
-            });
-          }
-
-          // Create the commission if it doesn't exist
-          const commission = await prisma.commission.upsert({
-            where: {
-              userId_roleType: {
-                userId: input.userId,
-                roleType: input.roleType as CommissionRole,
-              },
-            },
-            create: {
-              userId: input.userId,
-              roleType: input.roleType as CommissionRole,
-              commissionPercentage: 0,
-            },
-            update: {},
+    .query(async ({ ctx, input }) => {
+      const commissionValue = await prisma.commissionValue.findUnique({
+        where: { id: input.commissionValueId },
+        include: {
+          commission: {
             include: {
               user: {
                 select: {
@@ -735,197 +840,14 @@ export const commissionsRouter = createTRPCRouter({
                 },
               },
             },
-          });
-
-          // Determine opportunity type
-          let opportunityType: "MNA" | "REAL_ESTATE" | null = null;
-          const mnaExists = await prisma.mergerAndAcquisition.findUnique({
-            where: { id: input.opportunityId },
-          });
-          if (mnaExists) {
-            opportunityType = "MNA";
-          } else {
-            const reExists = await prisma.realEstate.findUnique({
-              where: { id: input.opportunityId },
-            });
-            if (reExists) {
-              opportunityType = "REAL_ESTATE";
-            }
-          }
-
-          if (!opportunityType) {
-            throw new TRPCError({
-              code: "NOT_FOUND",
-              message: "Opportunity not found",
-            });
-          }
-
-          // Create or find CommissionValue
-          commissionValue = await prisma.commissionValue.findFirst({
-            where: {
-              opportunityId: input.opportunityId,
-              opportunityType: opportunityType,
-              commissionId: commission.id,
-            },
-            include: {
-              commission: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      name: true,
-                      email: true,
-                    },
-                  },
-                },
-              },
-              payments: {
-                orderBy: {
-                  installmentNumber: "asc",
-                },
-              },
-            },
-          });
-
-          if (!commissionValue) {
-            commissionValue = await prisma.commissionValue.create({
-              data: {
-                opportunityId: input.opportunityId,
-                opportunityType: opportunityType,
-                commissionId: commission.id,
-                totalCommissionValue: null,
-              },
-              include: {
-                commission: {
-                  include: {
-                    user: {
-                      select: {
-                        id: true,
-                        name: true,
-                        email: true,
-                      },
-                    },
-                  },
-                },
-                payments: {
-                  orderBy: {
-                    installmentNumber: "asc",
-                  },
-                },
-              },
-            });
-          }
-        } else {
-          // Normal flow: commission ID is provided
-        const commission = await prisma.commission.findUnique({
-          where: { id: input.commissionId },
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
+          },
+          payments: {
+            orderBy: {
+              installmentNumber: "asc",
             },
           },
-        });
-
-        if (!commission) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Commission not found",
-          });
-        }
-
-        // Determine opportunity type by checking both tables
-        let opportunityType: "MNA" | "REAL_ESTATE" | null = null;
-        const mnaExists = await prisma.mergerAndAcquisition.findUnique({
-          where: { id: input.opportunityId },
-        });
-        if (mnaExists) {
-          opportunityType = "MNA";
-        } else {
-          const reExists = await prisma.realEstate.findUnique({
-            where: { id: input.opportunityId },
-          });
-          if (reExists) {
-            opportunityType = "REAL_ESTATE";
-          }
-        }
-
-        if (!opportunityType) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Opportunity not found",
-          });
-        }
-
-        // Find or create CommissionValue
-        commissionValue = await prisma.commissionValue.findFirst({
-          where: {
-            opportunityId: input.opportunityId,
-            opportunityType: opportunityType,
-            commissionId: input.commissionId,
-          },
-          include: {
-            commission: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                  },
-                },
-              },
-            },
-            payments: {
-              orderBy: {
-                installmentNumber: "asc",
-              },
-            },
-          },
-        });
-
-        // Create if doesn't exist
-        if (!commissionValue) {
-          commissionValue = await prisma.commissionValue.create({
-            data: {
-              opportunityId: input.opportunityId,
-              opportunityType: opportunityType,
-              commissionId: input.commissionId,
-              totalCommissionValue: null,
-            },
-            include: {
-              commission: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      name: true,
-                      email: true,
-                    },
-                  },
-                },
-              },
-              payments: {
-                orderBy: {
-                  installmentNumber: "asc",
-                },
-              },
-            },
-          });
-
-          // Note: We no longer create empty payment records here.
-          // Payment records will only be created when admin actually sets values.
-        }
-        }
-      } else {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Either commissionValueId or both opportunityId and commissionId must be provided",
-        });
-      }
+        },
+      });
 
       if (!commissionValue) {
         throw new TRPCError({
@@ -950,7 +872,7 @@ export const commissionsRouter = createTRPCRouter({
         });
       }
 
-      // Fetch the opportunity details based on type
+      // Fetch the opportunity details
       let opportunityDetails: {
         name: string;
         status: OpportunityStatus;
@@ -1006,19 +928,7 @@ export const commissionsRouter = createTRPCRouter({
         }
       }
 
-      // Fetch all commissions for this user on this project
-      const allUserCommissions = await prisma.commission.findMany({
-        where: {
-          userId: commissionValue.commission.userId,
-        },
-        select: {
-          id: true,
-          roleType: true,
-          commissionPercentage: true,
-        },
-      });
-
-      // Check if this user has commission values for other roles on the same project
+      // Fetch all project commissions for this user on this specific project
       const allProjectCommissions = await prisma.commissionValue.findMany({
         where: {
           opportunityId: commissionValue.opportunityId,
@@ -1041,7 +951,7 @@ export const commissionsRouter = createTRPCRouter({
         ...commissionValue,
         opportunity: opportunityDetails,
         isAdmin,
-        allProjectCommissions, // All roles this user has on this specific project
+        allProjectCommissions,
       };
     }),
 
@@ -1144,6 +1054,780 @@ export const commissionsRouter = createTRPCRouter({
       return {
         success: true,
         calculatedCommissions: results?.length || 0,
+      };
+    }),
+
+  // Get commission preview for an opportunity (admin only - doesn't save to DB)
+  getCommissionPreview: adminProcedure
+    .input(
+      z.object({
+        opportunityId: z.string(),
+        opportunityType: z.nativeEnum(OpportunityType),
+      })
+    )
+    .query(async ({ input }) => {
+      const { opportunityId, opportunityType } = input;
+
+      // Get the opportunity and its analytics
+      let opportunity: any;
+      let analytics: any;
+
+      if (opportunityType === OpportunityType.MNA) {
+        opportunity = await prisma.mergerAndAcquisition.findUnique({
+          where: { id: opportunityId },
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            clientAcquisitionerId: true,
+            clientAcquisitioner: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            clientOriginatorId: true,
+            clientOriginator: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            analytics: {
+              select: {
+                id: true,
+                commissionable_amount: true,
+                final_amount: true,
+                invested_person_id: true,
+                followup_person_id: true,
+                invested_person: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                  },
+                },
+                followup_person: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+        analytics = opportunity?.analytics;
+      } else {
+        opportunity = await prisma.realEstate.findUnique({
+          where: { id: opportunityId },
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            clientAcquisitionerId: true,
+            clientAcquisitioner: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            clientOriginatorId: true,
+            clientOriginator: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            analytics: {
+              select: {
+                id: true,
+                commissionable_amount: true,
+                final_amount: true,
+                invested_person_id: true,
+                followup_person_id: true,
+                invested_person: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                  },
+                },
+                followup_person: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+        analytics = opportunity?.analytics;
+      }
+
+      if (!opportunity) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Opportunity not found",
+        });
+      }
+
+      if (!analytics || analytics.commissionable_amount == null) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Opportunity has no commissionable amount set",
+        });
+      }
+
+      const commissionableAmount = analytics.commissionable_amount;
+
+      // Calculate commissions for each role
+      const commissionRecipients: Array<{
+        userId: string;
+        userName: string;
+        userEmail: string;
+        roleType: CommissionRole;
+        commissionPercentage: number;
+        calculatedAmount: number;
+      }> = [];
+
+      // Client Acquisitioner
+      if (opportunity.clientAcquisitionerId && opportunity.clientAcquisitioner) {
+        const commission = await prisma.commission.findUnique({
+          where: {
+            userId_roleType: {
+              userId: opportunity.clientAcquisitionerId,
+              roleType: CommissionRole.CLIENT_ACQUISITION,
+            },
+          },
+        });
+
+        if (commission && commission.commissionPercentage > 0) {
+          commissionRecipients.push({
+            userId: opportunity.clientAcquisitioner.id,
+            userName: opportunity.clientAcquisitioner.name,
+            userEmail: opportunity.clientAcquisitioner.email,
+            roleType: CommissionRole.CLIENT_ACQUISITION,
+            commissionPercentage: commission.commissionPercentage,
+            calculatedAmount: (commissionableAmount * commission.commissionPercentage) / 100,
+          });
+        }
+      }
+
+      // Client Originator
+      if (opportunity.clientOriginatorId && opportunity.clientOriginator) {
+        const commission = await prisma.commission.findUnique({
+          where: {
+            userId_roleType: {
+              userId: opportunity.clientOriginatorId,
+              roleType: CommissionRole.CLIENT_ORIGINATOR,
+            },
+          },
+        });
+
+        if (commission && commission.commissionPercentage > 0) {
+          commissionRecipients.push({
+            userId: opportunity.clientOriginator.id,
+            userName: opportunity.clientOriginator.name,
+            userEmail: opportunity.clientOriginator.email,
+            roleType: CommissionRole.CLIENT_ORIGINATOR,
+            commissionPercentage: commission.commissionPercentage,
+            calculatedAmount: (commissionableAmount * commission.commissionPercentage) / 100,
+          });
+        }
+      }
+
+      // Account Managers
+      const accountManagers = await prisma.opportunityAccountManager.findMany({
+        where: {
+          opportunityId,
+          opportunityType,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      const accountManagerCount = accountManagers.length;
+
+      for (const manager of accountManagers) {
+        const commission = await prisma.commission.findUnique({
+          where: {
+            userId_roleType: {
+              userId: manager.userId,
+              roleType: CommissionRole.ACCOUNT_MANAGER,
+            },
+          },
+        });
+
+        if (commission && commission.commissionPercentage > 0) {
+          const adjustedPercentage =
+            accountManagerCount === 2
+              ? commission.commissionPercentage / 2
+              : commission.commissionPercentage;
+
+          commissionRecipients.push({
+            userId: manager.user.id,
+            userName: manager.user.name,
+            userEmail: manager.user.email,
+            roleType: CommissionRole.ACCOUNT_MANAGER,
+            commissionPercentage: adjustedPercentage,
+            calculatedAmount: (commissionableAmount * adjustedPercentage) / 100,
+          });
+        }
+      }
+
+      // Deal Support
+      const dealSupportUsers: Array<{ id: string; name: string; email: string }> = [];
+      if (analytics.invested_person) {
+        dealSupportUsers.push(analytics.invested_person);
+      }
+      if (analytics.followup_person && analytics.followup_person.id !== analytics.invested_person?.id) {
+        dealSupportUsers.push(analytics.followup_person);
+      }
+
+      for (const user of dealSupportUsers) {
+        const commission = await prisma.commission.findUnique({
+          where: {
+            userId_roleType: {
+              userId: user.id,
+              roleType: CommissionRole.DEAL_SUPPORT,
+            },
+          },
+        });
+
+        if (commission && commission.commissionPercentage > 0) {
+          commissionRecipients.push({
+            userId: user.id,
+            userName: user.name,
+            userEmail: user.email,
+            roleType: CommissionRole.DEAL_SUPPORT,
+            commissionPercentage: commission.commissionPercentage,
+            calculatedAmount: (commissionableAmount * commission.commissionPercentage) / 100,
+          });
+        }
+      }
+
+      // Check if already resolved
+      const existingSchedule = await prisma.opportunityCommissionSchedule.findUnique({
+        where: {
+          opportunityId_opportunityType: {
+            opportunityId,
+            opportunityType,
+          },
+        },
+        include: {
+          paymentPlans: {
+            orderBy: {
+              installmentNumber: "asc",
+            },
+          },
+        },
+      });
+
+      return {
+        opportunity: {
+          id: opportunity.id,
+          name: opportunity.name,
+          status: opportunity.status,
+          finalAmount: analytics.final_amount,
+          commissionableAmount: analytics.commissionable_amount,
+        },
+        recipients: commissionRecipients,
+        isResolved: existingSchedule?.isResolved || false,
+        existingSchedule: existingSchedule || null,
+      };
+    }),
+
+  // Get opportunities pending commission resolution (admin only)
+  getPendingCommissions: adminProcedure.query(async () => {
+    // Get all M&A opportunities with CONCLUDED status
+    const mnaOpportunities = await prisma.mergerAndAcquisition.findMany({
+      where: {
+        status: "CONCLUDED",
+        analytics: {
+          commissionable_amount: { not: null, gt: 0 },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        analytics: {
+          select: {
+            final_amount: true,
+            commissionable_amount: true,
+          },
+        },
+      },
+    });
+
+    // Get all Real Estate opportunities with CONCLUDED status
+    const realEstateOpportunities = await prisma.realEstate.findMany({
+      where: {
+        status: "CONCLUDED",
+        analytics: {
+          commissionable_amount: { not: null, gt: 0 },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        analytics: {
+          select: {
+            final_amount: true,
+            commissionable_amount: true,
+          },
+        },
+      },
+    });
+
+    // Get all resolved commission schedules
+    const resolvedSchedules = await prisma.opportunityCommissionSchedule.findMany({
+      where: {
+        isResolved: true,
+      },
+      select: {
+        opportunityId: true,
+        opportunityType: true,
+      },
+    });
+
+    // Filter out opportunities that already have resolved commissions
+    const resolvedSet = new Set(
+      resolvedSchedules.map((s) => `${s.opportunityId}-${s.opportunityType}`)
+    );
+
+    const pendingMNA = mnaOpportunities
+      .filter((opp) => !resolvedSet.has(`${opp.id}-MNA`))
+      .map((opp) => ({
+        id: opp.id,
+        name: opp.name,
+        type: "MNA" as const,
+        status: opp.status,
+        finalAmount: opp.analytics?.final_amount,
+        commissionableAmount: opp.analytics?.commissionable_amount,
+      }));
+
+    const pendingRealEstate = realEstateOpportunities
+      .filter((opp) => !resolvedSet.has(`${opp.id}-REAL_ESTATE`))
+      .map((opp) => ({
+        id: opp.id,
+        name: opp.name,
+        type: "REAL_ESTATE" as const,
+        status: opp.status,
+        finalAmount: opp.analytics?.final_amount,
+        commissionableAmount: opp.analytics?.commissionable_amount,
+      }));
+
+    return [...pendingMNA, ...pendingRealEstate].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }),
+
+  // Get all resolved commission schedules (admin only)
+  getAllResolvedCommissions: adminProcedure.query(async () => {
+    const schedules = await prisma.opportunityCommissionSchedule.findMany({
+      where: {
+        isResolved: true,
+      },
+      include: {
+        paymentPlans: {
+          orderBy: {
+            installmentNumber: "asc",
+          },
+        },
+      },
+      orderBy: {
+        resolvedAt: "desc",
+      },
+    });
+
+    // Fetch opportunity details for each schedule
+    const schedulesWithDetails = await Promise.all(
+      schedules.map(async (schedule) => {
+        let opportunityDetails: {
+          name: string;
+          status: string;
+          finalAmount?: number | null;
+          commissionableAmount?: number | null;
+        } | null = null;
+
+        if (schedule.opportunityType === "MNA") {
+          const opportunity = await prisma.mergerAndAcquisition.findUnique({
+            where: { id: schedule.opportunityId },
+            select: {
+              name: true,
+              status: true,
+              analytics: {
+                select: {
+                  final_amount: true,
+                  commissionable_amount: true,
+                },
+              },
+            },
+          });
+
+          if (opportunity) {
+            opportunityDetails = {
+              name: opportunity.name,
+              status: opportunity.status,
+              finalAmount: opportunity.analytics?.final_amount,
+              commissionableAmount: opportunity.analytics?.commissionable_amount,
+            };
+          }
+        } else {
+          const opportunity = await prisma.realEstate.findUnique({
+            where: { id: schedule.opportunityId },
+            select: {
+              name: true,
+              status: true,
+              analytics: {
+                select: {
+                  final_amount: true,
+                  commissionable_amount: true,
+                },
+              },
+            },
+          });
+
+          if (opportunity) {
+            opportunityDetails = {
+              name: opportunity.name,
+              status: opportunity.status,
+              finalAmount: opportunity.analytics?.final_amount,
+              commissionableAmount: opportunity.analytics?.commissionable_amount,
+            };
+          }
+        }
+
+        // Get commission values count for this opportunity
+        const commissionValuesCount = await prisma.commissionValue.count({
+          where: {
+            opportunityId: schedule.opportunityId,
+            opportunityType: schedule.opportunityType,
+            totalCommissionValue: { not: null },
+          },
+        });
+
+        return {
+          ...schedule,
+          opportunity: opportunityDetails,
+          recipientsCount: commissionValuesCount,
+        };
+      })
+    );
+
+    return schedulesWithDetails.filter((s) => s.opportunity !== null);
+  }),
+
+  // Resolve commissions for an opportunity (admin only - saves to DB)
+  resolveCommissions: adminProcedure
+    .input(
+      z.object({
+        opportunityId: z.string(),
+        opportunityType: z.nativeEnum(OpportunityType),
+        paymentPlan: z.array(
+          z.object({
+            installmentNumber: z.number().int().min(1),
+            percentage: z.number().min(0).max(100),
+            paymentDate: z.date(),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { opportunityId, opportunityType, paymentPlan } = input;
+
+      // Validate percentages sum to 100
+      const totalPercentage = paymentPlan.reduce((sum, p) => sum + p.percentage, 0);
+      if (Math.abs(totalPercentage - 100) > 0.01) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Payment plan percentages must sum to 100% (currently ${totalPercentage}%)`,
+        });
+      }
+
+      // Get commission preview (validates opportunity and calculates commissions)
+      const preview = await prisma.$transaction(async (tx) => {
+        // Get the opportunity
+        let opportunity: any;
+        let analytics: any;
+
+        if (opportunityType === OpportunityType.MNA) {
+          opportunity = await tx.mergerAndAcquisition.findUnique({
+            where: { id: opportunityId },
+            select: {
+              id: true,
+              name: true,
+              status: true,
+              clientAcquisitionerId: true,
+              clientOriginatorId: true,
+              analytics: {
+                select: {
+                  commissionable_amount: true,
+                  invested_person_id: true,
+                  followup_person_id: true,
+                },
+              },
+            },
+          });
+          analytics = opportunity?.analytics;
+        } else {
+          opportunity = await tx.realEstate.findUnique({
+            where: { id: opportunityId },
+            select: {
+              id: true,
+              name: true,
+              status: true,
+              clientAcquisitionerId: true,
+              clientOriginatorId: true,
+              analytics: {
+                select: {
+                  commissionable_amount: true,
+                  invested_person_id: true,
+                  followup_person_id: true,
+                },
+              },
+            },
+          });
+          analytics = opportunity?.analytics;
+        }
+
+        if (!opportunity || !analytics?.commissionable_amount) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Opportunity not found or has no commissionable amount",
+          });
+        }
+
+        const commissionableAmount = analytics.commissionable_amount;
+
+        // Calculate commission recipients
+        const recipients: Array<{
+          userId: string;
+          roleType: CommissionRole;
+          percentage: number;
+          totalValue: number;
+        }> = [];
+
+        // Client Acquisitioner
+        if (opportunity.clientAcquisitionerId) {
+          const commission = await tx.commission.findUnique({
+            where: {
+              userId_roleType: {
+                userId: opportunity.clientAcquisitionerId,
+                roleType: CommissionRole.CLIENT_ACQUISITION,
+              },
+            },
+          });
+
+          if (commission && commission.commissionPercentage > 0) {
+            recipients.push({
+              userId: opportunity.clientAcquisitionerId,
+              roleType: CommissionRole.CLIENT_ACQUISITION,
+              percentage: commission.commissionPercentage,
+              totalValue: (commissionableAmount * commission.commissionPercentage) / 100,
+            });
+          }
+        }
+
+        // Client Originator
+        if (opportunity.clientOriginatorId) {
+          const commission = await tx.commission.findUnique({
+            where: {
+              userId_roleType: {
+                userId: opportunity.clientOriginatorId,
+                roleType: CommissionRole.CLIENT_ORIGINATOR,
+              },
+            },
+          });
+
+          if (commission && commission.commissionPercentage > 0) {
+            recipients.push({
+              userId: opportunity.clientOriginatorId,
+              roleType: CommissionRole.CLIENT_ORIGINATOR,
+              percentage: commission.commissionPercentage,
+              totalValue: (commissionableAmount * commission.commissionPercentage) / 100,
+            });
+          }
+        }
+
+        // Account Managers
+        const accountManagers = await tx.opportunityAccountManager.findMany({
+          where: { opportunityId, opportunityType },
+        });
+
+        const accountManagerCount = accountManagers.length;
+
+        for (const manager of accountManagers) {
+          const commission = await tx.commission.findUnique({
+            where: {
+              userId_roleType: {
+                userId: manager.userId,
+                roleType: CommissionRole.ACCOUNT_MANAGER,
+              },
+            },
+          });
+
+          if (commission && commission.commissionPercentage > 0) {
+            const adjustedPercentage =
+              accountManagerCount === 2
+                ? commission.commissionPercentage / 2
+                : commission.commissionPercentage;
+
+            recipients.push({
+              userId: manager.userId,
+              roleType: CommissionRole.ACCOUNT_MANAGER,
+              percentage: adjustedPercentage,
+              totalValue: (commissionableAmount * adjustedPercentage) / 100,
+            });
+          }
+        }
+
+        // Deal Support
+        const dealSupportIds = new Set<string>();
+        if (analytics.invested_person_id) {
+          dealSupportIds.add(analytics.invested_person_id);
+        }
+        if (analytics.followup_person_id) {
+          dealSupportIds.add(analytics.followup_person_id);
+        }
+
+        for (const userId of dealSupportIds) {
+          const commission = await tx.commission.findUnique({
+            where: {
+              userId_roleType: {
+                userId,
+                roleType: CommissionRole.DEAL_SUPPORT,
+              },
+            },
+          });
+
+          if (commission && commission.commissionPercentage > 0) {
+            recipients.push({
+              userId,
+              roleType: CommissionRole.DEAL_SUPPORT,
+              percentage: commission.commissionPercentage,
+              totalValue: (commissionableAmount * commission.commissionPercentage) / 100,
+            });
+          }
+        }
+
+        // Create or update schedule
+        const schedule = await tx.opportunityCommissionSchedule.upsert({
+          where: {
+            opportunityId_opportunityType: {
+              opportunityId,
+              opportunityType,
+            },
+          },
+          create: {
+            opportunityId,
+            opportunityType,
+            isResolved: true,
+            resolvedAt: new Date(),
+            resolvedBy: ctx.auth.user.id,
+          },
+          update: {
+            isResolved: true,
+            resolvedAt: new Date(),
+            resolvedBy: ctx.auth.user.id,
+          },
+        });
+
+        // Delete existing payment plans
+        await tx.opportunityPaymentPlan.deleteMany({
+          where: { scheduleId: schedule.id },
+        });
+
+        // Create new payment plans
+        await tx.opportunityPaymentPlan.createMany({
+          data: paymentPlan.map((plan) => ({
+            scheduleId: schedule.id,
+            installmentNumber: plan.installmentNumber,
+            percentage: plan.percentage,
+            paymentDate: plan.paymentDate,
+          })),
+        });
+
+        // Create or update commission values and payments for each recipient
+        for (const recipient of recipients) {
+          // Get or create commission record
+          const commission = await tx.commission.upsert({
+            where: {
+              userId_roleType: {
+                userId: recipient.userId,
+                roleType: recipient.roleType,
+              },
+            },
+            create: {
+              userId: recipient.userId,
+              roleType: recipient.roleType,
+              commissionPercentage: recipient.percentage,
+            },
+            update: {},
+          });
+
+          // Create or update commission value
+          const commissionValue = await tx.commissionValue.upsert({
+            where: {
+              opportunityId_opportunityType_commissionId: {
+                opportunityId,
+                opportunityType,
+                commissionId: commission.id,
+              },
+            },
+            create: {
+              opportunityId,
+              opportunityType,
+              commissionId: commission.id,
+              totalCommissionValue: recipient.totalValue,
+            },
+            update: {
+              totalCommissionValue: recipient.totalValue,
+            },
+          });
+
+          // Delete existing payments
+          await tx.commissionPayment.deleteMany({
+            where: { commissionValueId: commissionValue.id },
+          });
+
+          // Create payment records based on payment plan
+          await tx.commissionPayment.createMany({
+            data: paymentPlan.map((plan) => ({
+              commissionValueId: commissionValue.id,
+              installmentNumber: plan.installmentNumber,
+              percentage: plan.percentage,
+              paymentDate: plan.paymentDate,
+              paymentAmount: (recipient.totalValue * plan.percentage) / 100,
+              isPaid: false,
+            })),
+          });
+        }
+
+        return { schedule, recipients };
+      });
+
+      return {
+        success: true,
+        scheduleId: preview.schedule.id,
+        recipientsProcessed: preview.recipients.length,
       };
     }),
 });

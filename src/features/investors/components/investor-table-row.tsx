@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { EditIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -123,13 +124,24 @@ export const InvestorTableRow = ({
   isDeleting,
 }: InvestorTableRowProps) => {
   const t = useScopedI18n("backoffice.investors");
+  const router = useRouter();
+
+  const handleRowClick = () => {
+    router.push(backofficeInvestorDetailPath(investor.id));
+  };
 
   return (
-    <TableRow key={investor.id}>
+    <TableRow 
+      key={investor.id}
+      onClick={handleRowClick}
+      className="cursor-pointer"
+    >
       <TableCell className="sticky left-0 bg-background font-medium">
         {investor.companyName || "-"}
       </TableCell>
-      <TableCell>{investor.name}</TableCell>
+      <TableCell>
+        {investor.name}
+      </TableCell>
       <TableCell>{investor.email}</TableCell>
       <TableCell>{investor.representativeName || "-"}</TableCell>
       <TableCell>{investor.phoneNumber || "-"}</TableCell>
@@ -238,7 +250,7 @@ export const InvestorTableRow = ({
       </TableCell>
       {isAdmin && (
         <TableCell className="sticky right-0 z-10 bg-background">
-          <div className="flex gap-2">
+          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
             <Button
               disabled={isDeleting}
               asChild

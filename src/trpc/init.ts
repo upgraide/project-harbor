@@ -53,3 +53,19 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
   return next({ ctx });
 });
+
+export const teamOrAdminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  const user = await prisma.user.findUnique({
+    where: { id: ctx.auth.user.id },
+    select: { role: true },
+  });
+
+  if (!user || (user.role !== Role.ADMIN && user.role !== Role.TEAM)) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "Only team members and admins can perform this action",
+    });
+  }
+
+  return next({ ctx });
+});

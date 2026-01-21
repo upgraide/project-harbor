@@ -20,6 +20,7 @@ import {
   adminProcedure,
   createTRPCRouter,
   protectedProcedure,
+  teamOrAdminProcedure,
 } from "@/trpc/init";
 
 // Helper function to map investor type string to enum
@@ -874,7 +875,7 @@ export const investorsRouter = createTRPCRouter({
       });
     }),
 
-  updatePersonalNotes: adminProcedure
+  updatePersonalNotes: teamOrAdminProcedure
     .input(
       z.object({
         userId: z.string(),

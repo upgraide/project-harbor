@@ -112,7 +112,28 @@ export async function calculateOpportunityCommissions(input: CalculateCommission
     }
   }
 
-  // 2b. Account Managers
+  // 2b. Client Originator (who brought the client)
+  if (opportunity.clientOriginatorId) {
+    const commission = await prisma.commission.findUnique({
+      where: {
+        userId_roleType: {
+          userId: opportunity.clientOriginatorId,
+          roleType: CommissionRole.CLIENT_ORIGINATOR,
+        },
+      },
+      select: {
+        userId: true,
+        roleType: true,
+        commissionPercentage: true,
+      },
+    });
+
+    if (commission) {
+      usersWithRoles.push(commission);
+    }
+  }
+
+  // 2c. Account Managers
   const accountManagers = await prisma.opportunityAccountManager.findMany({
     where: {
       opportunityId,
@@ -155,7 +176,7 @@ export async function calculateOpportunityCommissions(input: CalculateCommission
     }
   }
 
-  // 2c. Deal Support (invested_person and followup_person)
+  // 2d. Deal Support (invested_person and followup_person)
   const dealSupportIds = new Set<string>();
   
   if (analytics.invested_person_id) {

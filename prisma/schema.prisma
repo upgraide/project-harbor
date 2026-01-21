@@ -71,6 +71,8 @@ model User {
   // Relations for opportunity assignments
   clientAcquisitionerMergerAndAcquisitions MergerAndAcquisition[]            @relation("clientAcquisitionerMergerAndAcquisitions")
   clientAcquisitionerRealEstates           RealEstate[]                      @relation("clientAcquisitionerRealEstates")
+  clientOriginatorMergerAndAcquisitions    MergerAndAcquisition[]            @relation("clientOriginatorMergerAndAcquisitions")
+  clientOriginatorRealEstates              RealEstate[]                      @relation("clientOriginatorRealEstates")
   accountManagerAssignments      OpportunityAccountManager[]
   
   // Relations for deal closing persons
@@ -339,6 +341,10 @@ model MergerAndAcquisition {
   clientAcquisitionerId String?
   clientAcquisitioner   User?   @relation("clientAcquisitionerMergerAndAcquisitions", fields: [clientAcquisitionerId], references: [id], onDelete: SetNull)
 
+  // Client Originator (who brought the client)
+  clientOriginatorId String?
+  clientOriginator   User?   @relation("clientOriginatorMergerAndAcquisitions", fields: [clientOriginatorId], references: [id], onDelete: SetNull)
+
   // Relations
   analytics     OpportunityAnalytics?
   userInterests UserMergerAndAcquisitionInterest[] @relation("mergerAndAcquisitionUsers")
@@ -424,6 +430,10 @@ model RealEstate {
   // Client Acquisitioner and Account Managers
   clientAcquisitionerId String?
   clientAcquisitioner   User?   @relation("clientAcquisitionerRealEstates", fields: [clientAcquisitionerId], references: [id], onDelete: SetNull)
+
+  // Client Originator (who brought the client)
+  clientOriginatorId String?
+  clientOriginator   User?   @relation("clientOriginatorRealEstates", fields: [clientOriginatorId], references: [id], onDelete: SetNull)
 
   // Relations
   analytics     OpportunityAnalytics?
@@ -757,12 +767,19 @@ model CommissionPayment {
   commissionValueId     String
   commissionValue       CommissionValue  @relation(fields: [commissionValueId], references: [id], onDelete: Cascade)
   
-  // Payment installment (1, 2, or 3)
+  // Payment installment number
   installmentNumber     Int
+  
+  // Percentage of total commission value for this payment
+  percentage            Float?
   
   // Payment details (null until admin sets them)
   paymentDate           DateTime?
   paymentAmount         Float?
+  
+  // Payment status
+  isPaid                Boolean          @default(false)
+  paidAt                DateTime?
   
   createdAt             DateTime         @default(now())
   updatedAt             DateTime         @updatedAt
@@ -771,8 +788,50 @@ model CommissionPayment {
   @@map("commission_payment")
 }
 
+// Track commission resolution status per opportunity
+model OpportunityCommissionSchedule {
+  id                    String              @id @default(cuid())
+  
+  // Which opportunity this schedule belongs to
+  opportunityId         String
+  opportunityType       OpportunityType
+  
+  // Resolution status
+  isResolved            Boolean             @default(false)
+  resolvedAt            DateTime?
+  resolvedBy            String?
+  
+  // Payment plan for this opportunity (shared by all commission recipients)
+  paymentPlans          OpportunityPaymentPlan[]
+  
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  @@unique([opportunityId, opportunityType])
+  @@map("opportunity_commission_schedule")
+}
+
+// Payment plan template for an opportunity (applies to all recipients)
+model OpportunityPaymentPlan {
+  id                    String                          @id @default(cuid())
+  scheduleId            String
+  schedule              OpportunityCommissionSchedule   @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  
+  // Installment details
+  installmentNumber     Int
+  percentage            Float  // Percentage of each person's total commission
+  paymentDate           DateTime
+  
+  createdAt             DateTime                        @default(now())
+  updatedAt             DateTime                        @updatedAt
+
+  @@unique([scheduleId, installmentNumber])
+  @@map("opportunity_payment_plan")
+}
+
 enum CommissionRole {
   ACCOUNT_MANAGER
   CLIENT_ACQUISITION
+  CLIENT_ORIGINATOR
   DEAL_SUPPORT
 }

@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
@@ -9,7 +7,6 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Table,
@@ -25,106 +22,20 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface CommissionDetailProps {
-  commissionValueId?: string;
-  opportunityId?: string;
-  commissionId?: string;
-  roleType?: string;
-  userId?: string;
+  commissionValueId: string;
 }
 
-interface PaymentEditState {
-  installmentNumber: number;
-  paymentDate: string;
-  paymentAmount: string;
-}
-
-export function CommissionDetail({ commissionValueId, opportunityId, commissionId, roleType, userId }: CommissionDetailProps) {
+export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useScopedI18n("crm.commissions");
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedPayments, setEditedPayments] = useState<PaymentEditState[]>([]);
-
-  // Get roleType and userId from search params if not provided as props
-  const finalRoleType = roleType || searchParams.get('roleType') || undefined;
-  const finalUserId = userId || searchParams.get('userId') || undefined;
 
   const { data: commissionDetail } = useSuspenseQuery(
     trpc.commissions.getCommissionDetail.queryOptions({
       commissionValueId,
-      opportunityId,
-      commissionId,
-      roleType: finalRoleType,
-      userId: finalUserId,
     })
   ) as { data: any };
-
-  const updatePaymentsMutation = useMutation(
-    trpc.commissions.updatePaymentSchedule.mutationOptions({
-      onSuccess: () => {
-        toast.success(t("detail.paymentSchedule.validation.saveSuccess"));
-        setIsEditing(false);
-        queryClient.invalidateQueries(
-          trpc.commissions.getCommissionDetail.queryOptions({
-            commissionValueId: commissionDetail.id,
-            opportunityId,
-            commissionId,
-          })
-        );
-        router.refresh();
-      },
-      onError: () => {
-        toast.error(t("detail.paymentSchedule.validation.saveFailed"));
-      },
-    })
-  );
-
-  const handleEdit = () => {
-    // Initialize with existing payments or create empty structure for 3 installments
-    const initialPayments = [1, 2, 3].map((num) => {
-      const existingPayment = commissionDetail.payments.find(
-        (p: any) => p.installmentNumber === num
-      );
-      return {
-        installmentNumber: num,
-        paymentDate: existingPayment?.paymentDate
-          ? new Date(existingPayment.paymentDate).toISOString().split("T")[0]
-          : "",
-        paymentAmount: existingPayment?.paymentAmount?.toString() ?? "",
-      };
-    });
-    
-    setEditedPayments(initialPayments);
-    setIsEditing(true);
-  };
-
-  const handleSave = () => {
-    const formattedPayments = editedPayments.map((p) => ({
-      installmentNumber: p.installmentNumber,
-      paymentDate: p.paymentDate ? new Date(p.paymentDate) : null,
-      paymentAmount: p.paymentAmount ? Number.parseFloat(p.paymentAmount) : null,
-    }));
-
-    updatePaymentsMutation.mutate({
-      commissionValueId: commissionDetail.id,
-      payments: formattedPayments,
-    });
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setEditedPayments([]);
-  };
-
-  const updatePayment = (installmentNumber: number, field: "paymentDate" | "paymentAmount", value: string) => {
-    setEditedPayments((prev) =>
-      prev.map((p) =>
-        p.installmentNumber === installmentNumber ? { ...p, [field]: value } : p
-      )
-    );
-  };
 
   const formatCurrency = (value: number | null | undefined) => {
     if (!value) return "-";
@@ -347,40 +258,11 @@ export function CommissionDetail({ commissionValueId, opportunityId, commissionI
 
       {/* Payment Schedule */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <CalendarIcon className="h-5 w-5" />
             {t("detail.paymentSchedule.title")}
           </CardTitle>
-          {commissionDetail.isAdmin && (
-            <div className="flex gap-2">
-              {isEditing ? (
-                <>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleCancel}
-                    disabled={updatePaymentsMutation.isPending}
-                  >
-                    {t("detail.paymentSchedule.actions.cancel")}
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={handleSave}
-                    disabled={updatePaymentsMutation.isPending}
-                  >
-                    {updatePaymentsMutation.isPending
-                      ? t("detail.paymentSchedule.actions.saving")
-                      : t("detail.paymentSchedule.actions.saveSchedule")}
-                  </Button>
-                </>
-              ) : (
-                <Button size="sm" onClick={handleEdit}>
-                  {t("detail.paymentSchedule.actions.editSchedule")}
-                </Button>
-              )}
-            </div>
-          )}
         </CardHeader>
         <CardContent>
           <Table>
@@ -393,85 +275,42 @@ export function CommissionDetail({ commissionValueId, opportunityId, commissionI
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isEditing ? (
-                // Edit mode - show all 3 installments
-                [1, 2, 3].map((num) => {
-                  const installmentKey = num === 1 ? "first" : num === 2 ? "second" : "third";
-                  const editedPayment = editedPayments.find((p) => p.installmentNumber === num);
-                  const payment = commissionDetail.payments.find((p: any) => p.installmentNumber === num);
+              {/* View mode - show payment schedule */}
+              {[1, 2, 3].map((num) => {
+                const installmentKey = num === 1 ? "first" : num === 2 ? "second" : "third";
+                const payment = commissionDetail.payments.find((p: any) => p.installmentNumber === num);
 
+                if (!payment) {
+                  // No payment record exists - show placeholder
                   return (
                     <TableRow key={num}>
                       <TableCell className="font-medium">
                         {t(`detail.paymentSchedule.installmentNumber.${installmentKey}`)}
                       </TableCell>
+                      <TableCell>-</TableCell>
+                      <TableCell>-</TableCell>
                       <TableCell>
-                        <Input
-                          type="date"
-                          value={editedPayment?.paymentDate ?? ""}
-                          onChange={(e) =>
-                            updatePayment(num, "paymentDate", e.target.value)
-                          }
-                          className="max-w-[180px]"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={editedPayment?.paymentAmount ?? ""}
-                          onChange={(e) =>
-                            updatePayment(num, "paymentAmount", e.target.value)
-                          }
-                          className="max-w-[150px]"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">
-                          {payment ? getPaymentStatus(payment).label : t("detail.paymentSchedule.statusValues.notSet")}
-                        </Badge>
+                        <Badge variant="secondary">{t("detail.paymentSchedule.statusValues.notSet")}</Badge>
                       </TableCell>
                     </TableRow>
                   );
-                })
-              ) : (
-                // View mode - show placeholders or actual data
-                [1, 2, 3].map((num) => {
-                  const installmentKey = num === 1 ? "first" : num === 2 ? "second" : "third";
-                  const payment = commissionDetail.payments.find((p: any) => p.installmentNumber === num);
+                }
 
-                  if (!payment) {
-                    // No payment record exists - show placeholder
-                    return (
-                      <TableRow key={num}>
-                        <TableCell className="font-medium">
-                          {t(`detail.paymentSchedule.installmentNumber.${installmentKey}`)}
-                        </TableCell>
-                        <TableCell>-</TableCell>
-                        <TableCell>-</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">{t("detail.paymentSchedule.statusValues.notSet")}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  }
-
-                  // Payment record exists - show actual data or "-" if null
-                  const status = getPaymentStatus(payment);
-                  return (
-                    <TableRow key={payment.id}>
-                      <TableCell className="font-medium">
-                        {t(`detail.paymentSchedule.installmentNumber.${installmentKey}`)}
-                      </TableCell>
-                      <TableCell>{formatDate(payment.paymentDate)}</TableCell>
-                      <TableCell>{formatCurrency(payment.paymentAmount)}</TableCell>
-                      <TableCell>
-                        <Badge variant={status.variant}>{status.label}</Badge>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
+                // Payment record exists - show actual data or "-" if null
+                const status = getPaymentStatus(payment);
+                return (
+                  <TableRow key={payment.id}>
+                    <TableCell className="font-medium">
+                      {t(`detail.paymentSchedule.installmentNumber.${installmentKey}`)}
+                    </TableCell>
+                    <TableCell>{formatDate(payment.paymentDate)}</TableCell>
+                    <TableCell>{formatCurrency(payment.paymentAmount)}</TableCell>
+                    <TableCell>
+                      <Badge variant={status.variant}>{status.label}</Badge>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
 

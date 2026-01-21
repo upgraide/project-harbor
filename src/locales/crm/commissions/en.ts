@@ -18,6 +18,7 @@ export default {
   roles: {
     ACCOUNT_MANAGER: "Account Manager",
     CLIENT_ACQUISITION: "Client Acquisition",
+    CLIENT_ORIGINATOR: "Client Originator",
     DEAL_SUPPORT: "Deal Support",
   },
 
@@ -44,6 +45,7 @@ export default {
       pending: "Pending",
       concluded: "Concluded",
       notFinished: "Project not finished",
+      notSetUp: "Not Set Up",
     },
 
     details: {
@@ -54,6 +56,7 @@ export default {
       commissionPercentage: "Commission Percentage",
       estimatedCommission: "Estimated Commission",
       closedAt: "Closed At",
+      myCommission: "My Commission",
     },
   },
 
@@ -65,6 +68,8 @@ export default {
         employee: "Employee",
         totalProjects: "Total Projects",
         commissionRoles: "Commission Roles",
+        totalReceived: "Total Received",
+        totalYetToReceive: "Yet to Receive",
         actions: "Actions",
         viewDetails: "View Details",
       },
@@ -166,5 +171,106 @@ export default {
       emptyState: "Payment schedule not configured",
       emptyStateDescription: "Admins can set up the payment schedule after project completion",
     },
+  },
+
+  resolution: {
+    title: "Resolve Commissions",
+    backButton: "Back",
+    alreadyResolved: "Already Resolved",
+    loadingDetails: "Loading commission details...",
+    
+    opportunityDetails: {
+      title: "Opportunity Details",
+      status: "Status",
+      finalAmount: "Final Amount",
+      commissionableAmount: "Commissionable Amount",
+    },
+    
+    recipients: {
+      title: "Commission Recipients",
+      description: "Calculated commissions based on current rates",
+      emptyState: "No commission recipients found. Make sure users have commission rates configured.",
+      totalCommission: "Total Commission",
+      rate: "Rate",
+      amount: "Amount",
+      grandTotal: "Grand Total",
+      halvedTooltip: "Percentage halved due to 2 Account Managers on this opportunity",
+    },
+    
+    paymentSchedule: {
+      title: "Payment Schedule",
+      description: "Define payment dates and percentages. The same schedule will apply to all {count} recipient{plural}.",
+      editDescription: "Edit the payment schedule for this opportunity",
+      addPayment: "Add Payment",
+      installment: "Payment {number}",
+      percentage: "Percentage",
+      paymentDate: "Payment Date",
+      total: "Total",
+      mustEqual100: "(must equal 100%)",
+      cancel: "Cancel",
+      save: "Resolve Commissions",
+      update: "Update Commission Schedule",
+      saving: "Saving...",
+      updating: "Updating...",
+    },
+    
+    toasts: {
+      resolveSuccess: "Commissions resolved successfully!",
+      resolveFailed: "Failed to resolve commissions",
+    },
+  },
+  
+  pendingResolution: {
+    title: "Opportunities Pending Commission Resolution",
+    description: "Concluded opportunities that need commission schedules set up",
+    emptyState: "All concluded opportunities have their commissions resolved",
+    table: {
+      name: "Name",
+      type: "Type",
+      finalAmount: "Final Amount",
+      commissionable: "Commissionable",
+      actions: "Actions",
+      setupButton: "Set Up Commissions",
+    },
+  },
+  
+  resolvedList: {
+    title: "Resolved Commissions",
+    description: "All opportunities with resolved commission schedules",
+    emptyTitle: "No resolved commissions yet",
+    emptyMessage: "Resolve commissions for concluded opportunities to see them here",
+    table: {
+      name: "Name",
+      type: "Type",
+      recipients: "Recipients",
+      finalAmount: "Final Amount",
+      commissionable: "Commissionable",
+      resolvedDate: "Resolved",
+      actions: "Actions",
+      viewButton: "View",
+    },
+  },
+  
+  tabs: {
+    pendingResolution: "Pending Resolution",
+    resolvedCommissions: "Resolved Commissions",
+    teamMembers: "Team Members",
+    commissionRates: "Commission Rates",
+  },
+  
+  loading: {
+    commissionData: "Loading commission data...",
+  },
+  
+  errorPage: {
+    title: "Commission Not Set Up",
+    description: "This opportunity's commission schedule has not been configured yet.",
+    message: "Only administrators can set up commission schedules. Once configured, the commission details will be visible here.",
+    backButton: "Back to Commissions",
+  },
+  
+  opportunityTypes: {
+    MNA: "M&A",
+    REAL_ESTATE: "Real Estate",
   },
 } as const;

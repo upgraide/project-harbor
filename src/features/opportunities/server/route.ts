@@ -22,7 +22,6 @@ import {
   createTRPCRouter,
   protectedProcedure,
 } from "@/trpc/init";
-import { triggerCommissionCalculations } from "@/features/commissions/server/calculations";
 
 const CAGR_MIN = 0;
 const CAGR_MAX = 100;
@@ -887,11 +886,6 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         data: { status: input.status },
       });
 
-      // Trigger commission calculations when status changes to CONCLUDED
-      if (input.status === "CONCLUDED") {
-        await triggerCommissionCalculations(input.id, OpportunityType.MNA);
-      }
-
       return result;
     }),
   updateFinalValues: adminProcedure
@@ -900,39 +894,42 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         id: z.string(),
         final_amount: z.number().optional(),
         closed_at: z.date().optional(),
+        client_originator_id: z.string().nullable().optional(),
         invested_person_id: z.string().nullable().optional(),
         followup_person_id: z.string().nullable().optional(),
-        profit_amount: z.number().optional(),
         commissionable_amount: z.number().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const updateData: {
+      // Update opportunity analytics
+      const analyticsUpdateData: {
         final_amount?: number;
         closed_at?: Date;
         invested_person_id?: string | null;
         followup_person_id?: string | null;
-        profit_amount?: number;
         commissionable_amount?: number;
       } = {};
       
-      if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
-      if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
-      if (input.invested_person_id !== undefined) updateData.invested_person_id = input.invested_person_id;
-      if (input.followup_person_id !== undefined) updateData.followup_person_id = input.followup_person_id;
-      if (input.profit_amount !== undefined) updateData.profit_amount = input.profit_amount;
-      if (input.commissionable_amount !== undefined) updateData.commissionable_amount = input.commissionable_amount;
+      if (input.final_amount !== undefined) analyticsUpdateData.final_amount = input.final_amount;
+      if (input.closed_at !== undefined) analyticsUpdateData.closed_at = input.closed_at;
+      if (input.invested_person_id !== undefined) analyticsUpdateData.invested_person_id = input.invested_person_id;
+      if (input.followup_person_id !== undefined) analyticsUpdateData.followup_person_id = input.followup_person_id;
+      if (input.commissionable_amount !== undefined) analyticsUpdateData.commissionable_amount = input.commissionable_amount;
 
-      const result = await prisma.opportunityAnalytics.update({
+      const analyticsResult = await prisma.opportunityAnalytics.update({
         where: { mergerAndAcquisitionId: input.id },
-        data: updateData,
+        data: analyticsUpdateData,
       });
 
-      // Trigger commission calculations when final values are updated
-      // (in case opportunity was already CONCLUDED before final values were set)
-      await triggerCommissionCalculations(input.id, OpportunityType.MNA);
+      // Update opportunity itself for client_originator_id
+      if (input.client_originator_id !== undefined) {
+        await prisma.mergerAndAcquisition.update({
+          where: { id: input.id },
+          data: { clientOriginatorId: input.client_originator_id },
+        });
+      }
 
-      return result;
+      return analyticsResult;
     }),
   getOne: protectedProcedure
     .input(z.object({ id: z.string() }))
@@ -2485,11 +2482,6 @@ export const realEstateRouter = createTRPCRouter({
         data: { status: input.status },
       });
 
-      // Trigger commission calculations when status changes to CONCLUDED
-      if (input.status === "CONCLUDED") {
-        await triggerCommissionCalculations(input.id, OpportunityType.REAL_ESTATE);
-      }
-
       return result;
     }),
   updateFinalValues: adminProcedure
@@ -2498,38 +2490,41 @@ export const realEstateRouter = createTRPCRouter({
         id: z.string(),
         final_amount: z.number().optional(),
         closed_at: z.date().optional(),
+        client_originator_id: z.string().nullable().optional(),
         invested_person_id: z.string().nullable().optional(),
         followup_person_id: z.string().nullable().optional(),
-        profit_amount: z.number().optional(),
         commissionable_amount: z.number().optional(),
       })
     )
     .mutation(async ({ input }) => {
-      const updateData: {
+      // Update opportunity analytics
+      const analyticsUpdateData: {
         final_amount?: number;
         closed_at?: Date;
         invested_person_id?: string | null;
         followup_person_id?: string | null;
-        profit_amount?: number;
         commissionable_amount?: number;
       } = {};
       
-      if (input.final_amount !== undefined) updateData.final_amount = input.final_amount;
-      if (input.closed_at !== undefined) updateData.closed_at = input.closed_at;
-      if (input.invested_person_id !== undefined) updateData.invested_person_id = input.invested_person_id;
-      if (input.followup_person_id !== undefined) updateData.followup_person_id = input.followup_person_id;
-      if (input.profit_amount !== undefined) updateData.profit_amount = input.profit_amount;
-      if (input.commissionable_amount !== undefined) updateData.commissionable_amount = input.commissionable_amount;
+      if (input.final_amount !== undefined) analyticsUpdateData.final_amount = input.final_amount;
+      if (input.closed_at !== undefined) analyticsUpdateData.closed_at = input.closed_at;
+      if (input.invested_person_id !== undefined) analyticsUpdateData.invested_person_id = input.invested_person_id;
+      if (input.followup_person_id !== undefined) analyticsUpdateData.followup_person_id = input.followup_person_id;
+      if (input.commissionable_amount !== undefined) analyticsUpdateData.commissionable_amount = input.commissionable_amount;
 
-      const result = await prisma.opportunityAnalytics.update({
+      const analyticsResult = await prisma.opportunityAnalytics.update({
         where: { realEstateId: input.id },
-        data: updateData,
+        data: analyticsUpdateData,
       });
 
-      // Trigger commission calculations when final values are updated
-      // (in case opportunity was already CONCLUDED before final values were set)
-      await triggerCommissionCalculations(input.id, OpportunityType.REAL_ESTATE);
+      // Update opportunity itself for client_originator_id
+      if (input.client_originator_id !== undefined) {
+        await prisma.realEstate.update({
+          where: { id: input.id },
+          data: { clientOriginatorId: input.client_originator_id },
+        });
+      }
 
-      return result;
+      return analyticsResult;
     }),
 });
