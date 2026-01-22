@@ -312,11 +312,14 @@ export default {
   graphCard: {
     title: "Dados do Gráfico",
     addRowButtonText: "Adicionar Linha",
+    unitLabel: "Unidade de Exibição",
+    millions: "Milhões (M€)",
+    thousands: "Milhares (K€)",
     table: {
       header: {
         year: "Ano",
-        revenue: "Vendas (M€)",
-        ebitda: "EBITDA (M€)",
+        revenue: "Vendas",
+        ebitda: "EBITDA",
         ebitdaMargin: "Margem EBITDA (%)",
         actions: "Ações",
       },

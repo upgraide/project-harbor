@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTheme } from "next-themes";
 import {
   Bar,
   CartesianGrid,
@@ -87,25 +88,15 @@ const chartConfig = (t: (key: string) => string) =>
   ({
     revenue: {
       label: t("graphCard.table.header.revenue"),
-      theme: {
-        light: "#113152",
-        dark: "#BECED7",
-      },
     },
     revenueFuture: {
       label: t("graphCard.table.header.revenue"),
-      theme: {
-        light: "#87CEEB",
-        dark: "#87CEEB",
-      },
     },
     ebitda: {
       label: t("graphCard.table.header.ebitda"),
-      color: "#4F565A",
     },
     ebitdaMargin: {
       label: t("graphCard.table.header.ebitdaMargin"),
-      color: "#9C3E11",
     },
   }) satisfies ChartConfig;
 
@@ -119,8 +110,8 @@ const getYearType = (year: string, currentYear: number = new Date().getFullYear(
 const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[], t: (key: string) => string) => {
   if (!graphRows || graphRows.length < 3) return null;
   const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
-  const firstYear = sortedRows[0].year.slice(0, 4);
-  const lastYear = sortedRows[sortedRows.length - 1].year.slice(0, 4);
+  const firstYear = sortedRows[0].year.slice(2, 4);
+  const lastYear = sortedRows[sortedRows.length - 1].year.slice(2, 4);
   return `CAGR Sales ${firstYear}–${lastYear}`;
 };
 
@@ -198,16 +189,19 @@ export const Creator = () => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionCreatePage");
   const createOpportunity = useCreateOpportunity();
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const [graphUnit, setGraphUnit] = useState<"millions" | "thousands">("millions");
   
-  // Initialize with 3 predefined years: current-2, current-1, current year
+  // Initialize with 3 predefined years: current-1, current, current+1
   const currentYear = new Date().getFullYear();
   const [graphRows, setGraphRows] = useState<
     { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[]
   >([
-    { year: `${currentYear - 2}`, revenue: 0, ebitda: 0, ebitdaMargin: 0 },
     { year: `${currentYear - 1}`, revenue: 0, ebitda: 0, ebitdaMargin: 0 },
     { year: `${currentYear}`, revenue: 0, ebitda: 0, ebitdaMargin: 0 },
+    { year: `${currentYear + 1}`, revenue: 0, ebitda: 0, ebitdaMargin: 0 },
   ]);
 
   const form = useForm<FormValues>({
@@ -255,6 +249,7 @@ export const Creator = () => {
           : undefined,
         images: uploadedImages.length > 0 ? uploadedImages : undefined,
         graphRows: graphRows.length > 0 ? graphRows : undefined,
+        graphUnit: graphUnit,
       };
       const newOpportunity = await createOpportunity.mutateAsync(submitValues);
 
@@ -930,16 +925,20 @@ export const Creator = () => {
                       />
                       <Bar
                         dataKey="revenue"
-                        fill="#1E3A8A"
+                        fill={isDark ? "#b3a092" : "#123353"}
                         label={{
                           position: "top",
                           fontSize: 12,
                           fontWeight: 600,
                           fill: ((entry: any) => {
                             const yearType = getYearType(String((entry as any)?.year || ''));
-                            return yearType === 'future' ? '#909090' : '#1E3A8A';
+                            if (yearType === 'future') return '#e2d8d3';
+                            return isDark ? "#b3a092" : "#123353";
                           }) as any,
-                          formatter: (value: number) => value.toFixed(2),
+                          formatter: (value: number) => {
+                            const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                            return Math.round(displayValue).toString();
+                          },
                         }}
                         radius={[4, 4, 0, 0]}
                         yAxisId="left"
@@ -949,7 +948,7 @@ export const Creator = () => {
                           return (
                             <Cell
                               key={`cell-${index}`}
-                              fill={yearType === 'future' ? '#909090' : '#1E3A8A'}
+                              fill={yearType === 'future' ? '#e2d8d3' : (isDark ? "#b3a092" : "#123353")}
                             />
                           );
                         })}
@@ -960,24 +959,32 @@ export const Creator = () => {
                         label={{
                           position: "top",
                           fontSize: 12,
-                          formatter: (value: number) => value.toFixed(2),
+                          fill: isDark ? "#BECED7" : "#984016",
+                          stroke: "#000000",
+                          strokeWidth: 1,
+                          paintOrder: "stroke",
+                          formatter: (value: number) => {
+                            const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                            return Math.round(displayValue).toString();
+                          },
                         }}
-                        stroke="#9C3E11"
+                        stroke={isDark ? "#ae9e98" : "#984016"}
                         strokeWidth={2}
                         type="monotone"
                         yAxisId="right"
                       />
                       <Line
                         dataKey="ebitdaMargin"
-                        dot={{ fill: "#9C3E11", r: 6 }}
+                        dot={{ fill: isDark ? "#984016" : "#7e9fb0", r: 6 }}
                         label={{
                           position: "top",
                           formatter: (value: number) => `${value}%`,
                           fontSize: 12,
                           fontWeight: 600,
+                          fill: isDark ? "#984016" : "#7e9fb0",
                           offset: 10,
                         }}
-                        stroke="#9C3E11"
+                        stroke={isDark ? "#984016" : "#7e9fb0"}
                         strokeWidth={0}
                         type="monotone"
                         yAxisId="margin"
@@ -985,11 +992,25 @@ export const Creator = () => {
                       <ChartLegend content={<ChartLegendContent />} />
                     </ComposedChart>
                   </ChartContainer>
-                  {graphRows.length >= 3 && (
-                    <div className="mt-2 text-right text-muted-foreground text-xs">
-                      {getCAGRLabel(graphRows, t)}
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">{t("graphCard.unitLabel")}:</span>
+                      <Select value={graphUnit} onValueChange={(value: "millions" | "thousands") => setGraphUnit(value)}>
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="millions">{t("graphCard.millions")}</SelectItem>
+                          <SelectItem value="thousands">{t("graphCard.thousands")}</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-                  )}
+                    {graphRows.length >= 3 && (
+                      <div className="text-right text-muted-foreground text-xs">
+                        {getCAGRLabel(graphRows, t)}
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -1023,10 +1044,10 @@ export const Creator = () => {
                       <TableRow>
                         <TableHead>{t("graphCard.table.header.year")}</TableHead>
                         <TableHead className="px-6 py-4 text-right">
-                          {t("graphCard.table.header.revenue")}
+                          {t("graphCard.table.header.revenue")} ({graphUnit === 'millions' ? 'M€' : 'K€'})
                         </TableHead>
                         <TableHead className="px-6 py-4 text-right">
-                          {t("graphCard.table.header.ebitda")}
+                          {t("graphCard.table.header.ebitda")} ({graphUnit === 'millions' ? 'M€' : 'K€'})
                         </TableHead>
                         <TableHead className="px-6 py-4 text-right">
                           {t("graphCard.table.header.ebitdaMargin")}
@@ -1040,6 +1061,7 @@ export const Creator = () => {
                       {graphRows.map((row, index) => (
                         <GraphRowTableRow
                           allRows={graphRows}
+                          graphUnit={graphUnit}
                           key={`${row.year}-${index}`}
                           onUpdate={(updatedRows) => {
                             setGraphRows(updatedRows);
@@ -1793,6 +1815,7 @@ type GraphRowTableRowProps = {
     ebitdaMargin: number;
   };
   rowIndex: number;
+  graphUnit: "millions" | "thousands";
   allRows: {
     year: string;
     revenue: number;
@@ -1812,6 +1835,7 @@ type GraphRowTableRowProps = {
 const GraphRowTableRow = ({
   row,
   rowIndex,
+  graphUnit,
   allRows,
   onUpdate,
 }: GraphRowTableRowProps) => {
@@ -1836,10 +1860,14 @@ const GraphRowTableRow = ({
   return (
     <TableRow>
       <TableCell className="font-medium">{row.year}</TableCell>
-      <TableCell className="text-right">{row.revenue.toFixed(2)}</TableCell>
-      <TableCell className="text-right">{row.ebitda.toFixed(2)}</TableCell>
       <TableCell className="text-right">
-        {row.ebitdaMargin.toFixed(2)}%
+        {graphUnit === 'thousands' ? Math.round(row.revenue * 1000).toString() : Math.round(row.revenue).toString()}
+      </TableCell>
+      <TableCell className="text-right">
+        {graphUnit === 'thousands' ? Math.round(row.ebitda * 1000).toString() : Math.round(row.ebitda).toString()}
+      </TableCell>
+      <TableCell className="text-right">
+        {Math.round(row.ebitdaMargin)}%
       </TableCell>
       <TableCell className="text-right">
         <DropdownMenu>

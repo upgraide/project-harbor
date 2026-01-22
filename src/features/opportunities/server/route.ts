@@ -81,6 +81,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
             ebitdaMargin: z.number(),
           })
         ).optional(),
+        graphUnit: z.enum(["millions", "thousands"]).optional(),
       })
     )
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex mutation
@@ -169,6 +170,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         clientAcquisitionerId: input.clientAcquisitionerId || null,
         images: input.images || [],
         graphRows: graphRows,
+        graphUnit: input.graphUnit || "millions",
       };
 
       // Create the opportunity with analytics
@@ -487,6 +489,19 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         },
       });
     }),
+  updateGraphUnit: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        graphUnit: z.enum(["millions", "thousands"]),
+      })
+    )
+    .mutation(({ input }) =>
+      prisma.mergerAndAcquisition.update({
+        where: { id: input.id },
+        data: { graphUnit: input.graphUnit },
+      })
+    ),
   updateImages: adminProcedure
     .input(
       z.object({

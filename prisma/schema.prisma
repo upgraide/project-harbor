@@ -294,6 +294,7 @@ model MergerAndAcquisition {
 
   // Graph data (stored as JSON)
   graphRows Json[] // Array of { year: string, revenue: number, ebitda: number, ebitdaMargin: number }
+  graphUnit String  @default("millions") // "millions" or "thousands"
 
   // Growth metrics
   salesCAGR  Float?

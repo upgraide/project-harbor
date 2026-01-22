@@ -142,11 +142,14 @@ export default {
   graphCard: {
     title: "Graph Data",
     addRowButtonText: "Add Row",
+    unitLabel: "Display Unit",
+    millions: "Millions (M€)",
+    thousands: "Thousands (K€)",
     table: {
       header: {
         year: "Year",
-        revenue: "Revenue (M€)",
-        ebitda: "EBITDA (M€)",
+        revenue: "Revenue",
+        ebitda: "EBITDA",
         ebitdaMargin: "EBITDA Margin (%)",
         actions: "Actions",
       },

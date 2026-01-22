@@ -743,6 +743,33 @@ export const useUpdateGraphRows = () => {
 };
 
 /**
+ * Hook to update graph unit
+ */
+export const useUpdateGraphUnit = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateGraphUnit.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to update the graph unit of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+/**
  * Hook to update opportunity images
  */
 export const useUpdateOpportunityImages = () => {

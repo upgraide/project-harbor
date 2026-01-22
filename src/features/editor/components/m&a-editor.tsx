@@ -5,6 +5,7 @@
 import { EditIcon, EllipsisVerticalIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { useTheme } from "next-themes";
 import {
   Bar,
   CartesianGrid,
@@ -97,6 +98,7 @@ import {
   useRemoveOpportunityWorkingCapitalNeeds,
   useSuspenseOpportunity,
   useUpdateGraphRows,
+  useUpdateGraphUnit,
   useUpdateOpportunityAssetIncluded,
   useUpdateOpportunityCapexItensity,
   useUpdateOpportunityCashConvertion,
@@ -148,25 +150,15 @@ const chartConfig = (t: (key: string) => string) =>
   ({
     revenue: {
       label: t("graphCard.table.header.revenue"),
-      theme: {
-        light: "#113152",
-        dark: "#BECED7",
-      },
     },
     revenueFuture: {
       label: t("graphCard.table.header.revenue"),
-      theme: {
-        light: "#87CEEB",
-        dark: "#87CEEB",
-      },
     },
     ebitda: {
       label: t("graphCard.table.header.ebitda"),
-      color: "#4F565A",
     },
     ebitdaMargin: {
       label: t("graphCard.table.header.ebitdaMargin"),
-      color: "#9C3E11",
     },
   }) satisfies ChartConfig;
 
@@ -180,8 +172,8 @@ const getYearType = (year: string, currentYear: number = new Date().getFullYear(
 const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[], t: (key: string) => string) => {
   if (!graphRows || graphRows.length < 3) return null;
   const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
-  const firstYear = sortedRows[0].year.slice(0, 4);
-  const lastYear = sortedRows[sortedRows.length - 1].year.slice(0, 4);
+  const firstYear = sortedRows[0].year.slice(2, 4);
+  const lastYear = sortedRows[sortedRows.length - 1].year.slice(2, 4);
   return `CAGR Sales ${firstYear}\u2013${lastYear}`;
 };
 
@@ -199,7 +191,10 @@ export const EditorError = () => {
 export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
   const locale = useCurrentLocale();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
+  const [graphUnit, setGraphUnit] = useState<"millions" | "thousands">(opportunity.graphUnit as "millions" | "thousands" || "millions");
 
   // Update operations
   const updateDescription = useUpdateOpportunityDescription();
@@ -216,6 +211,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const updateAssetIncluded = useUpdateOpportunityAssetIncluded();
   const updateEstimatedAssetValue = useUpdateOpportunityEstimatedAssetValue();
   const updateGraphRows = useUpdateGraphRows();
+  const updateGraphUnit = useUpdateGraphUnit();
   const updateImages = useUpdateOpportunityImages();
   const updateIm = useUpdateOpportunityIm();
   const updateEnterpriseValue = useUpdateOpportunityEnterpriseValue();
@@ -1514,7 +1510,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
 
         <Card className="border-none bg-transparent shadow-none">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="font-bold text-lg" />
+            <CardTitle className="font-bold text-lg">{t("graphCard.title")}</CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig(t)}>
@@ -1569,16 +1565,20 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                 />
                 <Bar
                   dataKey="revenue"
-                  fill="#1E3A8A"
+                  fill={isDark ? "#b3a092" : "#123353"}
                   label={{
                     position: "top",
                     fontSize: 12,
                     fontWeight: 600,
                     fill: ((entry: any) => {
                       const yearType = getYearType(String((entry as any)?.year || ''));
-                      return yearType === 'future' ? '#909090' : '#1E3A8A';
+                      if (yearType === 'future') return '#e2d8d3';
+                      return isDark ? "#b3a092" : "#123353";
                     }) as any,
-                    formatter: (value: number) => value.toFixed(2),
+                    formatter: (value: number) => {
+                      const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                      return Math.round(displayValue).toString();
+                    },
                   }}
                   radius={[4, 4, 0, 0]}
                   yAxisId="left"
@@ -1588,7 +1588,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     return (
                       <Cell
                         key={`cell-${index}`}
-                        fill={yearType === 'future' ? '#909090' : '#1E3A8A'}
+                        fill={yearType === 'future' ? '#e2d8d3' : (isDark ? "#b3a092" : "#123353")}
                       />
                     );
                   })}
@@ -1599,24 +1599,32 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   label={{
                     position: "top",
                     fontSize: 12,
-                    formatter: (value: number) => value.toFixed(2),
+                    fill: isDark ? "#BECED7" : "#984016",
+                    stroke: "#000000",
+                    strokeWidth: 1,
+                    paintOrder: "stroke",
+                    formatter: (value: number) => {
+                      const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                      return Math.round(displayValue).toString();
+                    },
                   }}
-                  stroke="#9C3E11"
+                  stroke={isDark ? "#ae9e98" : "#984016"}
                   strokeWidth={2}
                   type="monotone"
                   yAxisId="right"
                 />
                 <Line
                   dataKey="ebitdaMargin"
-                  dot={{ fill: "#9C3E11", r: 6 }}
+                  dot={{ fill: isDark ? "#984016" : "#7e9fb0", r: 6 }}
                   label={{
                     position: "top",
                     formatter: (value: number) => `${value}%`,
                     fontSize: 12,
                     fontWeight: 600,
+                    fill: isDark ? "#984016" : "#7e9fb0",
                     offset: 10,
                   }}
-                  stroke="#9C3E11"
+                  stroke={isDark ? "#984016" : "#7e9fb0"}
                   strokeWidth={0}
                   type="monotone"
                   yAxisId="margin"
@@ -1624,31 +1632,48 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                 <ChartLegend content={<ChartLegendContent />} />
               </ComposedChart>
             </ChartContainer>
-            {opportunity.graphRows && opportunity.graphRows.length >= 3 && (
-              <div className="mt-4 space-y-2">
-                <div className="text-right text-muted-foreground text-xs">
-                  {getCAGRLabel(opportunity.graphRows as any, t)}
-                </div>
-                <div className="flex justify-end gap-3">
-                  {opportunity.salesCAGR != null && (
-                    <div className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5">
-                      <span className="text-xs font-medium text-primary">Sales CAGR:</span>
-                      <span className="text-sm font-semibold text-muted-foreground">
-                        {opportunity.salesCAGR.toFixed(2)}%
-                      </span>
-                    </div>
-                  )}
-                  {opportunity.ebitdaCAGR != null && (
-                    <div className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5">
-                      <span className="text-xs font-medium text-primary">EBITDA CAGR:</span>
-                      <span className="text-sm font-semibold text-muted-foreground">
-                        {opportunity.ebitdaCAGR.toFixed(2)}%
-                      </span>
-                    </div>
-                  )}
-                </div>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">{t("graphCard.unitLabel")}:</span>
+                <Select value={graphUnit} onValueChange={(value: "millions" | "thousands") => {
+                  setGraphUnit(value);
+                  updateGraphUnit.mutate({ id: opportunity.id, graphUnit: value });
+                }}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="millions">{t("graphCard.millions")}</SelectItem>
+                    <SelectItem value="thousands">{t("graphCard.thousands")}</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            )}
+              {opportunity.graphRows && opportunity.graphRows.length >= 3 && (
+                <div className="space-y-2">
+                  <div className="text-right text-muted-foreground text-xs">
+                    {getCAGRLabel(opportunity.graphRows as any, t)}
+                  </div>
+                  <div className="flex justify-end gap-3">
+                    {opportunity.salesCAGR != null && (
+                      <div className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5">
+                        <span className="text-xs font-medium text-primary">Sales CAGR:</span>
+                        <span className="text-sm font-semibold text-muted-foreground">
+                          {opportunity.salesCAGR.toFixed(2)}%
+                        </span>
+                      </div>
+                    )}
+                    {opportunity.ebitdaCAGR != null && (
+                      <div className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5">
+                        <span className="text-xs font-medium text-primary">EBITDA CAGR:</span>
+                        <span className="text-sm font-semibold text-muted-foreground">
+                          {opportunity.ebitdaCAGR.toFixed(2)}%
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -1689,10 +1714,10 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   <TableRow>
                     <TableHead>{t("graphCard.table.header.year")}</TableHead>
                     <TableHead className="px-6 py-4 text-right">
-                      {t("graphCard.table.header.revenue")}
+                      {t("graphCard.table.header.revenue")} ({graphUnit === 'millions' ? 'M€' : 'K€'})
                     </TableHead>
                     <TableHead className="px-6 py-4 text-right">
-                      {t("graphCard.table.header.ebitda")}
+                      {t("graphCard.table.header.ebitda")} ({graphUnit === 'millions' ? 'M€' : 'K€'})
                     </TableHead>
                     <TableHead className="px-6 py-4 text-right">
                       {t("graphCard.table.header.ebitdaMargin")}
@@ -1720,6 +1745,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                           ebitdaMargin: number;
                         }[]
                       }
+                      graphUnit={graphUnit}
                       key={`${row.year}-${index}`}
                       onUpdate={(updatedRows) => {
                         updateGraphRows.mutate({
@@ -3232,6 +3258,7 @@ type GraphRowTableRowProps = {
   };
   opportunityId: string;
   rowIndex: number;
+  graphUnit: "millions" | "thousands";
   allRows: {
     year: string;
     revenue: number;
@@ -3251,6 +3278,7 @@ type GraphRowTableRowProps = {
 const GraphRowTableRow = ({
   row,
   rowIndex,
+  graphUnit,
   allRows,
   onUpdate,
 }: GraphRowTableRowProps) => {
@@ -3275,10 +3303,14 @@ const GraphRowTableRow = ({
   return (
     <TableRow>
       <TableCell className="font-medium">{row.year}</TableCell>
-      <TableCell className="text-right">{row.revenue.toFixed(2)}</TableCell>
-      <TableCell className="text-right">{row.ebitda.toFixed(2)}</TableCell>
       <TableCell className="text-right">
-        {row.ebitdaMargin.toFixed(2)}%
+        {graphUnit === 'thousands' ? Math.round(row.revenue * 1000).toString() : Math.round(row.revenue).toString()}
+      </TableCell>
+      <TableCell className="text-right">
+        {graphUnit === 'thousands' ? Math.round(row.ebitda * 1000).toString() : Math.round(row.ebitda).toString()}
+      </TableCell>
+      <TableCell className="text-right">
+        {Math.round(row.ebitdaMargin)}%
       </TableCell>
       <TableCell className="text-right">
         <DropdownMenu>
