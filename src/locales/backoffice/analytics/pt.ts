@@ -46,8 +46,8 @@ export default {
       advisorClientLoad: {
         title: "Clientes por Consultor",
         clients: "Clientes Ativos",
-        accountManager: "Gestor de Conta",
-        clientAcquisitioner: "Angariador de Cliente",
+        accountManager: "Acompanhamento do Cliente",
+        clientAcquisitioner: "Angariação do Cliente",
         dealClosure: "Fecho de Negócio",
       },
       investmentRangeBreakdown: {

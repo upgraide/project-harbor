@@ -346,10 +346,10 @@ export default {
   teamAssignmentCard: {
     title: "Atribuição de Equipa",
     clientAcquisitioner: {
-      label: "Adquiridor de Cliente",
+      label: "Angariação do Investidor",
     },
     accountManagers: {
-      label: "Gestores de Conta",
+      label: "Acompanhamento do Cliente",
     },
   },
 } as const;

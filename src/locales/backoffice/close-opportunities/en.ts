@@ -30,7 +30,7 @@ export default {
       status: "New Status",
       finalAmount: "Final Transaction Amount",
       closingDate: "Closing Date",
-      clientOriginator: "Client Originator",
+      clientOriginator: "Investor Acquisition",
       investedPerson: "Invested Person",
       followupPerson: "Follow-up Person",
       commissionableAmount: "Commissionable Amount",

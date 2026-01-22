@@ -16,10 +16,10 @@ export default {
   },
 
   roles: {
-    ACCOUNT_MANAGER: "Gestor de Conta",
-    CLIENT_ACQUISITION: "Angariação de Cliente",
-    CLIENT_ORIGINATOR: "Adquiridor do Cliente",
-    DEAL_SUPPORT: "Apoio ao Negócio",
+    ACCOUNT_MANAGER: "Acompanhamento do Cliente",
+    CLIENT_ACQUISITION: "Angariação do Cliente",
+    CLIENT_ORIGINATOR: "Angariação do Investidor",
+    DEAL_SUPPORT: "Acompanhamento do Investidor",
   },
 
   projects: {

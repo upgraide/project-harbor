@@ -46,8 +46,8 @@ export default {
       advisorClientLoad: {
         title: "Clients per Advisor",
         clients: "Active Clients",
-        accountManager: "Account Manager",
-        clientAcquisitioner: "Client Acquisitioner",
+        accountManager: "Client Follow-up",
+        clientAcquisitioner: "Client Acquisition",
         dealClosure: "Deal Closure",
       },
       investmentRangeBreakdown: {

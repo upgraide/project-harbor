@@ -16,10 +16,10 @@ export default {
   },
 
   roles: {
-    ACCOUNT_MANAGER: "Account Manager",
+    ACCOUNT_MANAGER: "Client Follow-up",
     CLIENT_ACQUISITION: "Client Acquisition",
-    CLIENT_ORIGINATOR: "Client Originator",
-    DEAL_SUPPORT: "Deal Support",
+    CLIENT_ORIGINATOR: "Investor Acquisition",
+    DEAL_SUPPORT: "Investor Follow-up",
   },
 
   projects: {
@@ -194,7 +194,7 @@ export default {
       rate: "Rate",
       amount: "Amount",
       grandTotal: "Grand Total",
-      halvedTooltip: "Percentage halved due to 2 Account Managers on this opportunity",
+      halvedTooltip: "Percentage halved due to 2 Client Follow-up roles on this opportunity",
     },
     
     paymentSchedule: {

@@ -30,7 +30,7 @@ export default {
       status: "Novo Estado",
       finalAmount: "Valor Final da Transação",
       closingDate: "Data de Fecho",
-      clientOriginator: "Adquiridor do Cliente",
+      clientOriginator: "Angariação do Investidor",
       investedPerson: "Pessoa Investidora",
       followupPerson: "Pessoa de Acompanhamento",
       commissionableAmount: "Valor Comissionável",

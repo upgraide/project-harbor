@@ -337,16 +337,16 @@ export default {
   teamAssignmentCard: {
     title: "Team Assignment",
     clientAcquisitioner: {
-      label: "Client Acquisitioner",
-      placeholder: "Select a client acquisitioner",
+      label: "Investor Acquisition",
+      placeholder: "Select investor acquisition",
       description:
-        "Select the client acquisitioner for this opportunity (must be a Team or Admin user)",
+        "Select the investor acquisition for this opportunity (must be a Team or Admin user)",
     },
     accountManagers: {
-      label: "Account Managers",
-      placeholder: "Select account managers",
+      label: "Client Follow-up",
+      placeholder: "Select client follow-up",
       description:
-        "Select 1 to 2 account managers for this opportunity (must be Team or Admin users)",
+        "Select 1 to 2 client follow-up for this opportunity (must be Team or Admin users)",
     },
   },
 } as const;
