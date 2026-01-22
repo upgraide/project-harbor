@@ -2,8 +2,6 @@ import { Metadata } from "next";
 import { CommissionsContainer } from "@/features/commissions/components/commissions-container";
 import { requireTeam } from "@/lib/auth-utils";
 import { HydrateClient, trpc, prefetch } from "@/trpc/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { Role } from "@/generated/prisma";
 
 export const metadata: Metadata = {
@@ -12,15 +10,10 @@ export const metadata: Metadata = {
 };
 
 const Page = async () => {
-  await requireTeam();
-  
-  // Get current user to check if admin
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const { role } = await requireTeam();
   
   // Prefetch admin queries if user is admin
-  if (session?.user?.role === Role.ADMIN) {
+  if (role === Role.ADMIN) {
     prefetch(trpc.commissions.getEmployeeSummary.queryOptions());
     prefetch(trpc.commissions.getPendingCommissions.queryOptions());
   }
