@@ -86,8 +86,8 @@ export const LocationMap = ({ location }: LocationMapProps) => {
       <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
         <Map
           mapId={MAP_ID}
-          defaultCenter={center}
-          defaultZoom={zoom}
+          center={center}
+          zoom={zoom}
           gestureHandling="greedy"
           disableDefaultUI={false}
           zoomControl={true}
