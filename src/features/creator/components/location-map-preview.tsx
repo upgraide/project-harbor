@@ -118,9 +118,10 @@ export const LocationMapPreview = ({
       <div className="h-96 w-full rounded-lg border border-border overflow-hidden">
         <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
           <Map
+            key={`${center.lat}-${center.lng}`}
             mapId={MAP_ID}
-            center={center}
-            zoom={zoom}
+            defaultCenter={center}
+            defaultZoom={zoom}
             gestureHandling="greedy"
             disableDefaultUI={false}
             zoomControl={true}
