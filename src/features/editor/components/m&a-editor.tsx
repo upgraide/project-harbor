@@ -4,7 +4,7 @@
 
 import { EditIcon, EllipsisVerticalIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import {
   Bar,
@@ -14,6 +14,7 @@ import {
   XAxis,
   YAxis,
   Cell,
+  LabelList,
 } from "recharts";
 import { toast } from "sonner";
 import { ErrorView, LoadingView } from "@/components/entity-components";
@@ -174,7 +175,7 @@ const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number
   const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
   const firstYear = sortedRows[0].year.slice(2, 4);
   const lastYear = sortedRows[sortedRows.length - 1].year.slice(2, 4);
-  return `CAGR Sales ${firstYear}\u2013${lastYear}`;
+  return `CAGR ${firstYear}\u2013${lastYear}`;
 };
 
 export const EditorLoading = () => {
@@ -194,7 +195,10 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
-  const [graphUnit, setGraphUnit] = useState<"millions" | "thousands">(opportunity.graphUnit as "millions" | "thousands" || "millions");
+  const [graphUnit, setGraphUnit] = useState<"millions" | "thousands">(
+    ((opportunity as any).graphUnit as "millions" | "thousands") || "millions"
+  );
+  const [newlyAddedIndex, setNewlyAddedIndex] = useState<number | null>(null);
 
   // Update operations
   const updateDescription = useUpdateOpportunityDescription();
@@ -1532,7 +1536,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     const year = String(value);
                     const yearNum = Number.parseInt(year);
                     const currentYear = new Date().getFullYear();
-                    const suffix = yearNum >= currentYear ? 'F' : 'H';
+                    const suffix = yearNum >= currentYear ? t('graphCard.yearSuffixFuture') : t('graphCard.yearSuffixHistorical');
                     return `${year.slice(0, 4)}${suffix}`;
                   }}
                   tickLine={false}
@@ -1568,12 +1572,12 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   fill={isDark ? "#b3a092" : "#123353"}
                   label={{
                     position: "top",
-                    fontSize: 12,
-                    fontWeight: 600,
+                    fontSize: 14,
+                    fontWeight: "bold",
                     fill: ((entry: any) => {
                       const yearType = getYearType(String((entry as any)?.year || ''));
                       if (yearType === 'future') return '#e2d8d3';
-                      return isDark ? "#b3a092" : "#123353";
+                      return isDark ? "#ffffff" : "#123353";
                     }) as any,
                     formatter: (value: number) => {
                       const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
@@ -1596,23 +1600,46 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                 <Line
                   dataKey="ebitda"
                   dot={false}
-                  label={{
-                    position: "top",
-                    fontSize: 12,
-                    fill: isDark ? "#BECED7" : "#984016",
-                    stroke: "#000000",
-                    strokeWidth: 1,
-                    paintOrder: "stroke",
-                    formatter: (value: number) => {
-                      const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
-                      return Math.round(displayValue).toString();
-                    },
-                  }}
-                  stroke={isDark ? "#ae9e98" : "#984016"}
+                  stroke={isDark ? "#b3a092" : "#984016"}
                   strokeWidth={2}
                   type="monotone"
                   yAxisId="right"
-                />
+                >
+                  <LabelList
+                    dataKey="ebitda"
+                    position="top"
+                    content={(props: any) => {
+                      const { x, y, value, index } = props;
+                      if (!value && value !== 0) return null;
+                      
+                      const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                      const dataPoint = (opportunity.graphRows as { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[])?.[index];
+                      const year = String(dataPoint?.year || '');
+                      const yearNum = Number.parseInt(year, 10);
+                      const currentYear = new Date().getFullYear();
+                      const isFuture = yearNum >= currentYear;
+                      
+                      let fillColor = "#6b6b6b";
+                      if (!isDark) {
+                        fillColor = isFuture ? '#909090' : '#ffffff';
+                      }
+                      
+                      return (
+                        <text
+                          x={x}
+                          y={y}
+                          dy={-6}
+                          fill={fillColor}
+                          fontSize={15}
+                          fontWeight="bold"
+                          textAnchor="middle"
+                        >
+                          {Math.round(displayValue)}
+                        </text>
+                      );
+                    }}
+                  />
+                </Line>
                 <Line
                   dataKey="ebitdaMargin"
                   dot={{ fill: isDark ? "#984016" : "#7e9fb0", r: 6 }}
@@ -1683,15 +1710,16 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
               {t("graphCard.title")}
             </CardTitle>
             <Button
-              onClick={() => {
+              onClick={async () => {
                 const newRow = {
-                  year: new Date().getFullYear().toString(),
+                  year: "0",
                   revenue: 0,
                   ebitda: 0,
                   ebitdaMargin: 0,
                 };
+                const newIndex = (opportunity.graphRows ?? []).length;
                 const updatedRows = [...(opportunity.graphRows ?? []), newRow];
-                updateGraphRows.mutate({
+                await updateGraphRows.mutateAsync({
                   id: opportunity.id,
                   graphRows: updatedRows as {
                     year: string;
@@ -1700,6 +1728,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     ebitdaMargin: number;
                   }[],
                 });
+                // Set index after mutation succeeds to trigger dialog
+                setNewlyAddedIndex(newIndex);
               }}
               size="sm"
               variant="outline"
@@ -1752,10 +1782,12 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                           id: opportunity.id,
                           graphRows: updatedRows,
                         });
+                        setNewlyAddedIndex(null);
                       }}
                       opportunityId={opportunity.id}
                       row={row}
                       rowIndex={index}
+                      autoOpen={newlyAddedIndex === index}
                     />
                   ))}
                 </TableBody>
@@ -3273,6 +3305,7 @@ type GraphRowTableRowProps = {
       ebitdaMargin: number;
     }[]
   ) => void;
+  autoOpen?: boolean;
 };
 
 const GraphRowTableRow = ({
@@ -3281,12 +3314,20 @@ const GraphRowTableRow = ({
   graphUnit,
   allRows,
   onUpdate,
+  autoOpen = false,
 }: GraphRowTableRowProps) => {
   const t = useScopedI18n(
     "backoffice.mergersAndAcquisitionOpportunityPage.graphCard"
   );
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(autoOpen);
   const [editedRow, setEditedRow] = useState(row);
+
+  // Auto-open dialog when autoOpen is true
+  useEffect(() => {
+    if (autoOpen) {
+      setIsEditOpen(true);
+    }
+  }, [autoOpen]);
 
   const handleSaveEdit = () => {
     const updatedRows = [...allRows];
@@ -3321,108 +3362,11 @@ const GraphRowTableRow = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <Dialog onOpenChange={setIsEditOpen} open={isEditOpen}>
-                <DialogTrigger asChild>
-                  <button
-                    className="flex w-full items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent"
-                    onClick={(e) => e.stopPropagation()}
-                    type="button"
-                  >
-                    <EditIcon className="mr-2 h-4 w-4" />
-                    {t("editButtonText")}
-                  </button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>{t("editGraphRowTitle")}</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <label className="font-medium text-sm" htmlFor="year">
-                        {t("year")}
-                      </label>
-                      <Input
-                        id="year"
-                        onChange={(e) =>
-                          setEditedRow({
-                            ...editedRow,
-                            year: e.target.value,
-                          })
-                        }
-                        type="text"
-                        value={editedRow.year}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="font-medium text-sm" htmlFor="revenue">
-                        {t("revenue")}
-                      </label>
-                      <Input
-                        id="revenue"
-                        onChange={(e) =>
-                          setEditedRow({
-                            ...editedRow,
-                            revenue: Number.parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        step="0.01"
-                        type="number"
-                        value={editedRow.revenue}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="font-medium text-sm" htmlFor="ebitda">
-                        {t("ebitda")}
-                      </label>
-                      <Input
-                        id="ebitda"
-                        onChange={(e) =>
-                          setEditedRow({
-                            ...editedRow,
-                            ebitda: Number.parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        step="0.01"
-                        type="number"
-                        value={editedRow.ebitda}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label
-                        className="font-medium text-sm"
-                        htmlFor="ebitdaMargin"
-                      >
-                        {t("ebitdaMargin")}
-                      </label>
-                      <Input
-                        id="ebitdaMargin"
-                        onChange={(e) =>
-                          setEditedRow({
-                            ...editedRow,
-                            ebitdaMargin:
-                              Number.parseFloat(e.target.value) || 0,
-                          })
-                        }
-                        step="0.01"
-                        type="number"
-                        value={editedRow.ebitdaMargin}
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button
-                      onClick={() => setIsEditOpen(false)}
-                      variant="outline"
-                    >
-                      {t("cancelButtonText")}
-                    </Button>
-                    <Button onClick={handleSaveEdit}>
-                      {t("saveButtonText")}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+            <DropdownMenuItem
+              onClick={() => setIsEditOpen(true)}
+            >
+              <EditIcon className="mr-2 h-4 w-4" />
+              {t("editButtonText")}
             </DropdownMenuItem>
             <DropdownMenuItem
               className="text-red-600 hover:bg-red-50 hover:text-red-700"
@@ -3433,6 +3377,97 @@ const GraphRowTableRow = ({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <Dialog onOpenChange={setIsEditOpen} open={isEditOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t("editGraphRowTitle")}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="font-medium text-sm" htmlFor="year">
+                  {t("year")}
+                </label>
+                <Input
+                  id="year"
+                  onChange={(e) =>
+                    setEditedRow({
+                      ...editedRow,
+                      year: e.target.value,
+                    })
+                  }
+                  type="text"
+                  value={editedRow.year}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="font-medium text-sm" htmlFor="revenue">
+                  {t("revenue")}
+                </label>
+                <Input
+                  id="revenue"
+                  onChange={(e) =>
+                    setEditedRow({
+                      ...editedRow,
+                      revenue: Number.parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  step="0.01"
+                  type="number"
+                  value={editedRow.revenue}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="font-medium text-sm" htmlFor="ebitda">
+                  {t("ebitda")}
+                </label>
+                <Input
+                  id="ebitda"
+                  onChange={(e) =>
+                    setEditedRow({
+                      ...editedRow,
+                      ebitda: Number.parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  step="0.01"
+                  type="number"
+                  value={editedRow.ebitda}
+                />
+              </div>
+              <div className="space-y-2">
+                <label
+                  className="font-medium text-sm"
+                  htmlFor="ebitdaMargin"
+                >
+                  {t("ebitdaMargin")}
+                </label>
+                <Input
+                  id="ebitdaMargin"
+                  onChange={(e) =>
+                    setEditedRow({
+                      ...editedRow,
+                      ebitdaMargin:
+                        Number.parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  step="0.01"
+                  type="number"
+                  value={editedRow.ebitdaMargin}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                onClick={() => setIsEditOpen(false)}
+                variant="outline"
+              >
+                {t("cancelButtonText")}
+              </Button>
+              <Button onClick={handleSaveEdit}>
+                {t("saveButtonText")}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </TableCell>
     </TableRow>
   );

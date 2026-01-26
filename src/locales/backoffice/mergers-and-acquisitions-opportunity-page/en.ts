@@ -145,6 +145,8 @@ export default {
     unitLabel: "Display Unit",
     millions: "Millions (M€)",
     thousands: "Thousands (K€)",
+    yearSuffixHistorical: "H",
+    yearSuffixFuture: "F",
     table: {
       header: {
         year: "Year",

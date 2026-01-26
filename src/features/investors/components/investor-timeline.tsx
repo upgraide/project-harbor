@@ -47,13 +47,11 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
         </CardDescription>
         <div className="flex gap-4 mt-4">
           <div className="flex items-center gap-2">
-            <Heart className="h-4 w-4 text-green-500" />
             <span className="text-sm">
               <span className="font-semibold">{interestedCount}</span> Interested
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <XCircle className="h-4 w-4 text-red-500" />
             <span className="text-sm">
               <span className="font-semibold">{notInterestedCount}</span> Not Interested
             </span>
@@ -96,12 +94,10 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
                       <div className="flex items-center gap-2">
                         {interest.interested ? (
                           <Badge className="bg-green-500 text-white">
-                            <Heart className="h-3 w-3 mr-1" />
                             Interested
                           </Badge>
                         ) : (
                           <Badge variant="destructive">
-                            <XCircle className="h-3 w-3 mr-1" />
                             Not Interested
                           </Badge>
                         )}

@@ -433,7 +433,6 @@ export const InvestorDetailContainer = ({
                     {isTeamOrAdmin && investor.personalNotes && (
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <Lock className="h-4 w-4 text-muted-foreground" />
                           <p className="text-sm font-medium">{t("personalNotes.title")}</p>
                         </div>
                         <p className="text-sm text-muted-foreground whitespace-pre-wrap">{investor.personalNotes}</p>
