@@ -46,6 +46,7 @@ import { InvestorInterests } from "./investor-interests";
 import { InvestorNotes } from "./investor-notes";
 import { InvestorActivities } from "./investor-activities";
 import { InvestorTimeline } from "./investor-timeline";
+import { InvestorLastFollowUps } from "./investor-last-followups";
 
 type InvestorDetailContainerProps = {
   investorId: string;
@@ -478,7 +479,10 @@ export const InvestorDetailContainer = ({
 
           {/* Edit Tab */}
           <TabsContent value="edit">
-            <InvestorDetailEditForm investor={investor} />
+            <div className="space-y-6">
+              <InvestorDetailEditForm investor={investor} />
+              <InvestorLastFollowUps investorId={investorId} />
+            </div>
           </TabsContent>
         </Tabs>
       </div>

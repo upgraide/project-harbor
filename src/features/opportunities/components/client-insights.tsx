@@ -19,16 +19,16 @@ import { useScopedI18n } from "@/locales/client";
 import { TrendingUp, TrendingDown } from "lucide-react";
 
 const COLORS = [
-  "#3b82f6", // blue
-  "#10b981", // green
-  "#f59e0b", // amber
-  "#ef4444", // red
-  "#8b5cf6", // violet
-  "#ec4899", // pink
-  "#06b6d4", // cyan
-  "#f97316", // orange
-  "#14b8a6", // teal
-  "#6366f1", // indigo
+  "#1D5C9B", // blue from schema
+  "#679A85", // teal from schema
+  "#9C3E11", // orange from schema
+  "#113152", // navy from schema
+  "#BECED7", // light blue from schema
+  "#404040", // dark gray from schema
+  "#1D5C9B", // blue (repeat)
+  "#679A85", // teal (repeat)
+  "#9C3E11", // orange (repeat)
+  "#113152", // navy (repeat)
 ];
 
 const formatNumber = (value: number): string => value.toLocaleString("en-US");
@@ -75,17 +75,12 @@ export const ClientInsights = () => {
       value: `${(stats?.retentionRate ?? 0).toFixed(1)}%`,
       trend: 0,
     },
-    {
-      title: tInsights("stats.avgPortfolioSize"),
-      value: (stats?.avgPortfolioSize ?? 0).toFixed(1),
-      trend: 0,
-    },
   ];
 
   return (
     <div className="space-y-6">
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         {kpiCards.map((kpi, index) => (
           <Card key={index}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -271,6 +266,9 @@ export const ClientInsights = () => {
             <CardTitle className="text-base">
               {tInsights("charts.investmentRangeBreakdown.title")}
             </CardTitle>
+            <p className="text-xs text-muted-foreground mt-1">
+              {tInsights("charts.investmentRangeBreakdown.description")}
+            </p>
           </CardHeader>
           <CardContent>
             {isLoadingInvestmentRange ? (
@@ -287,14 +285,14 @@ export const ClientInsights = () => {
                 config={{
                   count: {
                     label: tInsights("charts.investmentRangeBreakdown.count"),
-                    color: "#3b82f6",
+                    color: "#1D5C9B",
                   },
                 }}
               >
                 <BarChart data={investmentRangeData.map((item, index) => ({
                   range: formatInvestmentRange(item.range),
                   count: item.count,
-                  fill: ["#3b82f6", "#10b981", "#f59e0b"][index] || "#3b82f6",
+                  fill: ["#1D5C9B", "#679A85", "#9C3E11"][index] || "#1D5C9B",
                 }))}>
                   <XAxis
                     dataKey="range"
@@ -306,7 +304,7 @@ export const ClientInsights = () => {
                   <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                   <Bar dataKey="count" radius={4}>
                     {investmentRangeData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={["#3b82f6", "#10b981", "#f59e0b"][index] || "#3b82f6"} />
+                      <Cell key={`cell-${index}`} fill={["#1D5C9B", "#679A85", "#9C3E11"][index] || "#1D5C9B"} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -315,60 +313,6 @@ export const ClientInsights = () => {
           </CardContent>
         </Card>
       </div>
-
-      {/* Advisor Client Load - Full Width */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">
-            {tInsights("charts.advisorClientLoad.title")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoadingAdvisor ? (
-            <div className="flex items-center justify-center py-12">
-              <p className="text-muted-foreground text-sm">{t("loadingMessage")}</p>
-            </div>
-          ) : !advisorData || advisorData.length === 0 ? (
-            <div className="flex items-center justify-center py-12">
-              <p className="text-muted-foreground text-sm">{t("noData")}</p>
-            </div>
-          ) : (
-            <ChartContainer
-              className="h-[300px] w-full"
-              config={{
-                accountManager: {
-                  label: tInsights("charts.advisorClientLoad.accountManager"),
-                  color: "#3b82f6", // blue
-                },
-                clientAcquisitioner: {
-                  label: tInsights("charts.advisorClientLoad.clientAcquisitioner"),
-                  color: "#10b981", // green
-                },
-                dealClosure: {
-                  label: tInsights("charts.advisorClientLoad.dealClosure"),
-                  color: "#f59e0b", // amber
-                },
-              }}
-            >
-              <BarChart data={advisorData} layout="vertical" margin={{ left: 100, right: 12 }}>
-                <YAxis
-                  dataKey="advisorName"
-                  type="category"
-                  tickLine={false}
-                  tickMargin={10}
-                  fontSize={12}
-                  width={140}
-                />
-                <XAxis hide type="number" />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="accountManager" fill="var(--color-accountManager)" stackId="a" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="clientAcquisitioner" fill="var(--color-clientAcquisitioner)" stackId="a" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="dealClosure" fill="var(--color-dealClosure)" stackId="a" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ChartContainer>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 };

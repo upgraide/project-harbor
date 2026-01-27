@@ -892,4 +892,132 @@ export const investorsRouter = createTRPCRouter({
 
       return { success: true };
     }),
+
+  // Last Follow-up endpoints
+  getFollowUps: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input }) => {
+      return prisma.lastFollowUp.findMany({
+        where: { userId: input.userId },
+        include: {
+          contactedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          personContacted: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: { followUpDate: "desc" },
+      });
+    }),
+
+  addFollowUp: protectedProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        followUpDate: z.date(),
+        description: z.string().min(1),
+        contactedById: z.string(),
+        personContactedId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { userId, followUpDate, description, contactedById, personContactedId } = input;
+
+      const newFollowUp = await prisma.lastFollowUp.create({
+        data: {
+          userId,
+          followUpDate,
+          description,
+          contactedById,
+          personContactedId,
+        },
+        include: {
+          contactedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          personContacted: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      // Update lastContactDate on user
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          lastContactDate: followUpDate,
+        },
+      });
+
+      return newFollowUp;
+    }),
+
+  updateFollowUp: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        followUpDate: z.date(),
+        description: z.string().min(1),
+        contactedById: z.string(),
+        personContactedId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, followUpDate, description, contactedById, personContactedId } = input;
+
+      const updatedFollowUp = await prisma.lastFollowUp.update({
+        where: { id },
+        data: {
+          followUpDate,
+          description,
+          contactedById,
+          personContactedId,
+        },
+        include: {
+          contactedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          personContacted: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return updatedFollowUp;
+    }),
+
+  deleteFollowUp: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      await prisma.lastFollowUp.delete({
+        where: { id: input.id },
+      });
+
+      return { success: true };
+    }),
 });

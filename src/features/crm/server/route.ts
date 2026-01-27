@@ -208,6 +208,27 @@ export const leadsRouter = createTRPCRouter({
               createdAt: "desc",
             },
           },
+          lastFollowUps: {
+            include: {
+              contactedBy: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+              personContacted: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+            orderBy: {
+              followUpDate: "desc",
+            },
+          },
           activities: {
             orderBy: {
               createdAt: "desc",
@@ -440,6 +461,144 @@ export const leadsRouter = createTRPCRouter({
 
     return teamMembers;
   }),
+
+  // Last Follow-up endpoints for CRM
+  getFollowUps: adminProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input }) => {
+      return prisma.lastFollowUp.findMany({
+        where: { userId: input.userId },
+        include: {
+          contactedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          personContacted: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: { followUpDate: "desc" },
+      });
+    }),
+
+  addFollowUp: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        followUpDate: z.date(),
+        description: z.string().min(1),
+        contactedById: z.string(),
+        personContactedId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { userId, followUpDate, description, contactedById, personContactedId } = input;
+
+      const newFollowUp = await prisma.lastFollowUp.create({
+        data: {
+          userId,
+          followUpDate,
+          description,
+          contactedById,
+          personContactedId,
+        },
+        include: {
+          contactedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          personContacted: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      // Update lastContactDate on user
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          lastContactDate: followUpDate,
+        },
+      });
+
+      // Create activity log
+      await prisma.leadActivity.create({
+        data: {
+          userId,
+          activityType: ActivityType.OTHER,
+          title: "Follow-up recorded",
+          description: `Follow-up on ${followUpDate.toLocaleDateString()}`,
+        },
+      });
+
+      return newFollowUp;
+    }),
+
+  updateFollowUp: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        followUpDate: z.date(),
+        description: z.string().min(1),
+        contactedById: z.string(),
+        personContactedId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, followUpDate, description, contactedById, personContactedId } = input;
+
+      const updatedFollowUp = await prisma.lastFollowUp.update({
+        where: { id },
+        data: {
+          followUpDate,
+          description,
+          contactedById,
+          personContactedId,
+        },
+        include: {
+          contactedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          personContacted: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return updatedFollowUp;
+    }),
+
+  deleteFollowUp: adminProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      await prisma.lastFollowUp.delete({
+        where: { id: input.id },
+      });
+
+      return { success: true };
+    }),
 });
 
 export const crmRouter = createTRPCRouter({

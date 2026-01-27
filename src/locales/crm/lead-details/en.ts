@@ -61,6 +61,14 @@ export default {
       by: "by",
       lastNotes: "Last Notes",
     },
+
+    followUps: {
+      title: "Last Follow-ups",
+      noFollowUps: "No follow-ups recorded yet",
+      contactedBy: "Contacted By",
+      personContacted: "Person Contacted",
+      recordedOn: "Recorded On",
+    },
     
     activities: {
       title: "Activity Timeline",

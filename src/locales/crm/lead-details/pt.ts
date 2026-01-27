@@ -61,6 +61,14 @@ export default {
       by: "por",
       lastNotes: "Últimas Notas",
     },
+
+    followUps: {
+      title: "Últimos Follow-ups",
+      noFollowUps: "Ainda não há follow-ups registados",
+      contactedBy: "Contactado Por",
+      personContacted: "Pessoa Contactada",
+      recordedOn: "Registado em",
+    },
     
     activities: {
       title: "Cronologia de Atividades",

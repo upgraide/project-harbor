@@ -99,6 +99,11 @@ model User {
   leadMainContactFor User[] @relation("LeadMainContactUsers")
   notes             UserNote[]
   createdNotes      UserNote[] @relation("NoteCreator")
+  
+  // Last Follow-up relations
+  lastFollowUps         LastFollowUp[]
+  contactedByFollowUps  LastFollowUp[] @relation("ContactedBy")
+  personContactedFollowUps LastFollowUp[] @relation("PersonContacted")
   activities        LeadActivity[]
 
   // Commission relations
@@ -658,6 +663,31 @@ model UserNote {
   updatedAt DateTime @updatedAt
 
   @@map("user_note")
+}
+
+model LastFollowUp {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // The date of the follow-up (can be different from createdAt)
+  followUpDate      DateTime
+  
+  // Description of the conversation/meeting
+  description       String   @db.Text
+  
+  // Person who made the contact (from our team)
+  contactedById     String
+  contactedBy       User     @relation("ContactedBy", fields: [contactedById], references: [id], onDelete: Cascade)
+  
+  // Person who was contacted (the client/investor)
+  personContactedId String
+  personContacted   User     @relation("PersonContacted", fields: [personContactedId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("last_follow_up")
 }
 
 model LeadActivity {

@@ -960,35 +960,82 @@ export const analyticsRouter = createTRPCRouter({
   getClientActivity: protectedProcedure.query(async () => {
     const thirtyDaysAgo = subDays(new Date(), 30);
 
-    const noRecentContact = await prisma.user.findMany({
+    // Get all users who could be clients (excluding TEAM_MEMBER types)
+    const allUsers = await prisma.user.findMany({
       where: {
-        OR: [
-          { lastContactDate: { lt: thirtyDaysAgo } },
-          { lastContactDate: null },
-        ],
+        type: {
+          not: "TEAM_MEMBER",
+        },
       },
       select: {
         id: true,
         name: true,
         email: true,
-        lastContactDate: true,
         type: true,
-      },
-      orderBy: {
-        lastContactDate: "asc",
       },
     });
 
-    const recentContact = await prisma.user.count({
+    // Get all recent follow-ups in one query
+    const recentFollowUps = await prisma.lastFollowUp.findMany({
       where: {
-        lastContactDate: { gte: thirtyDaysAgo },
+        personContactedId: {
+          in: allUsers.map(u => u.id),
+        },
       },
+      select: {
+        personContactedId: true,
+        followUpDate: true,
+      },
+      orderBy: {
+        followUpDate: "desc",
+      },
+    });
+
+    // Create a map of user ID to their most recent follow-up date
+    const followUpMap = new Map<string, Date>();
+    for (const followUp of recentFollowUps) {
+      if (!followUpMap.has(followUp.personContactedId)) {
+        followUpMap.set(followUp.personContactedId, followUp.followUpDate);
+      }
+    }
+
+    // Categorize users based on their last follow-up
+    const usersWithLastFollowUp = allUsers.map(user => ({
+      ...user,
+      lastFollowUpDate: followUpMap.get(user.id),
+    }));
+
+    const noRecentContact = usersWithLastFollowUp.filter((user) => {
+      if (!user.lastFollowUpDate) return true;
+      return user.lastFollowUpDate < thirtyDaysAgo;
+    });
+
+    const recentContact = usersWithLastFollowUp.filter((user) => {
+      if (!user.lastFollowUpDate) return false;
+      return user.lastFollowUpDate >= thirtyDaysAgo;
     });
 
     return {
       noRecentContact: noRecentContact.length,
-      recentContact,
-      detailedList: noRecentContact,
+      recentContact: recentContact.length,
+      detailedList: noRecentContact.map((user) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        lastContactDate: user.lastFollowUpDate,
+      })),
+      recentContactList: recentContact
+        .map((user) => ({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          lastContactDate: user.lastFollowUpDate,
+        }))
+        .sort((a, b) => {
+          if (!a.lastContactDate) return 1;
+          if (!b.lastContactDate) return -1;
+          return b.lastContactDate.getTime() - a.lastContactDate.getTime();
+        }),
     };
   }),
 
@@ -1099,6 +1146,7 @@ export const analyticsRouter = createTRPCRouter({
     const advisors = await prisma.user.findMany({
       where: {
         OR: [
+          { type: "TEAM_MEMBER" },
           { accountManagerAssignments: { some: {} } },
           { leadResponsibleFor: { some: {} } },
           { leadMainContactFor: { some: {} } },
@@ -1109,7 +1157,9 @@ export const analyticsRouter = createTRPCRouter({
         name: true,
         email: true,
       },
-      distinct: ["id"],
+      orderBy: {
+        name: "asc",
+      },
     });
 
     return advisors.map((advisor) => ({

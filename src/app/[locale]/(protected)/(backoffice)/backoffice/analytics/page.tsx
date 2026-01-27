@@ -43,25 +43,23 @@ const Page = async () => {
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="charts">Charts & Metrics</TabsTrigger>
               <TabsTrigger value="performance">Performance</TabsTrigger>
-              <TabsTrigger value="client-insights">{tInsights("tabTitle")}</TabsTrigger>
-              <TabsTrigger value="top-viewed">Top Viewed</TabsTrigger>
+              <TabsTrigger value="advisor-performance">Advisor Performance</TabsTrigger>
             </TabsList>
 
-            {/* Overview Tab - KPIs */}
-            <TabsContent value="overview" className="space-y-6">
-              <AnalyticsFiltersProvider>
+            {/* Shared Analytics Filters Provider for Overview and Charts */}
+            <AnalyticsFiltersProvider>
+              {/* Overview Tab - KPIs */}
+              <TabsContent value="overview" className="space-y-6">
                 <AnalyticsFilters />
                 <ErrorBoundary fallback={<AnalyticsError />}>
                   <Suspense fallback={<AnalyticsLoading />}>
                     <AnalyticsOverview />
                   </Suspense>
                 </ErrorBoundary>
-              </AnalyticsFiltersProvider>
-            </TabsContent>
+              </TabsContent>
 
-            {/* Charts Tab */}
-            <TabsContent value="charts" className="space-y-6">
-              <AnalyticsFiltersProvider>
+              {/* Charts Tab */}
+              <TabsContent value="charts" className="space-y-6">
                 <AnalyticsFilters />
                 <div className="grid gap-6 md:grid-cols-2">
                   <ErrorBoundary fallback={<AnalyticsError />}>
@@ -90,8 +88,8 @@ const Page = async () => {
                     <SectorBreakdownBarChart />
                   </Suspense>
                 </ErrorBoundary>
-              </AnalyticsFiltersProvider>
-            </TabsContent>
+              </TabsContent>
+            </AnalyticsFiltersProvider>
 
             {/* Performance Tab */}
             <TabsContent value="performance" className="space-y-6">
@@ -100,15 +98,10 @@ const Page = async () => {
                   <ClientActivityCard />
                 </Suspense>
               </ErrorBoundary>
-              <ErrorBoundary fallback={<AnalyticsError />}>
-                <Suspense fallback={<AnalyticsLoading />}>
-                  <AdvisorPerformanceChart />
-                </Suspense>
-              </ErrorBoundary>
             </TabsContent>
 
-            {/* Client Insights Tab */}
-            <TabsContent value="client-insights" className="space-y-6">
+            {/* Advisor Performance Tab (formerly Client Insights) */}
+            <TabsContent value="advisor-performance" className="space-y-6">
               <ClientInsightsFiltersProvider>
                 <ClientInsightsFilters />
                 <ErrorBoundary fallback={<AnalyticsError />}>
@@ -117,15 +110,6 @@ const Page = async () => {
                   </Suspense>
                 </ErrorBoundary>
               </ClientInsightsFiltersProvider>
-            </TabsContent>
-
-            {/* Top Viewed Tab */}
-            <TabsContent value="top-viewed" className="space-y-6">
-              <ErrorBoundary fallback={<AnalyticsError />}>
-                <Suspense fallback={<AnalyticsLoading />}>
-                  <AnalyticsList />
-                </Suspense>
-              </ErrorBoundary>
             </TabsContent>
           </Tabs>
         </div>
