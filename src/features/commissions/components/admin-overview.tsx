@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +34,16 @@ export const AdminOverview = () => {
   const t = useScopedI18n("crm.commissions");
   const trpc = useTRPC();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get active tab from URL or default to "pending"
+  const activeTab = (searchParams.get('tab') as "pending" | "resolved" | "employees" | "settings") || "pending";
+
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('tab', value);
+    router.push(`?${params.toString()}`);
+  };
 
   const { data: employees, isLoading: isLoadingEmployees } = useQuery(
     trpc.commissions.getEmployeeSummary.queryOptions()
@@ -53,7 +63,7 @@ export const AdminOverview = () => {
 
   return (
     <div className="space-y-6">
-      <Tabs defaultValue="pending" className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="pending">
             {t("tabs.pendingResolution")}
@@ -128,11 +138,12 @@ export const AdminOverview = () => {
                         <TableCell className="text-right">
                           <Button
                             size="sm"
-                            onClick={() =>
+                            onClick={() => {
+                              const params = new URLSearchParams(searchParams.toString());
                               router.push(
-                                `/crm/commissions/resolve/${opp.id}?type=${opp.type}`
-                              )
-                            }
+                                `/crm/commissions/resolve/${opp.id}?type=${opp.type}&returnTab=${activeTab}&${params.toString()}`
+                              );
+                            }}
                           >
                             <PlusIcon className="mr-2 h-4 w-4" />
                             {t("pendingResolution.table.setupButton")}
@@ -179,7 +190,10 @@ export const AdminOverview = () => {
                       <TableRow 
                         key={employee.id}
                         className="cursor-pointer hover:bg-muted/50"
-                        onClick={() => router.push(`/crm/commissions/employee/${employee.id}?fromView=admin`)}
+                        onClick={() => {
+                          const params = new URLSearchParams(searchParams.toString());
+                          router.push(`/crm/commissions/employee/${employee.id}?returnTab=${activeTab}&${params.toString()}`);
+                        }}
                       >
                         <TableCell>
                           <div>

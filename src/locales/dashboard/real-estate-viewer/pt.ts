@@ -423,5 +423,7 @@ export default {
     description:
       "Por favor, diga-nos por que não está interessado nesta oportunidade. Isso ajuda-nos a melhorar as nossas ofertas.",
     placeholder: "Insira o seu motivo...",
+    cancel: "Cancelar",
+    confirm: "Confirmar",
   },
 } as const;

@@ -5,7 +5,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { requireAdmin } from "@/lib/auth-utils";
 
 const Layout = async ({ children }: { children: ReactNode }) => {
-  const { user } = await requireAdmin();
+  const { user, role } = await requireAdmin();
 
   return (
     <SidebarProvider>
@@ -16,6 +16,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
             name: user.name,
             email: user.email,
             image: user.image ?? "",
+            role,
           }}
         />
         <main className="flex-1">{children}</main>

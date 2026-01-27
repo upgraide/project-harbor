@@ -315,6 +315,41 @@ export const commissionsRouter = createTRPCRouter({
       },
     });
 
+    // Fetch all commission payments for this user across all opportunities
+    const userCommissionPayments = await prisma.commissionPayment.findMany({
+      where: {
+        commissionValue: {
+          opportunityId: { in: resolvedScheduleOpportunityIds },
+          commission: {
+            userId: userId,
+          },
+        },
+      },
+      select: {
+        commissionValue: {
+          select: {
+            opportunityId: true,
+          },
+        },
+        isPaid: true,
+        paymentAmount: true,
+      },
+    });
+
+    // Group payments by opportunity
+    const paymentsByOpportunity = new Map<string, Array<{ isPaid: boolean; paymentAmount: number | null }>>();
+    
+    for (const payment of userCommissionPayments) {
+      const oppId = payment.commissionValue.opportunityId;
+      if (!paymentsByOpportunity.has(oppId)) {
+        paymentsByOpportunity.set(oppId, []);
+      }
+      paymentsByOpportunity.get(oppId)!.push({
+        isPaid: payment.isPaid,
+        paymentAmount: payment.paymentAmount,
+      });
+    }
+
     // Create a map for easy lookup: `${opportunityId}-${roleType}` -> commissionValue
     const commissionValueMap = new Map(
       commissionValues.map(cv => [
@@ -323,13 +358,55 @@ export const commissionsRouter = createTRPCRouter({
       ])
     );
 
-    // Create schedule map for isResolved check
+    // Create schedule map for isResolved check with payment status
     const scheduleMap = new Map(
-      commissionSchedules.map(s => [
-        s.opportunityId,
-        { isResolved: s.isResolved, resolvedAt: s.resolvedAt },
-      ])
+      commissionSchedules.map(s => {
+        // Get payments for this opportunity
+        const allPayments = paymentsByOpportunity.get(s.opportunityId) || [];
+        const totalPaid = allPayments.filter(p => p.isPaid).reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
+        const totalAmount = allPayments.reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
+        const allPaid = allPayments.length > 0 && allPayments.every(p => p.isPaid);
+        const hasUnpaid = allPayments.some(p => !p.isPaid);
+
+        return [
+          s.opportunityId,
+          {
+            isResolved: s.isResolved,
+            resolvedAt: s.resolvedAt,
+            paymentStatus: {
+              allPaid,
+              hasUnpaid,
+              totalPaid,
+              totalAmount,
+            },
+          },
+        ];
+      })
     );
+
+    // Calculate payment statistics for the user (only for resolved schedules)
+    const allUserPayments = await prisma.commissionPayment.findMany({
+      where: {
+        commissionValue: {
+          opportunityId: { in: resolvedScheduleOpportunityIds },
+          commission: {
+            userId: userId,
+          },
+        },
+      },
+      select: {
+        isPaid: true,
+        paymentAmount: true,
+      },
+    });
+
+    const totalPaid = allUserPayments
+      .filter(p => p.isPaid)
+      .reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
+
+    const totalYetToPay = allUserPayments
+      .filter(p => !p.isPaid)
+      .reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
 
     return {
       commissions,
@@ -341,6 +418,10 @@ export const commissionsRouter = createTRPCRouter({
         clientOriginator: [...clientOriginatorMNA, ...clientOriginatorRE],
         accountManager: [...accountManagerMNA, ...accountManagerRE],
         dealSupport: [...dealSupportMNA, ...dealSupportRE],
+      },
+      paymentStats: {
+        totalPaid,
+        totalYetToPay,
       },
     };
   }),
@@ -1009,6 +1090,47 @@ export const commissionsRouter = createTRPCRouter({
       return updatedPayments;
     }),
 
+  // Update payment status (mark as paid/unpaid) - admin only
+  updatePaymentStatus: adminProcedure
+    .input(
+      z.object({
+        paymentId: z.string(),
+        isPaid: z.boolean(),
+        paidAt: z.date().optional().nullable(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { paymentId, isPaid, paidAt } = input;
+
+      // Validate that payment exists
+      const payment = await prisma.commissionPayment.findUnique({
+        where: { id: paymentId },
+        select: { paymentDate: true },
+      });
+
+      if (!payment) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Payment not found",
+        });
+      }
+
+      // Update payment status
+      const updatedPayment = await prisma.commissionPayment.update({
+        where: { id: paymentId },
+        data: {
+          isPaid,
+          // If marking as paid and no custom paidAt provided, use the scheduled paymentDate
+          // If marking as unpaid, set paidAt to null
+          paidAt: isPaid 
+            ? (paidAt ?? payment.paymentDate) 
+            : null,
+        },
+      });
+
+      return updatedPayment;
+    }),
+
   // Recalculate commissions for a specific opportunity (admin only)
   recalculateCommissions: adminProcedure
     .input(
@@ -1352,12 +1474,52 @@ export const commissionsRouter = createTRPCRouter({
       };
     }),
 
+  // Get commission payments for an opportunity (admin only - for payment tracking)
+  getOpportunityCommissionPayments: adminProcedure
+    .input(
+      z.object({
+        opportunityId: z.string(),
+        opportunityType: z.nativeEnum(OpportunityType),
+      })
+    )
+    .query(async ({ input }) => {
+      const { opportunityId, opportunityType } = input;
+
+      // Get all commission values for this opportunity
+      const commissionValues = await prisma.commissionValue.findMany({
+        where: {
+          opportunityId,
+          opportunityType,
+        },
+        include: {
+          commission: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+          },
+          payments: {
+            orderBy: {
+              installmentNumber: "asc",
+            },
+          },
+        },
+      });
+
+      return commissionValues;
+    }),
+
   // Get opportunities pending commission resolution (admin only)
   getPendingCommissions: adminProcedure.query(async () => {
-    // Get all M&A opportunities with CONCLUDED status
+    // Get all M&A opportunities with CONCLUDED status (excluding INACTIVE)
     const mnaOpportunities = await prisma.mergerAndAcquisition.findMany({
       where: {
-        status: "CONCLUDED",
+        status: OpportunityStatus.CONCLUDED,
         analytics: {
           commissionable_amount: { not: null, gt: 0 },
         },
@@ -1375,10 +1537,10 @@ export const commissionsRouter = createTRPCRouter({
       },
     });
 
-    // Get all Real Estate opportunities with CONCLUDED status
+    // Get all Real Estate opportunities with CONCLUDED status (excluding INACTIVE)
     const realEstateOpportunities = await prisma.realEstate.findMany({
       where: {
-        status: "CONCLUDED",
+        status: OpportunityStatus.CONCLUDED,
         analytics: {
           commissionable_amount: { not: null, gt: 0 },
         },
@@ -1524,10 +1686,41 @@ export const commissionsRouter = createTRPCRouter({
           },
         });
 
+        // Get all payments for this opportunity to check payment status
+        const allPayments = await prisma.commissionPayment.findMany({
+          where: {
+            commissionValue: {
+              opportunityId: schedule.opportunityId,
+              opportunityType: schedule.opportunityType,
+            },
+          },
+          select: {
+            isPaid: true,
+            paymentAmount: true,
+          },
+        });
+
+        // Calculate payment statistics
+        const totalPaid = allPayments
+          .filter(p => p.isPaid)
+          .reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
+
+        const totalAmount = allPayments
+          .reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
+
+        const allPaymentsPaid = allPayments.length > 0 && allPayments.every(p => p.isPaid);
+        const hasUnpaidPayments = allPayments.some(p => !p.isPaid);
+
         return {
           ...schedule,
           opportunity: opportunityDetails,
           recipientsCount: commissionValuesCount,
+          paymentStatus: {
+            allPaid: allPaymentsPaid,
+            hasUnpaid: hasUnpaidPayments,
+            totalPaid,
+            totalAmount,
+          },
         };
       })
     );

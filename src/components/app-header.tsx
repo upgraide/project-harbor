@@ -13,9 +13,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Role } from "@/generated/prisma";
 import { authClient } from "@/lib/auth-client";
 import { useScopedI18n } from "@/locales/client";
-import { indexPath } from "@/paths";
+import { crmCommissionsPath, dashboardSettingsPath, indexPath } from "@/paths";
 import { SidebarTrigger } from "./ui/sidebar";
 
 type AppHeaderProps = {
@@ -23,6 +24,7 @@ type AppHeaderProps = {
     name: string;
     email: string;
     image: string;
+    role?: Role;
   };
 };
 
@@ -58,7 +60,17 @@ export const AppHeader = ({ user }: AppHeaderProps) => {
             className="-right-4 fixed min-w-56 space-y-2 bg-card p-2"
             sideOffset={8}
           >
-            <DropdownMenuItem className="group flex-col items-start focus:bg-transparent">
+            <DropdownMenuItem 
+              className="group flex-col items-start cursor-pointer focus:bg-muted"
+              onClick={() => {
+                // Route based on user role
+                if (user.role === Role.TEAM || user.role === Role.ADMIN) {
+                  router.push(crmCommissionsPath());
+                } else {
+                  router.push(dashboardSettingsPath());
+                }
+              }}
+            >
               <p className="font-medium text-sm group-hover:text-primary group-focus:text-primary">
                 {user.name || emailPrefix}
               </p>

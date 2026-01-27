@@ -6,7 +6,12 @@ export default {
     myCommissions: "As Minhas Comissões",
     adminOverview: "Visão Geral Admin",
   },
-
+  paymentStats: {
+    totalReceived: "Total Recebido",
+    totalReceivedDescription: "Total de comissões pagas até à data",
+    totalYetToReceive: "Por Receber",
+    totalYetToReceiveDescription: "Total de pagamentos de comissões pendentes",
+  },
   summary: {
     title: "Resumo de Comissões",
     byRole: "Por Função",
@@ -25,13 +30,16 @@ export default {
   projects: {
     title: "Projetos Elegíveis para Comissão",
     tabs: {
+      pendingPayments: "Pagamentos Pendentes",
       pending: "Projetos Pendentes",
       concluded: "Projetos Concluídos",
     },
     emptyState: "Sem projetos elegíveis para comissão",
-    emptyStateDescription: "Os projetos onde tem funções de comissão aparecerão aqui",
+    emptyStateDescription: "Projetos onde tem funções de comissão aparecerão aqui",
     noConcludedProjects: "Sem projetos concluídos com comissões",
     noConcludedProjectsDescription: "Projetos concluídos com comissões configuradas aparecerão aqui",
+    noPendingPayments: "Sem pagamentos pendentes",
+    noPendingPaymentsDescription: "Todos os seus pagamentos de comissões foram recebidos",
     
     card: {
       role: "Função",
@@ -46,6 +54,7 @@ export default {
       concluded: "Concluído",
       notFinished: "Projeto não concluído",
       notSetUp: "Não Configurado",
+      pendingPayment: "Pagamento Pendente",
     },
 
     details: {
@@ -55,8 +64,9 @@ export default {
       commissionableAmount: "Valor Comissionável",
       commissionPercentage: "Percentagem de Comissão",
       estimatedCommission: "Comissão Estimada",
-      closedAt: "Fechado Em",
-      myCommission: "A Minha Comissão",
+      closedAt: "Fechado em",
+      myCommission: "Minha Comissão",
+      totalPaid: "Total Pago",
     },
   },
 
@@ -137,6 +147,11 @@ export default {
       status: "Estado",
       totalPaid: "Total Pago",
       totalRemaining: "Total Restante",
+      totalScheduled: "Total Agendado",
+      markAsPaid: "Marcar como Pago",
+      markAsUnpaid: "Marcar como Não Pago",
+      actualPaidDate: "Data Real de Pagamento",
+      editPaidDate: "Editar Data de Pagamento",
       
       installmentNumber: {
         first: "Primeira Parcela",
@@ -156,6 +171,22 @@ export default {
         saveSchedule: "Guardar Plano",
         cancel: "Cancelar",
         saving: "A guardar...",
+        markingPaid: "A marcar como pago...",
+        markingUnpaid: "A marcar como não pago...",
+      },
+
+      summary: {
+        title: "Resumo de Pagamento",
+        totalCommission: "Comissão Total",
+        totalPaidAmount: "Total Pago",
+        totalRemainingAmount: "Total Restante",
+        percentagePaid: "Percentagem Paga",
+      },
+
+      toasts: {
+        paymentMarkedPaid: "Pagamento marcado como pago",
+        paymentMarkedUnpaid: "Pagamento marcado como não pago",
+        updateFailed: "Falha ao atualizar estado do pagamento",
       },
 
       validation: {
@@ -234,15 +265,24 @@ export default {
   
   resolvedList: {
     title: "Comissões Resolvidas",
+    titlePendingPayments: "Comissões com Pagamentos Pendentes",
+    titleFullyPaid: "Comissões Totalmente Pagas",
     description: "Todas as oportunidades com planos de comissão resolvidos",
+    descriptionPendingPayments: "Oportunidades com pagamentos de comissão pendentes",
+    descriptionFullyPaid: "Oportunidades onde todos os pagamentos de comissão foram concluídos",
     emptyTitle: "Ainda sem comissões resolvidas",
     emptyMessage: "Resolva comissões para oportunidades concluídas para as ver aqui",
+    emptyPendingPayments: "Sem pagamentos pendentes",
+    emptyPendingPaymentsMessage: "Todas as comissões foram totalmente pagas",
+    emptyFullyPaid: "Ainda sem comissões totalmente pagas",
+    emptyFullyPaidMessage: "As comissões aparecerão aqui quando todos os pagamentos forem concluídos",
     table: {
       name: "Nome",
       type: "Tipo",
       recipients: "Destinatários",
       finalAmount: "Valor Final",
       commissionable: "Comissionável",
+      totalPaid: "Total Pago",
       resolvedDate: "Resolvido",
       actions: "Ações",
       viewButton: "Ver",

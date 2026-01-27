@@ -33,7 +33,7 @@ export const EmployeeCommissions = ({ userId }: EmployeeCommissionsProps) => {
   const trpc = useTRPC();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const fromView = searchParams.get('fromView');
+  const returnTab = searchParams.get('returnTab');
   const [activeTab, setActiveTab] = useState<"pending" | "concluded">("pending");
 
   const { data, isLoading } = useQuery(
@@ -84,7 +84,7 @@ export const EmployeeCommissions = ({ userId }: EmployeeCommissionsProps) => {
       ...p,
       role: CommissionRole.DEAL_SUPPORT,
     })),
-  ];
+  ].filter((p) => p.status !== OpportunityStatus.INACTIVE); // Exclude inactive opportunities
 
   const pendingProjects = allProjects.filter(
     (p) => p.status === OpportunityStatus.ACTIVE
@@ -103,8 +103,10 @@ export const EmployeeCommissions = ({ userId }: EmployeeCommissionsProps) => {
             variant="ghost"
             size="sm"
             onClick={() => {
-              if (fromView) {
-                router.push(`/crm/commissions?view=${fromView}`);
+              if (returnTab) {
+                const params = new URLSearchParams(searchParams.toString());
+                params.set('tab', returnTab);
+                router.push(`${crmCommissionsPath()}?${params.toString()}`);
               } else {
                 router.back();
               }

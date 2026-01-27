@@ -423,5 +423,7 @@ export default {
     description:
       "Please tell us why you're not interested in this opportunity. This helps us improve our offerings.",
     placeholder: "Enter your reason...",
+    cancel: "Cancel",
+    confirm: "Confirm",
   },
 } as const;

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { DollarSign, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,7 +24,7 @@ const formatCurrency = (value: number): string => {
 export const MyCommissions = () => {
   const t = useScopedI18n("crm.commissions");
   const trpc = useTRPC();
-  const [activeTab, setActiveTab] = useState<"pending" | "concluded">("pending");
+  const [activeTab, setActiveTab] = useState<"pendingPayments" | "pending" | "concluded">("pendingPayments");
 
   const { data } = useSuspenseQuery(
     trpc.commissions.getMyCommissions.queryOptions()
@@ -69,21 +70,79 @@ export const MyCommissions = () => {
       ...p,
       role: CommissionRole.DEAL_SUPPORT,
     })),
-  ];
+  ].filter((p) => p.status !== OpportunityStatus.INACTIVE); // Exclude inactive opportunities
 
   const pendingProjects = allProjects.filter(
     (p) => p.status === OpportunityStatus.ACTIVE
   );
 
-  const concludedProjects = allProjects.filter(
-    (p) => p.status === OpportunityStatus.CONCLUDED
-  );
+  // Filter concluded projects with pending payments (has unpaid installments)
+  const pendingPaymentProjects = allProjects.filter((project) => {
+    if (project.status !== OpportunityStatus.CONCLUDED) return false;
+    const schedule = data.scheduleMap?.[project.id];
+    return schedule?.isResolved && schedule?.paymentStatus?.hasUnpaid;
+  });
+
+  // Filter concluded projects where all payments are complete
+  const fullyPaidProjects = allProjects.filter((project) => {
+    if (project.status !== OpportunityStatus.CONCLUDED) return false;
+    const schedule = data.scheduleMap?.[project.id];
+    // Include if: resolved and all paid, OR concluded but not yet set up (no schedule)
+    return schedule?.isResolved && schedule?.paymentStatus?.allPaid;
+  });
+
+  // Projects that are concluded but not set up yet
+  const notSetUpProjects = allProjects.filter((project) => {
+    if (project.status !== OpportunityStatus.CONCLUDED) return false;
+    const schedule = data.scheduleMap?.[project.id];
+    return !schedule || !schedule.isResolved;
+  });
 
   return (
     <div className="space-y-6">
+      {/* Payment Statistics Cards */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium">
+                {t("paymentStats.totalReceived")}
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-green-600" />
+            </div>
+            <CardDescription className="text-xs">
+              {t("paymentStats.totalReceivedDescription")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {formatCurrency(data.paymentStats?.totalPaid ?? 0)}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium">
+                {t("paymentStats.totalYetToReceive")}
+              </CardTitle>
+              <TrendingUp className="h-4 w-4 text-orange-600" />
+            </div>
+            <CardDescription className="text-xs">
+              {t("paymentStats.totalYetToReceiveDescription")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-orange-600">
+              {formatCurrency(data.paymentStats?.totalYetToPay ?? 0)}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* Commission Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">{[
           CommissionRole.ACCOUNT_MANAGER,
           CommissionRole.CLIENT_ACQUISITION,
           CommissionRole.CLIENT_ORIGINATOR,
@@ -116,15 +175,113 @@ export const MyCommissions = () => {
           <CardTitle>{t("projects.title")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pending" | "concluded")}>
-            <TabsList className="grid w-full grid-cols-2 mb-6">
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pendingPayments" | "pending" | "concluded")}>
+            <TabsList className="grid w-full grid-cols-3 mb-6">
+              <TabsTrigger value="pendingPayments">
+                {t("projects.tabs.pendingPayments")} ({pendingPaymentProjects.length})
+              </TabsTrigger>
               <TabsTrigger value="pending">
                 {t("projects.tabs.pending")} ({pendingProjects.length})
               </TabsTrigger>
               <TabsTrigger value="concluded">
-                {t("projects.tabs.concluded")} ({concludedProjects.length})
+                {t("projects.tabs.concluded")} ({fullyPaidProjects.length + notSetUpProjects.length})
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="pendingPayments">
+              {pendingPaymentProjects.length === 0 ? (
+                <EmptyView
+                  title={t("projects.emptyPendingPayments")}
+                  message={t("projects.emptyPendingPaymentsMessage")}
+                />
+              ) : (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {pendingPaymentProjects.map((project) => {
+                    const commissionValue = data.commissionValues.find(
+                      cv => cv.opportunityId === project.id && cv.commission.roleType === project.role
+                    );
+                    const schedule = data.scheduleMap?.[project.id];
+
+                    const cardContent = (
+                      <Card className="overflow-hidden flex flex-col hover:shadow-lg transition-shadow cursor-pointer border-orange-200">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start justify-between">
+                            <CardTitle className="text-base line-clamp-1">
+                              {project.name}
+                            </CardTitle>
+                            <Badge variant="outline" className="border-orange-600 text-orange-600">
+                              {t("projects.status.pendingPayment")}
+                            </Badge>
+                          </div>
+                          <CardDescription className="text-xs">
+                            {getRoleLabel(project.role)}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                          <div className="space-y-2 text-sm">
+                            {project.analytics?.final_amount ? (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">
+                                  {t("projects.details.finalAmount")}:
+                                </span>
+                                <span className="font-medium">
+                                  {formatCurrency(project.analytics.final_amount)}
+                                </span>
+                              </div>
+                            ) : (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">
+                                  {t("projects.details.finalAmount")}:
+                                </span>
+                                <span className="font-medium">-</span>
+                              </div>
+                            )}
+                            {commissionValue?.totalCommissionValue ? (
+                              <div className="flex justify-between border-t pt-2">
+                                <span className="text-muted-foreground">
+                                  {t("projects.details.myCommission")}:
+                                </span>
+                                <span className="font-bold text-primary">
+                                  {formatCurrency(commissionValue.totalCommissionValue)}
+                                </span>
+                              </div>
+                            ) : null}
+                            {schedule?.paymentStatus?.totalPaid !== undefined && (
+                              <div className="flex justify-between border-t pt-2">
+                                <span className="text-muted-foreground">
+                                  {t("projects.details.totalPaid")}:
+                                </span>
+                                <span className="font-bold text-green-600">
+                                  {formatCurrency(schedule.paymentStatus.totalPaid)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+
+                    if (commissionValue) {
+                      return (
+                        <Link 
+                          key={`${project.id}-${project.role}`}
+                          href={`/crm/commissions/${commissionValue.id}`}
+                          className="block"
+                        >
+                          {cardContent}
+                        </Link>
+                      );
+                    }
+
+                    return (
+                      <div key={`${project.id}-${project.role}`}>
+                        {cardContent}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </TabsContent>
 
             <TabsContent value="pending">
               {pendingProjects.length === 0 ? (
@@ -166,14 +323,14 @@ export const MyCommissions = () => {
             </TabsContent>
 
             <TabsContent value="concluded">
-              {concludedProjects.length === 0 ? (
+              {(fullyPaidProjects.length === 0 && notSetUpProjects.length === 0) ? (
                 <EmptyView
                   title={t("projects.noConcludedProjects")}
                   message={t("projects.noConcludedProjectsDescription")}
                 />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {concludedProjects.map((project) => {
+                  {[...fullyPaidProjects, ...notSetUpProjects].map((project) => {
                     // Find the commission value for this project and role
                     const commissionValue = data.commissionValues.find(
                       cv => cv.opportunityId === project.id && cv.commission.roleType === project.role
@@ -182,6 +339,7 @@ export const MyCommissions = () => {
                     // Check if commission is resolved by checking the schedule
                     const schedule = data.scheduleMap?.[project.id];
                     const isResolved = schedule?.isResolved === true;
+                    const isFullyPaid = schedule?.paymentStatus?.allPaid === true;
 
                     const cardContent = (
                       <Card className={`overflow-hidden flex flex-col ${isResolved ? 'hover:shadow-lg transition-shadow cursor-pointer' : 'opacity-75'}`}>
@@ -190,8 +348,8 @@ export const MyCommissions = () => {
                             <CardTitle className="text-base line-clamp-1">
                               {project.name}
                             </CardTitle>
-                            <Badge variant={isResolved ? "default" : "secondary"}>
-                              {isResolved ? t("projects.status.concluded") : t("projects.status.notSetUp")}
+                            <Badge variant={isResolved ? (isFullyPaid ? "default" : "secondary") : "secondary"}>
+                              {isResolved ? (isFullyPaid ? t("projects.status.concluded") : t("projects.status.concluded")) : t("projects.status.notSetUp")}
                             </Badge>
                           </div>
                           <CardDescription className="text-xs">

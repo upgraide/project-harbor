@@ -7,6 +7,13 @@ export default {
     adminOverview: "Admin Overview",
   },
 
+  paymentStats: {
+    totalReceived: "Total Received",
+    totalReceivedDescription: "Total commissions paid to date",
+    totalYetToReceive: "Yet to Receive",
+    totalYetToReceiveDescription: "Total pending commission payments",
+  },
+
   summary: {
     title: "Commission Summary",
     byRole: "By Role",
@@ -25,6 +32,7 @@ export default {
   projects: {
     title: "Commission-Eligible Projects",
     tabs: {
+      pendingPayments: "Pending Payments",
       pending: "Pending Projects",
       concluded: "Concluded Projects",
     },
@@ -32,6 +40,8 @@ export default {
     emptyStateDescription: "Projects where you have commission roles will appear here",
     noConcludedProjects: "No concluded projects with commissions",
     noConcludedProjectsDescription: "Concluded projects with configured commissions will appear here",
+    noPendingPayments: "No pending payments",
+    noPendingPaymentsDescription: "All your commission payments have been received",
     
     card: {
       role: "Role",
@@ -46,6 +56,7 @@ export default {
       concluded: "Concluded",
       notFinished: "Project not finished",
       notSetUp: "Not Set Up",
+      pendingPayment: "Pending Payment",
     },
 
     details: {
@@ -57,6 +68,7 @@ export default {
       estimatedCommission: "Estimated Commission",
       closedAt: "Closed At",
       myCommission: "My Commission",
+      totalPaid: "Total Paid",
     },
   },
 
@@ -139,6 +151,11 @@ export default {
       status: "Status",
       totalPaid: "Total Paid",
       totalRemaining: "Total Remaining",
+      totalScheduled: "Total Scheduled",
+      markAsPaid: "Mark as Paid",
+      markAsUnpaid: "Mark as Unpaid",
+      actualPaidDate: "Actual Paid Date",
+      editPaidDate: "Edit Paid Date",
       
       installmentNumber: {
         first: "First Installment",
@@ -158,6 +175,22 @@ export default {
         saveSchedule: "Save Schedule",
         cancel: "Cancel",
         saving: "Saving...",
+        markingPaid: "Marking as paid...",
+        markingUnpaid: "Marking as unpaid...",
+      },
+
+      summary: {
+        title: "Payment Summary",
+        totalCommission: "Total Commission",
+        totalPaidAmount: "Total Paid",
+        totalRemainingAmount: "Total Remaining",
+        percentagePaid: "Percentage Paid",
+      },
+
+      toasts: {
+        paymentMarkedPaid: "Payment marked as paid",
+        paymentMarkedUnpaid: "Payment marked as unpaid",
+        updateFailed: "Failed to update payment status",
       },
 
       validation: {
@@ -236,15 +269,24 @@ export default {
   
   resolvedList: {
     title: "Resolved Commissions",
+    titlePendingPayments: "Commissions with Pending Payments",
+    titleFullyPaid: "Fully Paid Commissions",
     description: "All opportunities with resolved commission schedules",
+    descriptionPendingPayments: "Opportunities with outstanding commission payments",
+    descriptionFullyPaid: "Opportunities where all commission payments have been completed",
     emptyTitle: "No resolved commissions yet",
     emptyMessage: "Resolve commissions for concluded opportunities to see them here",
+    emptyPendingPayments: "No pending payments",
+    emptyPendingPaymentsMessage: "All commissions have been fully paid",
+    emptyFullyPaid: "No fully paid commissions yet",
+    emptyFullyPaidMessage: "Commissions will appear here once all payments are completed",
     table: {
       name: "Name",
       type: "Type",
       recipients: "Recipients",
       finalAmount: "Final Amount",
       commissionable: "Commissionable",
+      totalPaid: "Total Paid",
       resolvedDate: "Resolved",
       actions: "Actions",
       viewButton: "View",
