@@ -1537,7 +1537,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     const yearNum = Number.parseInt(year);
                     const currentYear = new Date().getFullYear();
                     const suffix = yearNum >= currentYear ? t('graphCard.yearSuffixFuture') : t('graphCard.yearSuffixHistorical');
-                    return `${year.slice(0, 4)}${suffix}`;
+                    return `${year.slice(0, 4)}-${suffix}`;
                   }}
                   tickLine={false}
                   tickMargin={8}
@@ -1621,7 +1621,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                       
                       let fillColor = "#6b6b6b";
                       if (!isDark) {
-                        fillColor = isFuture ? '#909090' : '#ffffff';
+                        fillColor = isFuture ? '#000000' : '#ffffff';
                       }
                       
                       return (

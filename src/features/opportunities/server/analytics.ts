@@ -386,11 +386,10 @@ export const analyticsRouter = createTRPCRouter({
       const { year, period, opportunityType } = input;
       const dateRange = getDateRange(year, period);
       
-      const now = new Date();
-      const twelveMonthsAgo = subMonths(now, MONTHS_BACK_FOR_ANALYTICS);
+      // Generate months only within the selected date range
       const months = eachMonthOfInterval({
-        start: startOfMonth(twelveMonthsAgo),
-        end: endOfMonth(now),
+        start: startOfMonth(dateRange.start),
+        end: endOfMonth(dateRange.end),
       });
 
       const data = await Promise.all(
@@ -398,19 +397,13 @@ export const analyticsRouter = createTRPCRouter({
           const monthStart = startOfMonth(month);
           const monthEnd = endOfMonth(month);
 
-          // Only count if month is within the selected date range
-          if (monthEnd < dateRange.start || monthStart > dateRange.end) {
-            return {
-              month: format(month, "yyyy-MM"),
-              count: 0,
-            };
-          }
-
           const whereClause = {
             status: "CONCLUDED" as const,
-            createdAt: {
-              gte: monthStart,
-              lte: monthEnd,
+            analytics: {
+              closed_at: {
+                gte: monthStart,
+                lte: monthEnd,
+              },
             },
           };
 
@@ -429,12 +422,13 @@ export const analyticsRouter = createTRPCRouter({
         })
       );
 
-      return data;
+      // Filter out months with zero count
+      return data.filter(item => item.count > 0);
     }),
 
   /**
-   * Get AUM growth over time (last 12 months)
-   * Shows monthly snapshot of active opportunities
+   * Get AUM growth over time
+   * Shows monthly snapshot of active opportunities (deals that were active during that month)
    */
   getAumByMonth: protectedProcedure
     .input(analyticsFiltersSchema)
@@ -442,40 +436,44 @@ export const analyticsRouter = createTRPCRouter({
       const { year, period, opportunityType } = input;
       const dateRange = getDateRange(year, period);
       
-      const now = new Date();
-      const twelveMonthsAgo = subMonths(now, MONTHS_BACK_FOR_ANALYTICS);
+      // Generate months only within the selected date range
       const months = eachMonthOfInterval({
-        start: startOfMonth(twelveMonthsAgo),
-        end: endOfMonth(now),
+        start: startOfMonth(dateRange.start),
+        end: endOfMonth(dateRange.end),
       });
 
       const data = await Promise.all(
         months.map(async (month) => {
-          const monthEndDate = endOfMonth(month);
+          const monthStart = startOfMonth(month);
+          const monthEnd = endOfMonth(month);
 
-          // Only count if month is within the selected date range
-          if (monthEndDate < dateRange.start || startOfMonth(month) > dateRange.end) {
-            return {
-              month: format(month, "yyyy-MM"),
-              count: 0,
-            };
-          }
-
-          // Count opportunities that were active at the end of this month
-          const whereClause = {
-            status: "ACTIVE" as const,
+          // Count opportunities that were active during this month:
+          // - Created on or before month end
+          // - AND either still ACTIVE, or was CONCLUDED after the month started
+          const activeWhereClause = {
             createdAt: {
-              lte: monthEndDate,
+              lte: monthEnd,
             },
+            OR: [
+              { status: "ACTIVE" as const },
+              {
+                status: "CONCLUDED" as const,
+                analytics: {
+                  closed_at: {
+                    gte: monthStart,
+                  },
+                },
+              },
+            ],
           };
 
           const activeMna = opportunityType === "realEstate" 
             ? 0 
-            : await prisma.mergerAndAcquisition.count({ where: whereClause });
+            : await prisma.mergerAndAcquisition.count({ where: activeWhereClause });
 
           const activeRealEstate = opportunityType === "mna" 
             ? 0 
-            : await prisma.realEstate.count({ where: whereClause });
+            : await prisma.realEstate.count({ where: activeWhereClause });
 
           return {
             month: format(month, "yyyy-MM"),
@@ -484,7 +482,8 @@ export const analyticsRouter = createTRPCRouter({
         })
       );
 
-      return data;
+      // Filter out months with zero count
+      return data.filter(item => item.count > 0);
     }),
 
   /**
