@@ -1,7 +1,7 @@
 export default {
   title: "Interesses de Investimento",
   description:
-    "Visualize e gerencie os interesses dos investidores em oportunidades de F&A e Imobiliário",
+    "Visualize e gerencie os interesses dos investidores em oportunidades de M&A e Imobiliário",
   searchPlaceholder: "Pesquisar por nome da oportunidade...",
   errorMessage:
     "Falha ao carregar interesses de investimento. Por favor, tente novamente.",
@@ -12,7 +12,7 @@ export default {
     type: {
       placeholder: "Tipo",
       all: "Todos os Tipos",
-      "m&a": "F&A",
+      "m&a": "M&A",
       "real-estate": "Imobiliário",
     },
     status: {
@@ -31,7 +31,7 @@ export default {
     actions: "Ações",
   },
   interestType: {
-    "m&a": "F&A",
+    "m&a": "M&A",
     "real-estate": "Imobiliário",
   },
   status: {

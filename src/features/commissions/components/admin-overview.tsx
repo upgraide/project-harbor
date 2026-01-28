@@ -139,9 +139,13 @@ export const AdminOverview = () => {
                           <Button
                             size="sm"
                             onClick={() => {
-                              const params = new URLSearchParams(searchParams.toString());
+                              const currentParams = new URLSearchParams(searchParams.toString());
+                              const view = currentParams.get('view');
+                              const params = new URLSearchParams();
+                              if (view) params.set('view', view);
+                              params.set('tab', activeTab);
                               router.push(
-                                `/crm/commissions/resolve/${opp.id}?type=${opp.type}&returnTab=${activeTab}&${params.toString()}`
+                                `/crm/commissions/resolve/${opp.id}?${params.toString()}`
                               );
                             }}
                           >
@@ -191,8 +195,12 @@ export const AdminOverview = () => {
                         key={employee.id}
                         className="cursor-pointer hover:bg-muted/50"
                         onClick={() => {
-                          const params = new URLSearchParams(searchParams.toString());
-                          router.push(`/crm/commissions/employee/${employee.id}?returnTab=${activeTab}&${params.toString()}`);
+                          const currentParams = new URLSearchParams(searchParams.toString());
+                          const view = currentParams.get('view');
+                          const params = new URLSearchParams();
+                          if (view) params.set('view', view);
+                          params.set('tab', activeTab);
+                          router.push(`/crm/commissions/employee/${employee.id}?${params.toString()}`);
                         }}
                       >
                         <TableCell>

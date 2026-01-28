@@ -57,7 +57,7 @@ import { cn } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 export const ViewerLoading = () => {
-  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
+  const t = useScopedI18n("dashboard.mAndAViewer");
   return (
     <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <LoadingView message={t("loadingMessage")} />
@@ -66,7 +66,7 @@ export const ViewerLoading = () => {
 };
 
 export const ViewerError = () => {
-  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
+  const t = useScopedI18n("dashboard.mAndAViewer");
   return (
     <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <ErrorView message={t("errorMessage")} />
@@ -109,7 +109,7 @@ const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component
 export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
-  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
+  const t = useScopedI18n("dashboard.mAndAViewer");
   const locale = useCurrentLocale();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";

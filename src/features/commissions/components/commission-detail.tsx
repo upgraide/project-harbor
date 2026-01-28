@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ import { ArrowLeftIcon, CalendarIcon, DollarSignIcon } from "lucide-react";
 import { crmCommissionsPath } from "@/paths";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { OpportunityStatus } from "@/generated/prisma";
 
 interface CommissionDetailProps {
   commissionValueId: string;
@@ -31,11 +32,58 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
   const t = useScopedI18n("crm.commissions");
   const trpc = useTRPC();
 
-  const { data: commissionDetail } = useSuspenseQuery(
+  const { data: commissionDetail, isLoading, isError, error } = useQuery(
     trpc.commissions.getCommissionDetail.queryOptions({
       commissionValueId,
     })
-  ) as { data: any };
+  );
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="text-muted-foreground">Loading commission details...</div>
+      </div>
+    );
+  }
+
+  // Handle error state
+  if (isError || !commissionDetail) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.back()}
+              className="mb-2"
+            >
+              <ArrowLeftIcon className="mr-2 h-4 w-4" />
+              {t("detail.backToCommissions")}
+            </Button>
+            <h1 className="text-3xl font-bold">{t("detail.title")}</h1>
+          </div>
+        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center">
+              <p className="text-lg font-semibold">Commission not found</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                {error?.message || "The commission you're looking for doesn't exist or you don't have permission to view it."}
+              </p>
+              <Button 
+                onClick={() => router.push(crmCommissionsPath())} 
+                className="mt-4"
+              >
+                Return to Commissions
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const formatCurrency = (value: number | null | undefined) => {
     if (!value) return "-";
@@ -131,8 +179,10 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
                 {t("detail.breakdown.projectStatus")}
               </Label>
               <div className="mt-1">
-                <Badge variant={commissionDetail.opportunity?.status === "CONCLUDED" ? "default" : "secondary"}>
-                  {commissionDetail.opportunity?.status ?? "UNKNOWN"}
+                <Badge variant={commissionDetail.opportunity?.status === OpportunityStatus.CONCLUDED ? "default" : "secondary"}>
+                  {commissionDetail.opportunity?.status ? 
+                    t(`projects.status.${commissionDetail.opportunity.status.toLowerCase()}`) : 
+                    "Unknown"}
                 </Badge>
               </div>
             </div>
@@ -168,7 +218,9 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
                         </span>
                       </div>
                       <span className="font-medium">
-                        {t(`roles.${projectCommission.commission.roleType}`)}
+                        {projectCommission.commission?.roleType ? 
+                          t(`roles.${projectCommission.commission.roleType}`) : 
+                          "Unknown Role"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -184,7 +236,9 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
               ) : (
                 <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-4 py-3">
                   <span className="font-medium">
-                    {t(`roles.${commissionDetail.commission.roleType}`)}
+                    {commissionDetail.commission?.roleType ? 
+                      t(`roles.${commissionDetail.commission.roleType}`) : 
+                      "Unknown Role"}
                   </span>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-muted-foreground">
@@ -210,7 +264,7 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {commissionDetail.opportunity?.status !== "CONCLUDED" ? (
+          {commissionDetail.opportunity?.status !== OpportunityStatus.CONCLUDED ? (
             <div className="rounded-lg bg-muted p-4 text-center">
               <p className="text-sm text-muted-foreground">
                 {t("detail.totalValue.calculationPending")}

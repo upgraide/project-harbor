@@ -7,7 +7,7 @@ import { calculateOpportunityCommissions } from "./calculations";
 
 export const commissionsRouter = createTRPCRouter({
   // Get commissions for the current logged-in user (team member view)
-  // Only shows CONCLUDED opportunities where commissions have been resolved
+  // Shows ALL CONCLUDED opportunities where user has a commission role (resolved or not)
   getMyCommissions: protectedProcedure.query(async ({ ctx }) => {
     // Check if user has TEAM or ADMIN role
     const user = await prisma.user.findUnique({
@@ -46,7 +46,7 @@ export const commissionsRouter = createTRPCRouter({
       },
     });
 
-    // Get only commission values that have been resolved
+    // Get only commission values that have been resolved (for resolved opportunity list)
     const resolvedCommissionValues = await prisma.commissionValue.findMany({
       where: {
         commission: {
@@ -62,12 +62,11 @@ export const commissionsRouter = createTRPCRouter({
 
     const resolvedOpportunityIds = resolvedCommissionValues.map(cv => cv.opportunityId);
 
-    // Fetch only CONCLUDED opportunities where commissions have been resolved
+    // Fetch ALL CONCLUDED opportunities where user has a commission role (resolved or not)
     const clientAcquisitionMNA = await prisma.mergerAndAcquisition.findMany({
       where: {
         clientAcquisitionerId: userId,
         status: OpportunityStatus.CONCLUDED,
-        id: { in: resolvedOpportunityIds },
       },
       select: {
         id: true,
@@ -87,7 +86,6 @@ export const commissionsRouter = createTRPCRouter({
       where: {
         clientAcquisitionerId: userId,
         status: OpportunityStatus.CONCLUDED,
-        id: { in: resolvedOpportunityIds },
       },
       select: {
         id: true,
@@ -108,7 +106,6 @@ export const commissionsRouter = createTRPCRouter({
       where: {
         clientOriginatorId: userId,
         status: OpportunityStatus.CONCLUDED,
-        id: { in: resolvedOpportunityIds },
       },
       select: {
         id: true,
@@ -128,7 +125,6 @@ export const commissionsRouter = createTRPCRouter({
       where: {
         clientOriginatorId: userId,
         status: OpportunityStatus.CONCLUDED,
-        id: { in: resolvedOpportunityIds },
       },
       select: {
         id: true,
@@ -155,13 +151,11 @@ export const commissionsRouter = createTRPCRouter({
 
     const accountManagerMNAIds = accountManagerAssignments
       .filter((a) => a.opportunityType === "MNA")
-      .map((a) => a.opportunityId)
-      .filter(id => resolvedOpportunityIds.includes(id));
+      .map((a) => a.opportunityId);
 
     const accountManagerREIds = accountManagerAssignments
       .filter((a) => a.opportunityType === "REAL_ESTATE")
-      .map((a) => a.opportunityId)
-      .filter(id => resolvedOpportunityIds.includes(id));
+      .map((a) => a.opportunityId);
 
     const accountManagerMNA = await prisma.mergerAndAcquisition.findMany({
       where: {
@@ -220,13 +214,11 @@ export const commissionsRouter = createTRPCRouter({
 
     const dealSupportMNAIds = dealSupportAnalytics
       .filter((a) => a.mergerAndAcquisitionId)
-      .map((a) => a.mergerAndAcquisitionId as string)
-      .filter(id => resolvedOpportunityIds.includes(id));
+      .map((a) => a.mergerAndAcquisitionId as string);
 
     const dealSupportREIds = dealSupportAnalytics
       .filter((a) => a.realEstateId)
-      .map((a) => a.realEstateId as string)
-      .filter(id => resolvedOpportunityIds.includes(id));
+      .map((a) => a.realEstateId as string);
 
     const dealSupportMNA = await prisma.mergerAndAcquisition.findMany({
       where: {
@@ -1184,127 +1176,104 @@ export const commissionsRouter = createTRPCRouter({
     .input(
       z.object({
         opportunityId: z.string(),
-        opportunityType: z.nativeEnum(OpportunityType),
+        opportunityType: z.nativeEnum(OpportunityType).optional(),
       })
     )
     .query(async ({ input }) => {
-      const { opportunityId, opportunityType } = input;
+      const { opportunityId } = input;
 
-      // Get the opportunity and its analytics
+      // Auto-detect opportunity type by querying both tables
       let opportunity: any;
       let analytics: any;
+      let detectedOpportunityType: OpportunityType;
 
-      if (opportunityType === OpportunityType.MNA) {
-        opportunity = await prisma.mergerAndAcquisition.findUnique({
-          where: { id: opportunityId },
+      const opportunitySelect = {
+        id: true,
+        name: true,
+        status: true,
+        clientAcquisitionerId: true,
+        clientAcquisitioner: {
           select: {
             id: true,
             name: true,
-            status: true,
-            clientAcquisitionerId: true,
-            clientAcquisitioner: {
+            email: true,
+          },
+        },
+        clientOriginatorId: true,
+        clientOriginator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        analytics: {
+          select: {
+            id: true,
+            commissionable_amount: true,
+            final_amount: true,
+            invested_person_id: true,
+            followup_person_id: true,
+            invested_person: {
               select: {
                 id: true,
                 name: true,
                 email: true,
               },
             },
-            clientOriginatorId: true,
-            clientOriginator: {
+            followup_person: {
               select: {
                 id: true,
                 name: true,
                 email: true,
-              },
-            },
-            analytics: {
-              select: {
-                id: true,
-                commissionable_amount: true,
-                final_amount: true,
-                invested_person_id: true,
-                followup_person_id: true,
-                invested_person: {
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                  },
-                },
-                followup_person: {
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                  },
-                },
               },
             },
           },
-        });
-        analytics = opportunity?.analytics;
+        },
+      };
+
+      // Try MNA first
+      const mnaOpportunity = await prisma.mergerAndAcquisition.findUnique({
+        where: { id: opportunityId },
+        select: opportunitySelect,
+      });
+
+      if (mnaOpportunity) {
+        opportunity = mnaOpportunity;
+        analytics = opportunity.analytics;
+        detectedOpportunityType = OpportunityType.MNA;
       } else {
-        opportunity = await prisma.realEstate.findUnique({
+        // Try REAL_ESTATE
+        const reOpportunity = await prisma.realEstate.findUnique({
           where: { id: opportunityId },
-          select: {
-            id: true,
-            name: true,
-            status: true,
-            clientAcquisitionerId: true,
-            clientAcquisitioner: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-            clientOriginatorId: true,
-            clientOriginator: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-            analytics: {
-              select: {
-                id: true,
-                commissionable_amount: true,
-                final_amount: true,
-                invested_person_id: true,
-                followup_person_id: true,
-                invested_person: {
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                  },
-                },
-                followup_person: {
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true,
-                  },
-                },
-              },
-            },
-          },
+          select: opportunitySelect,
         });
-        analytics = opportunity?.analytics;
+
+        if (reOpportunity) {
+          opportunity = reOpportunity;
+          analytics = opportunity.analytics;
+          detectedOpportunityType = OpportunityType.REAL_ESTATE;
+        }
       }
 
       if (!opportunity) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Opportunity not found",
+          message: `Opportunity not found with ID: ${opportunityId}. Searched in both MNA and Real Estate tables.`,
         });
       }
 
-      if (!analytics || analytics.commissionable_amount == null) {
+      if (!analytics) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Opportunity has no commissionable amount set",
+          message: `Opportunity "${opportunity.name}" has no analytics record. Please ensure analytics are properly configured.`,
+        });
+      }
+
+      if (analytics.commissionable_amount == null) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Opportunity "${opportunity.name}" has no commissionable amount set. Current final amount: ${analytics.final_amount ?? 'not set'}. Please configure the commissionable amount in opportunity analytics.`,
         });
       }
 
@@ -1370,7 +1339,7 @@ export const commissionsRouter = createTRPCRouter({
       const accountManagers = await prisma.opportunityAccountManager.findMany({
         where: {
           opportunityId,
-          opportunityType,
+          opportunityType: detectedOpportunityType,
         },
         include: {
           user: {
@@ -1448,7 +1417,7 @@ export const commissionsRouter = createTRPCRouter({
         where: {
           opportunityId_opportunityType: {
             opportunityId,
-            opportunityType,
+            opportunityType: detectedOpportunityType,
           },
         },
         include: {
@@ -1479,17 +1448,45 @@ export const commissionsRouter = createTRPCRouter({
     .input(
       z.object({
         opportunityId: z.string(),
-        opportunityType: z.nativeEnum(OpportunityType),
+        opportunityType: z.nativeEnum(OpportunityType).optional(),
       })
     )
     .query(async ({ input }) => {
-      const { opportunityId, opportunityType } = input;
+      const { opportunityId } = input;
+
+      // Auto-detect opportunity type by checking both tables
+      let detectedOpportunityType: OpportunityType | null = null;
+
+      const mnaExists = await prisma.mergerAndAcquisition.findUnique({
+        where: { id: opportunityId },
+        select: { id: true },
+      });
+
+      if (mnaExists) {
+        detectedOpportunityType = OpportunityType.MNA;
+      } else {
+        const reExists = await prisma.realEstate.findUnique({
+          where: { id: opportunityId },
+          select: { id: true },
+        });
+
+        if (reExists) {
+          detectedOpportunityType = OpportunityType.REAL_ESTATE;
+        }
+      }
+
+      if (!detectedOpportunityType) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: `Opportunity not found with ID: ${opportunityId}`,
+        });
+      }
 
       // Get all commission values for this opportunity
       const commissionValues = await prisma.commissionValue.findMany({
         where: {
           opportunityId,
-          opportunityType,
+          opportunityType: detectedOpportunityType,
         },
         include: {
           commission: {

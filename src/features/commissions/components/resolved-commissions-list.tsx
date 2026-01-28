@@ -98,14 +98,18 @@ export function ResolvedCommissionsList() {
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  const params = new URLSearchParams(searchParams.toString());
+                  const currentParams = new URLSearchParams(searchParams.toString());
+                  const view = currentParams.get('view');
+                  const params = new URLSearchParams();
+                  if (view) params.set('view', view);
+                  params.set('tab', activeTab);
                   router.push(
-                    `/crm/commissions/resolve/${schedule.opportunityId}?type=${schedule.opportunityType}&returnTab=${activeTab}&${params.toString()}`
+                    `/crm/commissions/resolve/${schedule.opportunityId}?${params.toString()}`
                   );
                 }}
               >
                 <ExternalLinkIcon className="mr-2 h-4 w-4" />
-                View/Edit
+                {t("resolvedList.table.viewButton")}
               </Button>
             </TableCell>
           </TableRow>

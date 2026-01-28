@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowLeftIcon, PlusIcon, TrashIcon, CheckCircleIcon, InfoIcon } from "lucide-react";
+import { ArrowLeftIcon, PlusIcon, TrashIcon, CheckCircleIcon, InfoIcon, AlertCircle } from "lucide-react";
 import { crmCommissionsPath } from "@/paths";
 import { toast } from "sonner";
 import { useTRPC } from "@/trpc/client";
@@ -88,8 +88,6 @@ export function CommissionResolution({ opportunityId, opportunityType, fallback 
   const queryClient = useQueryClient();
   const t = useScopedI18n("crm.commissions");
 
-  const returnTab = searchParams.get('returnTab');
-
   const getRoleLabel = (role: CommissionRole): string => {
     return t(`roles.${role}`);
   };
@@ -103,20 +101,31 @@ export function CommissionResolution({ opportunityId, opportunityType, fallback 
   const [editingPaidDate, setEditingPaidDate] = useState<string>("");
 
   // Use useQuery instead of useSuspenseQuery to handle errors gracefully
-  const { data: preview, isLoading, isError } = useQuery(
+  const { data: preview, isLoading, isError, error, refetch } = useQuery(
     trpc.commissions.getCommissionPreview.queryOptions({
       opportunityId,
-      opportunityType,
     })
-  ) as { data: any; isLoading: boolean; isError: boolean };
+  ) as { data: any; isLoading: boolean; isError: boolean; error: any; refetch: () => void };
 
   // Get actual commission payments if already resolved
   const { data: commissionPayments } = useQuery(
     trpc.commissions.getOpportunityCommissionPayments.queryOptions({
       opportunityId,
-      opportunityType,
     })
   ) as { data: any[] };
+
+  // Log error for debugging
+  useEffect(() => {
+    if (isError && error) {
+      console.error("Commission preview error:", error);
+      console.error("Error details:", {
+        message: error.message,
+        code: error.code,
+        data: error.data,
+        opportunityId,
+      });
+    }
+  }, [isError, error, opportunityId]);
 
   const updatePaymentStatus = useMutation(
     trpc.commissions.updatePaymentStatus.mutationOptions({
@@ -127,8 +136,7 @@ export function CommissionResolution({ opportunityId, opportunityType, fallback 
         toast.success(message);
         queryClient.invalidateQueries(
           trpc.commissions.getOpportunityCommissionPayments.queryOptions({ 
-            opportunityId, 
-            opportunityType 
+            opportunityId,
           })
         );
         setEditingPaymentId(null);
@@ -147,7 +155,6 @@ export function CommissionResolution({ opportunityId, opportunityType, fallback 
         queryClient.invalidateQueries(
           trpc.commissions.getCommissionPreview.queryOptions({
             opportunityId,
-            opportunityType,
           })
         );
         queryClient.invalidateQueries(
@@ -176,7 +183,54 @@ export function CommissionResolution({ opportunityId, opportunityType, fallback 
 
   // Show fallback if query failed or user doesn't have access
   if (isError) {
-    return fallback || null;
+    // If a custom fallback is provided, use it
+    // Otherwise, show a detailed error page with retry capability
+    if (fallback) {
+      return fallback;
+    }
+    
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.back()}
+              className="mb-2"
+            >
+              <ArrowLeftIcon className="mr-2 h-4 w-4" />
+              {t("detail.backToCommissions")}
+            </Button>
+            <h1 className="text-3xl font-bold">{t("resolution.title")}</h1>
+          </div>
+        </div>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              <div className="text-center">
+                <AlertCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+                <p className="text-lg font-semibold">{t("errorPage.title")}</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {error?.message || t("errorPage.message")}
+                </p>
+              </div>
+              <div className="flex justify-center gap-2 mt-6">
+                <Button onClick={() => refetch()} variant="default">
+                  {t("resolution.retry")}
+                </Button>
+                <Button 
+                  onClick={() => router.push(crmCommissionsPath())} 
+                  variant="outline"
+                >
+                  {t("errorPage.backButton")}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   // Show loading state
@@ -303,13 +357,13 @@ export function CommissionResolution({ opportunityId, opportunityType, fallback 
             variant="ghost"
             size="sm"
             onClick={() => {
-              if (returnTab) {
-                const params = new URLSearchParams(searchParams.toString());
-                params.set('tab', returnTab);
-                router.push(`${crmCommissionsPath()}?${params.toString()}`);
-              } else {
-                router.back();
-              }
+              const currentParams = new URLSearchParams(searchParams.toString());
+              const view = currentParams.get('view');
+              const tab = currentParams.get('tab');
+              const params = new URLSearchParams();
+              if (view) params.set('view', view);
+              if (tab) params.set('tab', tab);
+              router.push(`${crmCommissionsPath()}?${params.toString()}`);
             }}
             className="mb-2"
           >

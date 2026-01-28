@@ -209,6 +209,7 @@ export default {
   resolution: {
     title: "Resolve Commissions",
     backButton: "Back",
+    retry: "Retry",
     alreadyResolved: "Already Resolved",
     loadingDetails: "Loading commission details...",
     
@@ -302,6 +303,7 @@ export default {
   
   loading: {
     commissionData: "Loading commission data...",
+    employeeCommissions: "Loading employee commissions...",
   },
   
   errorPage: {

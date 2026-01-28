@@ -33,7 +33,6 @@ export const EmployeeCommissions = ({ userId }: EmployeeCommissionsProps) => {
   const trpc = useTRPC();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnTab = searchParams.get('returnTab');
   const [activeTab, setActiveTab] = useState<"pending" | "concluded">("pending");
 
   const { data, isLoading } = useQuery(
@@ -43,7 +42,7 @@ export const EmployeeCommissions = ({ userId }: EmployeeCommissionsProps) => {
   if (isLoading || !data) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="text-muted-foreground">Loading employee commissions...</div>
+        <div className="text-muted-foreground">{t("loading.employeeCommissions")}</div>
       </div>
     );
   }
@@ -103,13 +102,13 @@ export const EmployeeCommissions = ({ userId }: EmployeeCommissionsProps) => {
             variant="ghost"
             size="sm"
             onClick={() => {
-              if (returnTab) {
-                const params = new URLSearchParams(searchParams.toString());
-                params.set('tab', returnTab);
-                router.push(`${crmCommissionsPath()}?${params.toString()}`);
-              } else {
-                router.back();
-              }
+              const currentParams = new URLSearchParams(searchParams.toString());
+              const view = currentParams.get('view');
+              const tab = currentParams.get('tab');
+              const params = new URLSearchParams();
+              if (view) params.set('view', view);
+              if (tab) params.set('tab', tab);
+              router.push(`${crmCommissionsPath()}?${params.toString()}`);
             }}
             className="mb-2"
           >

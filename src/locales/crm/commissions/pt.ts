@@ -205,6 +205,7 @@ export default {
   resolution: {
     title: "Resolver Comissões",
     backButton: "Voltar",
+    retry: "Tentar Novamente",
     alreadyResolved: "Já Resolvido",
     loadingDetails: "A carregar detalhes da comissão...",
     
@@ -298,6 +299,7 @@ export default {
   
   loading: {
     commissionData: "A carregar dados de comissão...",
+    employeeCommissions: "A carregar comissões do funcionário...",
   },
   
   errorPage: {
@@ -308,7 +310,7 @@ export default {
   },
   
   opportunityTypes: {
-    MNA: "F&A",
+    MNA: "M&A",
     REAL_ESTATE: "Imobiliário",
   },
 } as const;

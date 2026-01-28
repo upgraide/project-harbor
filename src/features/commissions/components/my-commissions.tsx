@@ -72,9 +72,19 @@ export const MyCommissions = () => {
     })),
   ].filter((p) => p.status !== OpportunityStatus.INACTIVE); // Exclude inactive opportunities
 
-  const pendingProjects = allProjects.filter(
-    (p) => p.status === OpportunityStatus.ACTIVE
-  );
+  // Pending projects: ACTIVE projects + CONCLUDED projects without commission setup
+  const pendingProjects = allProjects.filter((project) => {
+    // Include all ACTIVE projects
+    if (project.status === OpportunityStatus.ACTIVE) return true;
+    
+    // Include CONCLUDED projects that don't have commissions set up yet
+    if (project.status === OpportunityStatus.CONCLUDED) {
+      const schedule = data.scheduleMap?.[project.id];
+      return !schedule || !schedule.isResolved;
+    }
+    
+    return false;
+  });
 
   // Filter concluded projects with pending payments (has unpaid installments)
   const pendingPaymentProjects = allProjects.filter((project) => {
@@ -87,15 +97,7 @@ export const MyCommissions = () => {
   const fullyPaidProjects = allProjects.filter((project) => {
     if (project.status !== OpportunityStatus.CONCLUDED) return false;
     const schedule = data.scheduleMap?.[project.id];
-    // Include if: resolved and all paid, OR concluded but not yet set up (no schedule)
     return schedule?.isResolved && schedule?.paymentStatus?.allPaid;
-  });
-
-  // Projects that are concluded but not set up yet
-  const notSetUpProjects = allProjects.filter((project) => {
-    if (project.status !== OpportunityStatus.CONCLUDED) return false;
-    const schedule = data.scheduleMap?.[project.id];
-    return !schedule || !schedule.isResolved;
   });
 
   return (
@@ -184,15 +186,15 @@ export const MyCommissions = () => {
                 {t("projects.tabs.pending")} ({pendingProjects.length})
               </TabsTrigger>
               <TabsTrigger value="concluded">
-                {t("projects.tabs.concluded")} ({fullyPaidProjects.length + notSetUpProjects.length})
+                {t("projects.tabs.concluded")} ({fullyPaidProjects.length})
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="pendingPayments">
               {pendingPaymentProjects.length === 0 ? (
                 <EmptyView
-                  title={t("projects.emptyPendingPayments")}
-                  message={t("projects.emptyPendingPaymentsMessage")}
+                  title={t("projects.noPendingPayments")}
+                  message={t("projects.noPendingPaymentsDescription")}
                 />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -292,29 +294,52 @@ export const MyCommissions = () => {
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {pendingProjects.map((project) => {
-                    // For now, pending projects show "-" since commissions aren't resolved yet
+                    const schedule = data.scheduleMap?.[project.id];
+                    const isConcludedNotSetUp = project.status === OpportunityStatus.CONCLUDED && (!schedule || !schedule.isResolved);
+                    
                     return (
                       <Card key={`${project.id}-${project.role}`} className="overflow-hidden flex flex-col">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <CardTitle className="text-base line-clamp-1">
-                          {project.name}
-                        </CardTitle>
-                        <Badge variant="secondary">
-                          {t("projects.status.pending")}
-                        </Badge>
-                      </div>
-                      <CardDescription className="text-xs">
-                        {getRoleLabel(project.role)}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-1">
-                      <div className="space-y-2 text-sm">
-                        <div className="text-center text-muted-foreground">
-                          {t("projects.details.projectNotFinished")}
-                        </div>
-                      </div>
-                    </CardContent>
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start justify-between">
+                            <CardTitle className="text-base line-clamp-1">
+                              {project.name}
+                            </CardTitle>
+                            <Badge variant={isConcludedNotSetUp ? "outline" : "secondary"}>
+                              {isConcludedNotSetUp ? t("projects.status.notSetUp") : t("projects.status.pending")}
+                            </Badge>
+                          </div>
+                          <CardDescription className="text-xs">
+                            {getRoleLabel(project.role)}
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-1">
+                          <div className="space-y-2 text-sm">
+                            {isConcludedNotSetUp ? (
+                              <>
+                                {project.analytics?.final_amount ? (
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">
+                                      {t("projects.details.finalAmount")}:
+                                    </span>
+                                    <span className="font-medium">
+                                      {formatCurrency(project.analytics.final_amount)}
+                                    </span>
+                                  </div>
+                                ) : null}
+                                <div className="flex justify-between border-t pt-2">
+                                  <span className="text-muted-foreground">
+                                    {t("projects.details.myCommission")}:
+                                  </span>
+                                  <span className="font-medium text-amber-600">{t("projects.status.notSetUp")}</span>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="text-center text-muted-foreground">
+                                {t("projects.details.projectNotFinished")}
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
                       </Card>
                     );
                   })}
@@ -323,33 +348,28 @@ export const MyCommissions = () => {
             </TabsContent>
 
             <TabsContent value="concluded">
-              {(fullyPaidProjects.length === 0 && notSetUpProjects.length === 0) ? (
+              {fullyPaidProjects.length === 0 ? (
                 <EmptyView
                   title={t("projects.noConcludedProjects")}
                   message={t("projects.noConcludedProjectsDescription")}
                 />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {[...fullyPaidProjects, ...notSetUpProjects].map((project) => {
+                  {fullyPaidProjects.map((project) => {
                     // Find the commission value for this project and role
                     const commissionValue = data.commissionValues.find(
                       cv => cv.opportunityId === project.id && cv.commission.roleType === project.role
                     );
 
-                    // Check if commission is resolved by checking the schedule
-                    const schedule = data.scheduleMap?.[project.id];
-                    const isResolved = schedule?.isResolved === true;
-                    const isFullyPaid = schedule?.paymentStatus?.allPaid === true;
-
                     const cardContent = (
-                      <Card className={`overflow-hidden flex flex-col ${isResolved ? 'hover:shadow-lg transition-shadow cursor-pointer' : 'opacity-75'}`}>
+                      <Card className="overflow-hidden flex flex-col hover:shadow-lg transition-shadow cursor-pointer">
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between">
                             <CardTitle className="text-base line-clamp-1">
                               {project.name}
                             </CardTitle>
-                            <Badge variant={isResolved ? (isFullyPaid ? "default" : "secondary") : "secondary"}>
-                              {isResolved ? (isFullyPaid ? t("projects.status.concluded") : t("projects.status.concluded")) : t("projects.status.notSetUp")}
+                            <Badge variant="default">
+                              {t("projects.status.concluded")}
                             </Badge>
                           </div>
                           <CardDescription className="text-xs">
@@ -389,7 +409,7 @@ export const MyCommissions = () => {
                                 <span className="text-muted-foreground">
                                   {t("projects.details.myCommission")}:
                                 </span>
-                                <span className="font-medium text-amber-600">{t("projects.status.notSetUp")}</span>
+                                <span className="font-medium">-</span>
                               </div>
                             )}
                           </div>
@@ -397,8 +417,8 @@ export const MyCommissions = () => {
                       </Card>
                     );
 
-                    // Only wrap in Link if commission is resolved
-                    if (isResolved && commissionValue) {
+                    // All concluded projects have commissions set up, wrap in Link
+                    if (commissionValue) {
                       return (
                         <Link 
                           key={`${project.id}-${project.role}`}
@@ -410,7 +430,7 @@ export const MyCommissions = () => {
                       );
                     }
 
-                    // Not resolved - just show card without link
+                    // Fallback - just show card without link
                     return (
                       <div key={`${project.id}-${project.role}`}>
                         {cardContent}

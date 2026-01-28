@@ -11,10 +11,10 @@ import { useScopedI18n } from "@/locales/client";
 
 interface CommissionResolutionPageProps {
   params: Promise<{ opportunityId: string }>;
-  searchParams: Promise<{ type?: string }>;
+  searchParams: Promise<{ type?: string; returnTab?: string }>;
 }
 
-function CommissionResolutionError() {
+function CommissionResolutionError({ onRetry, errorMessage }: { onRetry?: () => void; errorMessage?: string }) {
   const t = useScopedI18n("crm.commissions");
   
   return (
@@ -30,12 +30,25 @@ function CommissionResolutionError() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {errorMessage && (
+            <div className="mb-4 rounded-md bg-amber-50 p-3 border border-amber-200">
+              <p className="text-sm font-medium text-amber-800">Technical details:</p>
+              <p className="text-sm text-amber-700 mt-1">{errorMessage}</p>
+            </div>
+          )}
           <p className="text-sm text-muted-foreground mb-4">
             {t("errorPage.message")}
           </p>
-          <Link href={crmCommissionsPath()}>
-            <Button variant="outline">{t("errorPage.backButton")}</Button>
-          </Link>
+          <div className="flex gap-2">
+            {onRetry && (
+              <Button onClick={onRetry} variant="default">
+                Retry
+              </Button>
+            )}
+            <Link href={crmCommissionsPath()}>
+              <Button variant="outline">{t("errorPage.backButton")}</Button>
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -48,7 +61,10 @@ export default function CommissionResolutionPage({
 }: CommissionResolutionPageProps) {
   const { opportunityId } = use(params);
   const search = use(searchParams);
-  const opportunityType = (search.type?.toUpperCase() || "MNA") as "MNA" | "REAL_ESTATE";
+  
+  // Safely handle the type parameter - ensure it's a string before calling toUpperCase
+  const typeParam = typeof search.type === 'string' ? search.type : '';
+  const opportunityType = (typeParam.toUpperCase() || "MNA") as "MNA" | "REAL_ESTATE";
 
   return (
     <div className="flex flex-col gap-6 p-6">
