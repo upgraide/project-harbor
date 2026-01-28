@@ -1185,7 +1185,6 @@ export const commissionsRouter = createTRPCRouter({
       // Auto-detect opportunity type by querying both tables
       let opportunity: any;
       let analytics: any;
-      let detectedOpportunityType: OpportunityType;
 
       const opportunitySelect = {
         id: true,
@@ -1238,6 +1237,8 @@ export const commissionsRouter = createTRPCRouter({
         select: opportunitySelect,
       });
 
+      let detectedOpportunityType: OpportunityType;
+
       if (mnaOpportunity) {
         opportunity = mnaOpportunity;
         analytics = opportunity.analytics;
@@ -1253,6 +1254,11 @@ export const commissionsRouter = createTRPCRouter({
           opportunity = reOpportunity;
           analytics = opportunity.analytics;
           detectedOpportunityType = OpportunityType.REAL_ESTATE;
+        } else {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: `Opportunity not found with ID: ${opportunityId}. Searched in both MNA and Real Estate tables.`,
+          });
         }
       }
 
