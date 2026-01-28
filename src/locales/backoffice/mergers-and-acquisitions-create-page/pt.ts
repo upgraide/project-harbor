@@ -336,6 +336,8 @@ export default {
     ebitdaMargin: "Margem EBITDA (%)",
     actions: "Ações",
     deleteButtonText: "Eliminar",
+    yearSuffixFuture: "E",
+    yearSuffixHistorical: "H",
   },
   teamAssignmentCard: {
     title: "Atribuição de Equipa",

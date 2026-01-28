@@ -333,6 +333,8 @@ export default {
     ebitdaMargin: "EBITDA Margin (%)",
     actions: "Actions",
     deleteButtonText: "Delete",
+    yearSuffixFuture: "F",
+    yearSuffixHistorical: "H",
   },
   teamAssignmentCard: {
     title: "Team Assignment",

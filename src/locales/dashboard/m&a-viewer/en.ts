@@ -163,6 +163,8 @@ export default {
     ebitdaMargin: "EBITDA Margin (%)",
     actions: "Actions",
     deleteButtonText: "Delete",
+    yearSuffixFuture: "F",
+    yearSuffixHistorical: "H",
   },
   imagesCard: {
     title: "Images",
