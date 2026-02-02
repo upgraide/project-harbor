@@ -1,13 +1,13 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useClientActivity } from "@/features/opportunities/hooks/use-analytics";
+import { useClientActivityFiltered } from "@/features/opportunities/hooks/use-performance";
 import { useScopedI18n } from "@/locales/client";
 import { formatDistanceToNow } from "date-fns";
 
 export const ClientActivityCard = () => {
   const t = useScopedI18n("backoffice.analytics");
-  const { data, isLoading } = useClientActivity();
+  const { data, isLoading } = useClientActivityFiltered();
 
   if (isLoading) {
     return (
@@ -108,6 +108,11 @@ export const ClientActivityCard = () => {
                   <div className="flex-1">
                     <p className="font-medium text-sm">{client.name}</p>
                     <p className="text-muted-foreground text-xs">{client.email}</p>
+                    {client.leadResponsible && (
+                      <p className="text-muted-foreground text-xs mt-1">
+                        {t("graphs.clientActivity.leadResponsible")}: {client.leadResponsible}
+                      </p>
+                    )}
                   </div>
                   <div className="text-right text-xs text-muted-foreground">
                     {client.lastContactDate
@@ -140,6 +145,11 @@ export const ClientActivityCard = () => {
                   <div className="flex-1">
                     <p className="font-medium text-sm">{client.name}</p>
                     <p className="text-muted-foreground text-xs">{client.email}</p>
+                    {client.leadResponsible && (
+                      <p className="text-muted-foreground text-xs mt-1">
+                        {t("graphs.clientActivity.leadResponsible")}: {client.leadResponsible}
+                      </p>
+                    )}
                   </div>
                   <div className="text-right text-xs text-muted-foreground">
                     {client.lastContactDate

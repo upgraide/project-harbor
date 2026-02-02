@@ -113,6 +113,7 @@ export default {
       lastContact: "Último Follow-up",
       daysAgo: "dias atrás",
       empty: "Nenhum cliente sem follow-up recente",
+      leadResponsible: "Responsável pelo Lead",
     },
     advisorPerformance: {
       title: "Desempenho do Consultor",
@@ -127,6 +128,12 @@ export default {
       aum: "AUM Gerenciado",
       rate: "Taxa de Fechamento",
       empty: "Nenhum dado de equipe disponível",
+    },
+  },
+  performance: {
+    filters: {
+      leadResponsible: "Filtrar por Responsável pelo Lead",
+      leadResponsiblePlaceholder: "Todos os Responsáveis",
     },
   },
 };

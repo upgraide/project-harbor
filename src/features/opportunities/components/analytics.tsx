@@ -96,6 +96,7 @@ export { AdvisorPerformanceChart } from "./advisor-performance";
 export { AnalyticsFilters } from "./analytics-filters";
 export { ClientInsights } from "./client-insights";
 export { ClientInsightsFilters } from "./client-insights-filters";
+export { PerformanceFilters } from "./performance-filters";
 
 export const AnalyticsList = () => {
   const t = useScopedI18n("backoffice.analytics");

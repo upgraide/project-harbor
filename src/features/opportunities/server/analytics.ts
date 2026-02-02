@@ -956,86 +956,137 @@ export const analyticsRouter = createTRPCRouter({
   /**
    * Get client activity (no contact for >30 days)
    */
-  getClientActivity: protectedProcedure.query(async () => {
-    const thirtyDaysAgo = subDays(new Date(), 30);
+  getClientActivity: protectedProcedure
+    .input(
+      z.object({
+        leadResponsibleId: z.string().nullable().optional(),
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      const thirtyDaysAgo = subDays(new Date(), 30);
+      const leadResponsibleId = input?.leadResponsibleId;
 
-    // Get all users who could be clients (excluding TEAM_MEMBER types)
-    const allUsers = await prisma.user.findMany({
-      where: {
+      // Build where clause for users
+      const userWhereClause: any = {
         type: {
           not: "TEAM_MEMBER",
+        },
+      };
+
+      // Add lead responsible filter if provided
+      if (leadResponsibleId) {
+        userWhereClause.leadResponsibleId = leadResponsibleId;
+      }
+
+      // Get all users who could be clients (excluding TEAM_MEMBER types)
+      // Include their lead responsible information
+      const allUsers = await prisma.user.findMany({
+        where: userWhereClause,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          type: true,
+          leadResponsibleId: true,
+          leadResponsible: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      // Get all recent follow-ups for these users
+      const recentFollowUps = await prisma.lastFollowUp.findMany({
+        where: {
+          personContactedId: {
+            in: allUsers.map(u => u.id),
+          },
+        },
+        select: {
+          personContactedId: true,
+          followUpDate: true,
+        },
+        orderBy: {
+          followUpDate: "desc",
+        },
+      });
+
+      // Create a map of user ID to their most recent follow-up date
+      const followUpMap = new Map<string, Date>();
+      for (const followUp of recentFollowUps) {
+        if (!followUpMap.has(followUp.personContactedId)) {
+          followUpMap.set(followUp.personContactedId, followUp.followUpDate);
+        }
+      }
+
+      // Categorize users based on their last follow-up
+      const usersWithLastFollowUp = allUsers.map(user => ({
+        ...user,
+        lastFollowUpDate: followUpMap.get(user.id),
+      }));
+
+      const noRecentContact = usersWithLastFollowUp.filter((user) => {
+        if (!user.lastFollowUpDate) return true;
+        return user.lastFollowUpDate < thirtyDaysAgo;
+      });
+
+      const recentContact = usersWithLastFollowUp.filter((user) => {
+        if (!user.lastFollowUpDate) return false;
+        return user.lastFollowUpDate >= thirtyDaysAgo;
+      });
+
+      return {
+        noRecentContact: noRecentContact.length,
+        recentContact: recentContact.length,
+        detailedList: noRecentContact.map((user) => ({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          lastContactDate: user.lastFollowUpDate,
+          leadResponsible: user.leadResponsible?.name ?? null,
+          leadResponsibleId: user.leadResponsible?.id ?? null,
+        })),
+        recentContactList: recentContact
+          .map((user) => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            lastContactDate: user.lastFollowUpDate,
+            leadResponsible: user.leadResponsible?.name ?? null,
+            leadResponsibleId: user.leadResponsible?.id ?? null,
+          }))
+          .sort((a, b) => {
+            if (!a.lastContactDate) return 1;
+            if (!b.lastContactDate) return -1;
+            return b.lastContactDate.getTime() - a.lastContactDate.getTime();
+          }),
+      };
+    }),
+
+  /**
+   * Get list of lead responsibles (team members assigned as responsible for leads)
+   */
+  getLeadResponsibles: protectedProcedure.query(async () => {
+    // Get unique users who are assigned as lead responsibles
+    const leadResponsibles = await prisma.user.findMany({
+      where: {
+        leadResponsibleFor: {
+          some: {},
         },
       },
       select: {
         id: true,
         name: true,
         email: true,
-        type: true,
-      },
-    });
-
-    // Get all recent follow-ups in one query
-    const recentFollowUps = await prisma.lastFollowUp.findMany({
-      where: {
-        personContactedId: {
-          in: allUsers.map(u => u.id),
-        },
-      },
-      select: {
-        personContactedId: true,
-        followUpDate: true,
       },
       orderBy: {
-        followUpDate: "desc",
+        name: "asc",
       },
     });
 
-    // Create a map of user ID to their most recent follow-up date
-    const followUpMap = new Map<string, Date>();
-    for (const followUp of recentFollowUps) {
-      if (!followUpMap.has(followUp.personContactedId)) {
-        followUpMap.set(followUp.personContactedId, followUp.followUpDate);
-      }
-    }
-
-    // Categorize users based on their last follow-up
-    const usersWithLastFollowUp = allUsers.map(user => ({
-      ...user,
-      lastFollowUpDate: followUpMap.get(user.id),
-    }));
-
-    const noRecentContact = usersWithLastFollowUp.filter((user) => {
-      if (!user.lastFollowUpDate) return true;
-      return user.lastFollowUpDate < thirtyDaysAgo;
-    });
-
-    const recentContact = usersWithLastFollowUp.filter((user) => {
-      if (!user.lastFollowUpDate) return false;
-      return user.lastFollowUpDate >= thirtyDaysAgo;
-    });
-
-    return {
-      noRecentContact: noRecentContact.length,
-      recentContact: recentContact.length,
-      detailedList: noRecentContact.map((user) => ({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        lastContactDate: user.lastFollowUpDate,
-      })),
-      recentContactList: recentContact
-        .map((user) => ({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          lastContactDate: user.lastFollowUpDate,
-        }))
-        .sort((a, b) => {
-          if (!a.lastContactDate) return 1;
-          if (!b.lastContactDate) return -1;
-          return b.lastContactDate.getTime() - a.lastContactDate.getTime();
-        }),
-    };
+    return leadResponsibles;
   }),
 
   /**

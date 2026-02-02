@@ -113,6 +113,7 @@ export default {
       lastContact: "Last Follow-up",
       daysAgo: "days ago",
       empty: "No clients with no recent follow-up",
+      leadResponsible: "Lead Responsible",
     },
     advisorPerformance: {
       title: "Advisor Performance",
@@ -127,6 +128,12 @@ export default {
       aum: "AUM Managed",
       rate: "Closure Rate",
       empty: "No team data available",
+    },
+  },
+  performance: {
+    filters: {
+      leadResponsible: "Filter by Lead Responsible",
+      leadResponsiblePlaceholder: "All Lead Responsibles",
     },
   },
 };
