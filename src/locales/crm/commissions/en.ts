@@ -158,9 +158,9 @@ export default {
       editPaidDate: "Edit Paid Date",
       
       installmentNumber: {
-        first: "First Installment",
-        second: "Second Installment",
-        third: "Third Installment",
+        first: "1º Installment",
+        second: "2º Installment",
+        third: "3º Installment",
       },
 
       statusValues: {

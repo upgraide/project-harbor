@@ -30,25 +30,31 @@ export default {
       status: "New Status",
       finalAmount: "Final Transaction Amount",
       closingDate: "Closing Date",
+      // Commission role: Investor Acquisition (CLIENT_ORIGINATOR)
       clientOriginator: "Investor Acquisition",
-      investedPerson: "Invested Person",
-      followupPerson: "Follow-up Person",
+      // NOT a commission role - just the user/client who invested
+      investedPerson: "Investor (Client)",
+      // Commission role: Investor Follow-up (DEAL_SUPPORT)
+      followupPerson: "Investor Follow-up",
       commissionableAmount: "Commissionable Amount",
     },
     placeholders: {
       selectStatus: "Select new status",
       finalAmount: "Enter final transaction amount",
-      clientOriginator: "Select person who brought the client",
-      investedPerson: "Select person who invested/bought",
-      followupPerson: "Select person for follow-up",
+      clientOriginator: "Select person responsible for investor acquisition",
+      investedPerson: "Select the client/investor who purchased",
+      followupPerson: "Select person responsible for investor follow-up",
       commissionableAmount: "Enter commissionable amount",
     },
     helper: {
       values: "Update final transaction amount when closing the opportunity",
       concluded: "Mark as concluded when the deal is finalized",
-      clientOriginator: "Optional: Person who originated/brought the client",
-      investedPerson: "Optional: Person who invested or purchased",
-      followupPerson: "Optional: Person responsible for follow-up",
+      // Commission role explanation
+      clientOriginator: "Commission role: person responsible for bringing the investor",
+      // NOT a commission role - clarify this
+      investedPerson: "Record only: the client/investor who invested (no commission)",
+      // Commission role explanation
+      followupPerson: "Commission role: person responsible for investor follow-up",
     },
     update: "Update Status",
     updating: "Updating...",

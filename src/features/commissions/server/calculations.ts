@@ -176,18 +176,12 @@ export async function calculateOpportunityCommissions(input: CalculateCommission
     }
   }
 
-  // 2d. Deal Support (invested_person and followup_person)
-  const dealSupportIds = new Set<string>();
-  
-  if (analytics.invested_person_id) {
-    dealSupportIds.add(analytics.invested_person_id);
-  }
-  
+  // 2d. Deal Support - "Acompanhamento do Investidor" role
+  // IMPORTANT: Only followup_person gets the DEAL_SUPPORT commission.
+  // invested_person is the investor who bought/invested - NOT a commission role.
+  // This ensures exactly 1 person per role as per commission system rules.
   if (analytics.followup_person_id) {
-    dealSupportIds.add(analytics.followup_person_id);
-  }
-
-  for (const userId of dealSupportIds) {
+    const userId = analytics.followup_person_id;
     const commission = await prisma.commission.findUnique({
       where: {
         userId_roleType: {

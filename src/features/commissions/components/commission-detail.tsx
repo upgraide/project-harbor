@@ -141,6 +141,52 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
 
   const totalRemaining = (commissionDetail.totalCommissionValue ?? 0) - totalPaid;
 
+  // Calculate aggregated totals across all roles for this user on this project
+  const aggregatedTotalCommissionValue = commissionDetail.allProjectCommissions && commissionDetail.allProjectCommissions.length > 0
+    ? commissionDetail.allProjectCommissions.reduce((sum: number, cv: any) => sum + (cv.totalCommissionValue ?? 0), 0)
+    : commissionDetail.totalCommissionValue ?? 0;
+
+  // Aggregate payments across all roles
+  const aggregatedPayments = commissionDetail.allProjectCommissions && commissionDetail.allProjectCommissions.length > 0
+    ? commissionDetail.allProjectCommissions.flatMap((cv: any) => cv.payments || [])
+    : commissionDetail.payments;
+
+  const aggregatedTotalPaid = aggregatedPayments
+    .filter((p: any) => {
+      if (!p.paymentDate || !p.paymentAmount) return false;
+      return new Date(p.paymentDate) <= new Date();
+    })
+    .reduce((sum: number, p: any) => sum + (p.paymentAmount ?? 0), 0);
+
+  const aggregatedTotalScheduled = aggregatedPayments
+    .reduce((sum: number, p: any) => sum + (p.paymentAmount ?? 0), 0);
+
+  const aggregatedTotalRemaining = aggregatedTotalCommissionValue - aggregatedTotalPaid;
+
+  // Group aggregated payments by installment number
+  const paymentsByInstallment = new Map<number, { totalAmount: number; isPaid: boolean; paymentDate: Date | null; paidAt: Date | null }>();
+  for (const payment of aggregatedPayments) {
+    const num = payment.installmentNumber;
+    if (!paymentsByInstallment.has(num)) {
+      paymentsByInstallment.set(num, {
+        totalAmount: 0,
+        isPaid: true, // Assume paid until we find an unpaid one
+        paymentDate: payment.paymentDate,
+        paidAt: payment.paidAt,
+      });
+    }
+    const inst = paymentsByInstallment.get(num)!;
+    inst.totalAmount += payment.paymentAmount ?? 0;
+    if (!payment.isPaid) inst.isPaid = false;
+    // Use the first non-null paidAt date
+    if (payment.paidAt && !inst.paidAt) {
+      inst.paidAt = payment.paidAt;
+    }
+  }
+
+  // Get all installment numbers sorted
+  const installmentNumbers = Array.from(paymentsByInstallment.keys()).sort((a, b) => a - b);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -217,19 +263,31 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
                           {index + 1}
                         </span>
                       </div>
-                      <span className="font-medium">
-                        {projectCommission.commission?.roleType ? 
-                          t(`roles.${projectCommission.commission.roleType}`) : 
-                          "Unknown Role"}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">
+                          {projectCommission.commission?.roleType ? 
+                            t(`roles.${projectCommission.commission.roleType}`) : 
+                            "Unknown Role"}
+                        </span>
+                        {projectCommission.isHalved && (
+                          <Badge variant="secondary" className="text-xs">
+                            ½
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">
                         {t("detail.breakdown.commissionPercentage")}:
                       </span>
                       <Badge variant="outline" className="font-mono text-sm font-semibold">
-                        {projectCommission.commission.commissionPercentage}%
+                        {projectCommission.effectivePercentage?.toFixed(2) ?? projectCommission.commission.commissionPercentage}%
                       </Badge>
+                      {projectCommission.isHalved && (
+                        <span className="text-xs text-muted-foreground">
+                          (base: {projectCommission.commission.commissionPercentage}%)
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))
@@ -293,16 +351,27 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
                 <Label className="text-muted-foreground">
                   {t("detail.totalValue.commissionPercentage")}
                 </Label>
-                <p className="text-lg font-semibold">
-                  {commissionDetail.commission.commissionPercentage}%
-                </p>
+                <div className="text-lg font-semibold flex flex-wrap items-center gap-1">
+                  {commissionDetail.allProjectCommissions && commissionDetail.allProjectCommissions.length > 0
+                    ? commissionDetail.allProjectCommissions
+                        .map((cv: any, idx: number) => (
+                          <span key={idx} className="flex items-center gap-1">
+                            {idx > 0 && <span className="text-muted-foreground">+</span>}
+                            <span>{cv.effectivePercentage?.toFixed(2) ?? cv.commission.commissionPercentage}%</span>
+                            {cv.isHalved && (
+                              <Badge variant="secondary" className="text-xs ml-1">½</Badge>
+                            )}
+                          </span>
+                        ))
+                    : `${commissionDetail.commission.commissionPercentage}%`}
+                </div>
               </div>
               <div>
                 <Label className="text-muted-foreground">
                   {t("detail.totalValue.totalCommission")}
                 </Label>
                 <p className="text-2xl font-bold text-primary">
-                  {formatCurrency(commissionDetail.totalCommissionValue)}
+                  {formatCurrency(aggregatedTotalCommissionValue)}
                 </p>
               </div>
             </div>
@@ -329,54 +398,56 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {/* View mode - show payment schedule */}
-              {[1, 2, 3].map((num) => {
-                const installmentKey = num === 1 ? "first" : num === 2 ? "second" : "third";
-                const payment = commissionDetail.payments.find((p: any) => p.installmentNumber === num);
+              {/* View mode - show aggregated payment schedule dynamically */}
+              {installmentNumbers.length > 0 ? (
+                installmentNumbers.map((num) => {
+                  const installmentKey = num === 1 ? "first" : num === 2 ? "second" : num === 3 ? "third" : `${num}º`;
+                  const aggregatedInstallment = paymentsByInstallment.get(num)!;
 
-                if (!payment) {
-                  // No payment record exists - show placeholder
+                  // Payment record exists - show actual data
+                  const status = aggregatedInstallment.isPaid
+                    ? { label: t("detail.paymentSchedule.statusValues.paid"), variant: "default" as const }
+                    : { label: t("detail.paymentSchedule.statusValues.scheduled"), variant: "outline" as const };
+
+                  // Show paidAt date when paid, otherwise show scheduled paymentDate
+                  const displayDate = aggregatedInstallment.isPaid && aggregatedInstallment.paidAt
+                    ? aggregatedInstallment.paidAt
+                    : aggregatedInstallment.paymentDate;
+
                   return (
                     <TableRow key={num}>
                       <TableCell className="font-medium">
-                        {t(`detail.paymentSchedule.installmentNumber.${installmentKey}`)}
+                        {num <= 3 
+                          ? t(`detail.paymentSchedule.installmentNumber.${installmentKey}`)
+                          : `${num}º Pagamento`}
                       </TableCell>
-                      <TableCell>-</TableCell>
-                      <TableCell>-</TableCell>
+                      <TableCell>{formatDate(displayDate)}</TableCell>
+                      <TableCell>{formatCurrency(aggregatedInstallment.totalAmount)}</TableCell>
                       <TableCell>
-                        <Badge variant="secondary">{t("detail.paymentSchedule.statusValues.notSet")}</Badge>
+                        <Badge variant={status.variant}>{status.label}</Badge>
                       </TableCell>
                     </TableRow>
                   );
-                }
-
-                // Payment record exists - show actual data or "-" if null
-                const status = getPaymentStatus(payment);
-                return (
-                  <TableRow key={payment.id}>
-                    <TableCell className="font-medium">
-                      {t(`detail.paymentSchedule.installmentNumber.${installmentKey}`)}
-                    </TableCell>
-                    <TableCell>{formatDate(payment.paymentDate)}</TableCell>
-                    <TableCell>{formatCurrency(payment.paymentAmount)}</TableCell>
-                    <TableCell>
-                      <Badge variant={status.variant}>{status.label}</Badge>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center text-muted-foreground">
+                    {t("detail.paymentSchedule.statusValues.notSet")}
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
 
           {/* Payment Summary - only show if there are actual payments with values */}
-          {commissionDetail.payments.length > 0 && commissionDetail.payments.some((p: any) => p.paymentAmount) && (
+          {aggregatedPayments.length > 0 && aggregatedPayments.some((p: any) => p.paymentAmount) && (
             <div className="mt-6 grid grid-cols-1 gap-4 border-t pt-4 sm:grid-cols-3">
               <div>
                 <Label className="text-muted-foreground">
                   {t("detail.paymentSchedule.totalPaid")}
                 </Label>
                 <p className="text-lg font-semibold text-green-600">
-                  {formatCurrency(totalPaid)}
+                  {formatCurrency(aggregatedTotalPaid)}
                 </p>
               </div>
               <div>
@@ -384,7 +455,7 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
                   Total Scheduled
                 </Label>
                 <p className="text-lg font-semibold">
-                  {formatCurrency(totalScheduled)}
+                  {formatCurrency(aggregatedTotalScheduled)}
                 </p>
               </div>
               <div>
@@ -393,9 +464,9 @@ export function CommissionDetail({ commissionValueId }: CommissionDetailProps) {
                 </Label>
                 <p className={cn(
                   "text-lg font-semibold",
-                  totalRemaining > 0 ? "text-orange-600" : "text-muted-foreground"
+                  aggregatedTotalRemaining > 0 ? "text-orange-600" : "text-muted-foreground"
                 )}>
-                  {formatCurrency(totalRemaining)}
+                  {formatCurrency(aggregatedTotalRemaining)}
                 </p>
               </div>
             </div>

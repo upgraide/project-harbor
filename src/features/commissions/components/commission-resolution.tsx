@@ -712,168 +712,246 @@ export function CommissionResolution({ opportunityId, opportunityType, fallback 
       )}
 
       {/* Payment Tracking - Only shown if already resolved */}
-      {preview.isResolved && commissionPayments && commissionPayments.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Payment Tracking</CardTitle>
-            <CardDescription>
-              Mark payments as paid for each team member's commission installments
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {commissionPayments.map((commissionValue: any) => {
-                const totalPaid = commissionValue.payments
-                  .filter((p: any) => p.isPaid)
-                  .reduce((sum: number, p: any) => sum + (p.paymentAmount ?? 0), 0);
-                const totalRemaining = (commissionValue.totalCommissionValue ?? 0) - totalPaid;
+      {preview.isResolved && commissionPayments && commissionPayments.length > 0 && (() => {
+        // Group commission values by user, aggregating all their roles
+        const userGroupedPayments = new Map<string, {
+          userId: string;
+          userName: string;
+          userEmail: string;
+          roles: Array<{ roleType: CommissionRole; totalValue: number }>;
+          totalCommission: number;
+          // Group payments by installment number across all roles
+          installments: Map<number, {
+            installmentNumber: number;
+            paymentDate: Date | null;
+            totalAmount: number;
+            payments: Array<{ id: string; isPaid: boolean; paidAt: Date | null; paymentAmount: number; roleType: CommissionRole }>;
+          }>;
+        }>();
 
-                return (
-                  <div key={commissionValue.id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h4 className="font-semibold">{commissionValue.commission.user.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {t(`roles.${commissionValue.commission.roleType}`)} • {formatCurrency(commissionValue.totalCommissionValue ?? 0)} total
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-muted-foreground">Paid / Remaining</div>
-                        <div className="flex gap-2">
-                          <span className="font-semibold text-green-600">{formatCurrency(totalPaid)}</span>
-                          <span className="text-muted-foreground">/</span>
-                          <span className="font-semibold text-orange-600">{formatCurrency(totalRemaining)}</span>
+        for (const commissionValue of commissionPayments as any[]) {
+          const userId = commissionValue.commission.user.id;
+          const userName = commissionValue.commission.user.name;
+          const userEmail = commissionValue.commission.user.email;
+          const roleType = commissionValue.commission.roleType;
+          const totalValue = commissionValue.totalCommissionValue ?? 0;
+
+          if (!userGroupedPayments.has(userId)) {
+            userGroupedPayments.set(userId, {
+              userId,
+              userName,
+              userEmail,
+              roles: [],
+              totalCommission: 0,
+              installments: new Map(),
+            });
+          }
+
+          const userGroup = userGroupedPayments.get(userId)!;
+          userGroup.roles.push({ roleType, totalValue });
+          userGroup.totalCommission += totalValue;
+
+          // Group payments by installment number
+          for (const payment of commissionValue.payments) {
+            const installmentNum = payment.installmentNumber;
+            if (!userGroup.installments.has(installmentNum)) {
+              userGroup.installments.set(installmentNum, {
+                installmentNumber: installmentNum,
+                paymentDate: payment.paymentDate,
+                totalAmount: 0,
+                payments: [],
+              });
+            }
+            const installment = userGroup.installments.get(installmentNum)!;
+            installment.totalAmount += payment.paymentAmount ?? 0;
+            installment.payments.push({
+              id: payment.id,
+              isPaid: payment.isPaid,
+              paidAt: payment.paidAt,
+              paymentAmount: payment.paymentAmount ?? 0,
+              roleType,
+            });
+          }
+        }
+
+        const groupedUsers = Array.from(userGroupedPayments.values());
+
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment Tracking</CardTitle>
+              <CardDescription>
+                Mark payments as paid for each team member (payments are grouped across all their roles)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {groupedUsers.map((userGroup) => {
+                  // Calculate totals across all installments
+                  const allPayments = Array.from(userGroup.installments.values()).flatMap(i => i.payments);
+                  const totalPaid = allPayments
+                    .filter(p => p.isPaid)
+                    .reduce((sum, p) => sum + p.paymentAmount, 0);
+                  const totalRemaining = userGroup.totalCommission - totalPaid;
+
+                  return (
+                    <div key={userGroup.userId} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <div>
+                          <h4 className="font-semibold">{userGroup.userName}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {userGroup.roles.map(r => t(`roles.${r.roleType}`)).join(", ")} • {formatCurrency(userGroup.totalCommission)} total
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-sm text-muted-foreground">Paid / Remaining</div>
+                          <div className="flex gap-2">
+                            <span className="font-semibold text-green-600">{formatCurrency(totalPaid)}</span>
+                            <span className="text-muted-foreground">/</span>
+                            <span className="font-semibold text-orange-600">{formatCurrency(totalRemaining)}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-16">Paid</TableHead>
-                          <TableHead>Installment</TableHead>
-                          <TableHead>Scheduled Date</TableHead>
-                          <TableHead>Amount</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {commissionValue.payments.map((payment: any) => {
-                          const isEditingThis = editingPaymentId === payment.id;
-                          const installmentKey = payment.installmentNumber === 1 ? "first" : payment.installmentNumber === 2 ? "second" : "third";
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-16">Paid</TableHead>
+                            <TableHead>Installment</TableHead>
+                            <TableHead>Scheduled Date</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {Array.from(userGroup.installments.entries())
+                            .sort(([a], [b]) => a - b)
+                            .map(([installmentNum, installment]) => {
+                              // Check if all payments in this installment are paid
+                              const allPaid = installment.payments.every(p => p.isPaid);
+                              const somePaid = installment.payments.some(p => p.isPaid);
+                              const firstPayment = installment.payments[0];
+                              const isEditingThis = installment.payments.some(p => editingPaymentId === p.id);
+                              const installmentKey = installmentNum === 1 ? "first" : installmentNum === 2 ? "second" : "third";
 
-                          return (
-                            <TableRow key={payment.id}>
-                              <TableCell>
-                                <Checkbox
-                                  checked={payment.isPaid}
-                                  onCheckedChange={() => {
-                                    if (payment.isPaid) {
-                                      updatePaymentStatus.mutate({
-                                        paymentId: payment.id,
-                                        isPaid: false,
-                                        paidAt: null,
-                                      });
-                                    } else {
-                                      updatePaymentStatus.mutate({
-                                        paymentId: payment.id,
-                                        isPaid: true,
-                                        paidAt: payment.paymentDate ? new Date(payment.paymentDate) : new Date(),
-                                      });
-                                    }
-                                  }}
-                                  disabled={updatePaymentStatus.isPending}
-                                />
-                              </TableCell>
-                              <TableCell className="font-medium">
-                                {t(`detail.paymentSchedule.installmentNumber.${installmentKey}`)}
-                              </TableCell>
-                              <TableCell>
-                                {isEditingThis ? (
-                                  <div className="flex items-center gap-2">
-                                    <Input
-                                      type="date"
-                                      value={editingPaidDate}
-                                      onChange={(e) => setEditingPaidDate(e.target.value)}
-                                      className="w-40"
-                                    />
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      onClick={() => {
-                                        if (!editingPaidDate) return;
-                                        updatePaymentStatus.mutate({
-                                          paymentId: payment.id,
-                                          isPaid: true,
-                                          paidAt: new Date(editingPaidDate),
-                                        });
+                              return (
+                                <TableRow key={installmentNum}>
+                                  <TableCell>
+                                    <Checkbox
+                                      checked={allPaid}
+                                      onCheckedChange={() => {
+                                        // Toggle all payments in this installment
+                                        const newIsPaid = !allPaid;
+                                        for (const payment of installment.payments) {
+                                          updatePaymentStatus.mutate({
+                                            paymentId: payment.id,
+                                            isPaid: newIsPaid,
+                                            paidAt: newIsPaid ? (installment.paymentDate ? new Date(installment.paymentDate) : new Date()) : null,
+                                          });
+                                        }
                                       }}
                                       disabled={updatePaymentStatus.isPending}
-                                    >
-                                      Save
-                                    </Button>
-                                    <Button
-                                      size="sm"
-                                      variant="ghost"
-                                      onClick={() => {
-                                        setEditingPaymentId(null);
-                                        setEditingPaidDate("");
-                                      }}
-                                    >
-                                      Cancel
-                                    </Button>
-                                  </div>
-                                ) : (
-                                  <div>
-                                    <div>{payment.paymentDate ? new Date(payment.paymentDate).toLocaleDateString() : "-"}</div>
-                                    {payment.isPaid && payment.paidAt && (
-                                      <div className="text-xs text-muted-foreground">
-                                        Paid: {new Date(payment.paidAt).toLocaleDateString()}
+                                    />
+                                  </TableCell>
+                                  <TableCell className="font-medium">
+                                    {t(`detail.paymentSchedule.installmentNumber.${installmentKey}`)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {isEditingThis ? (
+                                      <div className="flex items-center gap-2">
+                                        <Input
+                                          type="date"
+                                          value={editingPaidDate}
+                                          onChange={(e) => setEditingPaidDate(e.target.value)}
+                                          className="w-40"
+                                        />
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          onClick={() => {
+                                            if (!editingPaidDate) return;
+                                            // Update all payments in this installment
+                                            for (const payment of installment.payments) {
+                                              updatePaymentStatus.mutate({
+                                                paymentId: payment.id,
+                                                isPaid: true,
+                                                paidAt: new Date(editingPaidDate),
+                                              });
+                                            }
+                                            setEditingPaymentId(null);
+                                            setEditingPaidDate("");
+                                          }}
+                                          disabled={updatePaymentStatus.isPending}
+                                        >
+                                          Save
+                                        </Button>
+                                        <Button
+                                          size="sm"
+                                          variant="ghost"
+                                          onClick={() => {
+                                            setEditingPaymentId(null);
+                                            setEditingPaidDate("");
+                                          }}
+                                        >
+                                          Cancel
+                                        </Button>
+                                      </div>
+                                    ) : (
+                                      <div>
+                                        <div>{installment.paymentDate ? new Date(installment.paymentDate).toLocaleDateString() : "-"}</div>
+                                        {allPaid && firstPayment?.paidAt && (
+                                          <div className="text-xs text-muted-foreground">
+                                            Paid: {new Date(firstPayment.paidAt).toLocaleDateString()}
+                                          </div>
+                                        )}
                                       </div>
                                     )}
-                                  </div>
-                                )}
-                              </TableCell>
-                              <TableCell>{formatCurrency(payment.paymentAmount ?? 0)}</TableCell>
-                              <TableCell>
-                                <Badge variant={payment.isPaid ? "default" : "outline"}>
-                                  {payment.isPaid ? t("detail.paymentSchedule.statusValues.paid") : t("detail.paymentSchedule.statusValues.scheduled")}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                {payment.isPaid && !isEditingThis && (
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => {
-                                      setEditingPaymentId(payment.id);
-                                      setEditingPaidDate(
-                                        payment.paidAt 
-                                          ? new Date(payment.paidAt).toISOString().split('T')[0]
-                                          : payment.paymentDate 
-                                            ? new Date(payment.paymentDate).toISOString().split('T')[0]
-                                            : new Date().toISOString().split('T')[0]
-                                      );
-                                    }}
-                                    disabled={updatePaymentStatus.isPending}
-                                  >
-                                    Edit Date
-                                  </Button>
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                                  </TableCell>
+                                  <TableCell>{formatCurrency(installment.totalAmount)}</TableCell>
+                                  <TableCell>
+                                    <Badge variant={allPaid ? "default" : somePaid ? "secondary" : "outline"}>
+                                      {allPaid 
+                                        ? t("detail.paymentSchedule.statusValues.paid") 
+                                        : somePaid 
+                                          ? "Partial" 
+                                          : t("detail.paymentSchedule.statusValues.scheduled")}
+                                    </Badge>
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    {allPaid && !isEditingThis && (
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => {
+                                          setEditingPaymentId(firstPayment.id);
+                                          setEditingPaidDate(
+                                            firstPayment.paidAt 
+                                              ? new Date(firstPayment.paidAt).toISOString().split('T')[0]
+                                              : installment.paymentDate 
+                                                ? new Date(installment.paymentDate).toISOString().split('T')[0]
+                                                : new Date().toISOString().split('T')[0]
+                                          );
+                                        }}
+                                        disabled={updatePaymentStatus.isPending}
+                                      >
+                                        Edit Date
+                                      </Button>
+                                    )}
+                                  </TableCell>
+                                </TableRow>
+                              );
+                            })}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })()}
     </div>
   );
 }

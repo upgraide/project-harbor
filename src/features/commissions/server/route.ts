@@ -1017,14 +1017,34 @@ export const commissionsRouter = createTRPCRouter({
               commissionPercentage: true,
             },
           },
+          payments: {
+            orderBy: {
+              installmentNumber: "asc",
+            },
+          },
         },
+      });
+
+      // Calculate effective percentage for each commission to detect halved commissions
+      const commissionableAmount = opportunityDetails?.commissionableAmount ?? 0;
+      const allProjectCommissionsWithEffective = allProjectCommissions.map(cv => {
+        const effectivePercentage = commissionableAmount > 0 && cv.totalCommissionValue
+          ? (cv.totalCommissionValue / commissionableAmount) * 100
+          : cv.commission.commissionPercentage;
+        const isHalved = cv.commission.commissionPercentage > 0 && 
+          Math.abs(effectivePercentage - cv.commission.commissionPercentage / 2) < 0.01;
+        return {
+          ...cv,
+          effectivePercentage,
+          isHalved,
+        };
       });
 
       return {
         ...commissionValue,
         opportunity: opportunityDetails,
         isAdmin,
-        allProjectCommissions,
+        allProjectCommissions: allProjectCommissionsWithEffective,
       };
     }),
 
@@ -1295,7 +1315,7 @@ export const commissionsRouter = createTRPCRouter({
         calculatedAmount: number;
       }> = [];
 
-      // Client Acquisitioner
+      // Client Acquisitioner (Angariação do Cliente)
       if (opportunity.clientAcquisitionerId && opportunity.clientAcquisitioner) {
         const commission = await prisma.commission.findUnique({
           where: {
@@ -1306,19 +1326,20 @@ export const commissionsRouter = createTRPCRouter({
           },
         });
 
-        if (commission && commission.commissionPercentage > 0) {
-          commissionRecipients.push({
-            userId: opportunity.clientAcquisitioner.id,
-            userName: opportunity.clientAcquisitioner.name,
-            userEmail: opportunity.clientAcquisitioner.email,
-            roleType: CommissionRole.CLIENT_ACQUISITION,
-            commissionPercentage: commission.commissionPercentage,
-            calculatedAmount: (commissionableAmount * commission.commissionPercentage) / 100,
-          });
-        }
+        // Include recipient even if commission percentage is 0 or not configured
+        // This allows admins to see all role assignments and configure percentages
+        const percentage = commission?.commissionPercentage ?? 0;
+        commissionRecipients.push({
+          userId: opportunity.clientAcquisitioner.id,
+          userName: opportunity.clientAcquisitioner.name,
+          userEmail: opportunity.clientAcquisitioner.email,
+          roleType: CommissionRole.CLIENT_ACQUISITION,
+          commissionPercentage: percentage,
+          calculatedAmount: (commissionableAmount * percentage) / 100,
+        });
       }
 
-      // Client Originator
+      // Client Originator (Angariação do Investidor)
       if (opportunity.clientOriginatorId && opportunity.clientOriginator) {
         const commission = await prisma.commission.findUnique({
           where: {
@@ -1329,16 +1350,17 @@ export const commissionsRouter = createTRPCRouter({
           },
         });
 
-        if (commission && commission.commissionPercentage > 0) {
-          commissionRecipients.push({
-            userId: opportunity.clientOriginator.id,
-            userName: opportunity.clientOriginator.name,
-            userEmail: opportunity.clientOriginator.email,
-            roleType: CommissionRole.CLIENT_ORIGINATOR,
-            commissionPercentage: commission.commissionPercentage,
-            calculatedAmount: (commissionableAmount * commission.commissionPercentage) / 100,
-          });
-        }
+        // Include recipient even if commission percentage is 0 or not configured
+        // This allows admins to see all role assignments and configure percentages
+        const percentage = commission?.commissionPercentage ?? 0;
+        commissionRecipients.push({
+          userId: opportunity.clientOriginator.id,
+          userName: opportunity.clientOriginator.name,
+          userEmail: opportunity.clientOriginator.email,
+          roleType: CommissionRole.CLIENT_ORIGINATOR,
+          commissionPercentage: percentage,
+          calculatedAmount: (commissionableAmount * percentage) / 100,
+        });
       }
 
       // Account Managers
@@ -1370,33 +1392,30 @@ export const commissionsRouter = createTRPCRouter({
           },
         });
 
-        if (commission && commission.commissionPercentage > 0) {
-          const adjustedPercentage =
-            accountManagerCount === 2
-              ? commission.commissionPercentage / 2
-              : commission.commissionPercentage;
+        // Include recipient even if commission percentage is 0 or not configured
+        // This allows admins to see all role assignments and configure percentages
+        const basePercentage = commission?.commissionPercentage ?? 0;
+        const adjustedPercentage =
+          accountManagerCount === 2
+            ? basePercentage / 2
+            : basePercentage;
 
-          commissionRecipients.push({
-            userId: manager.user.id,
-            userName: manager.user.name,
-            userEmail: manager.user.email,
-            roleType: CommissionRole.ACCOUNT_MANAGER,
-            commissionPercentage: adjustedPercentage,
-            calculatedAmount: (commissionableAmount * adjustedPercentage) / 100,
-          });
-        }
+        commissionRecipients.push({
+          userId: manager.user.id,
+          userName: manager.user.name,
+          userEmail: manager.user.email,
+          roleType: CommissionRole.ACCOUNT_MANAGER,
+          commissionPercentage: adjustedPercentage,
+          calculatedAmount: (commissionableAmount * adjustedPercentage) / 100,
+        });
       }
 
-      // Deal Support
-      const dealSupportUsers: Array<{ id: string; name: string; email: string }> = [];
-      if (analytics.invested_person) {
-        dealSupportUsers.push(analytics.invested_person);
-      }
-      if (analytics.followup_person && analytics.followup_person.id !== analytics.invested_person?.id) {
-        dealSupportUsers.push(analytics.followup_person);
-      }
-
-      for (const user of dealSupportUsers) {
+      // Deal Support - "Acompanhamento do Investidor" role
+      // IMPORTANT: Only followup_person gets the DEAL_SUPPORT commission.
+      // invested_person is the investor who bought/invested - NOT a commission role.
+      // This ensures exactly 1 person per role as per commission system rules.
+      if (analytics.followup_person) {
+        const user = analytics.followup_person;
         const commission = await prisma.commission.findUnique({
           where: {
             userId_roleType: {
@@ -1406,16 +1425,17 @@ export const commissionsRouter = createTRPCRouter({
           },
         });
 
-        if (commission && commission.commissionPercentage > 0) {
-          commissionRecipients.push({
-            userId: user.id,
-            userName: user.name,
-            userEmail: user.email,
-            roleType: CommissionRole.DEAL_SUPPORT,
-            commissionPercentage: commission.commissionPercentage,
-            calculatedAmount: (commissionableAmount * commission.commissionPercentage) / 100,
-          });
-        }
+        // Include recipient even if commission percentage is 0 or not configured
+        // This allows admins to see all role assignments and configure percentages
+        const percentage = commission?.commissionPercentage ?? 0;
+        commissionRecipients.push({
+          userId: user.id,
+          userName: user.name,
+          userEmail: user.email,
+          roleType: CommissionRole.DEAL_SUPPORT,
+          commissionPercentage: percentage,
+          calculatedAmount: (commissionableAmount * percentage) / 100,
+        });
       }
 
       // Check if already resolved
@@ -1736,7 +1756,7 @@ export const commissionsRouter = createTRPCRouter({
     .input(
       z.object({
         opportunityId: z.string(),
-        opportunityType: z.nativeEnum(OpportunityType),
+        opportunityType: z.nativeEnum(OpportunityType).optional(), // Optional - will auto-detect if not provided
         paymentPlan: z.array(
           z.object({
             installmentNumber: z.number().int().min(1),
@@ -1747,7 +1767,8 @@ export const commissionsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { opportunityId, opportunityType, paymentPlan } = input;
+      const { opportunityId, paymentPlan } = input;
+      let opportunityType = input.opportunityType;
 
       // Validate percentages sum to 100
       const totalPercentage = paymentPlan.reduce((sum, p) => sum + p.percentage, 0);
@@ -1760,31 +1781,37 @@ export const commissionsRouter = createTRPCRouter({
 
       // Get commission preview (validates opportunity and calculates commissions)
       const preview = await prisma.$transaction(async (tx) => {
-        // Get the opportunity
+        // Get the opportunity - auto-detect type if not provided
         let opportunity: any;
         let analytics: any;
+        let detectedOpportunityType: OpportunityType;
 
-        if (opportunityType === OpportunityType.MNA) {
-          opportunity = await tx.mergerAndAcquisition.findUnique({
-            where: { id: opportunityId },
-            select: {
-              id: true,
-              name: true,
-              status: true,
-              clientAcquisitionerId: true,
-              clientOriginatorId: true,
-              analytics: {
-                select: {
-                  commissionable_amount: true,
-                  invested_person_id: true,
-                  followup_person_id: true,
-                },
+        // Try MNA first
+        const mnaOpportunity = await tx.mergerAndAcquisition.findUnique({
+          where: { id: opportunityId },
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            clientAcquisitionerId: true,
+            clientOriginatorId: true,
+            analytics: {
+              select: {
+                commissionable_amount: true,
+                invested_person_id: true,
+                followup_person_id: true,
               },
             },
-          });
-          analytics = opportunity?.analytics;
+          },
+        });
+
+        if (mnaOpportunity) {
+          opportunity = mnaOpportunity;
+          analytics = opportunity.analytics;
+          detectedOpportunityType = OpportunityType.MNA;
         } else {
-          opportunity = await tx.realEstate.findUnique({
+          // Try Real Estate
+          const reOpportunity = await tx.realEstate.findUnique({
             where: { id: opportunityId },
             select: {
               id: true,
@@ -1801,19 +1828,36 @@ export const commissionsRouter = createTRPCRouter({
               },
             },
           });
-          analytics = opportunity?.analytics;
+
+          if (reOpportunity) {
+            opportunity = reOpportunity;
+            analytics = opportunity.analytics;
+            detectedOpportunityType = OpportunityType.REAL_ESTATE;
+          } else {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: `Opportunity not found with ID: ${opportunityId}. Searched in both MNA and Real Estate tables.`,
+            });
+          }
         }
 
-        if (!opportunity || !analytics?.commissionable_amount) {
+        // Use detected type if not provided
+        if (!opportunityType) {
+          opportunityType = detectedOpportunityType;
+        }
+
+        if (!analytics?.commissionable_amount) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Opportunity not found or has no commissionable amount",
+            code: "BAD_REQUEST",
+            message: `Opportunity "${opportunity.name}" has no commissionable amount set. Please go to "Close Opportunities" and set the "Commissionable Amount" field before resolving commissions.`,
           });
         }
 
         const commissionableAmount = analytics.commissionable_amount;
 
         // Calculate commission recipients
+        // Include recipients even if their commission percentage is 0 or not configured
+        // This allows admins to see all role assignments and configure percentages later
         const recipients: Array<{
           userId: string;
           roleType: CommissionRole;
@@ -1821,7 +1865,7 @@ export const commissionsRouter = createTRPCRouter({
           totalValue: number;
         }> = [];
 
-        // Client Acquisitioner
+        // Client Acquisitioner (Angariação do Cliente)
         if (opportunity.clientAcquisitionerId) {
           const commission = await tx.commission.findUnique({
             where: {
@@ -1832,17 +1876,16 @@ export const commissionsRouter = createTRPCRouter({
             },
           });
 
-          if (commission && commission.commissionPercentage > 0) {
-            recipients.push({
-              userId: opportunity.clientAcquisitionerId,
-              roleType: CommissionRole.CLIENT_ACQUISITION,
-              percentage: commission.commissionPercentage,
-              totalValue: (commissionableAmount * commission.commissionPercentage) / 100,
-            });
-          }
+          const percentage = commission?.commissionPercentage ?? 0;
+          recipients.push({
+            userId: opportunity.clientAcquisitionerId,
+            roleType: CommissionRole.CLIENT_ACQUISITION,
+            percentage: percentage,
+            totalValue: (commissionableAmount * percentage) / 100,
+          });
         }
 
-        // Client Originator
+        // Client Originator (Angariação do Investidor)
         if (opportunity.clientOriginatorId) {
           const commission = await tx.commission.findUnique({
             where: {
@@ -1853,19 +1896,18 @@ export const commissionsRouter = createTRPCRouter({
             },
           });
 
-          if (commission && commission.commissionPercentage > 0) {
-            recipients.push({
-              userId: opportunity.clientOriginatorId,
-              roleType: CommissionRole.CLIENT_ORIGINATOR,
-              percentage: commission.commissionPercentage,
-              totalValue: (commissionableAmount * commission.commissionPercentage) / 100,
-            });
-          }
+          const percentage = commission?.commissionPercentage ?? 0;
+          recipients.push({
+            userId: opportunity.clientOriginatorId,
+            roleType: CommissionRole.CLIENT_ORIGINATOR,
+            percentage: percentage,
+            totalValue: (commissionableAmount * percentage) / 100,
+          });
         }
 
-        // Account Managers
+        // Account Managers (Acompanhamento do Cliente)
         const accountManagers = await tx.opportunityAccountManager.findMany({
-          where: { opportunityId, opportunityType },
+          where: { opportunityId, opportunityType: detectedOpportunityType },
         });
 
         const accountManagerCount = accountManagers.length;
@@ -1880,31 +1922,26 @@ export const commissionsRouter = createTRPCRouter({
             },
           });
 
-          if (commission && commission.commissionPercentage > 0) {
-            const adjustedPercentage =
-              accountManagerCount === 2
-                ? commission.commissionPercentage / 2
-                : commission.commissionPercentage;
+          const basePercentage = commission?.commissionPercentage ?? 0;
+          const adjustedPercentage =
+            accountManagerCount === 2
+              ? basePercentage / 2
+              : basePercentage;
 
-            recipients.push({
-              userId: manager.userId,
-              roleType: CommissionRole.ACCOUNT_MANAGER,
-              percentage: adjustedPercentage,
-              totalValue: (commissionableAmount * adjustedPercentage) / 100,
-            });
-          }
+          recipients.push({
+            userId: manager.userId,
+            roleType: CommissionRole.ACCOUNT_MANAGER,
+            percentage: adjustedPercentage,
+            totalValue: (commissionableAmount * adjustedPercentage) / 100,
+          });
         }
 
-        // Deal Support
-        const dealSupportIds = new Set<string>();
-        if (analytics.invested_person_id) {
-          dealSupportIds.add(analytics.invested_person_id);
-        }
+        // Deal Support - "Acompanhamento do Investidor" role
+        // IMPORTANT: Only followup_person gets the DEAL_SUPPORT commission.
+        // invested_person is the investor who bought/invested - NOT a commission role.
+        // This ensures exactly 1 person per role as per commission system rules.
         if (analytics.followup_person_id) {
-          dealSupportIds.add(analytics.followup_person_id);
-        }
-
-        for (const userId of dealSupportIds) {
+          const userId = analytics.followup_person_id;
           const commission = await tx.commission.findUnique({
             where: {
               userId_roleType: {
@@ -1914,14 +1951,13 @@ export const commissionsRouter = createTRPCRouter({
             },
           });
 
-          if (commission && commission.commissionPercentage > 0) {
-            recipients.push({
-              userId,
-              roleType: CommissionRole.DEAL_SUPPORT,
-              percentage: commission.commissionPercentage,
-              totalValue: (commissionableAmount * commission.commissionPercentage) / 100,
-            });
-          }
+          const percentage = commission?.commissionPercentage ?? 0;
+          recipients.push({
+            userId,
+            roleType: CommissionRole.DEAL_SUPPORT,
+            percentage: percentage,
+            totalValue: (commissionableAmount * percentage) / 100,
+          });
         }
 
         // Create or update schedule
@@ -1929,12 +1965,12 @@ export const commissionsRouter = createTRPCRouter({
           where: {
             opportunityId_opportunityType: {
               opportunityId,
-              opportunityType,
+              opportunityType: detectedOpportunityType,
             },
           },
           create: {
             opportunityId,
-            opportunityType,
+            opportunityType: detectedOpportunityType,
             isResolved: true,
             resolvedAt: new Date(),
             resolvedBy: ctx.auth.user.id,
@@ -1984,13 +2020,13 @@ export const commissionsRouter = createTRPCRouter({
             where: {
               opportunityId_opportunityType_commissionId: {
                 opportunityId,
-                opportunityType,
+                opportunityType: detectedOpportunityType,
                 commissionId: commission.id,
               },
             },
             create: {
               opportunityId,
-              opportunityType,
+              opportunityType: detectedOpportunityType,
               commissionId: commission.id,
               totalCommissionValue: recipient.totalValue,
             },

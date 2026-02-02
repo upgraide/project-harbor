@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { DollarSign, TrendingUp } from "lucide-react";
@@ -21,6 +21,22 @@ const formatCurrency = (value: number): string => {
   }).format(value);
 };
 
+// Type for a grouped project (one per opportunity, with all roles)
+interface GroupedProject {
+  id: string;
+  name: string;
+  status: OpportunityStatus;
+  analytics?: {
+    closed_at?: Date | null;
+    final_amount?: number | null;
+    commissionable_amount?: number | null;
+  } | null;
+  roles: CommissionRole[];
+  totalCommissionValue: number;
+  commissionValueIds: string[];  // All CommissionValue IDs for this user on this opportunity
+  primaryCommissionValueId: string | null;  // First CommissionValue ID for linking
+}
+
 export const MyCommissions = () => {
   const t = useScopedI18n("crm.commissions");
   const trpc = useTRPC();
@@ -39,21 +55,93 @@ export const MyCommissions = () => {
     return commission?.commissionPercentage ?? 0;
   };
 
-  // Calculate effective commission percentage for a specific project and role
-  const getEffectiveCommissionPercentage = (projectId: string, role: CommissionRole, commissionableAmount?: number | null) => {
-    if (!commissionableAmount) return null;
-    
-    const key = `${projectId}-${role}`;
-    const commissionValue = data.commissionValueMap?.[key];
-    
-    if (commissionValue == null) return null;
-    
-    // Calculate: (commissionValue / commissionableAmount) * 100
-    const effectivePercentage = (commissionValue / commissionableAmount) * 100;
-    return effectivePercentage;
-  };
+  // Group projects by opportunityId, collecting all roles for each
+  const groupedProjects = useMemo(() => {
+    const allProjects = [
+      ...data.projects.clientAcquisition.map((p) => ({
+        ...p,
+        role: CommissionRole.CLIENT_ACQUISITION,
+      })),
+      ...(data.projects.clientOriginator || []).map((p) => ({
+        ...p,
+        role: CommissionRole.CLIENT_ORIGINATOR,
+      })),
+      ...data.projects.accountManager.map((p) => ({
+        ...p,
+        role: CommissionRole.ACCOUNT_MANAGER,
+      })),
+      ...(data.projects.dealSupport || []).map((p) => ({
+        ...p,
+        role: CommissionRole.DEAL_SUPPORT,
+      })),
+    ].filter((p) => p.status !== OpportunityStatus.INACTIVE);
 
-  const allProjects = [
+    // Group by opportunity ID
+    const grouped = new Map<string, GroupedProject>();
+    
+    for (const project of allProjects) {
+      if (!grouped.has(project.id)) {
+        grouped.set(project.id, {
+          id: project.id,
+          name: project.name,
+          status: project.status,
+          analytics: project.analytics,
+          roles: [],
+          totalCommissionValue: 0,
+          commissionValueIds: [],
+          primaryCommissionValueId: null,
+        });
+      }
+      
+      const group = grouped.get(project.id)!;
+      group.roles.push(project.role);
+      
+      // Find commission value for this role
+      const commissionValue = data.commissionValues.find(
+        cv => cv.opportunityId === project.id && cv.commission.roleType === project.role
+      );
+      if (commissionValue) {
+        group.totalCommissionValue += commissionValue.totalCommissionValue ?? 0;
+        group.commissionValueIds.push(commissionValue.id);
+        if (!group.primaryCommissionValueId) {
+          group.primaryCommissionValueId = commissionValue.id;
+        }
+      }
+    }
+    
+    return Array.from(grouped.values());
+  }, [data]);
+
+  // Filter grouped projects by status
+  const pendingProjects = useMemo(() => {
+    return groupedProjects.filter((project) => {
+      if (project.status === OpportunityStatus.ACTIVE) return true;
+      if (project.status === OpportunityStatus.CONCLUDED) {
+        const schedule = data.scheduleMap?.[project.id];
+        return !schedule || !schedule.isResolved;
+      }
+      return false;
+    });
+  }, [groupedProjects, data.scheduleMap]);
+
+  const pendingPaymentProjects = useMemo(() => {
+    return groupedProjects.filter((project) => {
+      if (project.status !== OpportunityStatus.CONCLUDED) return false;
+      const schedule = data.scheduleMap?.[project.id];
+      return schedule?.isResolved && schedule?.paymentStatus?.hasUnpaid;
+    });
+  }, [groupedProjects, data.scheduleMap]);
+
+  const fullyPaidProjects = useMemo(() => {
+    return groupedProjects.filter((project) => {
+      if (project.status !== OpportunityStatus.CONCLUDED) return false;
+      const schedule = data.scheduleMap?.[project.id];
+      return schedule?.isResolved && schedule?.paymentStatus?.allPaid;
+    });
+  }, [groupedProjects, data.scheduleMap]);
+
+  // Calculate role stats from all projects (not grouped)
+  const allProjectsWithRoles = useMemo(() => [
     ...data.projects.clientAcquisition.map((p) => ({
       ...p,
       role: CommissionRole.CLIENT_ACQUISITION,
@@ -70,35 +158,7 @@ export const MyCommissions = () => {
       ...p,
       role: CommissionRole.DEAL_SUPPORT,
     })),
-  ].filter((p) => p.status !== OpportunityStatus.INACTIVE); // Exclude inactive opportunities
-
-  // Pending projects: ACTIVE projects + CONCLUDED projects without commission setup
-  const pendingProjects = allProjects.filter((project) => {
-    // Include all ACTIVE projects
-    if (project.status === OpportunityStatus.ACTIVE) return true;
-    
-    // Include CONCLUDED projects that don't have commissions set up yet
-    if (project.status === OpportunityStatus.CONCLUDED) {
-      const schedule = data.scheduleMap?.[project.id];
-      return !schedule || !schedule.isResolved;
-    }
-    
-    return false;
-  });
-
-  // Filter concluded projects with pending payments (has unpaid installments)
-  const pendingPaymentProjects = allProjects.filter((project) => {
-    if (project.status !== OpportunityStatus.CONCLUDED) return false;
-    const schedule = data.scheduleMap?.[project.id];
-    return schedule?.isResolved && schedule?.paymentStatus?.hasUnpaid;
-  });
-
-  // Filter concluded projects where all payments are complete
-  const fullyPaidProjects = allProjects.filter((project) => {
-    if (project.status !== OpportunityStatus.CONCLUDED) return false;
-    const schedule = data.scheduleMap?.[project.id];
-    return schedule?.isResolved && schedule?.paymentStatus?.allPaid;
-  });
+  ].filter((p) => p.status !== OpportunityStatus.INACTIVE), [data]);
 
   return (
     <div className="space-y-6">
@@ -150,7 +210,7 @@ export const MyCommissions = () => {
           CommissionRole.CLIENT_ORIGINATOR,
           CommissionRole.DEAL_SUPPORT,
         ].map((role) => {
-          const roleProjects = allProjects.filter((p) => p.role === role);
+          const roleProjects = allProjectsWithRoles.filter((p) => p.role === role);
           const percentage = getCommissionPercentage(role);
 
           return (
@@ -199,9 +259,6 @@ export const MyCommissions = () => {
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {pendingPaymentProjects.map((project) => {
-                    const commissionValue = data.commissionValues.find(
-                      cv => cv.opportunityId === project.id && cv.commission.roleType === project.role
-                    );
                     const schedule = data.scheduleMap?.[project.id];
 
                     const cardContent = (
@@ -216,7 +273,7 @@ export const MyCommissions = () => {
                             </Badge>
                           </div>
                           <CardDescription className="text-xs">
-                            {getRoleLabel(project.role)}
+                            {project.roles.map(role => getRoleLabel(role)).join(", ")}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="flex-1">
@@ -238,13 +295,13 @@ export const MyCommissions = () => {
                                 <span className="font-medium">-</span>
                               </div>
                             )}
-                            {commissionValue?.totalCommissionValue ? (
+                            {project.totalCommissionValue > 0 ? (
                               <div className="flex justify-between border-t pt-2">
                                 <span className="text-muted-foreground">
                                   {t("projects.details.myCommission")}:
                                 </span>
                                 <span className="font-bold text-primary">
-                                  {formatCurrency(commissionValue.totalCommissionValue)}
+                                  {formatCurrency(project.totalCommissionValue)}
                                 </span>
                               </div>
                             ) : null}
@@ -263,11 +320,11 @@ export const MyCommissions = () => {
                       </Card>
                     );
 
-                    if (commissionValue) {
+                    if (project.primaryCommissionValueId) {
                       return (
                         <Link 
-                          key={`${project.id}-${project.role}`}
-                          href={`/crm/commissions/${commissionValue.id}`}
+                          key={project.id}
+                          href={`/crm/commissions/${project.primaryCommissionValueId}`}
                           className="block"
                         >
                           {cardContent}
@@ -276,7 +333,7 @@ export const MyCommissions = () => {
                     }
 
                     return (
-                      <div key={`${project.id}-${project.role}`}>
+                      <div key={project.id}>
                         {cardContent}
                       </div>
                     );
@@ -298,7 +355,7 @@ export const MyCommissions = () => {
                     const isConcludedNotSetUp = project.status === OpportunityStatus.CONCLUDED && (!schedule || !schedule.isResolved);
                     
                     return (
-                      <Card key={`${project.id}-${project.role}`} className="overflow-hidden flex flex-col">
+                      <Card key={project.id} className="overflow-hidden flex flex-col">
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between">
                             <CardTitle className="text-base line-clamp-1">
@@ -309,7 +366,7 @@ export const MyCommissions = () => {
                             </Badge>
                           </div>
                           <CardDescription className="text-xs">
-                            {getRoleLabel(project.role)}
+                            {project.roles.map(role => getRoleLabel(role)).join(", ")}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="flex-1">
@@ -356,11 +413,6 @@ export const MyCommissions = () => {
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {fullyPaidProjects.map((project) => {
-                    // Find the commission value for this project and role
-                    const commissionValue = data.commissionValues.find(
-                      cv => cv.opportunityId === project.id && cv.commission.roleType === project.role
-                    );
-
                     const cardContent = (
                       <Card className="overflow-hidden flex flex-col hover:shadow-lg transition-shadow cursor-pointer">
                         <CardHeader className="pb-3">
@@ -373,7 +425,7 @@ export const MyCommissions = () => {
                             </Badge>
                           </div>
                           <CardDescription className="text-xs">
-                            {getRoleLabel(project.role)}
+                            {project.roles.map(role => getRoleLabel(role)).join(", ")}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="flex-1">
@@ -395,13 +447,13 @@ export const MyCommissions = () => {
                                 <span className="font-medium">-</span>
                               </div>
                             )}
-                            {commissionValue?.totalCommissionValue ? (
+                            {project.totalCommissionValue > 0 ? (
                               <div className="flex justify-between border-t pt-2">
                                 <span className="text-muted-foreground">
                                   {t("projects.details.myCommission")}:
                                 </span>
                                 <span className="font-bold text-primary">
-                                  {formatCurrency(commissionValue.totalCommissionValue)}
+                                  {formatCurrency(project.totalCommissionValue)}
                                 </span>
                               </div>
                             ) : (
@@ -417,12 +469,12 @@ export const MyCommissions = () => {
                       </Card>
                     );
 
-                    // All concluded projects have commissions set up, wrap in Link
-                    if (commissionValue) {
+                    // Link to the primary commission value
+                    if (project.primaryCommissionValueId) {
                       return (
                         <Link 
-                          key={`${project.id}-${project.role}`}
-                          href={`/crm/commissions/${commissionValue.id}`}
+                          key={project.id}
+                          href={`/crm/commissions/${project.primaryCommissionValueId}`}
                           className="block"
                         >
                           {cardContent}
@@ -432,7 +484,7 @@ export const MyCommissions = () => {
 
                     // Fallback - just show card without link
                     return (
-                      <div key={`${project.id}-${project.role}`}>
+                      <div key={project.id}>
                         {cardContent}
                       </div>
                     );

@@ -154,9 +154,9 @@ export default {
       editPaidDate: "Editar Data de Pagamento",
       
       installmentNumber: {
-        first: "Primeira Parcela",
-        second: "Segunda Parcela",
-        third: "Terceira Parcela",
+        first: "1º Pagamento",
+        second: "2º Pagamento",
+        third: "3º Pagamento",
       },
 
       statusValues: {

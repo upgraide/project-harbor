@@ -42,6 +42,7 @@ import {
   useUpdateRealEstateStatus,
 } from "@/features/opportunities/hooks/use-real-estate-opportunities";
 import { UserSelect } from "@/features/users/components/user-select";
+import { InvestorSelect } from "@/features/users/components/investor-select";
 
 type OpportunityItem = {
   id: string;
@@ -201,7 +202,9 @@ const UpdateStatusDialog = ({
 
               <div className="grid gap-2">
                 <Label htmlFor="investedPerson">{t("labels.investedPerson")}</Label>
-                <UserSelect
+                {/* InvestorSelect shows USER role users (actual investors/clients).
+                    This is NOT a commission role - just for record/display purposes. */}
+                <InvestorSelect
                   value={investedPersonId}
                   onValueChange={setInvestedPersonId}
                   placeholder={t("placeholders.investedPerson")}
@@ -211,6 +214,8 @@ const UpdateStatusDialog = ({
 
               <div className="grid gap-2">
                 <Label htmlFor="followupPerson">{t("labels.followupPerson")}</Label>
+                {/* UserSelect for TEAM/ADMIN users - this person gets the
+                    "Acompanhamento do Investidor" (DEAL_SUPPORT) commission role */}
                 <UserSelect
                   value={followupPersonId}
                   onValueChange={setFollowupPersonId}
