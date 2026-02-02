@@ -504,6 +504,9 @@ model UserMergerAndAcquisitionInterest {
   // NDA tracking
   ndaSigned Boolean @default(false)
 
+  // Processed tracking: whether someone has looked at this interest
+  processed Boolean @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -528,6 +531,9 @@ model UserRealEstateInterest {
 
   // NDA tracking
   ndaSigned Boolean @default(false)
+
+  // Processed tracking: whether someone has looked at this interest
+  processed Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

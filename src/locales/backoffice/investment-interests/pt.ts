@@ -2,12 +2,13 @@ export default {
   title: "Interesses de Investimento",
   description:
     "Visualize e gerencie os interesses dos investidores em oportunidades de M&A e Imobiliário",
-  searchPlaceholder: "Pesquisar por nome da oportunidade...",
+  searchPlaceholder: "Pesquisar por nome da oportunidade ou cliente...",
   errorMessage:
     "Falha ao carregar interesses de investimento. Por favor, tente novamente.",
   emptyTitle: "Nenhum Interesse de Investimento",
   emptyMessage:
     "Nenhum interesse de investimento encontrado correspondente aos seus filtros.",
+  noMoreItems: "Todos os interesses carregados",
   filters: {
     type: {
       placeholder: "Tipo",
@@ -26,6 +27,7 @@ export default {
     clientName: "Nome do Cliente",
     project: "Projeto",
     interestType: "Tipo de Interesse",
+    interestStatus: "Interesse",
     date: "Data",
     status: "Estado",
     actions: "Ações",
@@ -34,6 +36,10 @@ export default {
     "m&a": "M&A",
     "real-estate": "Imobiliário",
   },
+  interestStatus: {
+    interested: "Interessado",
+    notInterested: "Não Interessado",
+  },
   status: {
     pending: "Pendente",
     processed: "Processado",
@@ -41,6 +47,7 @@ export default {
   actions: {
     viewDetails: "Ver Detalhes",
     markAsProcessed: "Marcar como Processado",
+    markAsUnprocessed: "Marcar como Não Processado",
     sendDocuments: "Enviar Documentos",
   },
 } as const;
