@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { CommissionRole, Role, OpportunityStatus, OpportunityType } from "@/generated/prisma";
+import { CommissionRole, NotificationType, Role, OpportunityStatus, OpportunityType } from "@/generated/prisma";
+import { createNotifications, notifyAdmins } from "@/features/notifications/server/notifications";
 import prisma from "@/lib/db";
 import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { calculateOpportunityCommissions } from "./calculations";
@@ -2055,6 +2056,37 @@ export const commissionsRouter = createTRPCRouter({
 
         return { schedule, recipients };
       });
+
+      // Notify recipients about their commission resolution
+      const recipientUserIds = preview.recipients.map((r) => r.userId);
+      const oppType = preview.schedule.opportunityType;
+
+      // Get opportunity name for notification message
+      let oppName = "opportunity";
+      if (oppType === OpportunityType.MNA) {
+        const opp = await prisma.mergerAndAcquisition.findUnique({
+          where: { id: opportunityId },
+          select: { name: true },
+        });
+        if (opp) oppName = opp.name;
+      } else {
+        const opp = await prisma.realEstate.findUnique({
+          where: { id: opportunityId },
+          select: { name: true },
+        });
+        if (opp) oppName = opp.name;
+      }
+
+      await createNotifications(
+        recipientUserIds.map((userId) => ({
+          userId,
+          type: NotificationType.COMMISSION_RESOLVED,
+          title: "Commission resolved",
+          message: `Commissions for "${oppName}" have been resolved. Check your commission details.`,
+          opportunityId,
+          opportunityType: oppType,
+        }))
+      );
 
       return {
         success: true,

@@ -22,6 +22,7 @@ export const env = createEnv({
     GOOGLE_API: z.string().min(1),
     UPLOADTHING_TOKEN: z.string().min(1),
     RESEND_API_KEY: z.string().min(1),
+    EMAIL_FROM: z.string().min(1).default("onboarding@resend.dev"),
     INNGEST_EVENT_KEY: z.string(),
     INNGEST_SIGNING_KEY: z.string(),
     PUSHER_APP_ID: z.string().min(1),

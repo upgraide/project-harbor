@@ -3,6 +3,7 @@ import { commissionsRouter } from "@/features/commissions/server/route";
 import { crmRouter } from "@/features/crm/server/route";
 import { investmentInterestsRouter } from "@/features/investment-interests/server/route";
 import { investorsRouter } from "@/features/investors/server/route";
+import { notificationsRouter } from "@/features/notifications/server/route";
 import { analyticsRouter } from "@/features/opportunities/server/analytics";
 import {
   mergerAndAcquisitionRouter,
@@ -25,6 +26,7 @@ export const appRouter = createTRPCRouter({
   accessRequest: accessRequestRouter,
   crm: crmRouter,
   commissions: commissionsRouter,
+  notifications: notificationsRouter,
 });
 
 // export type definition of API

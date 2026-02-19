@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { ActivityType, LeadStatus, Role } from "@/generated/prisma";
+import { ActivityType, LeadStatus, NotificationType, Role } from "@/generated/prisma";
+import { createNotification, notifyTeamAndAdmins } from "@/features/notifications/server/notifications";
 import prisma from "@/lib/db";
 import { adminProcedure, createTRPCRouter } from "@/trpc/init";
 import {
@@ -439,6 +440,17 @@ export const leadsRouter = createTRPCRouter({
         },
       });
 
+      // Notify team about lead status change
+      if (updatedLead.leadResponsibleId) {
+        await createNotification({
+          userId: updatedLead.leadResponsibleId,
+          type: NotificationType.LEAD_STATUS_CHANGE,
+          title: "Lead status updated",
+          message: `Lead "${updatedLead.name}" status changed to ${status}`,
+          relatedUserId: leadId,
+        });
+      }
+
       return updatedLead;
     }),
 
@@ -544,6 +556,21 @@ export const leadsRouter = createTRPCRouter({
           description: `Follow-up on ${followUpDate.toLocaleDateString()}`,
         },
       });
+
+      // Notify the contacted person's lead responsible about the follow-up
+      const lead = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true, leadResponsibleId: true },
+      });
+      if (lead?.leadResponsibleId && lead.leadResponsibleId !== contactedById) {
+        await createNotification({
+          userId: lead.leadResponsibleId,
+          type: NotificationType.LEAD_FOLLOW_UP,
+          title: "New follow-up recorded",
+          message: `A follow-up was recorded for lead "${lead.name}"`,
+          relatedUserId: userId,
+        });
+      }
 
       return newFollowUp;
     }),

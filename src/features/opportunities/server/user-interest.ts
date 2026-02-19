@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { Role } from "@/generated/prisma";
+import { NotificationType, OpportunityType, Role } from "@/generated/prisma";
 import prisma from "@/lib/db";
+import { notifyTeamAndAdmins } from "@/features/notifications/server/notifications";
 import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const userInterestRouter = createTRPCRouter({
@@ -49,20 +50,37 @@ export const userInterestRouter = createTRPCRouter({
         },
       });
 
+      let result;
       if (existing) {
-        return await prisma.userMergerAndAcquisitionInterest.update({
+        result = await prisma.userMergerAndAcquisitionInterest.update({
           where: { id: existing.id },
           data: { interested: true },
         });
+      } else {
+        result = await prisma.userMergerAndAcquisitionInterest.create({
+          data: {
+            userId: ctx.auth.user.id,
+            mergerAndAcquisitionId: input.opportunityId,
+            interested: true,
+          },
+        });
       }
 
-      return await prisma.userMergerAndAcquisitionInterest.create({
-        data: {
-          userId: ctx.auth.user.id,
-          mergerAndAcquisitionId: input.opportunityId,
-          interested: true,
-        },
+      // Notify team about interest
+      const [user, opp] = await Promise.all([
+        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
+        prisma.mergerAndAcquisition.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+      ]);
+      await notifyTeamAndAdmins({
+        type: NotificationType.OPPORTUNITY_INTEREST,
+        title: `${user?.name ?? "User"} interested in M&A`,
+        message: `${user?.name ?? "User"} expressed interest in ${opp?.name ?? "opportunity"}`,
+        opportunityId: input.opportunityId,
+        opportunityType: OpportunityType.MNA,
+        relatedUserId: ctx.auth.user.id,
       });
+
+      return result;
     }),
 
   /**
@@ -80,21 +98,38 @@ export const userInterestRouter = createTRPCRouter({
         },
       });
 
+      let result;
       if (existing) {
-        return await prisma.userMergerAndAcquisitionInterest.update({
+        result = await prisma.userMergerAndAcquisitionInterest.update({
           where: { id: existing.id },
           data: { interested: false, notInterestedReason: input.reason },
         });
+      } else {
+        result = await prisma.userMergerAndAcquisitionInterest.create({
+          data: {
+            userId: ctx.auth.user.id,
+            mergerAndAcquisitionId: input.opportunityId,
+            interested: false,
+            notInterestedReason: input.reason,
+          },
+        });
       }
 
-      return await prisma.userMergerAndAcquisitionInterest.create({
-        data: {
-          userId: ctx.auth.user.id,
-          mergerAndAcquisitionId: input.opportunityId,
-          interested: false,
-          notInterestedReason: input.reason,
-        },
+      // Notify team about no interest
+      const [user, opp] = await Promise.all([
+        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
+        prisma.mergerAndAcquisition.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+      ]);
+      await notifyTeamAndAdmins({
+        type: NotificationType.OPPORTUNITY_NOT_INTERESTED,
+        title: `${user?.name ?? "User"} not interested in M&A`,
+        message: `${user?.name ?? "User"} declined ${opp?.name ?? "opportunity"}${input.reason ? `: ${input.reason}` : ""}`,
+        opportunityId: input.opportunityId,
+        opportunityType: OpportunityType.MNA,
+        relatedUserId: ctx.auth.user.id,
       });
+
+      return result;
     }),
 
   /**
@@ -110,21 +145,38 @@ export const userInterestRouter = createTRPCRouter({
         },
       });
 
+      let result;
       if (existing) {
-        return await prisma.userMergerAndAcquisitionInterest.update({
+        result = await prisma.userMergerAndAcquisitionInterest.update({
           where: { id: existing.id },
           data: { ndaSigned: true, interested: true },
         });
+      } else {
+        result = await prisma.userMergerAndAcquisitionInterest.create({
+          data: {
+            userId: ctx.auth.user.id,
+            mergerAndAcquisitionId: input.opportunityId,
+            ndaSigned: true,
+            interested: true,
+          },
+        });
       }
 
-      return await prisma.userMergerAndAcquisitionInterest.create({
-        data: {
-          userId: ctx.auth.user.id,
-          mergerAndAcquisitionId: input.opportunityId,
-          ndaSigned: true,
-          interested: true,
-        },
+      // Notify team about NDA signing
+      const [user, opp] = await Promise.all([
+        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
+        prisma.mergerAndAcquisition.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+      ]);
+      await notifyTeamAndAdmins({
+        type: NotificationType.OPPORTUNITY_NDA_SIGNED,
+        title: `${user?.name ?? "User"} signed NDA`,
+        message: `${user?.name ?? "User"} signed NDA for ${opp?.name ?? "opportunity"} (M&A)`,
+        opportunityId: input.opportunityId,
+        opportunityType: OpportunityType.MNA,
+        relatedUserId: ctx.auth.user.id,
       });
+
+      return result;
     }),
 
   /**
@@ -140,20 +192,37 @@ export const userInterestRouter = createTRPCRouter({
         },
       });
 
+      let result;
       if (existing) {
-        return await prisma.userRealEstateInterest.update({
+        result = await prisma.userRealEstateInterest.update({
           where: { id: existing.id },
           data: { interested: true },
         });
+      } else {
+        result = await prisma.userRealEstateInterest.create({
+          data: {
+            userId: ctx.auth.user.id,
+            realEstateId: input.opportunityId,
+            interested: true,
+          },
+        });
       }
 
-      return await prisma.userRealEstateInterest.create({
-        data: {
-          userId: ctx.auth.user.id,
-          realEstateId: input.opportunityId,
-          interested: true,
-        },
+      // Notify team about interest
+      const [user, opp] = await Promise.all([
+        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
+        prisma.realEstate.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+      ]);
+      await notifyTeamAndAdmins({
+        type: NotificationType.OPPORTUNITY_INTEREST,
+        title: `${user?.name ?? "User"} interested in Real Estate`,
+        message: `${user?.name ?? "User"} expressed interest in ${opp?.name ?? "opportunity"}`,
+        opportunityId: input.opportunityId,
+        opportunityType: OpportunityType.REAL_ESTATE,
+        relatedUserId: ctx.auth.user.id,
       });
+
+      return result;
     }),
 
   /**
@@ -171,21 +240,38 @@ export const userInterestRouter = createTRPCRouter({
         },
       });
 
+      let result;
       if (existing) {
-        return await prisma.userRealEstateInterest.update({
+        result = await prisma.userRealEstateInterest.update({
           where: { id: existing.id },
           data: { interested: false, notInterestedReason: input.reason },
         });
+      } else {
+        result = await prisma.userRealEstateInterest.create({
+          data: {
+            userId: ctx.auth.user.id,
+            realEstateId: input.opportunityId,
+            interested: false,
+            notInterestedReason: input.reason,
+          },
+        });
       }
 
-      return await prisma.userRealEstateInterest.create({
-        data: {
-          userId: ctx.auth.user.id,
-          realEstateId: input.opportunityId,
-          interested: false,
-          notInterestedReason: input.reason,
-        },
+      // Notify team about no interest
+      const [user, opp] = await Promise.all([
+        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
+        prisma.realEstate.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+      ]);
+      await notifyTeamAndAdmins({
+        type: NotificationType.OPPORTUNITY_NOT_INTERESTED,
+        title: `${user?.name ?? "User"} not interested in RE`,
+        message: `${user?.name ?? "User"} declined ${opp?.name ?? "opportunity"}${input.reason ? `: ${input.reason}` : ""}`,
+        opportunityId: input.opportunityId,
+        opportunityType: OpportunityType.REAL_ESTATE,
+        relatedUserId: ctx.auth.user.id,
       });
+
+      return result;
     }),
 
   /**
@@ -201,21 +287,38 @@ export const userInterestRouter = createTRPCRouter({
         },
       });
 
+      let result;
       if (existing) {
-        return await prisma.userRealEstateInterest.update({
+        result = await prisma.userRealEstateInterest.update({
           where: { id: existing.id },
           data: { ndaSigned: true, interested: true },
         });
+      } else {
+        result = await prisma.userRealEstateInterest.create({
+          data: {
+            userId: ctx.auth.user.id,
+            realEstateId: input.opportunityId,
+            ndaSigned: true,
+            interested: true,
+          },
+        });
       }
 
-      return await prisma.userRealEstateInterest.create({
-        data: {
-          userId: ctx.auth.user.id,
-          realEstateId: input.opportunityId,
-          ndaSigned: true,
-          interested: true,
-        },
+      // Notify team about NDA signing
+      const [user, opp] = await Promise.all([
+        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
+        prisma.realEstate.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+      ]);
+      await notifyTeamAndAdmins({
+        type: NotificationType.OPPORTUNITY_NDA_SIGNED,
+        title: `${user?.name ?? "User"} signed NDA`,
+        message: `${user?.name ?? "User"} signed NDA for ${opp?.name ?? "opportunity"} (Real Estate)`,
+        opportunityId: input.opportunityId,
+        opportunityType: OpportunityType.REAL_ESTATE,
+        relatedUserId: ctx.auth.user.id,
       });
+
+      return result;
     }),
 
   /**

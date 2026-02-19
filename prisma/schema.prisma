@@ -109,6 +109,9 @@ model User {
   // Commission relations
   commissions Commission[]
 
+  // Notification relations
+  notifications Notification[]
+
   @@unique([email])
   @@map("user")
 }
@@ -871,4 +874,41 @@ enum CommissionRole {
   CLIENT_ACQUISITION
   CLIENT_ORIGINATOR
   DEAL_SUPPORT
+}
+
+// Notification System
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  readAt    DateTime?
+  
+  // Optional metadata for linking to relevant entities
+  opportunityId   String?
+  opportunityType OpportunityType?
+  relatedUserId   String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+  @@map("notification")
+}
+
+enum NotificationType {
+  ACCESS_REQUEST
+  OPPORTUNITY_INTEREST
+  OPPORTUNITY_NOT_INTERESTED
+  OPPORTUNITY_NDA_SIGNED
+  OPPORTUNITY_CONCLUDED
+  OPPORTUNITY_STATUS_CHANGE
+  COMMISSION_RESOLVED
+  LEAD_STATUS_CHANGE
+  LEAD_FOLLOW_UP
+  NEW_USER_REGISTERED
 }

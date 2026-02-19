@@ -17,6 +17,7 @@ type InviteEmailProps = {
   password: string;
   language: "en" | "pt";
   inviteLink?: string;
+  logoUrl?: string;
 };
 
 const translations = {
@@ -63,6 +64,7 @@ export const InviteEmail = ({
   password,
   language = "en",
   inviteLink = "https://www.harborpartners.app/login",
+  logoUrl = "https://www.harborpartners.app/assets/logo-dark.png",
 }: InviteEmailProps) => {
   const t = translations[language];
 
@@ -78,7 +80,7 @@ export const InviteEmail = ({
                 alt="Harbor Partners"
                 className="mx-auto my-0"
                 height="50"
-                src={"https://www.harborpartners.app/assets/logo-dark.png"}
+                src={logoUrl}
                 width="200"
               />
             </Section>
@@ -134,4 +136,5 @@ InviteEmail.PreviewProps = {
   password: "SecureP@ss123",
   language: "en",
   inviteLink: "https://www.harborpartners.app/login",
+  logoUrl: "https://www.harborpartners.app/assets/logo-dark.png",
 } as InviteEmailProps;

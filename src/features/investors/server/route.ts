@@ -554,7 +554,6 @@ export const investorsRouter = createTRPCRouter({
           userEmail: email,
           password: generatedPassword,
           language,
-          inviteLink: "https://www.harborpartners.app/login",
         });
 
         return {

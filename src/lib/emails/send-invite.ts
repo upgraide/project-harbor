@@ -5,31 +5,38 @@ import { InviteEmail } from "./invite-email";
 
 const resend = new Resend(env.RESEND_API_KEY);
 
+/** Strips trailing slash from a URL */
+function baseUrl(): string {
+  return env.BETTER_AUTH_URL.replace(/\/$/, "");
+}
+
 type SendInviteEmailParams = {
   userEmail: string;
   password: string;
   language: "en" | "pt";
-  inviteLink?: string;
 };
 
 export const sendInviteEmail = async ({
   userEmail,
   password,
   language,
-  inviteLink,
 }: SendInviteEmailParams) => {
   try {
+    const appBaseUrl = baseUrl();
+    const inviteLink = `${appBaseUrl}/login`;
+    const logoUrl = `${appBaseUrl}/assets/logo-dark.png`;
+
     const emailSubject =
       language === "en"
         ? "Exclusive Invite - Access to Harbor Investment Opportunities"
         : "Convite Exclusivo - Acesso à Harbor Exclusive Investment Opportunities";
 
     const emailHtml = await render(
-      InviteEmail({ userEmail, password, language, inviteLink })
+      InviteEmail({ userEmail, password, language, inviteLink, logoUrl })
     );
 
     const result = await resend.emails.send({
-      from: "invites@notfications.harborpartners.app",
+      from: env.EMAIL_FROM,
       to: userEmail,
       subject: emailSubject,
       html: emailHtml,

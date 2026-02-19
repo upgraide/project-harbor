@@ -4,6 +4,7 @@ import {
   EbitdaRange,
   Industry,
   IndustrySubsector,
+  NotificationType,
   OpportunityStatus,
   OpportunityType,
   RealEstateAssetType,
@@ -13,6 +14,11 @@ import {
   Type,
   TypeDetails,
 } from "@/generated/prisma";
+import {
+  createNotifications,
+  getOpportunityInvolvedUsers,
+  notifyAdmins,
+} from "@/features/notifications/server/notifications";
 import { inngest } from "@/inngest/client";
 import { calculateCAGR } from "@/lib/cagr-calculator";
 import prisma from "@/lib/db";
@@ -900,6 +906,46 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         where: { id: input.id },
         data: { status: input.status },
       });
+
+      // Notify when opportunity status changes
+      if (input.status === "CONCLUDED") {
+        const involvedUserIds = await getOpportunityInvolvedUsers(
+          input.id,
+          OpportunityType.MNA
+        );
+
+        // Notify involved users
+        if (involvedUserIds.length > 0) {
+          await createNotifications(
+            involvedUserIds.map((userId) => ({
+              userId,
+              type: NotificationType.OPPORTUNITY_CONCLUDED,
+              title: "Opportunity concluded",
+              message: `M&A opportunity "${result.name}" has been concluded`,
+              opportunityId: input.id,
+              opportunityType: OpportunityType.MNA,
+            }))
+          );
+        }
+
+        // Notify all admins
+        await notifyAdmins({
+          type: NotificationType.OPPORTUNITY_CONCLUDED,
+          title: "Opportunity concluded",
+          message: `M&A opportunity "${result.name}" has been concluded`,
+          opportunityId: input.id,
+          opportunityType: OpportunityType.MNA,
+        });
+      } else {
+        // Notify admins of status change
+        await notifyAdmins({
+          type: NotificationType.OPPORTUNITY_STATUS_CHANGE,
+          title: "Opportunity status changed",
+          message: `M&A opportunity "${result.name}" status changed to ${input.status}`,
+          opportunityId: input.id,
+          opportunityType: OpportunityType.MNA,
+        });
+      }
 
       return result;
     }),
@@ -2496,6 +2542,46 @@ export const realEstateRouter = createTRPCRouter({
         where: { id: input.id },
         data: { status: input.status },
       });
+
+      // Notify when opportunity status changes
+      if (input.status === "CONCLUDED") {
+        const involvedUserIds = await getOpportunityInvolvedUsers(
+          input.id,
+          OpportunityType.REAL_ESTATE
+        );
+
+        // Notify involved users
+        if (involvedUserIds.length > 0) {
+          await createNotifications(
+            involvedUserIds.map((userId) => ({
+              userId,
+              type: NotificationType.OPPORTUNITY_CONCLUDED,
+              title: "Opportunity concluded",
+              message: `Real Estate opportunity "${result.name}" has been concluded`,
+              opportunityId: input.id,
+              opportunityType: OpportunityType.REAL_ESTATE,
+            }))
+          );
+        }
+
+        // Notify all admins
+        await notifyAdmins({
+          type: NotificationType.OPPORTUNITY_CONCLUDED,
+          title: "Opportunity concluded",
+          message: `Real Estate opportunity "${result.name}" has been concluded`,
+          opportunityId: input.id,
+          opportunityType: OpportunityType.REAL_ESTATE,
+        });
+      } else {
+        // Notify admins of status change
+        await notifyAdmins({
+          type: NotificationType.OPPORTUNITY_STATUS_CHANGE,
+          title: "Opportunity status changed",
+          message: `Real Estate opportunity "${result.name}" status changed to ${input.status}`,
+          opportunityId: input.id,
+          opportunityType: OpportunityType.REAL_ESTATE,
+        });
+      }
 
       return result;
     }),
