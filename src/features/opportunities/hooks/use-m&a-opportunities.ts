@@ -1,9 +1,11 @@
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 import { useTRPC } from "@/trpc/client";
 import { useOpportunitiesParams } from "./use-opportunities-params";
 
@@ -734,6 +736,33 @@ export const useUpdateGraphRows = () => {
       onError: (error) => {
         toast.error(
           `Failed to update the graph rows of the opportunity: ${error.message}`
+        );
+      },
+    })
+  );
+};
+
+/**
+ * Hook to update graph unit
+ */
+export const useUpdateGraphUnit = () => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    trpc.mergerAndAcquisition.updateGraphUnit.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(`Opportunity ${data.name} updated`);
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getMany.queryOptions({})
+        );
+        queryClient.invalidateQueries(
+          trpc.mergerAndAcquisition.getOne.queryOptions({ id: data.id })
+        );
+      },
+      onError: (error) => {
+        toast.error(
+          `Failed to update the graph unit of the opportunity: ${error.message}`
         );
       },
     })
@@ -1890,12 +1919,14 @@ export const useSignMergerAndAcquisitionNDA = (onSuccess?: () => void) => {
  */
 export const useGetMergerAndAcquisitionInterest = (opportunityId: string) => {
   const trpc = useTRPC();
+  const { data: session } = authClient.useSession();
 
-  return useSuspenseQuery(
-    trpc.userInterest.getMergerAndAcquisitionInterest.queryOptions({
+  return useQuery({
+    ...trpc.userInterest.getMergerAndAcquisitionInterest.queryOptions({
       opportunityId,
-    })
-  );
+    }),
+    enabled: !!session?.user?.id,
+  });
 };
 
 /**

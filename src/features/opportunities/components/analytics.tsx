@@ -21,11 +21,11 @@ const TOP_OPPORTUNITIES_LIMIT = 5;
 const DEFAULT_SUM = 0;
 
 const COLORS = [
-  "#3b82f6", // blue
-  "#10b981", // green
-  "#f59e0b", // amber
-  "#ef4444", // red
-  "#8b5cf6", // violet
+  "#1D5C9B", // blue from schema
+  "#679A85", // teal from schema
+  "#9C3E11", // orange from schema
+  "#113152", // navy from schema
+  "#BECED7", // light blue from schema
 ];
 
 type OpportunityWithViews = {
@@ -94,6 +94,9 @@ export { SectorBreakdownBarChart } from "./sector-breakdown-bar";
 export { ClientActivityCard } from "./client-activity";
 export { AdvisorPerformanceChart } from "./advisor-performance";
 export { AnalyticsFilters } from "./analytics-filters";
+export { ClientInsights } from "./client-insights";
+export { ClientInsightsFilters } from "./client-insights-filters";
+export { PerformanceFilters } from "./performance-filters";
 
 export const AnalyticsList = () => {
   const t = useScopedI18n("backoffice.analytics");
@@ -134,7 +137,7 @@ export const AnalyticsList = () => {
   const chartConfig = {
     views: {
       label: t("chart.views"),
-      color: "#3b82f6",
+      color: "#1D5C9B",
     },
   };
 
@@ -189,7 +192,3 @@ export const AnalyticsList = () => {
     </Card>
   );
 };
-
-// Export new analytics components not in the original barrel export
-export { ClientInsightsFilters } from "./client-insights-filters";
-export { ClientInsights } from "./client-insights";

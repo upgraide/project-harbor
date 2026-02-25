@@ -3,7 +3,7 @@ import { env } from "./env";
 
 let pusherServer: Pusher | null = null;
 
-function getPusherServer(): Pusher {
+export function getPusherServer(): Pusher {
   if (pusherServer) {
     return pusherServer;
   }

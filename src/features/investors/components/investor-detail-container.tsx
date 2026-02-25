@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Role } from "@/generated/prisma";
 import { useTRPC } from "@/trpc/client";
@@ -47,6 +46,7 @@ import { InvestorInterests } from "./investor-interests";
 import { InvestorNotes } from "./investor-notes";
 import { InvestorActivities } from "./investor-activities";
 import { InvestorTimeline } from "./investor-timeline";
+import { InvestorLastFollowUps } from "./investor-last-followups";
 
 type InvestorDetailContainerProps = {
   investorId: string;
@@ -76,45 +76,52 @@ export const InvestorDetailContainer = ({
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
+    <div className="flex flex-col gap-6 p-6">
       {/* Header */}
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href={backofficeInvestorsPath()}>← Back to Investors</Link>
-        </Button>
-        <Separator orientation="vertical" className="h-6" />
+      <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <h1 className="text-lg font-semibold">
+          <Button variant="ghost" size="sm" asChild className="mb-2 -ml-2">
+            <Link href={backofficeInvestorsPath()}>
+              ← Back to Investors
+            </Link>
+          </Button>
+          <h1 className="text-3xl font-bold tracking-tight">
             {investor.companyName || investor.name}
           </h1>
           {investor.companyName && (
-            <p className="text-sm text-muted-foreground">{investor.name}</p>
+            <p className="text-muted-foreground mt-1">{investor.name}</p>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-2 items-end">
           {investor.leadStatus && (
-            <Badge variant={
-              investor.leadStatus === "CONVERTED" ? "default" :
-              investor.leadStatus === "LOST" ? "destructive" :
-              "secondary"
-            }>
-              {leadStatusLabels[investor.leadStatus] || investor.leadStatus}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Status:</span>
+              <Badge variant={
+                investor.leadStatus === "CONVERTED" ? "default" :
+                investor.leadStatus === "LOST" ? "destructive" :
+                "secondary"
+              }>
+                {leadStatusLabels[investor.leadStatus] || investor.leadStatus}
+              </Badge>
+            </div>
           )}
           {investor.leadPriority && (
-            <Badge variant={
-              investor.leadPriority === "URGENT" ? "destructive" :
-              investor.leadPriority === "HIGH" ? "default" :
-              "outline"
-            }>
-              {leadPriorityLabels[investor.leadPriority] || investor.leadPriority}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Priority:</span>
+              <Badge variant={
+                investor.leadPriority === "URGENT" ? "destructive" :
+                investor.leadPriority === "HIGH" ? "default" :
+                "outline"
+              }>
+                {leadPriorityLabels[investor.leadPriority] || investor.leadPriority}
+              </Badge>
+            </div>
           )}
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 sm:p-6">
+      <div>
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -427,9 +434,7 @@ export const InvestorDetailContainer = ({
                     {isTeamOrAdmin && investor.personalNotes && (
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <Lock className="h-4 w-4 text-muted-foreground" />
                           <p className="text-sm font-medium">{t("personalNotes.title")}</p>
-                          <Badge variant="secondary" className="text-xs">Admin Only</Badge>
                         </div>
                         <p className="text-sm text-muted-foreground whitespace-pre-wrap">{investor.personalNotes}</p>
                       </div>
@@ -474,10 +479,13 @@ export const InvestorDetailContainer = ({
 
           {/* Edit Tab */}
           <TabsContent value="edit">
-            <InvestorDetailEditForm investor={investor} />
+            <div className="space-y-6">
+              <InvestorDetailEditForm investor={investor} />
+              <InvestorLastFollowUps investorId={investorId} />
+            </div>
           </TabsContent>
         </Tabs>
-      </main>
+      </div>
     </div>
   );
 };

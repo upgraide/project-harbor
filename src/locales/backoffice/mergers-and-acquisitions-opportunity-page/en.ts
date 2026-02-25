@@ -142,11 +142,16 @@ export default {
   graphCard: {
     title: "Graph Data",
     addRowButtonText: "Add Row",
+    unitLabel: "Display Unit",
+    millions: "Millions (M€)",
+    thousands: "Thousands (K€)",
+    yearSuffixHistorical: "H",
+    yearSuffixFuture: "F",
     table: {
       header: {
         year: "Year",
-        revenue: "Revenue (M€)",
-        ebitda: "EBITDA (M€)",
+        revenue: "Revenue",
+        ebitda: "EBITDA",
         ebitdaMargin: "EBITDA Margin (%)",
         actions: "Actions",
       },
@@ -330,10 +335,10 @@ export default {
   teamAssignmentCard: {
     title: "Team Assignment",
     clientAcquisitioner: {
-      label: "Client Acquisitioner",
+      label: "Investor Acquisition",
     },
     accountManagers: {
-      label: "Account Managers",
+      label: "Client Follow-up",
     },
   },
 } as const;

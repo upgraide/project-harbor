@@ -71,6 +71,8 @@ model User {
   // Relations for opportunity assignments
   clientAcquisitionerMergerAndAcquisitions MergerAndAcquisition[]            @relation("clientAcquisitionerMergerAndAcquisitions")
   clientAcquisitionerRealEstates           RealEstate[]                      @relation("clientAcquisitionerRealEstates")
+  clientOriginatorMergerAndAcquisitions    MergerAndAcquisition[]            @relation("clientOriginatorMergerAndAcquisitions")
+  clientOriginatorRealEstates              RealEstate[]                      @relation("clientOriginatorRealEstates")
   accountManagerAssignments      OpportunityAccountManager[]
   
   // Relations for deal closing persons
@@ -97,7 +99,18 @@ model User {
   leadMainContactFor User[] @relation("LeadMainContactUsers")
   notes             UserNote[]
   createdNotes      UserNote[] @relation("NoteCreator")
+  
+  // Last Follow-up relations
+  lastFollowUps         LastFollowUp[]
+  contactedByFollowUps  LastFollowUp[] @relation("ContactedBy")
+  personContactedFollowUps LastFollowUp[] @relation("PersonContacted")
   activities        LeadActivity[]
+
+  // Commission relations
+  commissions Commission[]
+
+  // Notification relations
+  notifications Notification[]
 
   @@unique([email])
   @@map("user")
@@ -289,6 +302,7 @@ model MergerAndAcquisition {
 
   // Graph data (stored as JSON)
   graphRows Json[] // Array of { year: string, revenue: number, ebitda: number, ebitdaMargin: number }
+  graphUnit String  @default("millions") // "millions" or "thousands"
 
   // Growth metrics
   salesCAGR  Float?
@@ -335,6 +349,10 @@ model MergerAndAcquisition {
   // Client Acquisitioner and Account Managers
   clientAcquisitionerId String?
   clientAcquisitioner   User?   @relation("clientAcquisitionerMergerAndAcquisitions", fields: [clientAcquisitionerId], references: [id], onDelete: SetNull)
+
+  // Client Originator (who brought the client)
+  clientOriginatorId String?
+  clientOriginator   User?   @relation("clientOriginatorMergerAndAcquisitions", fields: [clientOriginatorId], references: [id], onDelete: SetNull)
 
   // Relations
   analytics     OpportunityAnalytics?
@@ -422,6 +440,10 @@ model RealEstate {
   clientAcquisitionerId String?
   clientAcquisitioner   User?   @relation("clientAcquisitionerRealEstates", fields: [clientAcquisitionerId], references: [id], onDelete: SetNull)
 
+  // Client Originator (who brought the client)
+  clientOriginatorId String?
+  clientOriginator   User?   @relation("clientOriginatorRealEstates", fields: [clientOriginatorId], references: [id], onDelete: SetNull)
+
   // Relations
   analytics     OpportunityAnalytics?
   userInterests UserRealEstateInterest[] @relation("realEstateUsers")
@@ -485,6 +507,9 @@ model UserMergerAndAcquisitionInterest {
   // NDA tracking
   ndaSigned Boolean @default(false)
 
+  // Processed tracking: whether someone has looked at this interest
+  processed Boolean @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -509,6 +534,9 @@ model UserRealEstateInterest {
 
   // NDA tracking
   ndaSigned Boolean @default(false)
+
+  // Processed tracking: whether someone has looked at this interest
+  processed Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -646,6 +674,31 @@ model UserNote {
   @@map("user_note")
 }
 
+model LastFollowUp {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // The date of the follow-up (can be different from createdAt)
+  followUpDate      DateTime
+  
+  // Description of the conversation/meeting
+  description       String   @db.Text
+  
+  // Person who made the contact (from our team)
+  contactedById     String
+  contactedBy       User     @relation("ContactedBy", fields: [contactedById], references: [id], onDelete: Cascade)
+  
+  // Person who was contacted (the client/investor)
+  personContactedId String
+  personContacted   User     @relation("PersonContacted", fields: [personContactedId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("last_follow_up")
+}
+
 model LeadActivity {
   id            String       @id @default(cuid())
   userId        String
@@ -706,4 +759,156 @@ enum ActivityType {
   ASSIGNMENT_CHANGE
   FOLLOW_UP_SCHEDULED
   OTHER
+}
+
+// Commission Management
+model Commission {
+  id                    String         @id @default(cuid())
+  userId                String
+  user                  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  roleType              CommissionRole
+  commissionPercentage  Float          @default(0)
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  // Relations to commission values
+  commissionValues      CommissionValue[] @relation("CommissionToCommissionValue")
+
+  @@unique([userId, roleType])
+  @@map("commission")
+}
+
+model CommissionValue {
+  id                    String              @id @default(cuid())
+  
+  // Project reference (polymorphic)
+  opportunityId         String
+  opportunityType       OpportunityType
+  
+  // Calculated commission value
+  totalCommissionValue  Float?
+  
+  // Commission entries involved (many-to-many through relation)
+  commissionId          String
+  commission            Commission          @relation("CommissionToCommissionValue", fields: [commissionId], references: [id], onDelete: Cascade)
+  
+  // Payment schedule
+  payments              CommissionPayment[]
+  
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  @@unique([opportunityId, opportunityType, commissionId])
+  @@map("commission_value")
+}
+
+model CommissionPayment {
+  id                    String           @id @default(cuid())
+  commissionValueId     String
+  commissionValue       CommissionValue  @relation(fields: [commissionValueId], references: [id], onDelete: Cascade)
+  
+  // Payment installment number
+  installmentNumber     Int
+  
+  // Percentage of total commission value for this payment
+  percentage            Float?
+  
+  // Payment details (null until admin sets them)
+  paymentDate           DateTime?
+  paymentAmount         Float?
+  
+  // Payment status
+  isPaid                Boolean          @default(false)
+  paidAt                DateTime?
+  
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  @@unique([commissionValueId, installmentNumber])
+  @@map("commission_payment")
+}
+
+// Track commission resolution status per opportunity
+model OpportunityCommissionSchedule {
+  id                    String              @id @default(cuid())
+  
+  // Which opportunity this schedule belongs to
+  opportunityId         String
+  opportunityType       OpportunityType
+  
+  // Resolution status
+  isResolved            Boolean             @default(false)
+  resolvedAt            DateTime?
+  resolvedBy            String?
+  
+  // Payment plan for this opportunity (shared by all commission recipients)
+  paymentPlans          OpportunityPaymentPlan[]
+  
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  @@unique([opportunityId, opportunityType])
+  @@map("opportunity_commission_schedule")
+}
+
+// Payment plan template for an opportunity (applies to all recipients)
+model OpportunityPaymentPlan {
+  id                    String                          @id @default(cuid())
+  scheduleId            String
+  schedule              OpportunityCommissionSchedule   @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  
+  // Installment details
+  installmentNumber     Int
+  percentage            Float  // Percentage of each person's total commission
+  paymentDate           DateTime
+  
+  createdAt             DateTime                        @default(now())
+  updatedAt             DateTime                        @updatedAt
+
+  @@unique([scheduleId, installmentNumber])
+  @@map("opportunity_payment_plan")
+}
+
+enum CommissionRole {
+  ACCOUNT_MANAGER
+  CLIENT_ACQUISITION
+  CLIENT_ORIGINATOR
+  DEAL_SUPPORT
+}
+
+// Notification System
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  readAt    DateTime?
+  
+  // Optional metadata for linking to relevant entities
+  opportunityId   String?
+  opportunityType OpportunityType?
+  relatedUserId   String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+  @@map("notification")
+}
+
+enum NotificationType {
+  ACCESS_REQUEST
+  OPPORTUNITY_INTEREST
+  OPPORTUNITY_NOT_INTERESTED
+  OPPORTUNITY_NDA_SIGNED
+  OPPORTUNITY_CONCLUDED
+  OPPORTUNITY_STATUS_CHANGE
+  COMMISSION_RESOLVED
+  LEAD_STATUS_CHANGE
+  LEAD_FOLLOW_UP
+  NEW_USER_REGISTERED
 }

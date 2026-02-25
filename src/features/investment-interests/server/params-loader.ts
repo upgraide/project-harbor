@@ -3,8 +3,7 @@ import { z } from "zod";
 import { PAGINATION } from "@/config/constants";
 
 const investmentInterestsParamsSchema = z.object({
-  page: z.coerce.number().default(PAGINATION.DEFAULT_PAGE),
-  pageSize: z.coerce
+  limit: z.coerce
     .number()
     .min(PAGINATION.MIN_PAGE_SIZE)
     .max(PAGINATION.MAX_PAGE_SIZE)
@@ -19,8 +18,7 @@ export const investmentInterestsParamsLoader = async (
 ) => {
   const resolvedSearchParams = await searchParams;
   const params = await investmentInterestsParamsSchema.parseAsync({
-    page: resolvedSearchParams.page,
-    pageSize: resolvedSearchParams.pageSize,
+    limit: resolvedSearchParams.limit,
     type: resolvedSearchParams.type,
     status: resolvedSearchParams.status,
     search: resolvedSearchParams.search,

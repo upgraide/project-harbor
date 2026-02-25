@@ -1,5 +1,6 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import { Line, LineChart, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -12,6 +13,8 @@ import { useScopedI18n } from "@/locales/client";
 
 export const AssetsTransactedLineChart = () => {
   const t = useScopedI18n("backoffice.analytics");
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const { data, isLoading } = useAssetsTransactedByMonth();
 
   if (isLoading) {
@@ -82,6 +85,7 @@ export const AssetsTransactedLineChart = () => {
               tickFormatter={(value) => value.toLocaleString()}
               tickLine={false}
               tickMargin={10}
+              domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.1)]}
             />
             <ChartTooltip
               content={
@@ -98,9 +102,10 @@ export const AssetsTransactedLineChart = () => {
             />
             <Line
               dataKey="count"
-              stroke="var(--color-count)"
+              stroke={chartData.length >= 2 ? (isDark ? "#FFFFFF" : "#000000") : "transparent"}
               strokeWidth={2}
               type="monotone"
+              dot={{ fill: isDark ? "#FFFFFF" : "#000000", r: 4 }}
             />
           </LineChart>
         </ChartContainer>

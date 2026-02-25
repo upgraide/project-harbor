@@ -11,11 +11,11 @@ import { useClientSegmentation } from "@/features/opportunities/hooks/use-analyt
 import { useScopedI18n } from "@/locales/client";
 
 const COLORS = [
-  "#3b82f6", // blue
-  "#10b981", // green
-  "#f59e0b", // amber
-  "#ef4444", // red
-  "#8b5cf6", // violet
+  "#1D5C9B", // blue from schema
+  "#679A85", // teal from schema
+  "#9C3E11", // orange from schema
+  "#113152", // navy from schema
+  "#BECED7", // light blue from schema
 ];
 
 const formatNumber = (value: number): string => value.toLocaleString("en-US");

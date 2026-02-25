@@ -1,4 +1,4 @@
-import { UsersIcon } from "lucide-react";
+import { CoinsIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getScopedI18n } from "@/locales/server";
-import { crmLeadsPath } from "@/paths";
+import { crmCommissionsPath, crmLeadsPath } from "@/paths";
 
 const Page = async () => {
   const t = await getScopedI18n("crm.main");
@@ -32,6 +32,21 @@ const Page = async () => {
           </CardHeader>
           <CardContent>
             <Link href={crmLeadsPath()}>
+              <Button className="w-full">{t("accessButton")}</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CoinsIcon className="size-5" />
+              {t("features.commissions.title")}
+            </CardTitle>
+            <CardDescription>{t("features.commissions.description")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link href={crmCommissionsPath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>
           </CardContent>

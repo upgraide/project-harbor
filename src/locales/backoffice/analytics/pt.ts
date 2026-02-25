@@ -10,7 +10,7 @@ export default {
     views: "Visualizações",
   },
   clientInsights: {
-    tabTitle: "Insights de Clientes",
+    tabTitle: "Desempenho do Consultor",
     filters: {
       advisor: "Filtrar por Consultor",
       advisorPlaceholder: "Todos os Consultores",
@@ -33,25 +33,29 @@ export default {
     charts: {
       geographicDistribution: {
         title: "Distribuição de Clientes por Região",
+        description: "Número de clientes agrupados por localização física.",
         clients: "Clientes",
       },
       clientTypeDistribution: {
         title: "Distribuição de Clientes por Tipo",
+        description: "Divisão de clientes por categoria de investidor (Family Office, PE Fund, etc.).",
         clients: "Clientes",
       },
       acquisitionTrend: {
         title: "Tendência de Aquisição de Clientes (Últimos 12 Meses)",
+        description: "Número de novos clientes adicionados mensalmente no último ano.",
         newClients: "Novos Clientes",
       },
       advisorClientLoad: {
         title: "Clientes por Consultor",
         clients: "Clientes Ativos",
-        accountManager: "Gestor de Conta",
-        clientAcquisitioner: "Angariador de Cliente",
+        accountManager: "Acompanhamento do Cliente",
+        clientAcquisitioner: "Angariação do Cliente",
         dealClosure: "Fecho de Negócio",
       },
       investmentRangeBreakdown: {
         title: "Clientes por Capacidade de Investimento",
+        description: "Distribuição de clientes por faixa de ticket size (<€10M, €10M-€100M, >€100M).",
         count: "Clientes",
       },
     },
@@ -70,14 +74,17 @@ export default {
     performanceSection: "3. Desempenho e Métricas da Equipe",
     assetsTransacted: {
       title: "Crescimento de Ativos Transacionados ao Longo do Tempo",
+      description: "Contagem de negócios concluídos por mês, mostrando velocidade de transação.",
       yLabel: "Total de Ativos Transacionados",
     },
     aum: {
       title: "Crescimento do AUM ao Longo do Tempo",
+      description: "Valor total de ativos sob gestão acompanhado mensalmente.",
       yLabel: "Total AUM",
     },
     pipeline: {
       title: "Funil do Pipeline de Negócios",
+      description: "Oportunidades ativas em cada etapa do processo de negociação.",
       stages: {
         leads: "Leads",
         dueDiligence: "Due Diligence",
@@ -87,24 +94,30 @@ export default {
     },
     segmentation: {
       title: "Segmentação de Clientes",
+      description: "Clientes agrupados por faixa de capacidade de investimento.",
       valueLabel: "Clientes",
     },
     sector: {
       title: "Repartição de Receitas por Setor",
+      description: "Número de oportunidades por indústria ou tipo de ativo.",
       yLabel: "Contagem",
     },
     clientActivity: {
-      title: "Engajamento de Clientes",
-      noContact: "Sem Contato Recente",
-      recentContact: "Contato Recente",
+      title: "Atividade de Follow-up de Clientes",
+      description: "Clientes categorizados por data do último follow-up (limite de 30 dias).",
+      noContact: "Sem Follow-up Recente",
+      recentContact: "Follow-up Recente",
       percentage: "% dos clientes",
-      detailedList: "Clientes sem contato (últimos 30+ dias)",
-      lastContact: "Último Contato",
+      detailedList: "Clientes sem follow-up (últimos 30+ dias)",
+      recentContactList: "Clientes contactados recentemente (últimos 30 dias)",
+      lastContact: "Último Follow-up",
       daysAgo: "dias atrás",
-      empty: "Nenhum cliente sem contato recente",
+      empty: "Nenhum cliente sem follow-up recente",
+      leadResponsible: "Responsável pelo Lead",
     },
     advisorPerformance: {
       title: "Desempenho do Consultor",
+      description: "Negócios fechados e oportunidades ativas geridas por cada membro da equipa.",
       dealsClosed: "Negócios Fechados",
       aumManaged: "AUM Gerenciado",
       closureRate: "Taxa de Fechamento",
@@ -115,6 +128,12 @@ export default {
       aum: "AUM Gerenciado",
       rate: "Taxa de Fechamento",
       empty: "Nenhum dado de equipe disponível",
+    },
+  },
+  performance: {
+    filters: {
+      leadResponsible: "Filtrar por Responsável pelo Lead",
+      leadResponsiblePlaceholder: "Todos os Responsáveis",
     },
   },
 };

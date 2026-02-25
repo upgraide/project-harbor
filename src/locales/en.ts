@@ -16,6 +16,7 @@ import realEstateOpportunities from "./backoffice/real-estate-opportunities/en";
 import realEstateOpportunityPage from "./backoffice/real-estate-opportunity-page/en";
 import sidebar from "./backoffice/sidebar/en";
 import users from "./backoffice/users/en";
+import crmCommissions from "./crm/commissions/en";
 import crmLeadDetails from "./crm/lead-details/en";
 import crmLeads from "./crm/leads/en";
 import crmMain from "./crm/main/en";
@@ -67,5 +68,6 @@ export default {
     leads: crmLeads,
     leadDetails: crmLeadDetails,
     main: crmMain,
+    commissions: crmCommissions,
   },
 } as const;

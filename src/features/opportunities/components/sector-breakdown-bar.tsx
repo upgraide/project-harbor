@@ -11,23 +11,23 @@ import { useSectorBreakdown } from "@/features/opportunities/hooks/use-analytics
 import { useScopedI18n } from "@/locales/client";
 
 const COLORS = [
-  "#3b82f6", // blue
-  "#10b981", // green
-  "#f59e0b", // amber
-  "#ef4444", // red
-  "#8b5cf6", // violet
-  "#ec4899", // pink
-  "#06b6d4", // cyan
-  "#f97316", // orange
-  "#14b8a6", // teal
-  "#6366f1", // indigo
+  "#1D5C9B", // blue from schema
+  "#679A85", // teal from schema
+  "#9C3E11", // orange from schema
+  "#113152", // navy from schema
+  "#BECED7", // light blue from schema
+  "#404040", // dark gray from schema
+  "#1D5C9B", // blue (repeat)
+  "#679A85", // teal (repeat)
+  "#9C3E11", // orange (repeat)
+  "#113152", // navy (repeat)
 ];
 
 const formatSectorLabel = (sector: string): string => {
-  // If it's a Real Estate sector (starts with "RE: "), format the asset type
+  // If it's a Real Estate sector (starts with "RE: "), remove the prefix and format the asset type
   if (sector.startsWith("RE: ")) {
     const assetType = sector.replace("RE: ", "");
-    return `RE: ${assetType.replace(/_/g, " ")}`;
+    return assetType.replace(/_/g, " ");
   }
   // Format M&A industry by replacing underscores with spaces
   return sector.replace(/_/g, " ");
@@ -78,7 +78,7 @@ export const SectorBreakdownBarChart = () => {
   const chartConfig = {
     count: {
       label: t("graphs.sector.yLabel"),
-      color: "#3b82f6",
+      color: "#1D5C9B",
     },
   };
 

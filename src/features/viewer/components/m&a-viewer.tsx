@@ -5,6 +5,7 @@
 import { CheckCircle2, XCircle } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import {
   Bar,
   CartesianGrid,
@@ -13,6 +14,7 @@ import {
   XAxis,
   YAxis,
   Cell,
+  LabelList,
 } from "recharts";
 import { ErrorView, LoadingView } from "@/components/entity-components";
 import {
@@ -55,7 +57,7 @@ import { cn } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 export const ViewerLoading = () => {
-  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
+  const t = useScopedI18n("dashboard.mAndAViewer");
   return (
     <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <LoadingView message={t("loadingMessage")} />
@@ -64,7 +66,7 @@ export const ViewerLoading = () => {
 };
 
 export const ViewerError = () => {
-  const t = useScopedI18n("backoffice.mergersAndAcquisitionOpportunityPage");
+  const t = useScopedI18n("dashboard.mAndAViewer");
   return (
     <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-y-4 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
       <ErrorView message={t("errorMessage")} />
@@ -72,31 +74,23 @@ export const ViewerError = () => {
   );
 };
 
-const chartConfig = (t: (key: string) => string) =>
-  ({
+const chartConfig = (t: (key: string) => string, graphUnit: "millions" | "thousands") => {
+  const unit = graphUnit === 'thousands' ? 'K€' : 'M€';
+  return ({
     revenue: {
-      label: t("graphCard.table.header.revenue"),
-      theme: {
-        light: "#113152",
-        dark: "#BECED7",
-      },
+      label: t("graphCard.table.header.revenue").replace('M€', unit),
     },
     revenueFuture: {
-      label: t("graphCard.table.header.revenue"),
-      theme: {
-        light: "#87CEEB",
-        dark: "#87CEEB",
-      },
+      label: t("graphCard.table.header.revenue").replace('M€', unit),
     },
     ebitda: {
-      label: t("graphCard.table.header.ebitda"),
-      color: "#4F565A",
+      label: t("graphCard.table.header.ebitda").replace('M€', unit),
     },
     ebitdaMargin: {
       label: t("graphCard.table.header.ebitdaMargin"),
-      color: "#9C3E11",
     },
   }) satisfies ChartConfig;
+};
 
 // Helper to determine if a year is future (projected)
 const getYearType = (year: string, currentYear: number = new Date().getFullYear()) => {
@@ -108,16 +102,19 @@ const getYearType = (year: string, currentYear: number = new Date().getFullYear(
 const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[], t: (key: string) => string) => {
   if (!graphRows || graphRows.length < 3) return null;
   const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
-  const firstYear = sortedRows[0].year.slice(0, 4);
-  const lastYear = sortedRows[sortedRows.length - 1].year.slice(0, 4);
-  return `CAGR Sales ${firstYear}\u2013${lastYear}`;
+  const firstYear = sortedRows[0].year.slice(2, 4);
+  const lastYear = sortedRows[sortedRows.length - 1].year.slice(2, 4);
+  return `CAGR ${firstYear}\u2013${lastYear}`;
 };
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex component
 export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const t = useScopedI18n("dashboard.mAndAViewer");
   const locale = useCurrentLocale();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
+  const graphUnit = (opportunity.graphUnit as "millions" | "thousands") || "millions";
 
   const { data: preloadedInterest } =
     useGetMergerAndAcquisitionInterest(opportunityId);
@@ -228,7 +225,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   }, [preloadedInterest]);
 
   return (
-    <main className="flex max-w-screen-xs flex-1 flex-col space-y-6 px-6 py-4 md:mx-auto md:max-w-screen-xl md:px-4">
+    <main className="flex flex-1 flex-col space-y-4 px-6 py-4 md:px-8">
       <h1 className="font-bold text-2xl md:text-4xl">{opportunity.name}</h1>
 
       {hasImages() && (
@@ -296,7 +293,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
             </CardHeader>
             <CardContent>
               {hasDescription() && (
-                <p className="text-balance text-base">
+                <p className="text-base whitespace-pre-line">
                   {locale === "en"
                     ? opportunity.englishDescription
                     : opportunity.description}
@@ -307,16 +304,9 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
         </section>
       )}
 
-      <div
-        className={cn(
-          "flex flex-col gap-6",
-          hasFinancialData() &&
-            hasGraphData() &&
-            "md:flex-row md:items-center md:justify-center"
-        )}
-      >
+      <div className="flex flex-col gap-4">
         {hasFinancialData() && (
-          <div className="flex-1">
+          <div>
             <Card className="border-none bg-transparent shadow-none">
               <CardHeader>
                 <CardTitle className="font-bold text-lg">
@@ -327,10 +317,10 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                 <Table>
                   <TableHeader className="bg-muted">
                     <TableRow>
-                      <TableHead className="px-6 py-4">
+                      <TableHead className="px-4 py-2">
                         {t("financialInformationCard.table.header.metric")}
                       </TableHead>
-                      <TableHead className="px-6 py-4">
+                      <TableHead className="px-4 py-2">
                         {t("financialInformationCard.table.header.value")}
                       </TableHead>
                     </TableRow>
@@ -338,10 +328,10 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   <TableBody>
                     {opportunity.type != null && (
                       <TableRow key="type">
-                        <TableCell className="px-6 py-4">
+                        <TableCell className="px-4 py-2">
                           {t("financialInformationCard.table.body.type.label")}
                         </TableCell>
-                        <TableCell className="px-6 py-4">
+                        <TableCell className="px-4 py-2">
                           {t(
                             `financialInformationCard.table.body.type.values.${opportunity.type}`
                           )}
@@ -550,118 +540,190 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
           <div className="min-h-64 w-full flex-1 md:min-h-96">
             <Card className="h-full border-none bg-transparent shadow-none">
               <CardContent className="h-full p-2 md:p-4">
-                <ChartContainer
-                  className="h-full w-full"
-                  config={chartConfig(t)}
-                >
-                  <ComposedChart
-                    accessibilityLayer
-                    data={opportunity.graphRows ?? []}
-                    margin={{
-                      left: 30,
-                      right: 30,
-                      top: 20,
-                      bottom: 40,
-                    }}
-                  >
-                    <CartesianGrid horizontal={false} vertical={false} />
-                    <XAxis
-                      axisLine={false}
-                      dataKey="year"
-                      tickFormatter={(value) => `${value.slice(0, 5)}H`}
-                      tickLine={false}
-                      tickMargin={8}
-                    />
-                    <YAxis
-                      domain={[
-                        0,
-                        (dataMax: number) => Math.ceil(dataMax * 1.3),
-                      ]}
-                      hide={true}
-                      stroke="#113152"
-                      yAxisId="left"
-                    />
-                    <YAxis
-                      domain={[0, 30]}
-                      hide={true}
-                      orientation="right"
-                      stroke="#679A85"
-                      tickFormatter={(value) => `${value}M`}
-                      yAxisId="right"
-                    />
-                    <YAxis
-                      domain={[-750, 100]}
-                      hide={true}
-                      orientation="right"
-                      stroke="#9C3E11"
-                      yAxisId="margin"
-                    />
-                    <ChartTooltip
-                      content={<ChartTooltipContent indicator="line" />}
-                      cursor={false}
-                    />
-                    <Bar
-                      dataKey="revenue"
-                      fill="#1E3A8A"
-                      label={{
-                        position: "top",
-                        fontSize: 12,
-                        fontWeight: 600,
-                        fill: ((entry: any) => {
-                          const yearType = getYearType(String((entry as any)?.year || ''));
-                          return yearType === 'future' ? '#A89F91' : '#1E3A8A';
-                        }) as any,
-                        formatter: (value: number) => value.toFixed(2),
-                      }}
-                      radius={[4, 4, 0, 0]}
-                      yAxisId="left"
+                <div className="flex flex-col md:flex-row gap-6 h-full">
+                  {/* Graph on the left - takes most of the space */}
+                  <div className="flex-1 min-h-64 md:min-h-96">
+                    <ChartContainer
+                      className="h-full w-full"
+                      config={chartConfig(t, graphUnit)}
                     >
-                      {opportunity.graphRows?.map((entry, index) => {
-                        const yearType = getYearType(String((entry as any)?.year || ''));
-                        return (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={yearType === 'future' ? '#A89F91' : '#1E3A8A'}
+                      <ComposedChart
+                        accessibilityLayer
+                        data={opportunity.graphRows ?? []}
+                        margin={{
+                          left: 30,
+                          right: 30,
+                          top: 20,
+                          bottom: 40,
+                        }}
+                      >
+                        <CartesianGrid horizontal={false} vertical={false} />
+                        <XAxis
+                          axisLine={false}
+                          dataKey="year"
+                          tickFormatter={(value) => {
+                            const year = String(value);
+                            const yearNum = Number.parseInt(year);
+                            const currentYear = new Date().getFullYear();
+                            const suffix = yearNum >= currentYear ? t('graphCard.yearSuffixFuture') : t('graphCard.yearSuffixHistorical');
+                            return `${year.slice(0, 4)}-${suffix}`;
+                          }}
+                          tickLine={false}
+                          tickMargin={8}
+                        />
+                        <YAxis
+                          domain={[
+                            0,
+                            (dataMax: number) => Math.ceil(dataMax * 1.3),
+                          ]}
+                          hide={true}
+                          stroke="#113152"
+                          yAxisId="left"
+                        />
+                        <YAxis
+                          domain={[0, 30]}
+                          hide={true}
+                          orientation="right"
+                          stroke="#679A85"
+                          tickFormatter={(value) => `${value}M`}
+                          yAxisId="right"
+                        />
+                        <YAxis
+                          domain={[-750, 100]}
+                          hide={true}
+                          orientation="right"
+                          stroke="#9C3E11"
+                          yAxisId="margin"
+                        />
+                        <ChartTooltip
+                          content={<ChartTooltipContent indicator="line" />}
+                          cursor={false}
+                        />
+                        <Bar
+                          dataKey="revenue"
+                          fill={isDark ? "#b3a092" : "#123353"}
+                          label={{
+                            position: "top",
+                            fontSize: 14,
+                            fontWeight: "bold",
+                            fill: ((entry: any) => {
+                              const yearType = getYearType(String((entry as any)?.year || ''));
+                              if (yearType === 'future') return '#e2d8d3';
+                              return isDark ? "#ffffff" : "#123353";
+                            }) as any,
+                            formatter: (value: number) => {
+                              const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                              return Math.round(displayValue).toString();
+                            },
+                          }}
+                          radius={[4, 4, 0, 0]}
+                          yAxisId="left"
+                        >
+                          {opportunity.graphRows?.map((entry, index) => {
+                            const yearType = getYearType(String((entry as any)?.year || ''));
+                            return (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={yearType === 'future' ? '#e2d8d3' : (isDark ? "#b3a092" : "#123353")}
+                              />
+                            );
+                          })}
+                        </Bar>
+                        <Line
+                          dataKey="ebitda"
+                          dot={false}
+                          stroke={isDark ? "#b3a092" : "#984016"}
+                          strokeWidth={2}
+                          type="monotone"
+                          yAxisId="right"
+                        >
+                          <LabelList
+                            dataKey="ebitda"
+                            position="top"
+                            content={(props: any) => {
+                              const { x, y, value, index } = props;
+                              if (!value && value !== 0) return null;
+                              
+                              const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                              const dataPoint = (opportunity.graphRows as { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[])?.[index];
+                              const year = String(dataPoint?.year || '');
+                              const yearNum = Number.parseInt(year, 10);
+                              const currentYear = new Date().getFullYear();
+                              const isFuture = yearNum >= currentYear;
+                              
+                              let fillColor = "#6b6b6b";
+                              if (!isDark) {
+                                fillColor = isFuture ? '#000000' : '#ffffff';
+                              }
+                              
+                              return (
+                                <text
+                                  x={x}
+                                  y={y}
+                                  dy={-6}
+                                  fill={fillColor}
+                                  fontSize={15}
+                                  fontWeight="bold"
+                                  textAnchor="middle"
+                                >
+                                  {Math.round(displayValue)}
+                                </text>
+                              );
+                            }}
                           />
-                        );
-                      })}
-                    </Bar>
-                    <Line
-                      dataKey="ebitda"
-                      dot={false}
-                      label={{
-                        position: "top",
-                        fontSize: 12,
-                        formatter: (value: number) => value.toFixed(2),
-                      }}
-                      stroke="#9CA3AF"
-                      strokeWidth={2}
-                      type="monotone"
-                      yAxisId="right"
-                    />
-                    <Line
-                      dataKey="ebitdaMargin"
-                      dot={{ fill: "#9C3E11", r: 6 }}
-                      label={{
-                        position: "top",
-                        formatter: (value: number) => `${value}%`,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        offset: 10,
-                      }}
-                      stroke="#9C3E11"
-                      strokeWidth={0}
-                      type="monotone"
-                      yAxisId="margin"
-                    />
-                    <ChartLegend content={<ChartLegendContent />} />
-                  </ComposedChart>
-                </ChartContainer>
-                {opportunity.graphRows && opportunity.graphRows.length >= 3 && (
-                  <div className="mt-2 text-right text-muted-foreground text-xs">
-                    {getCAGRLabel(opportunity.graphRows as any, t)}
+                        </Line>
+                        <Line
+                          dataKey="ebitdaMargin"
+                          dot={{ fill: isDark ? "#984016" : "#7e9fb0", r: 6 }}
+                          label={{
+                            position: "top",
+                            formatter: (value: number) => `${value}%`,
+                            fontSize: 12,
+                            fontWeight: 600,
+                            fill: isDark ? "#984016" : "#7e9fb0",
+                            offset: 10,
+                          }}
+                          stroke={isDark ? "#984016" : "#7e9fb0"}
+                          strokeWidth={0}
+                          type="monotone"
+                          yAxisId="margin"
+                        />
+                        <ChartLegend content={<ChartLegendContent />} />
+                      </ComposedChart>
+                    </ChartContainer>
                   </div>
-                )}
+
+                  {/* CAGR values on the right */}
+                  {opportunity.graphRows && opportunity.graphRows.length >= 3 && (
+                    <div className="flex flex-col gap-1 md:w-48">
+                      <h3 className="text-left text-xs font-medium text-muted-foreground">
+                        {getCAGRLabel(opportunity.graphRows as any, t)}
+                      </h3>
+                      <div className="flex flex-col gap-2">
+                        {opportunity.salesCAGR != null && (
+                          <div className="rounded-lg border border-primary/20 bg-primary/10 px-3 py-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-xs font-medium text-primary">Sales:</span>
+                              <span className="text-sm font-bold text-muted-foreground">
+                                {opportunity.salesCAGR.toFixed(2)}%
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                        {opportunity.ebitdaCAGR != null && (
+                          <div className="rounded-lg border border-primary/20 bg-primary/10 px-3 py-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-xs font-medium text-primary">EBITDA:</span>
+                              <span className="text-sm font-bold text-muted-foreground">
+                                {opportunity.ebitdaCAGR.toFixed(2)}%
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>

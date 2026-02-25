@@ -402,10 +402,10 @@ export default {
   teamAssignmentCard: {
     title: "Team Assignment",
     clientAcquisitioner: {
-      label: "Client Acquisitioner",
+      label: "Investor Acquisition",
     },
     accountManagers: {
-      label: "Account Managers",
+      label: "Client Follow-up",
     },
   },
   buttons: {
@@ -423,5 +423,7 @@ export default {
     description:
       "Please tell us why you're not interested in this opportunity. This helps us improve our offerings.",
     placeholder: "Enter your reason...",
+    cancel: "Cancel",
+    confirm: "Confirm",
   },
 } as const;

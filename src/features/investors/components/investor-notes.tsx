@@ -82,7 +82,7 @@ export const InvestorNotes = ({ investorId }: InvestorNotesProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Personal Notes Section - Visible to Team/Admin, Editable by Admin Only */}
+      {/* Personal Notes Section - Visible to Team/Admin */}
       {isTeamOrAdmin && (
         <Card>
           <CardHeader>
@@ -95,11 +95,8 @@ export const InvestorNotes = ({ investorId }: InvestorNotesProps) => {
                 <CardDescription>
                   {t("description")}
                 </CardDescription>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {t("visibleToTeam")}
-                </p>
               </div>
-              {isAdmin && !isEditingPersonalNotes && (
+              {isTeamOrAdmin && !isEditingPersonalNotes && (
                 <Button onClick={handleEditPersonalNotes} size="sm" variant="outline">
                   <Pencil className="h-4 w-4 mr-2" />
                   {t("editButton")}

@@ -309,11 +309,14 @@ export default {
   graphCard: {
     title: "Graph Data",
     addRowButtonText: "Add Row",
+    unitLabel: "Display Unit",
+    millions: "Millions (M€)",
+    thousands: "Thousands (K€)",
     table: {
       header: {
         year: "Year",
-        revenue: "Revenue (M€)",
-        ebitda: "EBITDA (M€)",
+        revenue: "Revenue",
+        ebitda: "EBITDA",
         ebitdaMargin: "EBITDA Margin (%)",
         actions: "Actions",
       },
@@ -330,20 +333,22 @@ export default {
     ebitdaMargin: "EBITDA Margin (%)",
     actions: "Actions",
     deleteButtonText: "Delete",
+    yearSuffixFuture: "F",
+    yearSuffixHistorical: "H",
   },
   teamAssignmentCard: {
     title: "Team Assignment",
     clientAcquisitioner: {
-      label: "Client Acquisitioner",
-      placeholder: "Select a client acquisitioner",
+      label: "Investor Acquisition",
+      placeholder: "Select investor acquisition",
       description:
-        "Select the client acquisitioner for this opportunity (must be a Team or Admin user)",
+        "Select the investor acquisition for this opportunity (must be a Team or Admin user)",
     },
     accountManagers: {
-      label: "Account Managers",
-      placeholder: "Select account managers",
+      label: "Client Follow-up",
+      placeholder: "Select client follow-up",
       description:
-        "Select 1 to 2 account managers for this opportunity (must be Team or Admin users)",
+        "Select 1 to 2 client follow-up for this opportunity (must be Team or Admin users)",
     },
   },
 } as const;

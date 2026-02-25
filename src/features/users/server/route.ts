@@ -326,7 +326,6 @@ export const usersRouter = createTRPCRouter({
           userEmail: email,
           password: generatedPassword,
           language,
-          inviteLink: "https://www.harborpartners.app/login",
         });
 
         return {
@@ -367,6 +366,30 @@ export const usersRouter = createTRPCRouter({
         id: true,
         name: true,
         email: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+    return users;
+  }),
+
+  /**
+   * Get users with USER role (investors/clients).
+   * Used for selecting "Pessoa investidora" - the user who invested in a deal.
+   * This is NOT a commission role - just for record/display purposes.
+   */
+  getInvestorUsers: protectedProcedure.query(async () => {
+    const users = await prisma.user.findMany({
+      where: {
+        role: Role.USER,
+        disabled: false,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        companyName: true,
       },
       orderBy: {
         name: "asc",

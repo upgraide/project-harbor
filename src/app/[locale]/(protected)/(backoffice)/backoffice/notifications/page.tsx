@@ -1,6 +1,20 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  Bell,
+  BellOff,
+  CheckCheck,
+  Eye,
+  FileText,
+  Handshake,
+  ShieldCheck,
+  ThumbsDown,
+  ThumbsUp,
+  TrendingUp,
+  UserPlus,
+  Users,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -13,113 +27,245 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Empty,
+  EmptyDescription,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { getPusherClient } from "@/lib/pusher-client";
+import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
 
-type AccessRequestNotification = {
-  accessRequestId: string;
-  name: string;
-  email: string;
-  company: string;
-  timestamp: string;
+type NotificationType =
+  | "ACCESS_REQUEST"
+  | "OPPORTUNITY_INTEREST"
+  | "OPPORTUNITY_NOT_INTERESTED"
+  | "OPPORTUNITY_NDA_SIGNED"
+  | "OPPORTUNITY_CONCLUDED"
+  | "OPPORTUNITY_STATUS_CHANGE"
+  | "COMMISSION_RESOLVED"
+  | "LEAD_STATUS_CHANGE"
+  | "LEAD_FOLLOW_UP"
+  | "NEW_USER_REGISTERED";
+
+type PusherNotification = {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  opportunityId?: string;
+  opportunityType?: string;
+  createdAt: string;
 };
+
+function getNotificationIcon(type: NotificationType) {
+  switch (type) {
+    case "ACCESS_REQUEST":
+      return <UserPlus className="h-4 w-4" />;
+    case "OPPORTUNITY_INTEREST":
+      return <ThumbsUp className="h-4 w-4" />;
+    case "OPPORTUNITY_NOT_INTERESTED":
+      return <ThumbsDown className="h-4 w-4" />;
+    case "OPPORTUNITY_NDA_SIGNED":
+      return <FileText className="h-4 w-4" />;
+    case "OPPORTUNITY_CONCLUDED":
+      return <Handshake className="h-4 w-4" />;
+    case "OPPORTUNITY_STATUS_CHANGE":
+      return <TrendingUp className="h-4 w-4" />;
+    case "COMMISSION_RESOLVED":
+      return <ShieldCheck className="h-4 w-4" />;
+    case "LEAD_STATUS_CHANGE":
+      return <Users className="h-4 w-4" />;
+    case "LEAD_FOLLOW_UP":
+      return <Eye className="h-4 w-4" />;
+    case "NEW_USER_REGISTERED":
+      return <UserPlus className="h-4 w-4" />;
+    default:
+      return <Bell className="h-4 w-4" />;
+  }
+}
+
+function getNotificationBadgeVariant(type: NotificationType) {
+  switch (type) {
+    case "OPPORTUNITY_NOT_INTERESTED":
+      return "secondary" as const;
+    case "OPPORTUNITY_STATUS_CHANGE":
+    case "LEAD_STATUS_CHANGE":
+    case "LEAD_FOLLOW_UP":
+      return "outline" as const;
+    default:
+      return "default" as const;
+  }
+}
+
+function NotificationSkeleton() {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+          </div>
+          <Skeleton className="h-5 w-16" />
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-4 w-full" />
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function NotificationsPage() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const t = useScopedI18n("backoffice.notifications");
-  const [statusFilter, setStatusFilter] = useState<
-    "PENDING" | "APPROVED" | "REJECTED" | undefined
-  >(undefined);
+  const [readFilter, setReadFilter] = useState<"all" | "unread" | "read">(
+    "all"
+  );
 
   const { data, isLoading } = useQuery(
-    trpc.accessRequest.getMany.queryOptions({
+    trpc.notifications.getMany.queryOptions({
       page: 1,
-      pageSize: 100,
-      status: statusFilter,
+      pageSize: 50,
+      readFilter,
     })
   );
 
-  const updateStatusMutation = useMutation(
-    trpc.accessRequest.updateStatus.mutationOptions({
+  const { data: unreadData } = useQuery(
+    trpc.notifications.getUnreadCount.queryOptions()
+  );
+
+  const markAsReadMutation = useMutation(
+    trpc.notifications.markAsRead.mutationOptions({
       onSuccess: () => {
         queryClient.invalidateQueries(
-          trpc.accessRequest.getMany.queryOptions({
+          trpc.notifications.getMany.queryOptions({
             page: 1,
-            pageSize: 100,
-            status: statusFilter,
+            pageSize: 50,
+            readFilter,
           })
+        );
+        queryClient.invalidateQueries(
+          trpc.notifications.getUnreadCount.queryOptions()
         );
       },
     })
   );
 
+  const markAllAsReadMutation = useMutation(
+    trpc.notifications.markAllAsRead.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.notifications.getMany.queryOptions({
+            page: 1,
+            pageSize: 50,
+            readFilter,
+          })
+        );
+        queryClient.invalidateQueries(
+          trpc.notifications.getUnreadCount.queryOptions()
+        );
+        toast.success(t("allMarkedRead"));
+      },
+    })
+  );
+
+  // Subscribe to real-time notifications via Pusher
   useEffect(() => {
     const pusher = getPusherClient();
     const channel = pusher.subscribe("notifications");
 
-    const handleAccessRequest = (
-      notificationData: AccessRequestNotification
-    ) => {
-      toast.success(
-        `New access request from ${notificationData.name} (${notificationData.company})`,
-        {
-          description: notificationData.email,
-          duration: 5000,
-        }
-      );
+    const handleNotification = (notificationData: PusherNotification) => {
+      toast.info(notificationData.title, {
+        description: notificationData.message,
+        duration: 5000,
+      });
 
-      // Refresh the list
       queryClient.invalidateQueries(
-        trpc.accessRequest.getMany.queryOptions({
+        trpc.notifications.getMany.queryOptions({
           page: 1,
-          pageSize: 100,
-          status: statusFilter,
+          pageSize: 50,
+          readFilter,
         })
       );
+      queryClient.invalidateQueries(
+        trpc.notifications.getUnreadCount.queryOptions()
+      );
     };
 
-    channel.bind("access-request", handleAccessRequest);
+    channel.bind("notification", handleNotification);
+    channel.bind("access-request", handleNotification);
 
     return () => {
-      channel.unbind("access-request", handleAccessRequest);
+      channel.unbind("notification", handleNotification);
+      channel.unbind("access-request", handleNotification);
       pusher.unsubscribe("notifications");
     };
-  }, [queryClient, trpc, statusFilter]);
+  }, [queryClient, trpc, readFilter]);
 
-  const handleStatusChange = async (
-    id: string,
-    status: "PENDING" | "APPROVED" | "REJECTED"
-  ) => {
-    await updateStatusMutation.mutateAsync({ id, status });
-    toast.success(`Request ${status.toLowerCase()}`);
+  const handleMarkAsRead = async (id: string) => {
+    await markAsReadMutation.mutateAsync({ id });
   };
 
-  const getStatusBadgeVariant = (
-    status: "PENDING" | "APPROVED" | "REJECTED"
-  ) => {
-    switch (status) {
-      case "PENDING":
-        return "default";
-      case "APPROVED":
-        return "default";
-      case "REJECTED":
-        return "secondary";
+  const handleMarkAllAsRead = async () => {
+    await markAllAsReadMutation.mutateAsync();
+  };
+
+  const formatDate = (date: string | Date) => {
+    const d = new Date(date);
+    const now = new Date();
+    const diff = now.getTime() - d.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) return t("timeAgo.justNow");
+    if (minutes < 60) return t("timeAgo.minutes").replace("{count}", String(minutes));
+    if (hours < 24) return t("timeAgo.hours").replace("{count}", String(hours));
+    if (days < 7) return t("timeAgo.days").replace("{count}", String(days));
+    return d.toLocaleDateString();
+  };
+
+  const getTypeLabel = (type: NotificationType) => {
+    switch (type) {
+      case "ACCESS_REQUEST":
+        return t("types.accessRequest");
+      case "OPPORTUNITY_INTEREST":
+        return t("types.interest");
+      case "OPPORTUNITY_NOT_INTERESTED":
+        return t("types.notInterested");
+      case "OPPORTUNITY_NDA_SIGNED":
+        return t("types.ndaSigned");
+      case "OPPORTUNITY_CONCLUDED":
+        return t("types.concluded");
+      case "OPPORTUNITY_STATUS_CHANGE":
+        return t("types.statusChange");
+      case "COMMISSION_RESOLVED":
+        return t("types.commissionResolved");
+      case "LEAD_STATUS_CHANGE":
+        return t("types.leadStatusChange");
+      case "LEAD_FOLLOW_UP":
+        return t("types.leadFollowUp");
+      case "NEW_USER_REGISTERED":
+        return t("types.newUser");
       default:
-        return "default";
+        return type;
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  const unreadCount = unreadData?.count ?? 0;
 
   return (
     <div className="container mx-auto space-y-6 p-6">
@@ -128,98 +274,148 @@ export default function NotificationsPage() {
           <h1 className="font-bold text-3xl">{t("title")}</h1>
           <p className="text-muted-foreground">{t("description")}</p>
         </div>
-        <Select
-          onValueChange={(value) =>
-            setStatusFilter(
-              value === "all" ? undefined : (value as typeof statusFilter)
-            )
-          }
-          value={statusFilter ?? "all"}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder={t("filter.status")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("filter.all")}</SelectItem>
-            <SelectItem value="PENDING">{t("filter.pending")}</SelectItem>
-            <SelectItem value="APPROVED">{t("filter.approved")}</SelectItem>
-            <SelectItem value="REJECTED">{t("filter.rejected")}</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="grid gap-4">
-        {data?.items.length === 0 ? (
-          <Card>
-            <CardContent className="py-8 text-center text-muted-foreground">
-              {t("empty")}
-            </CardContent>
-          </Card>
-        ) : (
-          data?.items.map((request) => (
-            <Card key={request.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle>{request.name}</CardTitle>
-                    <CardDescription>{request.email}</CardDescription>
-                  </div>
-                  <Badge variant={getStatusBadgeVariant(request.status)}>
-                    {request.status}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">{t("fields.company")}:</span>{" "}
-                    {request.company}
-                  </div>
-                  <div>
-                    <span className="font-medium">{t("fields.position")}:</span>{" "}
-                    {request.position}
-                  </div>
-                  <div>
-                    <span className="font-medium">{t("fields.phone")}:</span>{" "}
-                    {request.phone}
-                  </div>
-                  <div>
-                    <span className="font-medium">
-                      {t("fields.createdAt")}:
-                    </span>{" "}
-                    {new Date(request.createdAt).toLocaleString()}
-                  </div>
-                </div>
-                <div>
-                  <span className="font-medium">{t("fields.message")}:</span>
-                  <p className="mt-1 text-muted-foreground text-sm">
-                    {request.message}
-                  </p>
-                </div>
-                {request.status === "PENDING" && (
-                  <div className="flex gap-2">
-                    <Button
-                      disabled={updateStatusMutation.isPending}
-                      onClick={() => handleStatusChange(request.id, "APPROVED")}
-                      size="sm"
-                    >
-                      {t("actions.approve")}
-                    </Button>
-                    <Button
-                      disabled={updateStatusMutation.isPending}
-                      onClick={() => handleStatusChange(request.id, "REJECTED")}
-                      size="sm"
-                      variant="outline"
-                    >
-                      {t("actions.reject")}
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))
+        {unreadCount > 0 && (
+          <Button
+            disabled={markAllAsReadMutation.isPending}
+            onClick={handleMarkAllAsRead}
+            size="sm"
+            variant="outline"
+          >
+            <CheckCheck className="mr-2 h-4 w-4" />
+            {t("markAllRead")}
+            <Badge className="ml-2" variant="default">
+              {unreadCount}
+            </Badge>
+          </Button>
         )}
       </div>
+
+      <Tabs
+        defaultValue="all"
+        onValueChange={(value) =>
+          setReadFilter(value as "all" | "unread" | "read")
+        }
+        value={readFilter}
+      >
+        <TabsList>
+          <TabsTrigger value="all">
+            {t("filter.all")}
+          </TabsTrigger>
+          <TabsTrigger value="unread">
+            <Bell className="mr-1.5 h-3.5 w-3.5" />
+            {t("filter.unread")}
+            {unreadCount > 0 && (
+              <Badge className="ml-1.5" variant="default">
+                {unreadCount}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="read">
+            <BellOff className="mr-1.5 h-3.5 w-3.5" />
+            {t("filter.read")}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value={readFilter}>
+          {isLoading ? (
+            <div className="grid gap-4">
+              <NotificationSkeleton />
+              <NotificationSkeleton />
+              <NotificationSkeleton />
+            </div>
+          ) : data?.items.length === 0 ? (
+            <Empty>
+              <EmptyTitle>
+                {readFilter === "unread"
+                  ? t("emptyUnread")
+                  : readFilter === "read"
+                    ? t("emptyRead")
+                    : t("empty")}
+              </EmptyTitle>
+              <EmptyDescription>
+                {readFilter === "unread"
+                  ? t("emptyUnreadDescription")
+                  : readFilter === "read"
+                    ? t("emptyReadDescription")
+                    : t("emptyDescription")}
+              </EmptyDescription>
+            </Empty>
+          ) : (
+            <div className="grid gap-3">
+              {data?.items.map((notification) => (
+                <Card
+                  className={cn(
+                    "transition-colors",
+                    !notification.read &&
+                      "border-primary/20 bg-primary/[0.02]"
+                  )}
+                  key={notification.id}
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={cn(
+                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
+                            !notification.read
+                              ? "bg-primary/10 text-primary"
+                              : "bg-muted text-muted-foreground"
+                          )}
+                        >
+                          {getNotificationIcon(
+                            notification.type as NotificationType
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <CardTitle className="text-sm leading-tight">
+                            {notification.title}
+                          </CardTitle>
+                          <CardDescription className="text-xs">
+                            {formatDate(notification.createdAt)}
+                          </CardDescription>
+                        </div>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <Badge
+                          variant={getNotificationBadgeVariant(
+                            notification.type as NotificationType
+                          )}
+                        >
+                          {getTypeLabel(
+                            notification.type as NotificationType
+                          )}
+                        </Badge>
+                        {!notification.read && (
+                          <div className="h-2 w-2 rounded-full bg-primary" />
+                        )}
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pb-3">
+                    <div className="flex items-end justify-between gap-4">
+                      <p className="text-muted-foreground text-sm">
+                        {notification.message}
+                      </p>
+                      {!notification.read && (
+                        <Button
+                          className="shrink-0"
+                          disabled={markAsReadMutation.isPending}
+                          onClick={() => handleMarkAsRead(notification.id)}
+                          size="sm"
+                          variant="ghost"
+                        >
+                          <CheckCheck className="mr-1.5 h-3.5 w-3.5" />
+                          {t("markRead")}
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

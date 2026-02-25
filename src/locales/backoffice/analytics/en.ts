@@ -10,7 +10,7 @@ export default {
     views: "Views",
   },
   clientInsights: {
-    tabTitle: "Client Insights",
+    tabTitle: "Advisor Performance",
     filters: {
       advisor: "Filter by Advisor",
       advisorPlaceholder: "All Advisors",
@@ -33,25 +33,29 @@ export default {
     charts: {
       geographicDistribution: {
         title: "Client Distribution by Region",
+        description: "Shows the number of clients grouped by their physical location.",
         clients: "Clients",
       },
       clientTypeDistribution: {
         title: "Client Distribution by Type",
+        description: "Breakdown of clients by investor category (Family Office, PE Fund, etc.).",
         clients: "Clients",
       },
       acquisitionTrend: {
         title: "Client Acquisition Trend (Last 12 Months)",
+        description: "Number of new clients added each month over the past year.",
         newClients: "New Clients",
       },
       advisorClientLoad: {
         title: "Clients per Advisor",
         clients: "Active Clients",
-        accountManager: "Account Manager",
-        clientAcquisitioner: "Client Acquisitioner",
+        accountManager: "Client Follow-up",
+        clientAcquisitioner: "Client Acquisition",
         dealClosure: "Deal Closure",
       },
       investmentRangeBreakdown: {
         title: "Clients by Investment Capacity",
+        description: "Client distribution based on their ticket size range (<€10M, €10M-€100M, >€100M).",
         count: "Clients",
       },
     },
@@ -70,14 +74,17 @@ export default {
     performanceSection: "3. Performance & Team Metrics",
     assetsTransacted: {
       title: "Assets Transacted Growth Over Time",
+      description: "Count of concluded deals by month, showing transaction velocity.",
       yLabel: "Total Assets Transacted",
     },
     aum: {
       title: "AUM Growth Over Time",
+      description: "Total value of assets under management tracked monthly.",
       yLabel: "Total AUM",
     },
     pipeline: {
       title: "Deal Pipeline Funnel",
+      description: "Active opportunities at each stage of the deal process.",
       stages: {
         leads: "Leads",
         dueDiligence: "Due Diligence",
@@ -87,24 +94,30 @@ export default {
     },
     segmentation: {
       title: "Client Segmentation",
+      description: "Clients grouped by investment capacity range.",
       valueLabel: "Clients",
     },
     sector: {
       title: "Revenue Breakdown by Sector",
+      description: "Number of opportunities by industry or asset type.",
       yLabel: "Count",
     },
     clientActivity: {
-      title: "Client Engagement",
-      noContact: "No Recent Contact",
-      recentContact: "Recent Contact",
+      title: "Client Follow-up Activity",
+      description: "Clients categorized by last follow-up date (30-day threshold).",
+      noContact: "No Recent Follow-up",
+      recentContact: "Recent Follow-up",
       percentage: "% of clients",
-      detailedList: "Clients with no contact (past 30+ days)",
-      lastContact: "Last Contact",
+      detailedList: "Clients with no follow-up (past 30+ days)",
+      recentContactList: "Clients contacted recently (past 30 days)",
+      lastContact: "Last Follow-up",
       daysAgo: "days ago",
-      empty: "No clients with no recent contact",
+      empty: "No clients with no recent follow-up",
+      leadResponsible: "Lead Responsible",
     },
     advisorPerformance: {
       title: "Advisor Performance",
+      description: "Deals closed and active opportunities managed by each team member.",
       dealsClosed: "Deals Closed",
       aumManaged: "AUM Managed",
       closureRate: "Closure Rate",
@@ -115,6 +128,12 @@ export default {
       aum: "AUM Managed",
       rate: "Closure Rate",
       empty: "No team data available",
+    },
+  },
+  performance: {
+    filters: {
+      leadResponsible: "Filter by Lead Responsible",
+      leadResponsiblePlaceholder: "All Lead Responsibles",
     },
   },
 };

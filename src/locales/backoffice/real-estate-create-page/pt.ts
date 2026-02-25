@@ -334,16 +334,16 @@ export default {
   teamAssignmentCard: {
     title: "Atribuição de Equipa",
     clientAcquisitioner: {
-      label: "Adquiridor de Cliente",
-      placeholder: "Selecione um adquiridor de cliente",
+      label: "Angariação do Investidor",
+      placeholder: "Selecione a angariação do investidor",
       description:
-        "Selecione o adquiridor de cliente para esta oportunidade (deve ser um utilizador Team ou Admin)",
+        "Selecione a pessoa responsável pela angariação do investidor para esta oportunidade (deve ser um utilizador Team ou Admin)",
     },
     accountManagers: {
-      label: "Gestores de Conta",
-      placeholder: "Selecione gestores de conta",
+      label: "Acompanhamento do Cliente",
+      placeholder: "Selecione o acompanhamento do cliente",
       description:
-        "Selecione 1 a 2 gestores de conta para esta oportunidade (devem ser utilizadores Team ou Admin)",
+        "Selecione 1 a 2 pessoas para acompanhamento do cliente para esta oportunidade (devem ser utilizadores Team ou Admin)",
     },
   },
 } as const;

@@ -589,6 +589,48 @@ const Page = ({ params }: PageProps) => {
           </CardContent>
         </Card>
 
+        {/* Last Follow-ups */}
+        {lead.lastFollowUps && lead.lastFollowUps.length > 0 && (
+          <Card className="md:col-span-2">
+            <CardHeader>
+              <CardTitle>{t("sections.followUps.title")}</CardTitle>
+              <CardDescription>
+                {lead.lastFollowUps.length}{" "}
+                {lead.lastFollowUps.length === 1 ? "follow-up" : "follow-ups"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {lead.lastFollowUps.map((followUp) => (
+                  <div
+                    key={followUp.id}
+                    className="rounded-lg border bg-muted/50 p-4"
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <Badge variant="outline">
+                        {formatDateShort(followUp.followUpDate)}
+                      </Badge>
+                      <p className="text-sm text-muted-foreground">
+                        {formatDate(followUp.createdAt)}
+                      </p>
+                    </div>
+                    <p className="whitespace-pre-wrap mb-2">{followUp.description}</p>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      <span>
+                        {t("sections.followUps.contactedBy")}: {followUp.contactedBy.name}
+                      </span>
+                      <span>•</span>
+                      <span>
+                        {t("sections.followUps.personContacted")}: {followUp.personContacted.name}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Activities */}
         <Card className="md:col-span-2">
           <CardHeader>

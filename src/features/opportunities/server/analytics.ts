@@ -386,11 +386,10 @@ export const analyticsRouter = createTRPCRouter({
       const { year, period, opportunityType } = input;
       const dateRange = getDateRange(year, period);
       
-      const now = new Date();
-      const twelveMonthsAgo = subMonths(now, MONTHS_BACK_FOR_ANALYTICS);
+      // Generate months only within the selected date range
       const months = eachMonthOfInterval({
-        start: startOfMonth(twelveMonthsAgo),
-        end: endOfMonth(now),
+        start: startOfMonth(dateRange.start),
+        end: endOfMonth(dateRange.end),
       });
 
       const data = await Promise.all(
@@ -398,19 +397,13 @@ export const analyticsRouter = createTRPCRouter({
           const monthStart = startOfMonth(month);
           const monthEnd = endOfMonth(month);
 
-          // Only count if month is within the selected date range
-          if (monthEnd < dateRange.start || monthStart > dateRange.end) {
-            return {
-              month: format(month, "yyyy-MM"),
-              count: 0,
-            };
-          }
-
           const whereClause = {
             status: "CONCLUDED" as const,
-            createdAt: {
-              gte: monthStart,
-              lte: monthEnd,
+            analytics: {
+              closed_at: {
+                gte: monthStart,
+                lte: monthEnd,
+              },
             },
           };
 
@@ -429,12 +422,13 @@ export const analyticsRouter = createTRPCRouter({
         })
       );
 
-      return data;
+      // Filter out months with zero count
+      return data.filter(item => item.count > 0);
     }),
 
   /**
-   * Get AUM growth over time (last 12 months)
-   * Shows monthly snapshot of active opportunities
+   * Get AUM growth over time
+   * Shows monthly snapshot of active opportunities (deals that were active during that month)
    */
   getAumByMonth: protectedProcedure
     .input(analyticsFiltersSchema)
@@ -442,40 +436,44 @@ export const analyticsRouter = createTRPCRouter({
       const { year, period, opportunityType } = input;
       const dateRange = getDateRange(year, period);
       
-      const now = new Date();
-      const twelveMonthsAgo = subMonths(now, MONTHS_BACK_FOR_ANALYTICS);
+      // Generate months only within the selected date range
       const months = eachMonthOfInterval({
-        start: startOfMonth(twelveMonthsAgo),
-        end: endOfMonth(now),
+        start: startOfMonth(dateRange.start),
+        end: endOfMonth(dateRange.end),
       });
 
       const data = await Promise.all(
         months.map(async (month) => {
-          const monthEndDate = endOfMonth(month);
+          const monthStart = startOfMonth(month);
+          const monthEnd = endOfMonth(month);
 
-          // Only count if month is within the selected date range
-          if (monthEndDate < dateRange.start || startOfMonth(month) > dateRange.end) {
-            return {
-              month: format(month, "yyyy-MM"),
-              count: 0,
-            };
-          }
-
-          // Count opportunities that were active at the end of this month
-          const whereClause = {
-            status: "ACTIVE" as const,
+          // Count opportunities that were active during this month:
+          // - Created on or before month end
+          // - AND either still ACTIVE, or was CONCLUDED after the month started
+          const activeWhereClause = {
             createdAt: {
-              lte: monthEndDate,
+              lte: monthEnd,
             },
+            OR: [
+              { status: "ACTIVE" as const },
+              {
+                status: "CONCLUDED" as const,
+                analytics: {
+                  closed_at: {
+                    gte: monthStart,
+                  },
+                },
+              },
+            ],
           };
 
           const activeMna = opportunityType === "realEstate" 
             ? 0 
-            : await prisma.mergerAndAcquisition.count({ where: whereClause });
+            : await prisma.mergerAndAcquisition.count({ where: activeWhereClause });
 
           const activeRealEstate = opportunityType === "mna" 
             ? 0 
-            : await prisma.realEstate.count({ where: whereClause });
+            : await prisma.realEstate.count({ where: activeWhereClause });
 
           return {
             month: format(month, "yyyy-MM"),
@@ -484,7 +482,8 @@ export const analyticsRouter = createTRPCRouter({
         })
       );
 
-      return data;
+      // Filter out months with zero count
+      return data.filter(item => item.count > 0);
     }),
 
   /**
@@ -957,39 +956,137 @@ export const analyticsRouter = createTRPCRouter({
   /**
    * Get client activity (no contact for >30 days)
    */
-  getClientActivity: protectedProcedure.query(async () => {
-    const thirtyDaysAgo = subDays(new Date(), 30);
+  getClientActivity: protectedProcedure
+    .input(
+      z.object({
+        leadResponsibleId: z.string().nullable().optional(),
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      const thirtyDaysAgo = subDays(new Date(), 30);
+      const leadResponsibleId = input?.leadResponsibleId;
 
-    const noRecentContact = await prisma.user.findMany({
+      // Build where clause for users
+      const userWhereClause: any = {
+        type: {
+          not: "TEAM_MEMBER",
+        },
+      };
+
+      // Add lead responsible filter if provided
+      if (leadResponsibleId) {
+        userWhereClause.leadResponsibleId = leadResponsibleId;
+      }
+
+      // Get all users who could be clients (excluding TEAM_MEMBER types)
+      // Include their lead responsible information
+      const allUsers = await prisma.user.findMany({
+        where: userWhereClause,
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          type: true,
+          leadResponsibleId: true,
+          leadResponsible: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      // Get all recent follow-ups for these users
+      const recentFollowUps = await prisma.lastFollowUp.findMany({
+        where: {
+          personContactedId: {
+            in: allUsers.map(u => u.id),
+          },
+        },
+        select: {
+          personContactedId: true,
+          followUpDate: true,
+        },
+        orderBy: {
+          followUpDate: "desc",
+        },
+      });
+
+      // Create a map of user ID to their most recent follow-up date
+      const followUpMap = new Map<string, Date>();
+      for (const followUp of recentFollowUps) {
+        if (!followUpMap.has(followUp.personContactedId)) {
+          followUpMap.set(followUp.personContactedId, followUp.followUpDate);
+        }
+      }
+
+      // Categorize users based on their last follow-up
+      const usersWithLastFollowUp = allUsers.map(user => ({
+        ...user,
+        lastFollowUpDate: followUpMap.get(user.id),
+      }));
+
+      const noRecentContact = usersWithLastFollowUp.filter((user) => {
+        if (!user.lastFollowUpDate) return true;
+        return user.lastFollowUpDate < thirtyDaysAgo;
+      });
+
+      const recentContact = usersWithLastFollowUp.filter((user) => {
+        if (!user.lastFollowUpDate) return false;
+        return user.lastFollowUpDate >= thirtyDaysAgo;
+      });
+
+      return {
+        noRecentContact: noRecentContact.length,
+        recentContact: recentContact.length,
+        detailedList: noRecentContact.map((user) => ({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          lastContactDate: user.lastFollowUpDate,
+          leadResponsible: user.leadResponsible?.name ?? null,
+          leadResponsibleId: user.leadResponsible?.id ?? null,
+        })),
+        recentContactList: recentContact
+          .map((user) => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            lastContactDate: user.lastFollowUpDate,
+            leadResponsible: user.leadResponsible?.name ?? null,
+            leadResponsibleId: user.leadResponsible?.id ?? null,
+          }))
+          .sort((a, b) => {
+            if (!a.lastContactDate) return 1;
+            if (!b.lastContactDate) return -1;
+            return b.lastContactDate.getTime() - a.lastContactDate.getTime();
+          }),
+      };
+    }),
+
+  /**
+   * Get list of lead responsibles (team members assigned as responsible for leads)
+   */
+  getLeadResponsibles: protectedProcedure.query(async () => {
+    // Get unique users who are assigned as lead responsibles
+    const leadResponsibles = await prisma.user.findMany({
       where: {
-        OR: [
-          { lastContactDate: { lt: thirtyDaysAgo } },
-          { lastContactDate: null },
-        ],
+        leadResponsibleFor: {
+          some: {},
+        },
       },
       select: {
         id: true,
         name: true,
         email: true,
-        lastContactDate: true,
-        type: true,
       },
       orderBy: {
-        lastContactDate: "asc",
+        name: "asc",
       },
     });
 
-    const recentContact = await prisma.user.count({
-      where: {
-        lastContactDate: { gte: thirtyDaysAgo },
-      },
-    });
-
-    return {
-      noRecentContact: noRecentContact.length,
-      recentContact,
-      detailedList: noRecentContact,
-    };
+    return leadResponsibles;
   }),
 
   /**
@@ -1099,6 +1196,7 @@ export const analyticsRouter = createTRPCRouter({
     const advisors = await prisma.user.findMany({
       where: {
         OR: [
+          { type: "TEAM_MEMBER" },
           { accountManagerAssignments: { some: {} } },
           { leadResponsibleFor: { some: {} } },
           { leadMainContactFor: { some: {} } },
@@ -1109,7 +1207,9 @@ export const analyticsRouter = createTRPCRouter({
         name: true,
         email: true,
       },
-      distinct: ["id"],
+      orderBy: {
+        name: "asc",
+      },
     });
 
     return advisors.map((advisor) => ({

@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { ActivityType, LeadStatus, Role } from "@/generated/prisma";
+import { ActivityType, LeadStatus, NotificationType, Role } from "@/generated/prisma";
+import { createNotification, notifyTeamAndAdmins } from "@/features/notifications/server/notifications";
 import prisma from "@/lib/db";
 import { adminProcedure, createTRPCRouter } from "@/trpc/init";
 import {
@@ -206,6 +207,27 @@ export const leadsRouter = createTRPCRouter({
             },
             orderBy: {
               createdAt: "desc",
+            },
+          },
+          lastFollowUps: {
+            include: {
+              contactedBy: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+              personContacted: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                },
+              },
+            },
+            orderBy: {
+              followUpDate: "desc",
             },
           },
           activities: {
@@ -418,6 +440,17 @@ export const leadsRouter = createTRPCRouter({
         },
       });
 
+      // Notify team about lead status change
+      if (updatedLead.leadResponsibleId) {
+        await createNotification({
+          userId: updatedLead.leadResponsibleId,
+          type: NotificationType.LEAD_STATUS_CHANGE,
+          title: "Lead status updated",
+          message: `Lead "${updatedLead.name}" status changed to ${status}`,
+          relatedUserId: leadId,
+        });
+      }
+
       return updatedLead;
     }),
 
@@ -440,6 +473,159 @@ export const leadsRouter = createTRPCRouter({
 
     return teamMembers;
   }),
+
+  // Last Follow-up endpoints for CRM
+  getFollowUps: adminProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ input }) => {
+      return prisma.lastFollowUp.findMany({
+        where: { userId: input.userId },
+        include: {
+          contactedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          personContacted: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: { followUpDate: "desc" },
+      });
+    }),
+
+  addFollowUp: adminProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        followUpDate: z.date(),
+        description: z.string().min(1),
+        contactedById: z.string(),
+        personContactedId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { userId, followUpDate, description, contactedById, personContactedId } = input;
+
+      const newFollowUp = await prisma.lastFollowUp.create({
+        data: {
+          userId,
+          followUpDate,
+          description,
+          contactedById,
+          personContactedId,
+        },
+        include: {
+          contactedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          personContacted: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      // Update lastContactDate on user
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          lastContactDate: followUpDate,
+        },
+      });
+
+      // Create activity log
+      await prisma.leadActivity.create({
+        data: {
+          userId,
+          activityType: ActivityType.OTHER,
+          title: "Follow-up recorded",
+          description: `Follow-up on ${followUpDate.toLocaleDateString()}`,
+        },
+      });
+
+      // Notify the contacted person's lead responsible about the follow-up
+      const lead = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { name: true, leadResponsibleId: true },
+      });
+      if (lead?.leadResponsibleId && lead.leadResponsibleId !== contactedById) {
+        await createNotification({
+          userId: lead.leadResponsibleId,
+          type: NotificationType.LEAD_FOLLOW_UP,
+          title: "New follow-up recorded",
+          message: `A follow-up was recorded for lead "${lead.name}"`,
+          relatedUserId: userId,
+        });
+      }
+
+      return newFollowUp;
+    }),
+
+  updateFollowUp: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        followUpDate: z.date(),
+        description: z.string().min(1),
+        contactedById: z.string(),
+        personContactedId: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { id, followUpDate, description, contactedById, personContactedId } = input;
+
+      const updatedFollowUp = await prisma.lastFollowUp.update({
+        where: { id },
+        data: {
+          followUpDate,
+          description,
+          contactedById,
+          personContactedId,
+        },
+        include: {
+          contactedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          personContacted: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return updatedFollowUp;
+    }),
+
+  deleteFollowUp: adminProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      await prisma.lastFollowUp.delete({
+        where: { id: input.id },
+      });
+
+      return { success: true };
+    }),
 });
 
 export const crmRouter = createTRPCRouter({

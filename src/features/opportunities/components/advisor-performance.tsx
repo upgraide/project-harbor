@@ -58,11 +58,11 @@ export const AdvisorPerformanceChart = () => {
   const chartConfig = {
     dealsClosed: {
       label: t("graphs.advisorPerformance.dealsClosed"),
-      color: "#3b82f6", // blue
+      color: "#1D5C9B", // blue from schema
     },
     aumManaged: {
       label: t("graphs.advisorPerformance.aumManaged"),
-      color: "#10b981", // green
+      color: "#679A85", // teal from schema
     },
   } as const;
 
@@ -144,13 +144,13 @@ export const AdvisorPerformanceChart = () => {
                       </td>
                       <td className="text-center py-2 px-2 font-mono">
                         <span
-                          className={
-                            advisor.closureRate > 50
-                              ? "text-green-600"
+                          style={{
+                            color: advisor.closureRate > 50
+                              ? "#679A85"
                               : advisor.closureRate > 25
-                                ? "text-yellow-600"
-                                : "text-red-600"
-                          }
+                                ? "#9C3E11"
+                                : "#404040"
+                          }}
                         >
                           {advisor.closureRate.toFixed(1)}%
                         </span>

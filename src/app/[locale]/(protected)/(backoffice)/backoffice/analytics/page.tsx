@@ -16,6 +16,7 @@ import {
   AnalyticsFilters,
   ClientInsightsFilters,
   ClientInsights,
+  PerformanceFilters,
 } from "@/features/opportunities/components/analytics";
 import {
   AnalyticsFiltersProvider,
@@ -23,6 +24,9 @@ import {
 import {
   ClientInsightsFiltersProvider,
 } from "@/features/opportunities/context/client-insights-filters";
+import {
+  PerformanceFiltersProvider,
+} from "@/features/opportunities/context/performance-filters";
 import { requireTeam } from "@/lib/auth-utils";
 import { getScopedI18n } from "@/locales/server";
 import { HydrateClient } from "@/trpc/server";
@@ -38,96 +42,82 @@ const Page = async () => {
       <HydrateClient>
         <div className="space-y-6">
           {/* Tabs Navigation */}
-          <Tabs defaultValue="overview" className="space-y-6">
-            <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="charts">Charts & Metrics</TabsTrigger>
-              <TabsTrigger value="performance">Performance</TabsTrigger>
-              <TabsTrigger value="client-insights">{tInsights("tabTitle")}</TabsTrigger>
-              <TabsTrigger value="top-viewed">Top Viewed</TabsTrigger>
-            </TabsList>
-
-            {/* Overview Tab - KPIs */}
-            <TabsContent value="overview" className="space-y-6">
-              <AnalyticsFiltersProvider>
-                <AnalyticsFilters />
-                <ErrorBoundary fallback={<AnalyticsError />}>
-                  <Suspense fallback={<AnalyticsLoading />}>
-                    <AnalyticsOverview />
-                  </Suspense>
-                </ErrorBoundary>
-              </AnalyticsFiltersProvider>
-            </TabsContent>
-
-            {/* Charts Tab */}
-            <TabsContent value="charts" className="space-y-6">
-              <AnalyticsFiltersProvider>
-                <AnalyticsFilters />
-                <div className="grid gap-6 md:grid-cols-2">
-                  <ErrorBoundary fallback={<AnalyticsError />}>
-                    <Suspense fallback={<AnalyticsLoading />}>
-                      <AssetsTransactedLineChart />
-                    </Suspense>
-                  </ErrorBoundary>
-                  <ErrorBoundary fallback={<AnalyticsError />}>
-                    <Suspense fallback={<AnalyticsLoading />}>
-                      <AumLineChart />
-                    </Suspense>
-                  </ErrorBoundary>
-                  <ErrorBoundary fallback={<AnalyticsError />}>
-                    <Suspense fallback={<AnalyticsLoading />}>
-                      <PipelineFunnelChart />
-                    </Suspense>
-                  </ErrorBoundary>
-                  <ErrorBoundary fallback={<AnalyticsError />}>
-                    <Suspense fallback={<AnalyticsLoading />}>
-                      <ClientSegmentationDonutChart />
-                    </Suspense>
-                  </ErrorBoundary>
-                </div>
-                <ErrorBoundary fallback={<AnalyticsError />}>
-                  <Suspense fallback={<AnalyticsLoading />}>
-                    <SectorBreakdownBarChart />
-                  </Suspense>
-                </ErrorBoundary>
-              </AnalyticsFiltersProvider>
-            </TabsContent>
-
-            {/* Performance Tab */}
-            <TabsContent value="performance" className="space-y-6">
-              <ErrorBoundary fallback={<AnalyticsError />}>
-                <Suspense fallback={<AnalyticsLoading />}>
-                  <ClientActivityCard />
-                </Suspense>
-              </ErrorBoundary>
-              <ErrorBoundary fallback={<AnalyticsError />}>
-                <Suspense fallback={<AnalyticsLoading />}>
-                  <AdvisorPerformanceChart />
-                </Suspense>
-              </ErrorBoundary>
-            </TabsContent>
-
-            {/* Client Insights Tab */}
-            <TabsContent value="client-insights" className="space-y-6">
+          <AnalyticsFiltersProvider>
+            <PerformanceFiltersProvider>
               <ClientInsightsFiltersProvider>
-                <ClientInsightsFilters />
-                <ErrorBoundary fallback={<AnalyticsError />}>
-                  <Suspense fallback={<AnalyticsLoading />}>
-                    <ClientInsights />
-                  </Suspense>
-                </ErrorBoundary>
-              </ClientInsightsFiltersProvider>
-            </TabsContent>
+                <Tabs defaultValue="overview" className="space-y-6">
+                  <TabsList>
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    <TabsTrigger value="charts">Charts & Metrics</TabsTrigger>
+                    <TabsTrigger value="performance">Performance</TabsTrigger>
+                    <TabsTrigger value="advisor-performance">Advisor Performance</TabsTrigger>
+                  </TabsList>
 
-            {/* Top Viewed Tab */}
-            <TabsContent value="top-viewed" className="space-y-6">
-              <ErrorBoundary fallback={<AnalyticsError />}>
-                <Suspense fallback={<AnalyticsLoading />}>
-                  <AnalyticsList />
-                </Suspense>
-              </ErrorBoundary>
-            </TabsContent>
-          </Tabs>
+                  {/* Overview Tab - KPIs */}
+                  <TabsContent value="overview" className="space-y-6">
+                    <AnalyticsFilters />
+                    <ErrorBoundary fallback={<AnalyticsError />}>
+                      <Suspense fallback={<AnalyticsLoading />}>
+                        <AnalyticsOverview />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </TabsContent>
+
+                  {/* Charts Tab */}
+                  <TabsContent value="charts" className="space-y-6">
+                    <AnalyticsFilters />
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <ErrorBoundary fallback={<AnalyticsError />}>
+                        <Suspense fallback={<AnalyticsLoading />}>
+                          <AssetsTransactedLineChart />
+                        </Suspense>
+                      </ErrorBoundary>
+                      <ErrorBoundary fallback={<AnalyticsError />}>
+                        <Suspense fallback={<AnalyticsLoading />}>
+                          <AumLineChart />
+                        </Suspense>
+                      </ErrorBoundary>
+                      <ErrorBoundary fallback={<AnalyticsError />}>
+                        <Suspense fallback={<AnalyticsLoading />}>
+                          <PipelineFunnelChart />
+                        </Suspense>
+                      </ErrorBoundary>
+                      <ErrorBoundary fallback={<AnalyticsError />}>
+                        <Suspense fallback={<AnalyticsLoading />}>
+                          <ClientSegmentationDonutChart />
+                        </Suspense>
+                      </ErrorBoundary>
+                    </div>
+                    <ErrorBoundary fallback={<AnalyticsError />}>
+                      <Suspense fallback={<AnalyticsLoading />}>
+                        <SectorBreakdownBarChart />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </TabsContent>
+
+                  {/* Performance Tab */}
+                  <TabsContent value="performance" className="space-y-6">
+                    <PerformanceFilters />
+                    <ErrorBoundary fallback={<AnalyticsError />}>
+                      <Suspense fallback={<AnalyticsLoading />}>
+                        <ClientActivityCard />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </TabsContent>
+
+                  {/* Advisor Performance Tab (formerly Client Insights) */}
+                  <TabsContent value="advisor-performance" className="space-y-6">
+                    <ClientInsightsFilters />
+                    <ErrorBoundary fallback={<AnalyticsError />}>
+                      <Suspense fallback={<AnalyticsLoading />}>
+                        <ClientInsights />
+                      </Suspense>
+                    </ErrorBoundary>
+                  </TabsContent>
+                </Tabs>
+              </ClientInsightsFiltersProvider>
+            </PerformanceFiltersProvider>
+          </AnalyticsFiltersProvider>
         </div>
       </HydrateClient>
     </AnalyticsContainer>

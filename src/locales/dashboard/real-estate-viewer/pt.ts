@@ -402,10 +402,10 @@ export default {
   teamAssignmentCard: {
     title: "Atribuição de Equipa",
     clientAcquisitioner: {
-      label: "Adquiridor de Cliente",
+      label: "Angariação do Investidor",
     },
     accountManagers: {
-      label: "Gestores de Conta",
+      label: "Acompanhamento do Cliente",
     },
   },
   buttons: {
@@ -423,5 +423,7 @@ export default {
     description:
       "Por favor, diga-nos por que não está interessado nesta oportunidade. Isso ajuda-nos a melhorar as nossas ofertas.",
     placeholder: "Insira o seu motivo...",
+    cancel: "Cancelar",
+    confirm: "Confirmar",
   },
 } as const;

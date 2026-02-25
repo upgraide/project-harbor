@@ -28,26 +28,33 @@ export default {
     description: "Alterar o estado e atualizar valores finais desta oportunidade",
     labels: {
       status: "Novo Estado",
-      finalAmount: "Valor Final",
+      finalAmount: "Valor Final da Transação",
       closingDate: "Data de Fecho",
+      // Commission role: Angariação do Investidor (CLIENT_ORIGINATOR)
+      clientOriginator: "Angariação do Investidor",
+      // NOT a commission role - just the user/client who invested
       investedPerson: "Pessoa Investidora",
-      followupPerson: "Pessoa de Acompanhamento",
-      profitAmount: "Lucro",
+      // Commission role: Acompanhamento do Investidor (DEAL_SUPPORT)
+      followupPerson: "Acompanhamento do Investidor",
       commissionableAmount: "Valor Comissionável",
     },
     placeholders: {
       selectStatus: "Selecione o novo estado",
-      finalAmount: "Insira o valor final",
-      investedPerson: "Selecione a pessoa que investiu/comprou",
-      followupPerson: "Selecione a pessoa para acompanhamento",
-      profitAmount: "Insira o valor do lucro",
+      finalAmount: "Insira o valor final da transação",
+      clientOriginator: "Selecione o responsável pela angariação do investidor",
+      investedPerson: "Selecione o cliente/investidor que comprou",
+      followupPerson: "Selecione o responsável pelo acompanhamento do investidor",
       commissionableAmount: "Insira o valor comissionável",
     },
     helper: {
-      values: "Atualize o valor final ao fechar a oportunidade",
+      values: "Atualize o valor final da transação ao fechar a oportunidade",
       concluded: "Marcar como concluído quando o negócio for finalizado",
-      investedPerson: "Opcional: Pessoa que investiu ou comprou",
-      followupPerson: "Opcional: Pessoa responsável pelo acompanhamento",
+      // Commission role explanation
+      clientOriginator: "Função de comissão: pessoa responsável por trazer o investidor",
+      // NOT a commission role - clarify this
+      investedPerson: "Apenas registo: o cliente/investidor que investiu (sem comissão)",
+      // Commission role explanation
+      followupPerson: "Função de comissão: pessoa responsável pelo acompanhamento do investidor",
     },
     update: "Atualizar Estado",
     updating: "Atualizando...",

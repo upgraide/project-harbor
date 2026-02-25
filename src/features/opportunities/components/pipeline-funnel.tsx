@@ -47,33 +47,33 @@ export const PipelineFunnelChart = () => {
       key: "leads",
       label: t("graphs.pipeline.stages.leads"),
       value: data.leads,
-      fill: "#5468FF",
+      fill: "#1D5C9B",
     },
     {
       key: "dueDiligence",
       label: t("graphs.pipeline.stages.dueDiligence"),
       value: data.dueDiligence,
-      fill: "#8B5CF6",
+      fill: "#679A85",
     },
     {
       key: "negotiation",
       label: t("graphs.pipeline.stages.negotiation"),
       value: data.negotiation,
-      fill: "#EC4899",
+      fill: "#9C3E11",
     },
     {
       key: "closed",
       label: t("graphs.pipeline.stages.closed"),
       value: data.closed,
-      fill: "#F59E0B",
+      fill: "#113152",
     },
   ];
 
   const chartConfig = {
-    leads: { color: "#F59E0B" },
-    dueDiligence: { color: "#8B5CF6" },
-    negotiation: { color: "#EC4899" },
-    closed: { color: "#F59E0B" },
+    leads: { color: "#1D5C9B" },
+    dueDiligence: { color: "#679A85" },
+    negotiation: { color: "#9C3E11" },
+    closed: { color: "#113152" },
   } as const;
 
   return (
@@ -82,6 +82,9 @@ export const PipelineFunnelChart = () => {
         <CardTitle className="text-base">
           {t("graphs.pipeline.title")}
         </CardTitle>
+        <p className="text-xs text-muted-foreground mt-1">
+          {t("graphs.pipeline.description")}
+        </p>
       </CardHeader>
       <CardContent>
         <ChartContainer className="h-[320px] w-full" config={chartConfig}>

@@ -163,6 +163,8 @@ export default {
     ebitdaMargin: "EBITDA Margin (%)",
     actions: "Actions",
     deleteButtonText: "Delete",
+    yearSuffixFuture: "F",
+    yearSuffixHistorical: "H",
   },
   imagesCard: {
     title: "Images",
@@ -344,10 +346,10 @@ export default {
   teamAssignmentCard: {
     title: "Team Assignment",
     clientAcquisitioner: {
-      label: "Client Acquisitioner",
+      label: "Investor Acquisition",
     },
     accountManagers: {
-      label: "Account Managers",
+      label: "Client Follow-up",
     },
   },
 } as const;

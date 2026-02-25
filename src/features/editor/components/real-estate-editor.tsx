@@ -383,7 +383,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             </div>
             {opportunity.analytics.invested_person && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Invested Person</p>
+                {/* Pessoa investidora: NOT a commission role - just the investor record */}
+                <p className="text-sm font-medium text-muted-foreground">Investor (Client)</p>
                 <p className="text-base">
                   {opportunity.analytics.invested_person.name} ({opportunity.analytics.invested_person.email})
                 </p>
@@ -391,7 +392,8 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             )}
             {opportunity.analytics.followup_person && (
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Follow-up Person</p>
+                {/* Commission role: Acompanhamento do Investidor (DEAL_SUPPORT) */}
+                <p className="text-sm font-medium text-muted-foreground">Investor Follow-up</p>
                 <p className="text-base">
                   {opportunity.analytics.followup_person.name} ({opportunity.analytics.followup_person.email})
                 </p>

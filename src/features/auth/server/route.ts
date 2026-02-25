@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { NotificationType } from "@/generated/prisma";
+import { notifyAdmins } from "@/features/notifications/server/notifications";
 import prisma from "@/lib/db";
 import { sendAccessRequestNotification } from "@/lib/pusher";
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
@@ -46,6 +48,13 @@ export const accessRequestRouter = createTRPCRouter({
         name: accessRequest.name,
         email: accessRequest.email,
         company: accessRequest.company,
+      });
+
+      // Create persistent DB notifications for admins
+      await notifyAdmins({
+        type: NotificationType.ACCESS_REQUEST,
+        title: `New access request`,
+        message: `${accessRequest.name} from ${accessRequest.company} (${accessRequest.email}) requested access`,
       });
 
       return {

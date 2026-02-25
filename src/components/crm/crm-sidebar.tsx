@@ -1,6 +1,6 @@
 "use client";
 
-import { BookUserIcon, LayoutPanelLeft, LogOutIcon } from "lucide-react";
+import { BookUserIcon, LayoutPanelLeft, LogOutIcon, DollarSignIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { DynamicImage } from "@/components/dynamic-image";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { useScopedI18n } from "@/locales/client";
-import { backofficePath, crmPath, crmLeadsPath, indexPath } from "@/paths";
+import { backofficePath, crmPath, crmLeadsPath, crmCommissionsPath, indexPath } from "@/paths";
 
 const LOGO_EXPANDED_SIZE = 175;
 const LOGO_COLLAPSED_SIZE = 64;
@@ -37,6 +37,11 @@ const createMenuItems = (t: (key: string) => string) => [
         title: t("items.leads.title"),
         icon: BookUserIcon,
         url: crmLeadsPath(),
+      },
+      {
+        title: t("items.commissions.title"),
+        icon: DollarSignIcon,
+        url: crmCommissionsPath(),
       },
     ],
   },

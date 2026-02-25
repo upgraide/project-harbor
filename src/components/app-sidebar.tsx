@@ -1,5 +1,6 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import {
   BellIcon,
   BookUserIcon,
@@ -29,6 +30,7 @@ import {
   dashboardPath,
   indexPath,
 } from "@/paths";
+import { useTRPC } from "@/trpc/client";
 import { DynamicImage } from "./dynamic-image";
 import {
   Sidebar,
@@ -38,6 +40,7 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
@@ -101,6 +104,11 @@ export const AppSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { state } = useSidebar();
+  const trpc = useTRPC();
+  const { data: unreadData } = useQuery(
+    trpc.notifications.getUnreadCount.queryOptions()
+  );
+  const unreadCount = unreadData?.count ?? 0;
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -172,6 +180,12 @@ export const AppSidebar = () => {
                         <span>{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
+                    {item.url === backofficeNotificationsPath() &&
+                      unreadCount > 0 && (
+                        <SidebarMenuBadge className="bg-primary text-primary-foreground">
+                          {unreadCount}
+                        </SidebarMenuBadge>
+                      )}
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>

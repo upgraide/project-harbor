@@ -9,5 +9,9 @@ export default {
       title: "Gestão de Leads",
       description: "Gerir e acompanhar todos os potenciais investidores e clientes",
     },
+    commissions: {
+      title: "Comissões",
+      description: "Acompanhar e gerir comissões e ganhos dos membros da equipa",
+    },
   },
 };
