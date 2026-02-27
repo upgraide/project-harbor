@@ -1,7 +1,7 @@
 pre-commit:
   jobs:
-    - run: npx biome format --write {staged_files}
-      glob:
+    - run: bun x ultracite fix
+      glob: 
         - "*.js"
         - "*.jsx"
         - "*.ts"
