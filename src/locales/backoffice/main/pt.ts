@@ -32,4 +32,8 @@ export default {
     title: "Notificações",
     description: "Ver e gerir pedidos de acesso",
   },
+  accessRequests: {
+    title: "Pedidos de Acesso",
+    description: "Rever e aprovar pedidos de acesso pendentes",
+  },
 };

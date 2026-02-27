@@ -10,6 +10,7 @@ import {
   HomeIcon,
   LayoutPanelLeft,
   LogOutIcon,
+  UserPlusIcon,
   UsersIcon,
   WalletIcon,
 } from "lucide-react";
@@ -18,6 +19,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { useScopedI18n } from "@/locales/client";
 import {
+  backofficeAccessRequestsPath,
   backofficeAnalyticsPath,
   backofficeInvestmentInterestsPath,
   backofficeInvestorsPath,
@@ -93,6 +95,11 @@ const createMenuItems = (t: (key: string) => string) => [
         title: t("items.notifications.title"),
         icon: BellIcon,
         url: backofficeNotificationsPath(),
+      },
+      {
+        title: t("items.access-requests.title"),
+        icon: UserPlusIcon,
+        url: backofficeAccessRequestsPath(),
       },
     ],
   },

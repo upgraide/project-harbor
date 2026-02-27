@@ -32,4 +32,8 @@ export default {
     title: "Notifications",
     description: "View and manage access requests",
   },
+  accessRequests: {
+    title: "Access Requests",
+    description: "Review and approve pending access requests",
+  },
 };

@@ -28,10 +28,10 @@
 ### Invite to Platform
 *Triggered after an Admin approves an `AccessRequest`.*
 
-- [ ] Merge the "Approve" and "Invite" actions into a single atomic flow: approving an access request immediately creates the user and sends the invitation email
-- [ ] Auto-populate the new `User` record from the `AccessRequest` fields: `name`, `email`, `company` → `companyName`, `phone` → `phoneNumber`, `position`
-- [ ] The "Reject" action remains separate
-- [ ] All new UI text must be available in both Portuguese and English
+- [x] Merge the "Approve" and "Invite" actions into a single atomic flow: approving an access request immediately creates the user and sends the invitation email
+- [x] Auto-populate the new `User` record from the `AccessRequest` fields: `name`, `email`, `company` → `companyName`, `phone` → `phoneNumber`, `position`
+- [x] The "Reject" action remains separate
+- [x] All new UI text must be available in both Portuguese and English
 - [x] *(Already done)* Invite email template exists (`src/lib/emails/invite-email.tsx`) — bilingual, shows credentials + login link
 - [x] *(Already done)* `investorsRouter.invite` creates user via Better Auth, generates temp password, sends email via Resend
 

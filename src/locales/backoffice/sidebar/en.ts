@@ -25,6 +25,9 @@ export default {
     notifications: {
       title: "Notifications",
     },
+    "access-requests": {
+      title: "Access Requests",
+    },
     logout: {
       title: "Logout",
     },

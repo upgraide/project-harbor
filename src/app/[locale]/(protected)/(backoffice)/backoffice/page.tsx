@@ -5,6 +5,7 @@ import {
   ClipboardCheckIcon,
   HeartIcon,
   HomeIcon,
+  UserPlusIcon,
   UsersIcon,
   WalletIcon,
 } from "lucide-react";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { getScopedI18n } from "@/locales/server";
 import {
+  backofficeAccessRequestsPath,
   backofficeAnalyticsPath,
   backofficeCloseOpportunitiesPath,
   backofficeInvestmentInterestsPath,
@@ -171,6 +173,24 @@ const Page = async () => {
           </CardHeader>
           <CardContent className="mt-auto">
             <Link href={backofficeNotificationsPath()}>
+              <Button className="w-full">{t("accessButton")}</Button>
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Access Requests */}
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <UserPlusIcon className="size-5" />
+              {t("accessRequests.title")}
+            </CardTitle>
+            <CardDescription>
+              {t("accessRequests.description")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="mt-auto">
+            <Link href={backofficeAccessRequestsPath()}>
               <Button className="w-full">{t("accessButton")}</Button>
             </Link>
           </CardContent>

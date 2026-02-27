@@ -1,9 +1,17 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { NotificationType } from "@/generated/prisma";
 import { notifyAdmins } from "@/features/notifications/server/notifications";
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
+import { sendInviteEmail } from "@/lib/emails/send-invite";
+import { generatePassword } from "@/lib/generate-password";
 import { sendAccessRequestNotification } from "@/lib/pusher";
-import { baseProcedure, createTRPCRouter } from "@/trpc/init";
+import {
+  baseProcedure,
+  createTRPCRouter,
+  teamOrAdminProcedure,
+} from "@/trpc/init";
 
 const MIN_NAME_LENGTH = 1;
 const MAX_NAME_LENGTH = 100;
@@ -63,7 +71,7 @@ export const accessRequestRouter = createTRPCRouter({
       };
     }),
 
-  getMany: baseProcedure
+  getMany: teamOrAdminProcedure
     .input(
       z.object({
         page: z.number().default(DEFAULT_PAGE),
@@ -105,19 +113,89 @@ export const accessRequestRouter = createTRPCRouter({
       };
     }),
 
-  updateStatus: baseProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        status: z.enum(["PENDING", "APPROVED", "REJECTED"]),
-      })
-    )
+  approve: teamOrAdminProcedure
+    .input(z.object({ id: z.string() }))
     .mutation(async ({ input }) => {
-      const accessRequest = await prisma.accessRequest.update({
+      const accessRequest = await prisma.accessRequest.findUnique({
         where: { id: input.id },
-        data: { status: input.status },
       });
 
-      return accessRequest;
+      if (!accessRequest) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Access request not found",
+        });
+      }
+
+      // Check if user with this email already exists
+      const existingUser = await prisma.user.findUnique({
+        where: { email: accessRequest.email },
+      });
+
+      if (existingUser) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "A user with this email already exists",
+        });
+      }
+
+      const generatedPassword = generatePassword();
+
+      // Send invite email BEFORE creating the user so a failed email
+      // doesn't leave an orphaned user record.
+      await sendInviteEmail({
+        userEmail: accessRequest.email,
+        password: generatedPassword,
+        language: "pt",
+      });
+
+      // Create user via Better Auth
+      const newUser = await auth.api.signUpEmail({
+        body: {
+          name: accessRequest.name,
+          email: accessRequest.email,
+          password: generatedPassword,
+        },
+      });
+
+      if (!newUser.user) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create user",
+        });
+      }
+
+      // Update user with mapped fields from access request
+      await prisma.user.update({
+        where: { id: newUser.user.id },
+        data: {
+          companyName: accessRequest.company,
+          phoneNumber: accessRequest.phone,
+        },
+      });
+
+      // Delete the access request
+      await prisma.accessRequest.delete({
+        where: { id: input.id },
+      });
+
+      return {
+        success: true,
+        user: {
+          id: newUser.user.id,
+          email: newUser.user.email,
+          name: newUser.user.name,
+        },
+      };
+    }),
+
+  reject: teamOrAdminProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input }) => {
+      await prisma.accessRequest.delete({
+        where: { id: input.id },
+      });
+
+      return { success: true };
     }),
 });

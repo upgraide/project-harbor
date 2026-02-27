@@ -25,6 +25,9 @@ export default {
     notifications: {
       title: "Notificações",
     },
+    "access-requests": {
+      title: "Pedidos de Acesso",
+    },
     logout: {
       title: "Sair",
     },

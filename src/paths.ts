@@ -37,6 +37,8 @@ export const backofficeInvestorsPath = () => "/backoffice/investors";
 export const backofficeInvestorDetailPath = (id: string) =>
   `/backoffice/investors/${id}`;
 export const backofficeNotificationsPath = () => "/backoffice/notifications";
+export const backofficeAccessRequestsPath = () =>
+  "/backoffice/access-requests";
 export const backofficeCloseOpportunitiesPath = () =>
   "/backoffice/close-opportunities";
 

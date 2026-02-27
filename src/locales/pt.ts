@@ -2,6 +2,7 @@ import changePasswordDialog from "./auth/change-password-dialog/pt";
 import forgotPasswordForm from "./auth/forgot-password-form/pt";
 import loginForm from "./auth/login-form/pt";
 import requestAccessForm from "./auth/request-access-form/pt";
+import accessRequests from "./backoffice/access-requests/pt";
 import analytics from "./backoffice/analytics/pt";
 import closeOpportunities from "./backoffice/close-opportunities/pt";
 import entityComponents from "./backoffice/entity-components/pt";
@@ -57,6 +58,7 @@ export default {
     investors,
     notifications,
     closeOpportunities,
+    accessRequests,
   },
   dashboard: {
     navigation,
