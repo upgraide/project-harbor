@@ -3,6 +3,7 @@ export default {
   description: "Please enter your email and password to login.",
   emailPlaceholder: "m@example.com",
   submit: "Login",
+  forgotPassword: "Forgot your password?",
   dontHaveAccount: "Don't have an account?",
   requestAccess: "Request access",
 

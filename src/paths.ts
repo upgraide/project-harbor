@@ -1,6 +1,7 @@
 export const indexPath = () => "/";
 export const requestAccessPath = () => "/request-access";
 export const loginPath = () => "/login";
+export const forgotPasswordPath = () => "/forgot-password";
 
 // Protected paths
 

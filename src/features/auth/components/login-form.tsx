@@ -25,7 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { useScopedI18n } from "@/locales/client";
-import { dashboardPath, requestAccessPath } from "@/paths";
+import { dashboardPath, forgotPasswordPath, requestAccessPath } from "@/paths";
 
 const createLoginSchema = (t: (key: string) => string) =>
   z.object({
@@ -120,6 +120,14 @@ export function LoginForm() {
                   <Button className="w-full" disabled={isPending} type="submit">
                     {t("submit")}
                   </Button>
+                </div>
+                <div className="text-center text-sm">
+                  <Link
+                    className="underline underline-offset-4"
+                    href={forgotPasswordPath()}
+                  >
+                    {t("forgotPassword")}
+                  </Link>
                 </div>
                 <div className="text-center text-sm">
                   {t("dontHaveAccount")}{" "}
