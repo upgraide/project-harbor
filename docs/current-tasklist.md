@@ -13,15 +13,15 @@
 
 ---
 
-### Forget Password
+### ~~Forget Password~~ — DONE
 *Triggered when a user requests a password reset from the login page.*
 
-- [ ] The login page must have a "Forgot Password?" link
-- [ ] Users enter their email; if the email belongs to a valid user, the server generates a temporary password, updates credentials via Better Auth, and sets `passwordChanged: false`
-- [ ] If the email does not exist in the database, show a generic error (e.g., "If this email is registered, you will receive instructions") — do NOT reveal whether the email is registered
-- [ ] The user receives an email with the temporary password and a link to the login page
-- [ ] After logging in with the temp password, `PasswordChangeProvider` forces the user to set a real password — `passwordChanged` is then set to `true`
-- [ ] Design a "Forgot Password" email template (bilingual PT/EN) showing the temporary password and a login button
+- [x] The login page must have a "Forgot Password?" link
+- [x] Users enter their email; if the email belongs to a valid user, the server generates a temporary password, updates credentials via Better Auth, and sets `passwordChanged: false`
+- [x] If the email does not exist in the database, show a generic error (e.g., "If this email is registered, you will receive instructions") — do NOT reveal whether the email is registered
+- [x] The user receives an email with the temporary password and a link to the login page
+- [x] After logging in with the temp password, `PasswordChangeProvider` forces the user to set a real password — `passwordChanged` is then set to `true`
+- [x] Design a "Forgot Password" email template (bilingual PT/EN) showing the temporary password and a login button
 
 ---
 
