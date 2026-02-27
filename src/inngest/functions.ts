@@ -1,10 +1,15 @@
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import Sentry from "@sentry/nextjs";
 import { generateText } from "ai";
+import { z } from "zod/v4";
+import { Role } from "@/generated/prisma";
 import prisma from "@/lib/db";
+import { sendOpportunityActiveEmail } from "@/lib/emails/send-opportunity-active";
+import { env } from "@/lib/env";
 import { inngest } from "./client";
 
 const google = createGoogleGenerativeAI();
+const TRAILING_SLASH_RE = /\/$/;
 
 export const execute = inngest.createFunction(
   { id: "execute-ai" },
@@ -157,5 +162,97 @@ export const translateDescription = inngest.createFunction(
       Sentry.captureException(error);
       throw error;
     }
+  }
+);
+
+const opportunityActiveEventSchema = z.object({
+  opportunityId: z.string().min(1),
+  opportunityType: z.enum(["MA", "REAL_ESTATE"]),
+});
+
+export const notifyInvestorsOnOpportunityActive = inngest.createFunction(
+  { id: "opportunity/notify-investors", retries: 3 },
+  { event: "opportunity/active" },
+  async ({ event, step }) => {
+    const { opportunityId, opportunityType } =
+      opportunityActiveEventSchema.parse(event.data);
+
+    const opportunity = await step.run("fetch-opportunity", () => {
+      if (opportunityType === "MA") {
+        return prisma.mergerAndAcquisition.findUniqueOrThrow({
+          where: { id: opportunityId },
+          select: { id: true, name: true, images: true },
+        });
+      }
+      return prisma.realEstate.findUniqueOrThrow({
+        where: { id: opportunityId },
+        select: { id: true, name: true, images: true },
+      });
+    });
+
+    const investors = await step.run("fetch-investors", async () =>
+      prisma.user.findMany({
+        where: {
+          role: Role.USER,
+          disabled: false,
+          acceptMarketingList: true,
+        },
+        select: { id: true, name: true, email: true },
+      })
+    );
+
+    const appBaseUrl = env.BETTER_AUTH_URL.replace(TRAILING_SLASH_RE, "");
+    const dealPath =
+      opportunityType === "MA"
+        ? `/dashboard/ma/${opportunity.id}`
+        : `/dashboard/real-estate/${opportunity.id}`;
+    const coverImageUrl = opportunity.images?.[0] ?? undefined;
+
+    const result = await step.run("send-emails", async () => {
+      let sent = 0;
+      let failed = 0;
+
+      await Promise.allSettled(
+        investors.map(async (investor) => {
+          try {
+            await sendOpportunityActiveEmail({
+              investorEmail: investor.email,
+              investorName: investor.name ?? "Investor",
+              opportunityName: opportunity.name,
+              opportunityType,
+              coverImageUrl,
+              dealPageUrl: `${appBaseUrl}${dealPath}`,
+              language: "pt",
+            });
+            sent++;
+          } catch (err) {
+            failed++;
+            Sentry.captureException(err, {
+              tags: {
+                feature: "opportunity-notify",
+                opportunityId,
+                opportunityType,
+              },
+              extra: { investorId: investor.id, investorEmail: investor.email },
+            });
+          }
+        })
+      );
+
+      return { sent, failed };
+    });
+
+    Sentry.logger.info("[opportunity/notify-investors] Done", {
+      opportunityId,
+      total: investors.length,
+      sent: result.sent,
+      failed: result.failed,
+    });
+
+    return {
+      total: investors.length,
+      sent: result.sent,
+      failed: result.failed,
+    };
   }
 );

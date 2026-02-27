@@ -1,9 +1,17 @@
 import { serve } from "inngest/next";
 import { inngest } from "@/inngest/client";
-import { execute, translateDescription } from "@/inngest/functions";
+import {
+  execute,
+  notifyInvestorsOnOpportunityActive,
+  translateDescription,
+} from "@/inngest/functions";
 
-// Create an API that serves zero functions
+// Serve all Inngest functions via this API route
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [execute, translateDescription],
+  functions: [
+    execute,
+    translateDescription,
+    notifyInvestorsOnOpportunityActive,
+  ],
 });

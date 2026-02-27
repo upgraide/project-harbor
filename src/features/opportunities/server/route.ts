@@ -79,14 +79,16 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         clientAcquisitionerId: z.string().optional(),
         accountManagerIds: z.string().array().optional(),
         images: z.string().array().optional(),
-        graphRows: z.array(
-          z.object({
-            year: z.string(),
-            revenue: z.number(),
-            ebitda: z.number(),
-            ebitdaMargin: z.number(),
-          })
-        ).optional(),
+        graphRows: z
+          .array(
+            z.object({
+              year: z.string(),
+              revenue: z.number(),
+              ebitda: z.number(),
+              ebitdaMargin: z.number(),
+            })
+          )
+          .optional(),
         graphUnit: z.enum(["millions", "thousands"]).optional(),
       })
     )
@@ -210,6 +212,14 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
           },
         });
       }
+
+      await inngest.send({
+        name: "opportunity/active",
+        data: {
+          opportunityId: created.id,
+          opportunityType: "MA" as const,
+        },
+      });
 
       return created;
     }),
@@ -485,10 +495,10 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
     .mutation(({ input }) => {
       // Calculate CAGR values from graph rows
       const { salesCAGR, ebitdaCAGR } = calculateCAGR(input.graphRows as any);
-      
+
       return prisma.mergerAndAcquisition.update({
         where: { id: input.id },
-        data: { 
+        data: {
           graphRows: input.graphRows,
           salesCAGR: salesCAGR,
           ebitdaCAGR: ebitdaCAGR,
@@ -902,6 +912,11 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
+      const previous = await prisma.mergerAndAcquisition.findUniqueOrThrow({
+        where: { id: input.id },
+        select: { status: true },
+      });
+
       const result = await prisma.mergerAndAcquisition.update({
         where: { id: input.id },
         data: { status: input.status },
@@ -947,6 +962,17 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         });
       }
 
+      // Notify investors when transitioning INTO ACTIVE
+      if (input.status === "ACTIVE" && previous.status !== "ACTIVE") {
+        await inngest.send({
+          name: "opportunity/active",
+          data: {
+            opportunityId: input.id,
+            opportunityType: "MA" as const,
+          },
+        });
+      }
+
       return result;
     }),
   updateFinalValues: adminProcedure
@@ -970,12 +996,17 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         followup_person_id?: string | null;
         commissionable_amount?: number;
       } = {};
-      
-      if (input.final_amount !== undefined) analyticsUpdateData.final_amount = input.final_amount;
-      if (input.closed_at !== undefined) analyticsUpdateData.closed_at = input.closed_at;
-      if (input.invested_person_id !== undefined) analyticsUpdateData.invested_person_id = input.invested_person_id;
-      if (input.followup_person_id !== undefined) analyticsUpdateData.followup_person_id = input.followup_person_id;
-      if (input.commissionable_amount !== undefined) analyticsUpdateData.commissionable_amount = input.commissionable_amount;
+
+      if (input.final_amount !== undefined)
+        analyticsUpdateData.final_amount = input.final_amount;
+      if (input.closed_at !== undefined)
+        analyticsUpdateData.closed_at = input.closed_at;
+      if (input.invested_person_id !== undefined)
+        analyticsUpdateData.invested_person_id = input.invested_person_id;
+      if (input.followup_person_id !== undefined)
+        analyticsUpdateData.followup_person_id = input.followup_person_id;
+      if (input.commissionable_amount !== undefined)
+        analyticsUpdateData.commissionable_amount = input.commissionable_amount;
 
       const analyticsResult = await prisma.opportunityAnalytics.update({
         where: { mergerAndAcquisitionId: input.id },
@@ -1058,12 +1089,14 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         search: z.string().default(""),
-        status: z.enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).default("ACTIVE"),
+        status: z
+          .enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"])
+          .default("ACTIVE"),
       })
     )
     .query(async ({ input }) => {
       const { page, pageSize, search, status } = input;
-      
+
       const whereCondition: {
         name: { contains: string; mode: "insensitive" };
         status?: OpportunityStatus;
@@ -1071,7 +1104,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         name: { contains: search, mode: "insensitive" },
         ...(status !== "all" && { status: status as OpportunityStatus }),
       };
-      
+
       const [items, totalCount] = await Promise.all([
         prisma.mergerAndAcquisition.findMany({
           skip: (page - 1) * pageSize,
@@ -1114,7 +1147,10 @@ export const opportunitiesRouter = createTRPCRouter({
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         type: z.enum(["all", "mna", "realEstate"]).default("all"),
         search: z.string().default(""),
-        status: z.enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).default("all").optional(),
+        status: z
+          .enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"])
+          .default("all")
+          .optional(),
       })
     )
     .query(async ({ input }) => {
@@ -1441,6 +1477,14 @@ export const realEstateRouter = createTRPCRouter({
         });
       }
 
+      await inngest.send({
+        name: "opportunity/active",
+        data: {
+          opportunityId: created.id,
+          opportunityType: "REAL_ESTATE" as const,
+        },
+      });
+
       return created;
     }),
   getMany: protectedProcedure
@@ -1453,12 +1497,14 @@ export const realEstateRouter = createTRPCRouter({
           .max(PAGINATION.MAX_PAGE_SIZE)
           .default(PAGINATION.DEFAULT_PAGE_SIZE),
         search: z.string().default(""),
-        status: z.enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).default("ACTIVE"),
+        status: z
+          .enum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"])
+          .default("ACTIVE"),
       })
     )
     .query(async ({ input }) => {
       const { page, pageSize, search, status } = input;
-      
+
       const whereCondition: {
         name: { contains: string; mode: "insensitive" };
         status?: OpportunityStatus;
@@ -1466,7 +1512,7 @@ export const realEstateRouter = createTRPCRouter({
         name: { contains: search, mode: "insensitive" },
         ...(status !== "all" && { status: status as OpportunityStatus }),
       };
-      
+
       const [items, totalCount] = await Promise.all([
         prisma.realEstate.findMany({
           skip: (page - 1) * pageSize,
@@ -2538,6 +2584,11 @@ export const realEstateRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
+      const previous = await prisma.realEstate.findUniqueOrThrow({
+        where: { id: input.id },
+        select: { status: true },
+      });
+
       const result = await prisma.realEstate.update({
         where: { id: input.id },
         data: { status: input.status },
@@ -2583,6 +2634,17 @@ export const realEstateRouter = createTRPCRouter({
         });
       }
 
+      // Notify investors when transitioning INTO ACTIVE
+      if (input.status === "ACTIVE" && previous.status !== "ACTIVE") {
+        await inngest.send({
+          name: "opportunity/active",
+          data: {
+            opportunityId: input.id,
+            opportunityType: "REAL_ESTATE" as const,
+          },
+        });
+      }
+
       return result;
     }),
   updateFinalValues: adminProcedure
@@ -2606,12 +2668,17 @@ export const realEstateRouter = createTRPCRouter({
         followup_person_id?: string | null;
         commissionable_amount?: number;
       } = {};
-      
-      if (input.final_amount !== undefined) analyticsUpdateData.final_amount = input.final_amount;
-      if (input.closed_at !== undefined) analyticsUpdateData.closed_at = input.closed_at;
-      if (input.invested_person_id !== undefined) analyticsUpdateData.invested_person_id = input.invested_person_id;
-      if (input.followup_person_id !== undefined) analyticsUpdateData.followup_person_id = input.followup_person_id;
-      if (input.commissionable_amount !== undefined) analyticsUpdateData.commissionable_amount = input.commissionable_amount;
+
+      if (input.final_amount !== undefined)
+        analyticsUpdateData.final_amount = input.final_amount;
+      if (input.closed_at !== undefined)
+        analyticsUpdateData.closed_at = input.closed_at;
+      if (input.invested_person_id !== undefined)
+        analyticsUpdateData.invested_person_id = input.invested_person_id;
+      if (input.followup_person_id !== undefined)
+        analyticsUpdateData.followup_person_id = input.followup_person_id;
+      if (input.commissionable_amount !== undefined)
+        analyticsUpdateData.commissionable_amount = input.commissionable_amount;
 
       const analyticsResult = await prisma.opportunityAnalytics.update({
         where: { realEstateId: input.id },
