@@ -1,12 +1,13 @@
 import changePasswordDialog from "./auth/change-password-dialog/en";
+import forgotPasswordForm from "./auth/forgot-password-form/en";
 import loginForm from "./auth/login-form/en";
 import requestAccessForm from "./auth/request-access-form/en";
 import analytics from "./backoffice/analytics/en";
 import closeOpportunities from "./backoffice/close-opportunities/en";
 import entityComponents from "./backoffice/entity-components/en";
 import investmentInterests from "./backoffice/investment-interests/en";
-import backofficeMain from "./backoffice/main/en";
 import investors from "./backoffice/investors/en";
+import backofficeMain from "./backoffice/main/en";
 import mergersAndAcquisitionOpportunites from "./backoffice/mergers-and-acquisition-opportunites/en";
 import mergersAndAcquisitionCreatePage from "./backoffice/mergers-and-acquisitions-create-page/en";
 import mergersAndAcquisitionOpportunityPage from "./backoffice/mergers-and-acquisitions-opportunity-page/en";
@@ -36,6 +37,7 @@ export default {
   themeSwitcher,
   auth: {
     loginForm,
+    forgotPasswordForm,
     requestAccessForm,
     changePasswordDialog,
   },

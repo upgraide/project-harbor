@@ -1,3 +1,4 @@
+import { passwordRouter } from "@/features/auth/server/password";
 import { accessRequestRouter } from "@/features/auth/server/route";
 import { commissionsRouter } from "@/features/commissions/server/route";
 import { crmRouter } from "@/features/crm/server/route";
@@ -27,6 +28,7 @@ export const appRouter = createTRPCRouter({
   crm: crmRouter,
   commissions: commissionsRouter,
   notifications: notificationsRouter,
+  password: passwordRouter,
 });
 
 // export type definition of API
