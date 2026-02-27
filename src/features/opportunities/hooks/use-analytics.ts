@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
 import { useAnalyticsFilters } from "@/features/opportunities/context/analytics-filters";
+import { useTRPC } from "@/trpc/client";
 
 /**
  * Hook to get available years from actual data
@@ -229,4 +229,3 @@ export const useAdvisorPerformance = () => {
   const trpc = useTRPC();
   return useQuery(trpc.analytics.getAdvisorPerformance.queryOptions());
 };
-

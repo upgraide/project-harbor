@@ -82,7 +82,11 @@ export const AdvisorPerformanceChart = () => {
               tickLine={false}
               tickMargin={10}
             />
-            <YAxis tickFormatter={(value) => formatNumber(value)} tickLine={false} tickMargin={10} />
+            <YAxis
+              tickFormatter={(value) => formatNumber(value)}
+              tickLine={false}
+              tickMargin={10}
+            />
             <ChartTooltip
               content={
                 <ChartTooltipContent
@@ -112,17 +116,17 @@ export const AdvisorPerformanceChart = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-2 px-2 font-semibold">
+                <tr className="border-border border-b">
+                  <th className="px-2 py-2 text-left font-semibold">
                     {t("graphs.advisorPerformance.advisor")}
                   </th>
-                  <th className="text-center py-2 px-2 font-semibold">
+                  <th className="px-2 py-2 text-center font-semibold">
                     {t("graphs.advisorPerformance.closed")}
                   </th>
-                  <th className="text-center py-2 px-2 font-semibold">
+                  <th className="px-2 py-2 text-center font-semibold">
                     {t("graphs.advisorPerformance.aum")}
                   </th>
-                  <th className="text-center py-2 px-2 font-semibold">
+                  <th className="px-2 py-2 text-center font-semibold">
                     {t("graphs.advisorPerformance.rate")}
                   </th>
                 </tr>
@@ -132,24 +136,25 @@ export const AdvisorPerformanceChart = () => {
                   .filter((advisor) => advisor !== null)
                   .map((advisor) => (
                     <tr
+                      className="border-border border-b hover:bg-muted/50"
                       key={advisor.advisorId}
-                      className="border-b border-border hover:bg-muted/50"
                     >
-                      <td className="py-2 px-2">{advisor.advisorName}</td>
-                      <td className="text-center py-2 px-2 font-mono">
+                      <td className="px-2 py-2">{advisor.advisorName}</td>
+                      <td className="px-2 py-2 text-center font-mono">
                         {advisor.dealsClosed}
                       </td>
-                      <td className="text-center py-2 px-2 font-mono">
+                      <td className="px-2 py-2 text-center font-mono">
                         {advisor.aumManaged}
                       </td>
-                      <td className="text-center py-2 px-2 font-mono">
+                      <td className="px-2 py-2 text-center font-mono">
                         <span
                           style={{
-                            color: advisor.closureRate > 50
-                              ? "#679A85"
-                              : advisor.closureRate > 25
-                                ? "#9C3E11"
-                                : "#404040"
+                            color:
+                              advisor.closureRate > 50
+                                ? "#679A85"
+                                : advisor.closureRate > 25
+                                  ? "#9C3E11"
+                                  : "#404040",
                           }}
                         >
                           {advisor.closureRate.toFixed(1)}%

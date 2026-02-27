@@ -33,17 +33,20 @@ export default {
     charts: {
       geographicDistribution: {
         title: "Client Distribution by Region",
-        description: "Shows the number of clients grouped by their physical location.",
+        description:
+          "Shows the number of clients grouped by their physical location.",
         clients: "Clients",
       },
       clientTypeDistribution: {
         title: "Client Distribution by Type",
-        description: "Breakdown of clients by investor category (Family Office, PE Fund, etc.).",
+        description:
+          "Breakdown of clients by investor category (Family Office, PE Fund, etc.).",
         clients: "Clients",
       },
       acquisitionTrend: {
         title: "Client Acquisition Trend (Last 12 Months)",
-        description: "Number of new clients added each month over the past year.",
+        description:
+          "Number of new clients added each month over the past year.",
         newClients: "New Clients",
       },
       advisorClientLoad: {
@@ -55,7 +58,8 @@ export default {
       },
       investmentRangeBreakdown: {
         title: "Clients by Investment Capacity",
-        description: "Client distribution based on their ticket size range (<€10M, €10M-€100M, >€100M).",
+        description:
+          "Client distribution based on their ticket size range (<€10M, €10M-€100M, >€100M).",
         count: "Clients",
       },
     },
@@ -74,7 +78,8 @@ export default {
     performanceSection: "3. Performance & Team Metrics",
     assetsTransacted: {
       title: "Assets Transacted Growth Over Time",
-      description: "Count of concluded deals by month, showing transaction velocity.",
+      description:
+        "Count of concluded deals by month, showing transaction velocity.",
       yLabel: "Total Assets Transacted",
     },
     aum: {
@@ -104,7 +109,8 @@ export default {
     },
     clientActivity: {
       title: "Client Follow-up Activity",
-      description: "Clients categorized by last follow-up date (30-day threshold).",
+      description:
+        "Clients categorized by last follow-up date (30-day threshold).",
       noContact: "No Recent Follow-up",
       recentContact: "Recent Follow-up",
       percentage: "% of clients",
@@ -117,7 +123,8 @@ export default {
     },
     advisorPerformance: {
       title: "Advisor Performance",
-      description: "Deals closed and active opportunities managed by each team member.",
+      description:
+        "Deals closed and active opportunities managed by each team member.",
       dealsClosed: "Deals Closed",
       aumManaged: "AUM Managed",
       closureRate: "Closure Rate",

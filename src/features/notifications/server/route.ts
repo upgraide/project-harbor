@@ -1,9 +1,6 @@
 import { z } from "zod";
 import prisma from "@/lib/db";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "@/trpc/init";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 const MIN_PAGE_SIZE = 1;
 const MAX_PAGE_SIZE = 100;

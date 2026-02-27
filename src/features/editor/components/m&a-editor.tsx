@@ -4,17 +4,17 @@
 
 import { EditIcon, EllipsisVerticalIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import {
   Bar,
   CartesianGrid,
+  Cell,
   ComposedChart,
+  LabelList,
   Line,
   XAxis,
   YAxis,
-  Cell,
-  LabelList,
 } from "recharts";
 import { toast } from "sonner";
 import { ErrorView, LoadingView } from "@/components/entity-components";
@@ -164,15 +164,28 @@ const chartConfig = (t: (key: string) => string) =>
   }) satisfies ChartConfig;
 
 // Helper to determine if a year is future (projected)
-const getYearType = (year: string, currentYear: number = new Date().getFullYear()) => {
+const getYearType = (
+  year: string,
+  currentYear: number = new Date().getFullYear()
+) => {
   const yearNum = Number.parseInt(year);
-  return yearNum >= currentYear ? 'future' : 'historical';
+  return yearNum >= currentYear ? "future" : "historical";
 };
 
 // Helper to get CAGR label with dynamic years
-const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[], t: (key: string) => string) => {
+const getCAGRLabel = (
+  graphRows: {
+    year: string;
+    revenue: number;
+    ebitda: number;
+    ebitdaMargin: number;
+  }[],
+  t: (key: string) => string
+) => {
   if (!graphRows || graphRows.length < 3) return null;
-  const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
+  const sortedRows = [...graphRows].sort((a, b) =>
+    a.year.localeCompare(b.year)
+  );
   const firstYear = sortedRows[0].year.slice(2, 4);
   const lastYear = sortedRows[sortedRows.length - 1].year.slice(2, 4);
   return `CAGR ${firstYear}\u2013${lastYear}`;
@@ -289,32 +302,51 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Final Amount</p>
-              <p className="text-2xl font-bold">
-                {opportunity.analytics.final_amount ? new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(opportunity.analytics.final_amount) : "N/A"}
+              <p className="font-medium text-muted-foreground text-sm">
+                Final Amount
+              </p>
+              <p className="font-bold text-2xl">
+                {opportunity.analytics.final_amount
+                  ? new Intl.NumberFormat(locale, {
+                      style: "currency",
+                      currency: "EUR",
+                    }).format(opportunity.analytics.final_amount)
+                  : "N/A"}
               </p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Closing Date</p>
+              <p className="font-medium text-muted-foreground text-sm">
+                Closing Date
+              </p>
               <p className="text-lg">
-                {opportunity.analytics.closed_at ? new Date(opportunity.analytics.closed_at).toLocaleDateString(locale) : "N/A"}
+                {opportunity.analytics.closed_at
+                  ? new Date(
+                      opportunity.analytics.closed_at
+                    ).toLocaleDateString(locale)
+                  : "N/A"}
               </p>
             </div>
             {opportunity.analytics.invested_person && (
               <div>
                 {/* Pessoa investidora: NOT a commission role - just the investor record */}
-                <p className="text-sm font-medium text-muted-foreground">Investor (Client)</p>
+                <p className="font-medium text-muted-foreground text-sm">
+                  Investor (Client)
+                </p>
                 <p className="text-base">
-                  {opportunity.analytics.invested_person.name} ({opportunity.analytics.invested_person.email})
+                  {opportunity.analytics.invested_person.name} (
+                  {opportunity.analytics.invested_person.email})
                 </p>
               </div>
             )}
             {opportunity.analytics.followup_person && (
               <div>
                 {/* Commission role: Acompanhamento do Investidor (DEAL_SUPPORT) */}
-                <p className="text-sm font-medium text-muted-foreground">Investor Follow-up</p>
+                <p className="font-medium text-muted-foreground text-sm">
+                  Investor Follow-up
+                </p>
                 <p className="text-base">
-                  {opportunity.analytics.followup_person.name} ({opportunity.analytics.followup_person.email})
+                  {opportunity.analytics.followup_person.name} (
+                  {opportunity.analytics.followup_person.email})
                 </p>
               </div>
             )}
@@ -1074,11 +1106,11 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   </TableCell>
                   <TableCell className="px-6 py-4">
                     {opportunity.ebitdaNormalized != null
-                      ? new Intl.NumberFormat('pt-PT', { 
-                          style: 'currency', 
-                          currency: 'EUR',
+                      ? new Intl.NumberFormat("pt-PT", {
+                          style: "currency",
+                          currency: "EUR",
                           minimumFractionDigits: 0,
-                          maximumFractionDigits: 0
+                          maximumFractionDigits: 0,
                         }).format(opportunity.ebitdaNormalized)
                       : "N/A"}
                   </TableCell>
@@ -1516,7 +1548,9 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
 
         <Card className="border-none bg-transparent shadow-none">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="font-bold text-lg">{t("graphCard.title")}</CardTitle>
+            <CardTitle className="font-bold text-lg">
+              {t("graphCard.title")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig(t)}>
@@ -1538,7 +1572,10 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     const year = String(value);
                     const yearNum = Number.parseInt(year);
                     const currentYear = new Date().getFullYear();
-                    const suffix = yearNum >= currentYear ? t('graphCard.yearSuffixFuture') : t('graphCard.yearSuffixHistorical');
+                    const suffix =
+                      yearNum >= currentYear
+                        ? t("graphCard.yearSuffixFuture")
+                        : t("graphCard.yearSuffixHistorical");
                     return `${year.slice(0, 4)}-${suffix}`;
                   }}
                   tickLine={false}
@@ -1577,12 +1614,15 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                     fontSize: 14,
                     fontWeight: "bold",
                     fill: ((entry: any) => {
-                      const yearType = getYearType(String((entry as any)?.year || ''));
-                      if (yearType === 'future') return '#e2d8d3';
+                      const yearType = getYearType(
+                        String((entry as any)?.year || "")
+                      );
+                      if (yearType === "future") return "#e2d8d3";
                       return isDark ? "#ffffff" : "#123353";
                     }) as any,
                     formatter: (value: number) => {
-                      const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                      const displayValue =
+                        graphUnit === "thousands" ? value * 1000 : value;
                       return Math.round(displayValue).toString();
                     },
                   }}
@@ -1590,11 +1630,19 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   yAxisId="left"
                 >
                   {opportunity.graphRows?.map((entry, index) => {
-                    const yearType = getYearType(String((entry as any)?.year || ''));
+                    const yearType = getYearType(
+                      String((entry as any)?.year || "")
+                    );
                     return (
                       <Cell
+                        fill={
+                          yearType === "future"
+                            ? "#e2d8d3"
+                            : isDark
+                              ? "#b3a092"
+                              : "#123353"
+                        }
                         key={`cell-${index}`}
-                        fill={yearType === 'future' ? '#e2d8d3' : (isDark ? "#b3a092" : "#123353")}
                       />
                     );
                   })}
@@ -1608,38 +1656,46 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   yAxisId="right"
                 >
                   <LabelList
-                    dataKey="ebitda"
-                    position="top"
                     content={(props: any) => {
                       const { x, y, value, index } = props;
                       if (!value && value !== 0) return null;
-                      
-                      const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
-                      const dataPoint = (opportunity.graphRows as { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[])?.[index];
-                      const year = String(dataPoint?.year || '');
+
+                      const displayValue =
+                        graphUnit === "thousands" ? value * 1000 : value;
+                      const dataPoint = (
+                        opportunity.graphRows as {
+                          year: string;
+                          revenue: number;
+                          ebitda: number;
+                          ebitdaMargin: number;
+                        }[]
+                      )?.[index];
+                      const year = String(dataPoint?.year || "");
                       const yearNum = Number.parseInt(year, 10);
                       const currentYear = new Date().getFullYear();
                       const isFuture = yearNum >= currentYear;
-                      
+
                       let fillColor = "#6b6b6b";
                       if (!isDark) {
-                        fillColor = isFuture ? '#000000' : '#ffffff';
+                        fillColor = isFuture ? "#000000" : "#ffffff";
                       }
-                      
+
                       return (
                         <text
-                          x={x}
-                          y={y}
                           dy={-6}
                           fill={fillColor}
                           fontSize={15}
                           fontWeight="bold"
                           textAnchor="middle"
+                          x={x}
+                          y={y}
                         >
                           {Math.round(displayValue)}
                         </text>
                       );
                     }}
+                    dataKey="ebitda"
+                    position="top"
                   />
                 </Line>
                 <Line
@@ -1663,17 +1719,29 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
             </ChartContainer>
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">{t("graphCard.unitLabel")}:</span>
-                <Select value={graphUnit} onValueChange={(value: "millions" | "thousands") => {
-                  setGraphUnit(value);
-                  updateGraphUnit.mutate({ id: opportunity.id, graphUnit: value });
-                }}>
+                <span className="text-muted-foreground text-sm">
+                  {t("graphCard.unitLabel")}:
+                </span>
+                <Select
+                  onValueChange={(value: "millions" | "thousands") => {
+                    setGraphUnit(value);
+                    updateGraphUnit.mutate({
+                      id: opportunity.id,
+                      graphUnit: value,
+                    });
+                  }}
+                  value={graphUnit}
+                >
                   <SelectTrigger className="w-[140px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="millions">{t("graphCard.millions")}</SelectItem>
-                    <SelectItem value="thousands">{t("graphCard.thousands")}</SelectItem>
+                    <SelectItem value="millions">
+                      {t("graphCard.millions")}
+                    </SelectItem>
+                    <SelectItem value="thousands">
+                      {t("graphCard.thousands")}
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -1685,16 +1753,20 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   <div className="flex justify-end gap-3">
                     {opportunity.salesCAGR != null && (
                       <div className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5">
-                        <span className="text-xs font-medium text-primary">Sales CAGR:</span>
-                        <span className="text-sm font-semibold text-muted-foreground">
+                        <span className="font-medium text-primary text-xs">
+                          Sales CAGR:
+                        </span>
+                        <span className="font-semibold text-muted-foreground text-sm">
                           {opportunity.salesCAGR.toFixed(2)}%
                         </span>
                       </div>
                     )}
                     {opportunity.ebitdaCAGR != null && (
                       <div className="inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 px-3 py-1.5">
-                        <span className="text-xs font-medium text-primary">EBITDA CAGR:</span>
-                        <span className="text-sm font-semibold text-muted-foreground">
+                        <span className="font-medium text-primary text-xs">
+                          EBITDA CAGR:
+                        </span>
+                        <span className="font-semibold text-muted-foreground text-sm">
                           {opportunity.ebitdaCAGR.toFixed(2)}%
                         </span>
                       </div>
@@ -1746,10 +1818,12 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   <TableRow>
                     <TableHead>{t("graphCard.table.header.year")}</TableHead>
                     <TableHead className="px-6 py-4 text-right">
-                      {t("graphCard.table.header.revenue")} ({graphUnit === 'millions' ? 'M€' : 'K€'})
+                      {t("graphCard.table.header.revenue")} (
+                      {graphUnit === "millions" ? "M€" : "K€"})
                     </TableHead>
                     <TableHead className="px-6 py-4 text-right">
-                      {t("graphCard.table.header.ebitda")} ({graphUnit === 'millions' ? 'M€' : 'K€'})
+                      {t("graphCard.table.header.ebitda")} (
+                      {graphUnit === "millions" ? "M€" : "K€"})
                     </TableHead>
                     <TableHead className="px-6 py-4 text-right">
                       {t("graphCard.table.header.ebitdaMargin")}
@@ -1777,6 +1851,7 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                           ebitdaMargin: number;
                         }[]
                       }
+                      autoOpen={newlyAddedIndex === index}
                       graphUnit={graphUnit}
                       key={`${row.year}-${index}`}
                       onUpdate={(updatedRows) => {
@@ -1789,7 +1864,6 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                       opportunityId={opportunity.id}
                       row={row}
                       rowIndex={index}
-                      autoOpen={newlyAddedIndex === index}
                     />
                   ))}
                 </TableBody>
@@ -1933,10 +2007,10 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
                   <TableCell className="px-6 py-4">
                     {opportunity.im != null ? (
                       <a
-                        href={opportunity.im}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="text-blue-600 hover:underline"
+                        href={opportunity.im}
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         {opportunity.im}
                       </a>
@@ -3347,10 +3421,14 @@ const GraphRowTableRow = ({
     <TableRow>
       <TableCell className="font-medium">{row.year}</TableCell>
       <TableCell className="text-right">
-        {graphUnit === 'thousands' ? Math.round(row.revenue * 1000).toString() : Math.round(row.revenue).toString()}
+        {graphUnit === "thousands"
+          ? Math.round(row.revenue * 1000).toString()
+          : Math.round(row.revenue).toString()}
       </TableCell>
       <TableCell className="text-right">
-        {graphUnit === 'thousands' ? Math.round(row.ebitda * 1000).toString() : Math.round(row.ebitda).toString()}
+        {graphUnit === "thousands"
+          ? Math.round(row.ebitda * 1000).toString()
+          : Math.round(row.ebitda).toString()}
       </TableCell>
       <TableCell className="text-right">
         {Math.round(row.ebitdaMargin)}%
@@ -3364,9 +3442,7 @@ const GraphRowTableRow = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => setIsEditOpen(true)}
-            >
+            <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
               <EditIcon className="mr-2 h-4 w-4" />
               {t("editButtonText")}
             </DropdownMenuItem>
@@ -3436,10 +3512,7 @@ const GraphRowTableRow = ({
                 />
               </div>
               <div className="space-y-2">
-                <label
-                  className="font-medium text-sm"
-                  htmlFor="ebitdaMargin"
-                >
+                <label className="font-medium text-sm" htmlFor="ebitdaMargin">
                   {t("ebitdaMargin")}
                 </label>
                 <Input
@@ -3447,8 +3520,7 @@ const GraphRowTableRow = ({
                   onChange={(e) =>
                     setEditedRow({
                       ...editedRow,
-                      ebitdaMargin:
-                        Number.parseFloat(e.target.value) || 0,
+                      ebitdaMargin: Number.parseFloat(e.target.value) || 0,
                     })
                   }
                   step="0.01"
@@ -3458,15 +3530,10 @@ const GraphRowTableRow = ({
               </div>
             </div>
             <DialogFooter>
-              <Button
-                onClick={() => setIsEditOpen(false)}
-                variant="outline"
-              >
+              <Button onClick={() => setIsEditOpen(false)} variant="outline">
                 {t("cancelButtonText")}
               </Button>
-              <Button onClick={handleSaveEdit}>
-                {t("saveButtonText")}
-              </Button>
+              <Button onClick={handleSaveEdit}>{t("saveButtonText")}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

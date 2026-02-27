@@ -60,7 +60,8 @@ export default {
       role: "Tipo de Utilizador",
       rolePlaceholder: "Selecione o tipo de utilizador",
       roleDescription: "Defina o nível de acesso e permissões do utilizador",
-      roleDescriptionRestricted: "Apenas administradores podem alterar as funções dos utilizadores",
+      roleDescriptionRestricted:
+        "Apenas administradores podem alterar as funções dos utilizadores",
       roleUser: "Utilizador",
       roleTeam: "Membro da Equipa",
       roleAdmin: "Administrador",

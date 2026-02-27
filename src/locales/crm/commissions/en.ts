@@ -1,7 +1,7 @@
 export default {
   title: "Commissions",
   description: "Manage commission rates and view commission-eligible projects",
-  
+
   viewSelector: {
     myCommissions: "My Commissions",
     adminOverview: "Admin Overview",
@@ -37,12 +37,15 @@ export default {
       concluded: "Concluded Projects",
     },
     emptyState: "No commission-eligible projects",
-    emptyStateDescription: "Projects where you have commission roles will appear here",
+    emptyStateDescription:
+      "Projects where you have commission roles will appear here",
     noConcludedProjects: "No concluded projects with commissions",
-    noConcludedProjectsDescription: "Concluded projects with configured commissions will appear here",
+    noConcludedProjectsDescription:
+      "Concluded projects with configured commissions will appear here",
     noPendingPayments: "No pending payments",
-    noPendingPaymentsDescription: "All your commission payments have been received",
-    
+    noPendingPaymentsDescription:
+      "All your commission payments have been received",
+
     card: {
       role: "Role",
       project: "Project",
@@ -122,7 +125,7 @@ export default {
   detail: {
     title: "Commission Detail",
     backToCommissions: "Back to Commissions",
-    
+
     breakdown: {
       title: "Commission Breakdown",
       project: "Project",
@@ -140,7 +143,8 @@ export default {
       commissionPercentage: "Commission Percentage",
       totalCommission: "Total Commission",
       notCalculated: "Not calculated",
-      calculationPending: "Commission calculation pending until project completion",
+      calculationPending:
+        "Commission calculation pending until project completion",
     },
 
     paymentSchedule: {
@@ -156,7 +160,7 @@ export default {
       markAsUnpaid: "Mark as Unpaid",
       actualPaidDate: "Actual Paid Date",
       editPaidDate: "Edit Paid Date",
-      
+
       installmentNumber: {
         first: "1º Installment",
         second: "2º Installment",
@@ -202,7 +206,8 @@ export default {
       },
 
       emptyState: "Payment schedule not configured",
-      emptyStateDescription: "Admins can set up the payment schedule after project completion",
+      emptyStateDescription:
+        "Admins can set up the payment schedule after project completion",
     },
   },
 
@@ -212,28 +217,31 @@ export default {
     retry: "Retry",
     alreadyResolved: "Already Resolved",
     loadingDetails: "Loading commission details...",
-    
+
     opportunityDetails: {
       title: "Opportunity Details",
       status: "Status",
       finalAmount: "Final Amount",
       commissionableAmount: "Commissionable Amount",
     },
-    
+
     recipients: {
       title: "Commission Recipients",
       description: "Calculated commissions based on current rates",
-      emptyState: "No commission recipients found. Make sure users have commission rates configured.",
+      emptyState:
+        "No commission recipients found. Make sure users have commission rates configured.",
       totalCommission: "Total Commission",
       rate: "Rate",
       amount: "Amount",
       grandTotal: "Grand Total",
-      halvedTooltip: "Percentage halved due to 2 Client Follow-up roles on this opportunity",
+      halvedTooltip:
+        "Percentage halved due to 2 Client Follow-up roles on this opportunity",
     },
-    
+
     paymentSchedule: {
       title: "Payment Schedule",
-      description: "Define payment dates and percentages. The same schedule will apply to all {count} recipient{plural}.",
+      description:
+        "Define payment dates and percentages. The same schedule will apply to all {count} recipient{plural}.",
       editDescription: "Edit the payment schedule for this opportunity",
       addPayment: "Add Payment",
       installment: "Payment {number}",
@@ -247,16 +255,17 @@ export default {
       saving: "Saving...",
       updating: "Updating...",
     },
-    
+
     toasts: {
       resolveSuccess: "Commissions resolved successfully!",
       resolveFailed: "Failed to resolve commissions",
     },
   },
-  
+
   pendingResolution: {
     title: "Opportunities Pending Commission Resolution",
-    description: "Concluded opportunities that need commission schedules set up",
+    description:
+      "Concluded opportunities that need commission schedules set up",
     emptyState: "All concluded opportunities have their commissions resolved",
     table: {
       name: "Name",
@@ -267,20 +276,24 @@ export default {
       setupButton: "Set Up Commissions",
     },
   },
-  
+
   resolvedList: {
     title: "Resolved Commissions",
     titlePendingPayments: "Commissions with Pending Payments",
     titleFullyPaid: "Fully Paid Commissions",
     description: "All opportunities with resolved commission schedules",
-    descriptionPendingPayments: "Opportunities with outstanding commission payments",
-    descriptionFullyPaid: "Opportunities where all commission payments have been completed",
+    descriptionPendingPayments:
+      "Opportunities with outstanding commission payments",
+    descriptionFullyPaid:
+      "Opportunities where all commission payments have been completed",
     emptyTitle: "No resolved commissions yet",
-    emptyMessage: "Resolve commissions for concluded opportunities to see them here",
+    emptyMessage:
+      "Resolve commissions for concluded opportunities to see them here",
     emptyPendingPayments: "No pending payments",
     emptyPendingPaymentsMessage: "All commissions have been fully paid",
     emptyFullyPaid: "No fully paid commissions yet",
-    emptyFullyPaidMessage: "Commissions will appear here once all payments are completed",
+    emptyFullyPaidMessage:
+      "Commissions will appear here once all payments are completed",
     table: {
       name: "Name",
       type: "Type",
@@ -293,26 +306,28 @@ export default {
       viewButton: "View",
     },
   },
-  
+
   tabs: {
     pendingResolution: "Pending Resolution",
     resolvedCommissions: "Resolved Commissions",
     teamMembers: "Team Members",
     commissionRates: "Commission Rates",
   },
-  
+
   loading: {
     commissionData: "Loading commission data...",
     employeeCommissions: "Loading employee commissions...",
   },
-  
+
   errorPage: {
     title: "Commission Not Set Up",
-    description: "This opportunity's commission schedule has not been configured yet.",
-    message: "Only administrators can set up commission schedules. Once configured, the commission details will be visible here.",
+    description:
+      "This opportunity's commission schedule has not been configured yet.",
+    message:
+      "Only administrators can set up commission schedules. Once configured, the commission details will be visible here.",
     backButton: "Back to Commissions",
   },
-  
+
   opportunityTypes: {
     MNA: "M&A",
     REAL_ESTATE: "Real Estate",

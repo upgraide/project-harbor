@@ -1,27 +1,10 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Calendar, Plus, Pencil, Trash2, Users } from "lucide-react";
+import { Calendar, Pencil, Plus, Trash2, Users } from "lucide-react";
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,13 +15,30 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { useTRPC } from "@/trpc/client";
-import { useScopedI18n } from "@/locales/client";
-import { toast } from "sonner";
 import { UserSelect } from "@/features/users/components/user-select";
+import { useScopedI18n } from "@/locales/client";
+import { useTRPC } from "@/trpc/client";
 
 type InvestorLastFollowUpsProps = {
   investorId: string;
@@ -51,16 +51,20 @@ type FollowUpFormData = {
   personContactedId: string;
 };
 
-export const InvestorLastFollowUps = ({ investorId }: InvestorLastFollowUpsProps) => {
+export const InvestorLastFollowUps = ({
+  investorId,
+}: InvestorLastFollowUpsProps) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const t = useScopedI18n("backoffice.investors.detail.lastFollowUps");
-  
+
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedFollowUpId, setSelectedFollowUpId] = useState<string | null>(null);
-  
+  const [selectedFollowUpId, setSelectedFollowUpId] = useState<string | null>(
+    null
+  );
+
   const [formData, setFormData] = useState<FollowUpFormData>({
     followUpDate: new Date().toISOString().split("T")[0],
     description: "",
@@ -134,7 +138,14 @@ export const InvestorLastFollowUps = ({ investorId }: InvestorLastFollowUpsProps
   };
 
   const handleAdd = () => {
-    if (!formData.followUpDate || !formData.description || !formData.contactedById || !formData.personContactedId) {
+    if (
+      !(
+        formData.followUpDate &&
+        formData.description &&
+        formData.contactedById &&
+        formData.personContactedId
+      )
+    ) {
       toast.error(t("validation.descriptionRequired"));
       return;
     }
@@ -149,7 +160,15 @@ export const InvestorLastFollowUps = ({ investorId }: InvestorLastFollowUpsProps
   };
 
   const handleEdit = () => {
-    if (!selectedFollowUpId || !formData.followUpDate || !formData.description || !formData.contactedById || !formData.personContactedId) {
+    if (
+      !(
+        selectedFollowUpId &&
+        formData.followUpDate &&
+        formData.description &&
+        formData.contactedById &&
+        formData.personContactedId
+      )
+    ) {
       toast.error(t("validation.descriptionRequired"));
       return;
     }
@@ -173,7 +192,9 @@ export const InvestorLastFollowUps = ({ investorId }: InvestorLastFollowUpsProps
     const followUp = followUps.find((f: any) => f.id === followUpId);
     if (followUp) {
       setFormData({
-        followUpDate: new Date(followUp.followUpDate).toISOString().split("T")[0],
+        followUpDate: new Date(followUp.followUpDate)
+          .toISOString()
+          .split("T")[0],
         description: followUp.description,
         contactedById: followUp.contactedById,
         personContactedId: followUp.personContactedId,
@@ -187,7 +208,7 @@ export const InvestorLastFollowUps = ({ investorId }: InvestorLastFollowUpsProps
     setSelectedFollowUpId(followUpId);
     setDeleteDialogOpen(true);
   };
-if (isLoading) {
+  if (isLoading) {
     return (
       <Card>
         <CardHeader>
@@ -211,7 +232,6 @@ if (isLoading) {
     return null;
   }
 
-  
   return (
     <>
       <Card>
@@ -225,24 +245,24 @@ if (isLoading) {
               <CardDescription>{t("description")}</CardDescription>
             </div>
             <Button onClick={() => setAddDialogOpen(true)} size="sm">
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               {t("addButton")}
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {followUps.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-8">
+            <p className="py-8 text-center text-muted-foreground text-sm">
               {t("empty")}
             </p>
           ) : (
             <div className="space-y-4">
               {followUps.map((followUp: any) => (
                 <div
+                  className="rounded-lg border p-4 transition-colors hover:bg-muted/50"
                   key={followUp.id}
-                  className="border rounded-lg p-4 hover:bg-muted/50 transition-colors"
                 >
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="mb-3 flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <Badge variant="outline">
                         {format(new Date(followUp.followUpDate), "PPP")}
@@ -250,25 +270,25 @@ if (isLoading) {
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
-                        variant="ghost"
-                        size="sm"
                         onClick={() => openEditDialog(followUp.id)}
+                        size="sm"
+                        variant="ghost"
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
                       <Button
-                        variant="ghost"
-                        size="sm"
                         onClick={() => openDeleteDialog(followUp.id)}
+                        size="sm"
+                        variant="ghost"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
-                  <p className="text-sm whitespace-pre-wrap mb-3">
+                  <p className="mb-3 whitespace-pre-wrap text-sm">
                     {followUp.description}
                   </p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-4 text-muted-foreground text-xs">
                     <div className="flex items-center gap-1">
                       <Users className="h-3 w-3" />
                       <span>
@@ -282,8 +302,9 @@ if (isLoading) {
                       </span>
                     </div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-2">
-                    {t("createdAt")}: {format(new Date(followUp.createdAt), "PPp")}
+                  <div className="mt-2 text-muted-foreground text-xs">
+                    {t("createdAt")}:{" "}
+                    {format(new Date(followUp.createdAt), "PPp")}
                   </div>
                 </div>
               ))}
@@ -293,7 +314,7 @@ if (isLoading) {
       </Card>
 
       {/* Add Dialog */}
-      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+      <Dialog onOpenChange={setAddDialogOpen} open={addDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>{t("addDialog.title")}</DialogTitle>
@@ -305,34 +326,38 @@ if (isLoading) {
               <Label htmlFor="add-date">{t("labels.followUpDate")}</Label>
               <Input
                 id="add-date"
-                type="date"
-                value={formData.followUpDate}
                 onChange={(e) =>
                   setFormData({ ...formData, followUpDate: e.target.value })
                 }
+                type="date"
+                value={formData.followUpDate}
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="add-contacted-by">{t("labels.contactedBy")}</Label>
+              <Label htmlFor="add-contacted-by">
+                {t("labels.contactedBy")}
+              </Label>
               <UserSelect
-                value={formData.contactedById}
                 onValueChange={(value: string) =>
                   setFormData({ ...formData, contactedById: value })
                 }
                 placeholder={t("labels.selectPerson")}
+                value={formData.contactedById}
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="add-person-contacted">{t("labels.personContacted")}</Label>
+              <Label htmlFor="add-person-contacted">
+                {t("labels.personContacted")}
+              </Label>
               <Input
+                className="bg-muted"
+                disabled
                 id="add-person-contacted"
                 value={investorId}
-                disabled
-                className="bg-muted"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 This field is automatically set to the current client/investor
               </p>
             </div>
@@ -341,35 +366,37 @@ if (isLoading) {
               <Label htmlFor="add-description">{t("labels.description")}</Label>
               <Textarea
                 id="add-description"
-                placeholder={t("labels.descriptionPlaceholder")}
-                value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
+                placeholder={t("labels.descriptionPlaceholder")}
                 rows={6}
+                value={formData.description}
               />
             </div>
           </div>
 
           <DialogFooter>
             <Button
-              variant="outline"
               onClick={() => {
                 resetForm();
                 setAddDialogOpen(false);
               }}
+              variant="outline"
             >
               {t("addDialog.cancel")}
             </Button>
-            <Button onClick={handleAdd} disabled={addFollowUp.isPending}>
-              {addFollowUp.isPending ? t("addDialog.saving") : t("addDialog.save")}
+            <Button disabled={addFollowUp.isPending} onClick={handleAdd}>
+              {addFollowUp.isPending
+                ? t("addDialog.saving")
+                : t("addDialog.save")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Edit Dialog */}
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+      <Dialog onOpenChange={setEditDialogOpen} open={editDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>{t("editDialog.title")}</DialogTitle>
@@ -381,69 +408,77 @@ if (isLoading) {
               <Label htmlFor="edit-date">{t("labels.followUpDate")}</Label>
               <Input
                 id="edit-date"
-                type="date"
-                value={formData.followUpDate}
                 onChange={(e) =>
                   setFormData({ ...formData, followUpDate: e.target.value })
                 }
+                type="date"
+                value={formData.followUpDate}
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit-contacted-by">{t("labels.contactedBy")}</Label>
+              <Label htmlFor="edit-contacted-by">
+                {t("labels.contactedBy")}
+              </Label>
               <UserSelect
-                value={formData.contactedById}
                 onValueChange={(value: string) =>
                   setFormData({ ...formData, contactedById: value })
                 }
                 placeholder={t("labels.selectPerson")}
+                value={formData.contactedById}
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit-person-contacted">{t("labels.personContacted")}</Label>
+              <Label htmlFor="edit-person-contacted">
+                {t("labels.personContacted")}
+              </Label>
               <Input
+                className="bg-muted"
+                disabled
                 id="edit-person-contacted"
                 value={investorId}
-                disabled
-                className="bg-muted"
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="edit-description">{t("labels.description")}</Label>
+              <Label htmlFor="edit-description">
+                {t("labels.description")}
+              </Label>
               <Textarea
                 id="edit-description"
-                placeholder={t("labels.descriptionPlaceholder")}
-                value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
+                placeholder={t("labels.descriptionPlaceholder")}
                 rows={6}
+                value={formData.description}
               />
             </div>
           </div>
 
           <DialogFooter>
             <Button
-              variant="outline"
               onClick={() => {
                 resetForm();
                 setEditDialogOpen(false);
                 setSelectedFollowUpId(null);
               }}
+              variant="outline"
             >
               {t("editDialog.cancel")}
             </Button>
-            <Button onClick={handleEdit} disabled={updateFollowUp.isPending}>
-              {updateFollowUp.isPending ? t("editDialog.saving") : t("editDialog.save")}
+            <Button disabled={updateFollowUp.isPending} onClick={handleEdit}>
+              {updateFollowUp.isPending
+                ? t("editDialog.saving")
+                : t("editDialog.save")}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("deleteDialog.title")}</AlertDialogTitle>
@@ -456,8 +491,8 @@ if (isLoading) {
               {t("deleteDialog.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleDelete}
             >
               {t("deleteDialog.confirm")}
             </AlertDialogAction>

@@ -28,12 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Department,
-  LeadPriority,
-  LeadSource,
-  LeadStatus,
-} from "@/generated/prisma";
+import type { LeadPriority, LeadStatus } from "@/generated/prisma";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import { crmLeadDetailsPath } from "@/paths";
 import type { LeadListItem } from "../types/lead-schemas";
@@ -124,7 +119,7 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
   };
 
   const formatTicketSize = (min: number | null, max: number | null) => {
-    if (!min && !max) return "N/A";
+    if (!(min || max)) return "N/A";
     if (min && max) return `${formatCurrency(min)} - ${formatCurrency(max)}`;
     if (min) return `${formatCurrency(min)}+`;
     if (max) return `Up to ${formatCurrency(max)}`;
@@ -141,7 +136,7 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
 
   if (leads.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-muted-foreground">
+      <div className="flex h-64 items-center justify-center text-muted-foreground">
         {t("emptyMessage")}
       </div>
     );
@@ -169,12 +164,12 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
                 <TableCell className="font-medium">
                   <div className="flex flex-col">
                     <Link
-                      href={crmLeadDetailsPath(lead.id)}
                       className="hover:underline"
+                      href={crmLeadDetailsPath(lead.id)}
                     >
                       {lead.name}
                     </Link>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       {lead.email}
                     </span>
                   </div>
@@ -189,14 +184,14 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
                 <TableCell>
                   {lead.priority && (
                     <Badge
-                      variant={getPriorityBadgeVariant(lead.priority)}
                       className={
                         lead.priority === "MEDIUM"
                           ? "bg-yellow-500/10 text-yellow-700 hover:bg-yellow-500/20 dark:text-yellow-400"
                           : lead.priority === "LOW"
-                          ? "bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
-                          : ""
+                            ? "bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
+                            : ""
                       }
+                      variant={getPriorityBadgeVariant(lead.priority)}
                     >
                       {t(`leadPriority.${lead.priority}`)}
                     </Badge>
@@ -204,11 +199,9 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col text-sm">
-                    <span>
-                      {lead.leadResponsible?.name || "Unassigned"}
-                    </span>
+                    <span>{lead.leadResponsible?.name || "Unassigned"}</span>
                     {lead.department && (
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-muted-foreground text-xs">
                         {t(`department.${lead.department}`)}
                       </span>
                     )}
@@ -220,7 +213,7 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
+                      <Button className="h-8 w-8 p-0" variant="ghost">
                         <span className="sr-only">Open menu</span>
                         <MoreHorizontalIcon className="h-4 w-4" />
                       </Button>
@@ -266,18 +259,18 @@ export const LeadsTable = ({ leads }: LeadsTableProps) => {
       {/* Dialogs */}
       <AssignLeadDialog
         leadId={selectedLeadId}
-        open={assignDialogOpen}
         onOpenChange={setAssignDialogOpen}
+        open={assignDialogOpen}
       />
       <AddNoteDialog
         leadId={selectedLeadId}
-        open={noteDialogOpen}
         onOpenChange={setNoteDialogOpen}
+        open={noteDialogOpen}
       />
       <ScheduleFollowUpDialog
         leadId={selectedLeadId}
-        open={followUpDialogOpen}
         onOpenChange={setFollowUpDialogOpen}
+        open={followUpDialogOpen}
       />
     </>
   );

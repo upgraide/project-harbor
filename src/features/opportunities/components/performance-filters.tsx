@@ -15,34 +15,42 @@ import { useScopedI18n } from "@/locales/client";
 
 export const PerformanceFilters = () => {
   const t = useScopedI18n("backoffice.analytics.performance.filters");
-  const { filters, setLeadResponsibleId, resetFilters } = usePerformanceFilters();
+  const { filters, setLeadResponsibleId, resetFilters } =
+    usePerformanceFilters();
 
-  const { data: leadResponsibles, isLoading: isLoadingLeadResponsibles } = useLeadResponsibles();
+  const { data: leadResponsibles, isLoading: isLoadingLeadResponsibles } =
+    useLeadResponsibles();
 
   return (
     <div className="flex flex-wrap items-center gap-4">
       {/* Lead Responsible Filter */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">{t("leadResponsible")}</label>
+        <label className="font-medium text-sm">{t("leadResponsible")}</label>
         <Select
+          onValueChange={(value) =>
+            setLeadResponsibleId(value === "all" ? null : value)
+          }
           value={filters.leadResponsibleId ?? "all"}
-          onValueChange={(value) => setLeadResponsibleId(value === "all" ? null : value)}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder={t("leadResponsiblePlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("leadResponsiblePlaceholder")}</SelectItem>
+            <SelectItem value="all">
+              {t("leadResponsiblePlaceholder")}
+            </SelectItem>
             {isLoadingLeadResponsibles ? (
-              <SelectItem value="loading" disabled>
+              <SelectItem disabled value="loading">
                 Loading...
               </SelectItem>
             ) : (
-              leadResponsibles?.map((responsible: { id: string; name: string | null }) => (
-                <SelectItem key={responsible.id} value={responsible.id}>
-                  {responsible.name}
-                </SelectItem>
-              ))
+              leadResponsibles?.map(
+                (responsible: { id: string; name: string | null }) => (
+                  <SelectItem key={responsible.id} value={responsible.id}>
+                    {responsible.name}
+                  </SelectItem>
+                )
+              )
             )}
           </SelectContent>
         </Select>
@@ -50,8 +58,8 @@ export const PerformanceFilters = () => {
 
       {/* Reset Button */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium invisible">Reset</label>
-        <Button variant="outline" size="icon" onClick={resetFilters}>
+        <label className="invisible font-medium text-sm">Reset</label>
+        <Button onClick={resetFilters} size="icon" variant="outline">
           <RotateCcw className="h-4 w-4" />
         </Button>
       </div>

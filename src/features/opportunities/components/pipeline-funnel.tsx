@@ -82,7 +82,7 @@ export const PipelineFunnelChart = () => {
         <CardTitle className="text-base">
           {t("graphs.pipeline.title")}
         </CardTitle>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="mt-1 text-muted-foreground text-xs">
           {t("graphs.pipeline.description")}
         </p>
       </CardHeader>

@@ -88,10 +88,7 @@ export const UserEditContent = ({ userId }: UserEditContentProps) => {
                 <FormItem>
                   <FormLabel>{t("form.name")}</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={t("form.namePlaceholder")}
-                    />
+                    <Input {...field} placeholder={t("form.namePlaceholder")} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,8 +142,8 @@ export const UserEditContent = ({ userId }: UserEditContentProps) => {
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    {isAdmin 
-                      ? t("form.roleDescription") 
+                    {isAdmin
+                      ? t("form.roleDescription")
                       : t("form.roleDescriptionRestricted")}
                   </FormDescription>
                   <FormMessage />
@@ -160,11 +157,7 @@ export const UserEditContent = ({ userId }: UserEditContentProps) => {
           <Button disabled={updateUser.isPending} type="submit">
             {updateUser.isPending ? t("form.saving") : t("form.save")}
           </Button>
-          <Button
-            onClick={handleCancel}
-            type="button"
-            variant="outline"
-          >
+          <Button onClick={handleCancel} type="button" variant="outline">
             {t("form.cancel")}
           </Button>
         </div>

@@ -1,12 +1,5 @@
 import type { SearchParams } from "nuqs/server";
-import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import {
-  CloseOpportunitiesContent,
-  CloseOpportunitiesError,
-  CloseOpportunitiesList,
-  CloseOpportunitiesLoading,
-} from "@/features/close-opportunities/components/close-opportunities-list";
+import { CloseOpportunitiesList } from "@/features/close-opportunities/components/close-opportunities-list";
 import { requireTeam } from "@/lib/auth-utils";
 import { HydrateClient } from "@/trpc/server";
 

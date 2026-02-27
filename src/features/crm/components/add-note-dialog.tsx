@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
-import { toast } from "sonner";
 
 type AddNoteDialogProps = {
   leadId: string | null;
@@ -60,7 +60,7 @@ export const AddNoteDialog = ({
   };
 
   const handleAdd = () => {
-    if (!leadId || !note.trim()) return;
+    if (!(leadId && note.trim())) return;
 
     addNote.mutate({
       leadId,
@@ -69,7 +69,7 @@ export const AddNoteDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{t("title")}</DialogTitle>
@@ -80,29 +80,29 @@ export const AddNoteDialog = ({
           <div className="grid gap-2">
             <Label htmlFor="note">{t("labels.note")}</Label>
             <Textarea
-              id="note"
-              placeholder={t("placeholders.note")}
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              rows={5}
               disabled={addNote.isPending}
+              id="note"
+              onChange={(e) => setNote(e.target.value)}
+              placeholder={t("placeholders.note")}
+              rows={5}
+              value={note}
             />
           </div>
         </div>
 
         <DialogFooter>
           <Button
+            disabled={addNote.isPending}
+            onClick={resetAndClose}
             type="button"
             variant="outline"
-            onClick={resetAndClose}
-            disabled={addNote.isPending}
           >
             {t("cancel")}
           </Button>
           <Button
-            type="button"
-            onClick={handleAdd}
             disabled={!note.trim() || addNote.isPending}
+            onClick={handleAdd}
+            type="button"
           >
             {addNote.isPending ? t("adding") : t("add")}
           </Button>

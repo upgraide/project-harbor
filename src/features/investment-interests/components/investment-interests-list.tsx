@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
 import { EmptyView } from "@/components/entity-components";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -86,7 +86,11 @@ export const InvestmentInterestsList = () => {
         observer.unobserve(currentRef);
       }
     };
-  }, [interests.hasNextPage, interests.isFetchingNextPage, interests.fetchNextPage]);
+  }, [
+    interests.hasNextPage,
+    interests.isFetchingNextPage,
+    interests.fetchNextPage,
+  ]);
 
   return (
     <div className="space-y-4">
@@ -142,10 +146,10 @@ export const InvestmentInterestsList = () => {
           <EmptyView message={t("emptyMessage")} title={t("emptyTitle")} />
         </div>
       ) : (
-        <div className="rounded-lg border overflow-hidden">
+        <div className="overflow-hidden rounded-lg border">
           <div className="max-h-[calc(100vh-280px)] overflow-auto">
             <Table>
-              <TableHeader className="sticky top-0 bg-background z-10">
+              <TableHeader className="sticky top-0 z-10 bg-background">
                 <TableRow>
                   <TableHead>{t("table.clientName")}</TableHead>
                   <TableHead>{t("table.project")}</TableHead>
@@ -173,12 +177,12 @@ export const InvestmentInterestsList = () => {
                     <TableCell>
                       {interest.interested ? (
                         <Badge className="bg-green-500">
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          <CheckCircle2 className="mr-1 h-3 w-3" />
                           {t("interestStatus.interested")}
                         </Badge>
                       ) : (
                         <Badge variant="destructive">
-                          <XCircle className="h-3 w-3 mr-1" />
+                          <XCircle className="mr-1 h-3 w-3" />
                           {t("interestStatus.notInterested")}
                         </Badge>
                       )}
@@ -215,9 +219,9 @@ export const InvestmentInterestsList = () => {
                         </Link>
                         <button
                           className="text-left text-primary text-sm hover:underline disabled:opacity-50"
-                          type="button"
-                          onClick={() => handleToggleProcessed(interest)}
                           disabled={toggleProcessed.isPending}
+                          onClick={() => handleToggleProcessed(interest)}
+                          type="button"
                         >
                           {interest.processed
                             ? t("actions.markAsUnprocessed")
@@ -233,12 +237,12 @@ export const InvestmentInterestsList = () => {
               </TableBody>
             </Table>
             {/* Load more trigger */}
-            <div ref={loadMoreRef} className="py-4 flex justify-center">
+            <div className="flex justify-center py-4" ref={loadMoreRef}>
               {interests.isFetchingNextPage && (
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               )}
               {!interests.hasNextPage && allItems.length > 0 && (
-                <span className="text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-sm">
                   {t("noMoreItems")}
                 </span>
               )}

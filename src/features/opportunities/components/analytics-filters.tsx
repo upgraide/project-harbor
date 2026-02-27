@@ -1,5 +1,7 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
+import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -8,22 +10,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAnalyticsFilters, type OpportunityType, type Period } from "@/features/opportunities/context/analytics-filters";
+import {
+  type OpportunityType,
+  type Period,
+  useAnalyticsFilters,
+} from "@/features/opportunities/context/analytics-filters";
 import { useScopedI18n } from "@/locales/client";
-import { RotateCcw } from "lucide-react";
 import { useTRPC } from "@/trpc/client";
-import { useQuery } from "@tanstack/react-query";
 
 export const AnalyticsFilters = () => {
   const t = useScopedI18n("backoffice.analytics");
   const trpc = useTRPC();
-  const {
-    filters,
-    setYear,
-    setPeriod,
-    setOpportunityType,
-    resetFilters,
-  } = useAnalyticsFilters();
+  const { filters, setYear, setPeriod, setOpportunityType, resetFilters } =
+    useAnalyticsFilters();
 
   // Fetch available years dynamically
   const { data: availableYears } = useQuery(
@@ -40,7 +39,10 @@ export const AnalyticsFilters = () => {
     { value: "full", label: "Full Year" },
   ];
 
-  const opportunityTypeOptions: Array<{ value: OpportunityType; label: string }> = [
+  const opportunityTypeOptions: Array<{
+    value: OpportunityType;
+    label: string;
+  }> = [
     { value: "all", label: "All Opportunities" },
     { value: "mna", label: "M&A" },
     { value: "realEstate", label: "Real Estate" },
@@ -49,12 +51,12 @@ export const AnalyticsFilters = () => {
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted/30 p-4">
       <div className="flex items-center gap-2">
-        <label className="text-sm font-medium">Year:</label>
+        <label className="font-medium text-sm">Year:</label>
         <Select
-          value={filters.year}
           onValueChange={(value) => {
             setYear(value);
           }}
+          value={filters.year}
         >
           <SelectTrigger className="w-[140px]">
             <SelectValue />
@@ -71,10 +73,10 @@ export const AnalyticsFilters = () => {
 
       {filters.year !== "allTime" && (
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium">Period:</label>
+          <label className="font-medium text-sm">Period:</label>
           <Select
-            value={filters.period}
             onValueChange={(value) => setPeriod(value as Period)}
+            value={filters.period}
           >
             <SelectTrigger className="w-[160px]">
               <SelectValue />
@@ -91,10 +93,12 @@ export const AnalyticsFilters = () => {
       )}
 
       <div className="flex items-center gap-2">
-        <label className="text-sm font-medium">View:</label>
+        <label className="font-medium text-sm">View:</label>
         <Select
+          onValueChange={(value) =>
+            setOpportunityType(value as OpportunityType)
+          }
           value={filters.opportunityType}
-          onValueChange={(value) => setOpportunityType(value as OpportunityType)}
         >
           <SelectTrigger className="w-[220px]">
             <SelectValue />
@@ -110,10 +114,10 @@ export const AnalyticsFilters = () => {
       </div>
 
       <Button
-        variant="ghost"
-        size="sm"
-        onClick={resetFilters}
         className="ml-auto gap-2"
+        onClick={resetFilters}
+        size="sm"
+        variant="ghost"
       >
         <RotateCcw className="h-4 w-4" />
         Reset

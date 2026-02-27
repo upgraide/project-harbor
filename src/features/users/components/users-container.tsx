@@ -1,6 +1,4 @@
-import { EntityContainer } from "@/components/entity-components";
 import { UsersHeader } from "./users-header";
-import { UsersPagination } from "./users-pagination";
 import { UsersSearch } from "./users-search";
 
 type UsersContainerProps = {
@@ -13,7 +11,9 @@ export const UsersContainer = ({ children }: UsersContainerProps) => (
       <UsersHeader />
       <div className="flex h-full min-w-0 flex-col gap-y-4 overflow-hidden">
         <UsersSearch />
-        <div className="flex min-w-0 flex-col gap-y-4 overflow-hidden">{children}</div>
+        <div className="flex min-w-0 flex-col gap-y-4 overflow-hidden">
+          {children}
+        </div>
       </div>
     </div>
   </div>

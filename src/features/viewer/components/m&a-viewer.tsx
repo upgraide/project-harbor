@@ -2,19 +2,20 @@
 /** biome-ignore-all lint/style/noMagicNumbers: Ignored */
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, XCircle } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { useCallback, useEffect, useState } from "react";
 import {
   Bar,
   CartesianGrid,
+  Cell,
   ComposedChart,
+  LabelList,
   Line,
   XAxis,
   YAxis,
-  Cell,
-  LabelList,
 } from "recharts";
 import { ErrorView, LoadingView } from "@/components/entity-components";
 import {
@@ -53,8 +54,11 @@ import {
   useSignMergerAndAcquisitionNDA,
   useSuspenseOpportunity,
 } from "@/features/opportunities/hooks/use-m&a-opportunities";
+import { authClient } from "@/lib/auth-client";
+import { getPusherClient } from "@/lib/pusher-client";
 import { cn } from "@/lib/utils";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
+import { useTRPC } from "@/trpc/client";
 
 export const ViewerLoading = () => {
   const t = useScopedI18n("dashboard.mAndAViewer");
@@ -74,34 +78,50 @@ export const ViewerError = () => {
   );
 };
 
-const chartConfig = (t: (key: string) => string, graphUnit: "millions" | "thousands") => {
-  const unit = graphUnit === 'thousands' ? 'K€' : 'M€';
-  return ({
+const chartConfig = (
+  t: (key: string) => string,
+  graphUnit: "millions" | "thousands"
+) => {
+  const unit = graphUnit === "thousands" ? "K€" : "M€";
+  return {
     revenue: {
-      label: t("graphCard.table.header.revenue").replace('M€', unit),
+      label: t("graphCard.table.header.revenue").replace("M€", unit),
     },
     revenueFuture: {
-      label: t("graphCard.table.header.revenue").replace('M€', unit),
+      label: t("graphCard.table.header.revenue").replace("M€", unit),
     },
     ebitda: {
-      label: t("graphCard.table.header.ebitda").replace('M€', unit),
+      label: t("graphCard.table.header.ebitda").replace("M€", unit),
     },
     ebitdaMargin: {
       label: t("graphCard.table.header.ebitdaMargin"),
     },
-  }) satisfies ChartConfig;
+  } satisfies ChartConfig;
 };
 
 // Helper to determine if a year is future (projected)
-const getYearType = (year: string, currentYear: number = new Date().getFullYear()) => {
+const getYearType = (
+  year: string,
+  currentYear: number = new Date().getFullYear()
+) => {
   const yearNum = Number.parseInt(year);
-  return yearNum >= currentYear ? 'future' : 'historical';
+  return yearNum >= currentYear ? "future" : "historical";
 };
 
 // Helper to get CAGR label with dynamic years
-const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[], t: (key: string) => string) => {
+const getCAGRLabel = (
+  graphRows: {
+    year: string;
+    revenue: number;
+    ebitda: number;
+    ebitdaMargin: number;
+  }[],
+  t: (key: string) => string
+) => {
   if (!graphRows || graphRows.length < 3) return null;
-  const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
+  const sortedRows = [...graphRows].sort((a, b) =>
+    a.year.localeCompare(b.year)
+  );
   const firstYear = sortedRows[0].year.slice(2, 4);
   const lastYear = sortedRows[sortedRows.length - 1].year.slice(2, 4);
   return `CAGR ${firstYear}\u2013${lastYear}`;
@@ -114,7 +134,8 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   const { data: opportunity } = useSuspenseOpportunity(opportunityId);
-  const graphUnit = (opportunity.graphUnit as "millions" | "thousands") || "millions";
+  const graphUnit =
+    (opportunity.graphUnit as "millions" | "thousands") || "millions";
 
   const { data: preloadedInterest } =
     useGetMergerAndAcquisitionInterest(opportunityId);
@@ -151,7 +172,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
     opportunity.netDebt != null;
 
   const showCAGRs = () =>
-    opportunity.graphRows != null && 
+    opportunity.graphRows != null &&
     opportunity.graphRows.length >= 3 &&
     (opportunity.salesCAGR != null || opportunity.ebitdaCAGR != null);
 
@@ -212,9 +233,40 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const handleMarkNoInterest = useMarkMergerAndAcquisitionNoInterest(() =>
     setUserInterest((prev) => ({ ...prev, interested: false }))
   );
-  const handleSignNDA = useSignMergerAndAcquisitionNDA(() =>
-    setUserInterest((prev) => ({ ...prev, ndaSigned: true }))
-  );
+  const handleSignNDA = useSignMergerAndAcquisitionNDA();
+
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { data: session } = authClient.useSession();
+
+  const invalidateInterestQueries = useCallback(() => {
+    queryClient.invalidateQueries(
+      trpc.mergerAndAcquisition.getOne.queryOptions({ id: opportunityId })
+    );
+    queryClient.invalidateQueries(
+      trpc.userInterest.getMergerAndAcquisitionInterest.queryOptions({
+        opportunityId,
+      })
+    );
+  }, [queryClient, trpc, opportunityId]);
+
+  // Subscribe to Pusher for real-time NDA status updates from webhook
+  useEffect(() => {
+    const email = session?.user?.email;
+    if (!email) return;
+
+    const pusher = getPusherClient();
+    const channel = pusher.subscribe(`user-${email}`);
+
+    channel.bind("nda-status-update", () => {
+      invalidateInterestQueries();
+    });
+
+    return () => {
+      channel.unbind("nda-status-update");
+      pusher.unsubscribe(`user-${email}`);
+    };
+  }, [session?.user?.email, invalidateInterestQueries]);
 
   useEffect(() => {
     setUserInterest((prev) => ({
@@ -293,7 +345,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
             </CardHeader>
             <CardContent>
               {hasDescription() && (
-                <p className="text-base whitespace-pre-line">
+                <p className="whitespace-pre-line text-base">
                   {locale === "en"
                     ? opportunity.englishDescription
                     : opportunity.description}
@@ -424,11 +476,11 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                           )}
                         </TableCell>
                         <TableCell className="px-6 py-4">
-                          {new Intl.NumberFormat('pt-PT', { 
-                            style: 'currency', 
-                            currency: 'EUR',
+                          {new Intl.NumberFormat("pt-PT", {
+                            style: "currency",
+                            currency: "EUR",
                             minimumFractionDigits: 0,
-                            maximumFractionDigits: 0
+                            maximumFractionDigits: 0,
                           }).format(opportunity.ebitdaNormalized)}
                         </TableCell>
                       </TableRow>
@@ -540,9 +592,9 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
           <div className="min-h-64 w-full flex-1 md:min-h-96">
             <Card className="h-full border-none bg-transparent shadow-none">
               <CardContent className="h-full p-2 md:p-4">
-                <div className="flex flex-col md:flex-row gap-6 h-full">
+                <div className="flex h-full flex-col gap-6 md:flex-row">
                   {/* Graph on the left - takes most of the space */}
-                  <div className="flex-1 min-h-64 md:min-h-96">
+                  <div className="min-h-64 flex-1 md:min-h-96">
                     <ChartContainer
                       className="h-full w-full"
                       config={chartConfig(t, graphUnit)}
@@ -565,7 +617,10 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                             const year = String(value);
                             const yearNum = Number.parseInt(year);
                             const currentYear = new Date().getFullYear();
-                            const suffix = yearNum >= currentYear ? t('graphCard.yearSuffixFuture') : t('graphCard.yearSuffixHistorical');
+                            const suffix =
+                              yearNum >= currentYear
+                                ? t("graphCard.yearSuffixFuture")
+                                : t("graphCard.yearSuffixHistorical");
                             return `${year.slice(0, 4)}-${suffix}`;
                           }}
                           tickLine={false}
@@ -607,12 +662,17 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                             fontSize: 14,
                             fontWeight: "bold",
                             fill: ((entry: any) => {
-                              const yearType = getYearType(String((entry as any)?.year || ''));
-                              if (yearType === 'future') return '#e2d8d3';
+                              const yearType = getYearType(
+                                String((entry as any)?.year || "")
+                              );
+                              if (yearType === "future") return "#e2d8d3";
                               return isDark ? "#ffffff" : "#123353";
                             }) as any,
                             formatter: (value: number) => {
-                              const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                              const displayValue =
+                                graphUnit === "thousands"
+                                  ? value * 1000
+                                  : value;
                               return Math.round(displayValue).toString();
                             },
                           }}
@@ -620,11 +680,19 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                           yAxisId="left"
                         >
                           {opportunity.graphRows?.map((entry, index) => {
-                            const yearType = getYearType(String((entry as any)?.year || ''));
+                            const yearType = getYearType(
+                              String((entry as any)?.year || "")
+                            );
                             return (
                               <Cell
+                                fill={
+                                  yearType === "future"
+                                    ? "#e2d8d3"
+                                    : isDark
+                                      ? "#b3a092"
+                                      : "#123353"
+                                }
                                 key={`cell-${index}`}
-                                fill={yearType === 'future' ? '#e2d8d3' : (isDark ? "#b3a092" : "#123353")}
                               />
                             );
                           })}
@@ -638,38 +706,48 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                           yAxisId="right"
                         >
                           <LabelList
-                            dataKey="ebitda"
-                            position="top"
                             content={(props: any) => {
                               const { x, y, value, index } = props;
                               if (!value && value !== 0) return null;
-                              
-                              const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
-                              const dataPoint = (opportunity.graphRows as { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[])?.[index];
-                              const year = String(dataPoint?.year || '');
+
+                              const displayValue =
+                                graphUnit === "thousands"
+                                  ? value * 1000
+                                  : value;
+                              const dataPoint = (
+                                opportunity.graphRows as {
+                                  year: string;
+                                  revenue: number;
+                                  ebitda: number;
+                                  ebitdaMargin: number;
+                                }[]
+                              )?.[index];
+                              const year = String(dataPoint?.year || "");
                               const yearNum = Number.parseInt(year, 10);
                               const currentYear = new Date().getFullYear();
                               const isFuture = yearNum >= currentYear;
-                              
+
                               let fillColor = "#6b6b6b";
                               if (!isDark) {
-                                fillColor = isFuture ? '#000000' : '#ffffff';
+                                fillColor = isFuture ? "#000000" : "#ffffff";
                               }
-                              
+
                               return (
                                 <text
-                                  x={x}
-                                  y={y}
                                   dy={-6}
                                   fill={fillColor}
                                   fontSize={15}
                                   fontWeight="bold"
                                   textAnchor="middle"
+                                  x={x}
+                                  y={y}
                                 >
                                   {Math.round(displayValue)}
                                 </text>
                               );
                             }}
+                            dataKey="ebitda"
+                            position="top"
                           />
                         </Line>
                         <Line
@@ -694,35 +772,40 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                   </div>
 
                   {/* CAGR values on the right */}
-                  {opportunity.graphRows && opportunity.graphRows.length >= 3 && (
-                    <div className="flex flex-col gap-1 md:w-48">
-                      <h3 className="text-left text-xs font-medium text-muted-foreground">
-                        {getCAGRLabel(opportunity.graphRows as any, t)}
-                      </h3>
-                      <div className="flex flex-col gap-2">
-                        {opportunity.salesCAGR != null && (
-                          <div className="rounded-lg border border-primary/20 bg-primary/10 px-3 py-2">
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="text-xs font-medium text-primary">Sales:</span>
-                              <span className="text-sm font-bold text-muted-foreground">
-                                {opportunity.salesCAGR.toFixed(2)}%
-                              </span>
+                  {opportunity.graphRows &&
+                    opportunity.graphRows.length >= 3 && (
+                      <div className="flex flex-col gap-1 md:w-48">
+                        <h3 className="text-left font-medium text-muted-foreground text-xs">
+                          {getCAGRLabel(opportunity.graphRows as any, t)}
+                        </h3>
+                        <div className="flex flex-col gap-2">
+                          {opportunity.salesCAGR != null && (
+                            <div className="rounded-lg border border-primary/20 bg-primary/10 px-3 py-2">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="font-medium text-primary text-xs">
+                                  Sales:
+                                </span>
+                                <span className="font-bold text-muted-foreground text-sm">
+                                  {opportunity.salesCAGR.toFixed(2)}%
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        )}
-                        {opportunity.ebitdaCAGR != null && (
-                          <div className="rounded-lg border border-primary/20 bg-primary/10 px-3 py-2">
-                            <div className="flex items-center justify-between gap-2">
-                              <span className="text-xs font-medium text-primary">EBITDA:</span>
-                              <span className="text-sm font-bold text-muted-foreground">
-                                {opportunity.ebitdaCAGR.toFixed(2)}%
-                              </span>
+                          )}
+                          {opportunity.ebitdaCAGR != null && (
+                            <div className="rounded-lg border border-primary/20 bg-primary/10 px-3 py-2">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className="font-medium text-primary text-xs">
+                                  EBITDA:
+                                </span>
+                                <span className="font-bold text-muted-foreground text-sm">
+                                  {opportunity.ebitdaCAGR.toFixed(2)}%
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               </CardContent>
             </Card>
@@ -758,10 +841,10 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
                     <TableCell className="px-6 py-4">
                       {opportunity.im ? (
                         <a
-                          href={opportunity.im}
-                          target="_blank"
-                          rel="noopener noreferrer"
                           className="text-blue-600 hover:underline"
+                          href={opportunity.im}
+                          rel="noopener noreferrer"
+                          target="_blank"
                         >
                           {opportunity.im}
                         </a>

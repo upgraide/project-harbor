@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { authClient } from "@/lib/auth-client";
 import { useTRPC } from "@/trpc/client";
@@ -55,31 +55,19 @@ export const useMarkRealEstateNoInterest = (onSuccess?: () => void) => {
 };
 
 /**
- * Hook to mark NDA as signed for a Real Estate opportunity
+ * Hook to start NDA signing flow for a Real Estate opportunity.
+ * Redirects to PandaDocs for signing on success.
  */
-export const useSignRealEstateNDA = (onSuccess?: () => void) => {
+export const useSignRealEstateNDA = () => {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
 
   return useMutation(
     trpc.userInterest.signRealEstateNDA.mutationOptions({
-      onSuccess: (_data, variables) => {
-        toast.success("NDA signed");
-        // Invalidate both queries to refetch and show post-NDA data
-        queryClient.invalidateQueries(
-          trpc.realEstate.getOne.queryOptions({
-            id: variables.opportunityId,
-          })
-        );
-        queryClient.invalidateQueries(
-          trpc.userInterest.getRealEstateInterest.queryOptions({
-            opportunityId: variables.opportunityId,
-          })
-        );
-        onSuccess?.();
+      onSuccess: (data) => {
+        window.location.href = data.signingUrl;
       },
       onError: (error) => {
-        toast.error(`Failed to sign NDA: ${error.message}`);
+        toast.error(`Failed to start NDA signing: ${error.message}`);
       },
     })
   );

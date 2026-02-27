@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { AdvancedMarker, APIProvider, Map } from "@vis.gl/react-google-maps";
 import { AlertCircle } from "lucide-react";
-import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
+import { useEffect, useState } from "react";
 
 type LocationMapPreviewProps = {
   location: string;
@@ -36,7 +36,10 @@ export const LocationMapPreview = ({
 }: LocationMapPreviewProps) => {
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
-  const [markerPosition, setMarkerPosition] = useState<{ lat: number; lng: number } | null>(null);
+  const [markerPosition, setMarkerPosition] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -57,7 +60,9 @@ export const LocationMapPreview = ({
 
         if (!response.ok) {
           const errorData = await response.json();
-          setError(errorData.error || "Location not found. Please check the address.");
+          setError(
+            errorData.error || "Location not found. Please check the address."
+          );
           setIsLoading(false);
           onGeocodeError?.();
           return;
@@ -81,9 +86,12 @@ export const LocationMapPreview = ({
 
           // Determine appropriate zoom level
           let calculatedZoom = DEFAULT_ZOOM;
-          if (maxDiff < 0.01) calculatedZoom = 18; // Street level
-          else if (maxDiff < 0.1) calculatedZoom = 16; // Neighborhood
-          else if (maxDiff < 0.5) calculatedZoom = 13; // City
+          if (maxDiff < 0.01)
+            calculatedZoom = 18; // Street level
+          else if (maxDiff < 0.1)
+            calculatedZoom = 16; // Neighborhood
+          else if (maxDiff < 0.5)
+            calculatedZoom = 13; // City
           else calculatedZoom = 10; // Region
 
           setZoom(calculatedZoom);
@@ -115,20 +123,20 @@ export const LocationMapPreview = ({
           <p className="text-muted-foreground text-sm">Loading map...</p>
         </div>
       )}
-      <div className="h-96 w-full rounded-lg border border-border overflow-hidden">
+      <div className="h-96 w-full overflow-hidden rounded-lg border border-border">
         <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}>
           <Map
-            key={`${center.lat}-${center.lng}`}
-            mapId={MAP_ID}
+            clickableIcons={true}
             defaultCenter={center}
             defaultZoom={zoom}
-            gestureHandling="greedy"
             disableDefaultUI={false}
-            zoomControl={true}
+            fullscreenControl={true}
+            gestureHandling="greedy"
+            key={`${center.lat}-${center.lng}`}
+            mapId={MAP_ID}
             mapTypeControl={true}
             streetViewControl={true}
-            fullscreenControl={true}
-            clickableIcons={true}
+            zoomControl={true}
           >
             {markerPosition && <AdvancedMarker position={markerPosition} />}
           </Map>

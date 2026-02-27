@@ -1,20 +1,36 @@
-import { PrismaClient, Role, OpportunityStatus, InvestorType, InvestorClientType, InvestorStrategy, InvestorSegment, Department, TeamMember, Type, TypeDetails, Industry, IndustrySubsector, SalesRange, EbitdaRange, RealEstateAssetType, RealEstateInvestmentType } from '../src/generated/prisma';
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
+import {
+  EbitdaRange,
+  Industry,
+  IndustrySubsector,
+  InvestorClientType,
+  InvestorSegment,
+  InvestorStrategy,
+  InvestorType,
+  OpportunityStatus,
+  PrismaClient,
+  RealEstateAssetType,
+  RealEstateInvestmentType,
+  Role,
+  SalesRange,
+  Type,
+  TypeDetails,
+} from "../src/generated/prisma";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Start seeding ...');
+  console.log("Start seeding ...");
 
   // Create Admin User
-  const adminEmail = 'admin@harbor.com';
+  const adminEmail = "admin@harbor.com";
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },
     update: {},
     create: {
       id: faker.string.uuid(),
       email: adminEmail,
-      name: 'Admin User',
+      name: "Admin User",
       role: Role.ADMIN,
       emailVerified: true,
     },
@@ -24,7 +40,10 @@ async function main() {
   // Create Team Users
   const teamUsers = [];
   for (let i = 0; i < 5; i++) {
-    const email = faker.internet.email({ firstName: 'Team', lastName: `Member${i}` });
+    const email = faker.internet.email({
+      firstName: "Team",
+      lastName: `Member${i}`,
+    });
     const user = await prisma.user.upsert({
       where: { email },
       update: {},
@@ -59,8 +78,8 @@ async function main() {
         type: faker.helpers.arrayElement(Object.values(InvestorClientType)),
         strategy1: faker.helpers.arrayElement(Object.values(InvestorStrategy)),
         segment1: faker.helpers.arrayElement(Object.values(InvestorSegment)),
-        minTicketSize: faker.number.float({ min: 100000, max: 1000000 }),
-        maxTicketSize: faker.number.float({ min: 1000000, max: 10000000 }),
+        minTicketSize: faker.number.float({ min: 100_000, max: 1_000_000 }),
+        maxTicketSize: faker.number.float({ min: 1_000_000, max: 10_000_000 }),
       },
     });
     investors.push(user);
@@ -78,23 +97,25 @@ async function main() {
         type: faker.helpers.arrayElement(Object.values(Type)),
         typeDetails: faker.helpers.arrayElement(Object.values(TypeDetails)),
         industry: faker.helpers.arrayElement(Object.values(Industry)),
-        industrySubsector: faker.helpers.arrayElement(Object.values(IndustrySubsector)),
+        industrySubsector: faker.helpers.arrayElement(
+          Object.values(IndustrySubsector)
+        ),
         sales: faker.helpers.arrayElement(Object.values(SalesRange)),
         ebitda: faker.helpers.arrayElement(Object.values(EbitdaRange)),
-        ebitdaNormalized: faker.number.float({ min: 100000, max: 5000000 }),
-        netDebt: faker.number.float({ min: 0, max: 1000000 }),
+        ebitdaNormalized: faker.number.float({ min: 100_000, max: 5_000_000 }),
+        netDebt: faker.number.float({ min: 0, max: 1_000_000 }),
         userId: admin.id, // Created by admin
         status: OpportunityStatus.ACTIVE,
         clientAcquisitionerId: faker.helpers.arrayElement(teamUsers).id,
         analytics: {
           create: {
             views: faker.number.int({ min: 0, max: 1000 }),
-          }
-        }
+          },
+        },
       },
     });
   }
-  console.log('Created M&A opportunities');
+  console.log("Created M&A opportunities");
 
   // Create Real Estate Opportunities
   for (let i = 0; i < 10; i++) {
@@ -105,9 +126,11 @@ async function main() {
         englishDescription: faker.lorem.paragraph(),
         images: [faker.image.url(), faker.image.url()],
         asset: faker.helpers.arrayElement(Object.values(RealEstateAssetType)),
-        investment: faker.helpers.arrayElement(Object.values(RealEstateInvestmentType)),
+        investment: faker.helpers.arrayElement(
+          Object.values(RealEstateInvestmentType)
+        ),
         location: faker.location.city(),
-        value: faker.number.float({ min: 500000, max: 10000000 }),
+        value: faker.number.float({ min: 500_000, max: 10_000_000 }),
         yield: faker.number.float({ min: 0.03, max: 0.15 }),
         createdBy: admin.id,
         status: OpportunityStatus.ACTIVE,
@@ -115,14 +138,14 @@ async function main() {
         analytics: {
           create: {
             views: faker.number.int({ min: 0, max: 1000 }),
-          }
-        }
+          },
+        },
       },
     });
   }
-  console.log('Created Real Estate opportunities');
+  console.log("Created Real Estate opportunities");
 
-  console.log('Seeding finished.');
+  console.log("Seeding finished.");
 }
 
 main()

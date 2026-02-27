@@ -1,11 +1,16 @@
 import z from "zod";
 import { PAGINATION } from "@/config/constants";
 import {
+  createNotifications,
+  getOpportunityInvolvedUsers,
+  notifyAdmins,
+} from "@/features/notifications/server/notifications";
+import {
   EbitdaRange,
   Industry,
   IndustrySubsector,
   NotificationType,
-  OpportunityStatus,
+  type OpportunityStatus,
   OpportunityType,
   RealEstateAssetType,
   RealEstateInvestmentType,
@@ -14,11 +19,6 @@ import {
   Type,
   TypeDetails,
 } from "@/generated/prisma";
-import {
-  createNotifications,
-  getOpportunityInvolvedUsers,
-  notifyAdmins,
-} from "@/features/notifications/server/notifications";
 import { inngest } from "@/inngest/client";
 import { calculateCAGR } from "@/lib/cagr-calculator";
 import prisma from "@/lib/db";
@@ -149,8 +149,8 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         ebitda: input.ebitda,
         ebitdaNormalized: parseOptionalFloat(input.ebitdaNormalized),
         netDebt: parseOptionalFloat(input.netDebt),
-        salesCAGR: salesCAGR,
-        ebitdaCAGR: ebitdaCAGR,
+        salesCAGR,
+        ebitdaCAGR,
         assetIncluded: input.assetIncluded === "yes",
         estimatedAssetValue: parseOptionalFloat(input.estimatedAssetValue),
         preNDANotes: input.preNDANotes,
@@ -177,7 +177,7 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         holdPeriod: parseOptionalFloat(input.holdPeriod),
         clientAcquisitionerId: input.clientAcquisitionerId || null,
         images: input.images || [],
-        graphRows: graphRows,
+        graphRows,
         graphUnit: input.graphUnit || "millions",
       };
 
@@ -500,8 +500,8 @@ export const mergerAndAcquisitionRouter = createTRPCRouter({
         where: { id: input.id },
         data: {
           graphRows: input.graphRows,
-          salesCAGR: salesCAGR,
-          ebitdaCAGR: ebitdaCAGR,
+          salesCAGR,
+          ebitdaCAGR,
         },
       });
     }),

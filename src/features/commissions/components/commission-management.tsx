@@ -1,11 +1,21 @@
 "use client";
 
-import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
+import { EmptyView } from "@/components/entity-components";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -15,7 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { EmptyView } from "@/components/entity-components";
 import { CommissionRole } from "@/generated/prisma";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
@@ -55,9 +64,7 @@ export const CommissionManagement = () => {
     })
   );
 
-  const getRoleLabel = (role: CommissionRole) => {
-    return t(`roles.${role}`);
-  };
+  const getRoleLabel = (role: CommissionRole) => t(`roles.${role}`);
 
   const getCommissionValue = (
     userId: string,
@@ -98,11 +105,8 @@ export const CommissionManagement = () => {
     setEditingCell(null);
   };
 
-  const isEditing = (userId: string, roleType: CommissionRole) => {
-    return (
-      editingCell?.userId === userId && editingCell?.roleType === roleType
-    );
-  };
+  const isEditing = (userId: string, roleType: CommissionRole) =>
+    editingCell?.userId === userId && editingCell?.roleType === roleType;
 
   const allRoles = [
     CommissionRole.ACCOUNT_MANAGER,
@@ -120,8 +124,8 @@ export const CommissionManagement = () => {
       <CardContent>
         {teamMembers.length === 0 ? (
           <EmptyView
-            title={t("admin.management.emptyState")}
             message={t("admin.management.emptyStateDescription")}
+            title={t("admin.management.emptyState")}
           />
         ) : (
           <div className="overflow-x-auto">
@@ -130,7 +134,7 @@ export const CommissionManagement = () => {
                 <TableRow>
                   <TableHead>{t("admin.management.table.employee")}</TableHead>
                   {allRoles.map((role) => (
-                    <TableHead key={role} className="text-center">
+                    <TableHead className="text-center" key={role}>
                       {getRoleLabel(role)}
                     </TableHead>
                   ))}
@@ -142,62 +146,62 @@ export const CommissionManagement = () => {
                     <TableCell>
                       <div>
                         <div className="font-medium">{member.name}</div>
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-muted-foreground text-xs">
                           {member.email}
                         </div>
                       </div>
                     </TableCell>
                     {allRoles.map((role) => (
-                      <TableCell key={role} className="text-center">
+                      <TableCell className="text-center" key={role}>
                         {isEditing(member.id, role) ? (
                           <div className="flex items-center justify-center gap-2">
                             <Input
-                              type="number"
-                              min="0"
+                              autoFocus
+                              className="w-20 text-center"
                               max="100"
-                              step="0.1"
-                              value={editingCell?.value}
+                              min="0"
                               onChange={(e) =>
                                 setEditingCell({
                                   ...editingCell!,
                                   value: e.target.value,
                                 })
                               }
-                              className="w-20 text-center"
-                              autoFocus
                               onKeyDown={(e) => {
                                 if (e.key === "Enter") handleSave();
                                 if (e.key === "Escape") handleCancel();
                               }}
+                              step="0.1"
+                              type="number"
+                              value={editingCell?.value}
                             />
                             <Button
-                              size="sm"
-                              onClick={handleSave}
                               disabled={updateCommission.isPending}
+                              onClick={handleSave}
+                              size="sm"
                             >
                               {updateCommission.isPending
                                 ? t("admin.management.table.saving")
                                 : t("admin.management.table.save")}
                             </Button>
                             <Button
+                              disabled={updateCommission.isPending}
+                              onClick={handleCancel}
                               size="sm"
                               variant="outline"
-                              onClick={handleCancel}
-                              disabled={updateCommission.isPending}
                             >
                               {t("admin.management.table.cancel")}
                             </Button>
                           </div>
                         ) : (
                           <button
-                            type="button"
-                            onClick={() => handleEdit(member.id, role)}
                             className="flex w-full items-center justify-center gap-2 rounded-md px-3 py-2 hover:bg-accent"
+                            onClick={() => handleEdit(member.id, role)}
+                            type="button"
                           >
                             <span className="font-mono text-sm">
                               {getCommissionValue(member.id, role)}%
                             </span>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-muted-foreground text-xs">
                               ({t("admin.management.table.edit")})
                             </span>
                           </button>

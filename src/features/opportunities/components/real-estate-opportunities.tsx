@@ -6,7 +6,6 @@ import { BuildingIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   EmptyView,
-  EntityContainer,
   EntityHeader,
   EntityItem,
   EntityList,
@@ -42,8 +41,13 @@ export const OpportunitiesStatusFilter = () => {
 
   return (
     <Select
+      onValueChange={(value) =>
+        setParams({
+          ...params,
+          status: value as "all" | "ACTIVE" | "INACTIVE" | "CONCLUDED",
+        })
+      }
       value={params.status}
-      onValueChange={(value) => setParams({ ...params, status: value as "all" | "ACTIVE" | "INACTIVE" | "CONCLUDED" })}
     >
       <SelectTrigger className="w-[180px]">
         <SelectValue />
@@ -117,14 +121,12 @@ export const OpportunitiesPagination = () => {
   );
 };
 
-export const OpportunitiesContent = () => {
-  return (
-    <>
-      <OpportunitiesList />
-      <OpportunitiesPagination />
-    </>
-  );
-};
+export const OpportunitiesContent = () => (
+  <>
+    <OpportunitiesList />
+    <OpportunitiesPagination />
+  </>
+);
 
 export const OpportunitiesContainer = ({
   children,
@@ -136,7 +138,9 @@ export const OpportunitiesContainer = ({
       <OpportunitiesHeader />
       <div className="flex h-full min-w-0 flex-col gap-y-4 overflow-hidden">
         <OpportunitiesSearch />
-        <div className="flex min-w-0 flex-col gap-y-4 overflow-hidden">{children}</div>
+        <div className="flex min-w-0 flex-col gap-y-4 overflow-hidden">
+          {children}
+        </div>
       </div>
     </div>
   </div>
@@ -193,7 +197,7 @@ export const OpportunityItem = ({ data }: { data: RealEstate }) => {
       isRemoving={removeOpportunity.isPending}
       onRemove={handleRemove}
       subtitle={
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex flex-wrap items-center gap-2">
           <Badge variant={getStatusBadgeVariant(data.status)}>
             {t(`status.${data.status.toLowerCase()}`)}
           </Badge>

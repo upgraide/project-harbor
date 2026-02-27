@@ -11,9 +11,6 @@ import z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StyledUploadButton } from "@/features/editor/components/styled-upload-button";
-import { LocationMapPreview } from "@/features/creator/components/location-map-preview";
-import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -32,6 +29,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { LocationMapPreview } from "@/features/creator/components/location-map-preview";
+import { StyledUploadButton } from "@/features/editor/components/styled-upload-button";
 import { useCreateRealEstateOpportunity } from "@/features/opportunities/hooks/use-real-estate-opportunities";
 import { UserMultiSelect } from "@/features/users/components/user-multi-select";
 import { UserSelect } from "@/features/users/components/user-select";
@@ -39,6 +38,7 @@ import {
   RealEstateAssetType,
   RealEstateInvestmentType,
 } from "@/generated/prisma";
+import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
 import { backofficeRealEstatePath } from "@/paths";
 
@@ -100,7 +100,11 @@ const formSchema = z.object({
   coInvestmentHoldPeriod: z.string().optional(),
   coInvestmentBreakEvenOccupancy: z.string().optional(),
   clientAcquisitionerId: z.string().optional(),
-  accountManagerIds: z.string().array().min(1, "At least 1 account manager is required").max(2, "Maximum 2 account managers allowed"),
+  accountManagerIds: z
+    .string()
+    .array()
+    .min(1, "At least 1 account manager is required")
+    .max(2, "Maximum 2 account managers allowed"),
   images: z.string().array().optional(),
 });
 
@@ -279,7 +283,8 @@ export const Creator = () => {
                   endpoint="imageUploader"
                   onClientUploadComplete={async (res) => {
                     const imageUrls = res.map((file) => file.url);
-                    const totalImages = uploadedImages.length + imageUrls.length;
+                    const totalImages =
+                      uploadedImages.length + imageUrls.length;
 
                     if (totalImages > 10) {
                       toast.error(t("imagesCard.maxImagesError"));
@@ -509,14 +514,14 @@ export const Creator = () => {
                           />
                         </FormControl>
                         <Button
-                          type="button"
-                          variant="outline"
+                          disabled={!field.value}
                           onClick={() => {
                             if (field.value) {
                               setShowLocationMap(!showLocationMap);
                             }
                           }}
-                          disabled={!field.value}
+                          type="button"
+                          variant="outline"
                         >
                           {showLocationMap
                             ? t("assetInformationCard.location.hideMapButton")
@@ -1893,7 +1898,9 @@ export const Creator = () => {
           <section>
             <Card className="border-none bg-transparent shadow-none">
               <CardHeader>
-                <CardTitle className="font-bold text-lg">{t("teamAssignmentCard.title")}</CardTitle>
+                <CardTitle className="font-bold text-lg">
+                  {t("teamAssignmentCard.title")}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField

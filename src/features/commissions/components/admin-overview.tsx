@@ -1,10 +1,18 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { AlertCircleIcon, PlusIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { EmptyView } from "@/components/entity-components";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -14,21 +22,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { EmptyView } from "@/components/entity-components";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
 import { CommissionManagement } from "./commission-management";
 import { ResolvedCommissionsList } from "./resolved-commissions-list";
-import { PlusIcon, AlertCircleIcon } from "lucide-react";
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat("en-US", {
+const formatCurrency = (value: number): string =>
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "EUR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
-};
 
 export const AdminOverview = () => {
   const t = useScopedI18n("crm.commissions");
@@ -37,11 +42,16 @@ export const AdminOverview = () => {
   const searchParams = useSearchParams();
 
   // Get active tab from URL or default to "pending"
-  const activeTab = (searchParams.get('tab') as "pending" | "resolved" | "employees" | "settings") || "pending";
+  const activeTab =
+    (searchParams.get("tab") as
+      | "pending"
+      | "resolved"
+      | "employees"
+      | "settings") || "pending";
 
   const handleTabChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set('tab', value);
+    params.set("tab", value);
     router.push(`?${params.toString()}`);
   };
 
@@ -53,32 +63,47 @@ export const AdminOverview = () => {
     trpc.commissions.getPendingCommissions.queryOptions()
   ) as { data: any[]; isLoading: boolean };
 
-  if (isLoadingEmployees || isLoadingPending || !employees || !pendingOpportunities) {
+  if (
+    isLoadingEmployees ||
+    isLoadingPending ||
+    !employees ||
+    !pendingOpportunities
+  ) {
     return (
       <div className="flex items-center justify-center p-12">
-        <div className="text-muted-foreground">{t("loading.commissionData")}</div>
+        <div className="text-muted-foreground">
+          {t("loading.commissionData")}
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+      <Tabs
+        className="w-full"
+        onValueChange={handleTabChange}
+        value={activeTab}
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="pending">
             {t("tabs.pendingResolution")}
             {pendingOpportunities.length > 0 && (
-              <Badge variant="destructive" className="ml-2">
+              <Badge className="ml-2" variant="destructive">
                 {pendingOpportunities.length}
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="resolved">{t("tabs.resolvedCommissions")}</TabsTrigger>
+          <TabsTrigger value="resolved">
+            {t("tabs.resolvedCommissions")}
+          </TabsTrigger>
           <TabsTrigger value="employees">{t("tabs.teamMembers")}</TabsTrigger>
-          <TabsTrigger value="settings">{t("tabs.commissionRates")}</TabsTrigger>
+          <TabsTrigger value="settings">
+            {t("tabs.commissionRates")}
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="pending" className="space-y-6 mt-6">
+        <TabsContent className="mt-6 space-y-6" value="pending">
           <Card>
             <CardHeader>
               <CardTitle>{t("pendingResolution.title")}</CardTitle>
@@ -89,8 +114,8 @@ export const AdminOverview = () => {
             <CardContent>
               {pendingOpportunities.length === 0 ? (
                 <EmptyView
-                  title=""
                   message={t("pendingResolution.emptyState")}
+                  title=""
                 />
               ) : (
                 <Table>
@@ -98,9 +123,13 @@ export const AdminOverview = () => {
                     <TableRow>
                       <TableHead>{t("pendingResolution.table.name")}</TableHead>
                       <TableHead>{t("pendingResolution.table.type")}</TableHead>
-                      <TableHead className="text-right">{t("pendingResolution.table.finalAmount")}</TableHead>
-                      <TableHead className="text-right">{t("pendingResolution.table.commissionable")}</TableHead>
-                      <TableHead></TableHead>
+                      <TableHead className="text-right">
+                        {t("pendingResolution.table.finalAmount")}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {t("pendingResolution.table.commissionable")}
+                      </TableHead>
+                      <TableHead />
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -137,17 +166,19 @@ export const AdminOverview = () => {
                         </TableCell>
                         <TableCell className="text-right">
                           <Button
-                            size="sm"
                             onClick={() => {
-                              const currentParams = new URLSearchParams(searchParams.toString());
-                              const view = currentParams.get('view');
+                              const currentParams = new URLSearchParams(
+                                searchParams.toString()
+                              );
+                              const view = currentParams.get("view");
                               const params = new URLSearchParams();
-                              if (view) params.set('view', view);
-                              params.set('tab', activeTab);
+                              if (view) params.set("view", view);
+                              params.set("tab", activeTab);
                               router.push(
                                 `/crm/commissions/resolve/${opp.id}?${params.toString()}`
                               );
                             }}
+                            size="sm"
                           >
                             <PlusIcon className="mr-2 h-4 w-4" />
                             {t("pendingResolution.table.setupButton")}
@@ -162,7 +193,7 @@ export const AdminOverview = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="employees" className="space-y-6 mt-6">
+        <TabsContent className="mt-6 space-y-6" value="employees">
           {/* Employee Overview Table */}
           <Card>
             <CardHeader>
@@ -180,7 +211,9 @@ export const AdminOverview = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t("admin.overview.table.employee")}</TableHead>
+                      <TableHead>
+                        {t("admin.overview.table.employee")}
+                      </TableHead>
                       <TableHead className="text-right">
                         {t("admin.overview.table.totalReceived")}
                       </TableHead>
@@ -191,22 +224,26 @@ export const AdminOverview = () => {
                   </TableHeader>
                   <TableBody>
                     {employees.map((employee) => (
-                      <TableRow 
-                        key={employee.id}
+                      <TableRow
                         className="cursor-pointer hover:bg-muted/50"
+                        key={employee.id}
                         onClick={() => {
-                          const currentParams = new URLSearchParams(searchParams.toString());
-                          const view = currentParams.get('view');
+                          const currentParams = new URLSearchParams(
+                            searchParams.toString()
+                          );
+                          const view = currentParams.get("view");
                           const params = new URLSearchParams();
-                          if (view) params.set('view', view);
-                          params.set('tab', activeTab);
-                          router.push(`/crm/commissions/employee/${employee.id}?${params.toString()}`);
+                          if (view) params.set("view", view);
+                          params.set("tab", activeTab);
+                          router.push(
+                            `/crm/commissions/employee/${employee.id}?${params.toString()}`
+                          );
                         }}
                       >
                         <TableCell>
                           <div>
                             <div className="font-medium">{employee.name}</div>
-                            <div className="text-sm text-muted-foreground">
+                            <div className="text-muted-foreground text-sm">
                               {employee.email}
                             </div>
                           </div>
@@ -230,11 +267,11 @@ export const AdminOverview = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="resolved" className="space-y-6 mt-6">
+        <TabsContent className="mt-6 space-y-6" value="resolved">
           <ResolvedCommissionsList />
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-6 mt-6">
+        <TabsContent className="mt-6 space-y-6" value="settings">
           <CommissionManagement />
         </TabsContent>
       </Tabs>

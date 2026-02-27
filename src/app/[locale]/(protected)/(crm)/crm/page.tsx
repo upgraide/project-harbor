@@ -17,7 +17,7 @@ const Page = async () => {
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
+        <h1 className="font-bold text-3xl tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground">{t("welcome")}</p>
       </div>
 
@@ -43,7 +43,9 @@ const Page = async () => {
               <CoinsIcon className="size-5" />
               {t("features.commissions.title")}
             </CardTitle>
-            <CardDescription>{t("features.commissions.description")}</CardDescription>
+            <CardDescription>
+              {t("features.commissions.description")}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Link href={crmCommissionsPath()}>

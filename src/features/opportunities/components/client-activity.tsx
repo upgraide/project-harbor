@@ -1,9 +1,9 @@
 "use client";
 
+import { formatDistanceToNow } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useClientActivityFiltered } from "@/features/opportunities/hooks/use-performance";
 import { useScopedI18n } from "@/locales/client";
-import { formatDistanceToNow } from "date-fns";
 
 export const ClientActivityCard = () => {
   const t = useScopedI18n("backoffice.analytics");
@@ -16,7 +16,7 @@ export const ClientActivityCard = () => {
           <CardTitle className="text-base">
             {t("graphs.clientActivity.title")}
           </CardTitle>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground text-xs">
             {t("graphs.clientActivity.description")}
           </p>
         </CardHeader>
@@ -34,7 +34,7 @@ export const ClientActivityCard = () => {
           <CardTitle className="text-base">
             {t("graphs.clientActivity.title")}
           </CardTitle>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground text-xs">
             {t("graphs.clientActivity.description")}
           </p>
         </CardHeader>
@@ -62,7 +62,10 @@ export const ClientActivityCard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <div className="font-bold text-3xl tabular-nums leading-none" style={{ color: "#9C3E11" }}>
+              <div
+                className="font-bold text-3xl tabular-nums leading-none"
+                style={{ color: "#9C3E11" }}
+              >
                 {data.noRecentContact}
               </div>
               <div className="text-muted-foreground text-sm">
@@ -80,7 +83,10 @@ export const ClientActivityCard = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <div className="font-bold text-3xl tabular-nums leading-none" style={{ color: "#679A85" }}>
+              <div
+                className="font-bold text-3xl tabular-nums leading-none"
+                style={{ color: "#679A85" }}
+              >
                 {data.recentContact}
               </div>
               <div className="text-muted-foreground text-sm">
@@ -99,22 +105,25 @@ export const ClientActivityCard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+            <div className="max-h-[400px] space-y-3 overflow-y-auto">
               {data.detailedList.map((client) => (
                 <div
+                  className="flex items-start justify-between gap-4 border-border border-b pb-3 last:border-b-0"
                   key={client.id}
-                  className="flex items-start justify-between gap-4 border-b border-border pb-3 last:border-b-0"
                 >
                   <div className="flex-1">
                     <p className="font-medium text-sm">{client.name}</p>
-                    <p className="text-muted-foreground text-xs">{client.email}</p>
+                    <p className="text-muted-foreground text-xs">
+                      {client.email}
+                    </p>
                     {client.leadResponsible && (
-                      <p className="text-muted-foreground text-xs mt-1">
-                        {t("graphs.clientActivity.leadResponsible")}: {client.leadResponsible}
+                      <p className="mt-1 text-muted-foreground text-xs">
+                        {t("graphs.clientActivity.leadResponsible")}:{" "}
+                        {client.leadResponsible}
                       </p>
                     )}
                   </div>
-                  <div className="text-right text-xs text-muted-foreground">
+                  <div className="text-right text-muted-foreground text-xs">
                     {client.lastContactDate
                       ? formatDistanceToNow(new Date(client.lastContactDate), {
                           addSuffix: true,
@@ -136,22 +145,25 @@ export const ClientActivityCard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+            <div className="max-h-[400px] space-y-3 overflow-y-auto">
               {data.recentContactList.map((client) => (
                 <div
+                  className="flex items-start justify-between gap-4 border-border border-b pb-3 last:border-b-0"
                   key={client.id}
-                  className="flex items-start justify-between gap-4 border-b border-border pb-3 last:border-b-0"
                 >
                   <div className="flex-1">
                     <p className="font-medium text-sm">{client.name}</p>
-                    <p className="text-muted-foreground text-xs">{client.email}</p>
+                    <p className="text-muted-foreground text-xs">
+                      {client.email}
+                    </p>
                     {client.leadResponsible && (
-                      <p className="text-muted-foreground text-xs mt-1">
-                        {t("graphs.clientActivity.leadResponsible")}: {client.leadResponsible}
+                      <p className="mt-1 text-muted-foreground text-xs">
+                        {t("graphs.clientActivity.leadResponsible")}:{" "}
+                        {client.leadResponsible}
                       </p>
                     )}
                   </div>
-                  <div className="text-right text-xs text-muted-foreground">
+                  <div className="text-right text-muted-foreground text-xs">
                     {client.lastContactDate
                       ? formatDistanceToNow(new Date(client.lastContactDate), {
                           addSuffix: true,

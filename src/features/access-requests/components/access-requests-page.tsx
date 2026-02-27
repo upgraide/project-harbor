@@ -89,8 +89,8 @@ export const AccessRequestsPage = () => {
                     disabled={approve.isPending}
                     onClick={() => approve.mutate({ id: request.id })}
                     size="sm"
-                    variant="ghost"
                     title={t("approveButton")}
+                    variant="ghost"
                   >
                     {approve.isPending ? (
                       <Loader2 className="size-4 animate-spin" />
@@ -103,8 +103,8 @@ export const AccessRequestsPage = () => {
                       <Button
                         disabled={reject.isPending}
                         size="sm"
-                        variant="ghost"
                         title={t("rejectButton")}
+                        variant="ghost"
                       >
                         {reject.isPending ? (
                           <Loader2 className="size-4 animate-spin" />

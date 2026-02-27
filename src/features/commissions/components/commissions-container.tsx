@@ -1,8 +1,8 @@
 "use client";
 
-import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Suspense } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -26,11 +26,11 @@ export const CommissionsContainer = () => {
   const isTeam = currentUserRole === Role.TEAM;
 
   // Get view mode from URL or default to "my"
-  const viewMode = (searchParams.get('view') as "my" | "admin") || "my";
+  const viewMode = (searchParams.get("view") as "my" | "admin") || "my";
 
   const handleViewChange = (value: "my" | "admin") => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set('view', value);
+    params.set("view", value);
     router.push(`?${params.toString()}`);
   };
 
@@ -47,21 +47,22 @@ export const CommissionsContainer = () => {
     <div className="flex h-full flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t("title")}</h1>
+          <h1 className="font-bold text-3xl">{t("title")}</h1>
           <p className="text-muted-foreground">{t("description")}</p>
         </div>
 
         {isAdmin && (
-          <Select
-            value={viewMode}
-            onValueChange={handleViewChange}
-          >
+          <Select onValueChange={handleViewChange} value={viewMode}>
             <SelectTrigger className="w-[200px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="my">{t("viewSelector.myCommissions")}</SelectItem>
-              <SelectItem value="admin">{t("viewSelector.adminOverview")}</SelectItem>
+              <SelectItem value="my">
+                {t("viewSelector.myCommissions")}
+              </SelectItem>
+              <SelectItem value="admin">
+                {t("viewSelector.adminOverview")}
+              </SelectItem>
             </SelectContent>
           </Select>
         )}

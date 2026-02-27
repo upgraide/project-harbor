@@ -85,10 +85,7 @@ export async function GET(request: Request) {
       return NextResponse.json(geocodeResult);
     }
 
-    return NextResponse.json(
-      { error: "No results found" },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: "No results found" }, { status: 404 });
   } catch (error) {
     console.error("Geocoding error:", error);
     return NextResponse.json(

@@ -26,18 +26,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Empty,
-  EmptyDescription,
-  EmptyTitle,
-} from "@/components/ui/empty";
+import { Empty, EmptyDescription, EmptyTitle } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getPusherClient } from "@/lib/pusher-client";
 import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
@@ -227,12 +218,13 @@ export default function NotificationsPage() {
     const d = new Date(date);
     const now = new Date();
     const diff = now.getTime() - d.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+    const minutes = Math.floor(diff / 60_000);
+    const hours = Math.floor(diff / 3_600_000);
+    const days = Math.floor(diff / 86_400_000);
 
     if (minutes < 1) return t("timeAgo.justNow");
-    if (minutes < 60) return t("timeAgo.minutes").replace("{count}", String(minutes));
+    if (minutes < 60)
+      return t("timeAgo.minutes").replace("{count}", String(minutes));
     if (hours < 24) return t("timeAgo.hours").replace("{count}", String(hours));
     if (days < 7) return t("timeAgo.days").replace("{count}", String(days));
     return d.toLocaleDateString();
@@ -298,9 +290,7 @@ export default function NotificationsPage() {
         value={readFilter}
       >
         <TabsList>
-          <TabsTrigger value="all">
-            {t("filter.all")}
-          </TabsTrigger>
+          <TabsTrigger value="all">{t("filter.all")}</TabsTrigger>
           <TabsTrigger value="unread">
             <Bell className="mr-1.5 h-3.5 w-3.5" />
             {t("filter.unread")}
@@ -346,8 +336,7 @@ export default function NotificationsPage() {
                 <Card
                   className={cn(
                     "transition-colors",
-                    !notification.read &&
-                      "border-primary/20 bg-primary/[0.02]"
+                    !notification.read && "border-primary/20 bg-primary/[0.02]"
                   )}
                   key={notification.id}
                 >
@@ -357,9 +346,9 @@ export default function NotificationsPage() {
                         <div
                           className={cn(
                             "flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-                            !notification.read
-                              ? "bg-primary/10 text-primary"
-                              : "bg-muted text-muted-foreground"
+                            notification.read
+                              ? "bg-muted text-muted-foreground"
+                              : "bg-primary/10 text-primary"
                           )}
                         >
                           {getNotificationIcon(
@@ -381,9 +370,7 @@ export default function NotificationsPage() {
                             notification.type as NotificationType
                           )}
                         >
-                          {getTypeLabel(
-                            notification.type as NotificationType
-                          )}
+                          {getTypeLabel(notification.type as NotificationType)}
                         </Badge>
                         {!notification.read && (
                           <div className="h-2 w-2 rounded-full bg-primary" />

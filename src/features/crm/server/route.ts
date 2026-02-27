@@ -1,17 +1,22 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { ActivityType, LeadStatus, NotificationType, Role } from "@/generated/prisma";
-import { createNotification, notifyTeamAndAdmins } from "@/features/notifications/server/notifications";
+import { createNotification } from "@/features/notifications/server/notifications";
+import {
+  ActivityType,
+  LeadStatus,
+  NotificationType,
+  Role,
+} from "@/generated/prisma";
 import prisma from "@/lib/db";
 import { adminProcedure, createTRPCRouter } from "@/trpc/init";
 import {
   addNoteSchema,
   assignLeadSchema,
+  type LeadListItem,
+  type LeadListResponse,
   leadListInputSchema,
   scheduleFollowUpSchema,
   updateLeadStatusSchema,
-  type LeadListItem,
-  type LeadListResponse,
 } from "../types/lead-schemas";
 
 export const leadsRouter = createTRPCRouter({
@@ -389,7 +394,9 @@ export const leadsRouter = createTRPCRouter({
           userId: leadId,
           activityType: ActivityType.FOLLOW_UP_SCHEDULED,
           title: "Follow-up scheduled",
-          description: note || `Follow-up scheduled for ${followUpDate.toLocaleDateString()}`,
+          description:
+            note ||
+            `Follow-up scheduled for ${followUpDate.toLocaleDateString()}`,
         },
       });
 
@@ -477,8 +484,8 @@ export const leadsRouter = createTRPCRouter({
   // Last Follow-up endpoints for CRM
   getFollowUps: adminProcedure
     .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
-      return prisma.lastFollowUp.findMany({
+    .query(async ({ input }) =>
+      prisma.lastFollowUp.findMany({
         where: { userId: input.userId },
         include: {
           contactedBy: {
@@ -497,8 +504,8 @@ export const leadsRouter = createTRPCRouter({
           },
         },
         orderBy: { followUpDate: "desc" },
-      });
-    }),
+      })
+    ),
 
   addFollowUp: adminProcedure
     .input(
@@ -511,7 +518,13 @@ export const leadsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const { userId, followUpDate, description, contactedById, personContactedId } = input;
+      const {
+        userId,
+        followUpDate,
+        description,
+        contactedById,
+        personContactedId,
+      } = input;
 
       const newFollowUp = await prisma.lastFollowUp.create({
         data: {
@@ -586,7 +599,13 @@ export const leadsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, followUpDate, description, contactedById, personContactedId } = input;
+      const {
+        id,
+        followUpDate,
+        description,
+        contactedById,
+        personContactedId,
+      } = input;
 
       const updatedFollowUp = await prisma.lastFollowUp.update({
         where: { id },

@@ -207,7 +207,8 @@ export default {
       },
       deleteDialog: {
         title: "Delete Follow-up",
-        description: "Are you sure you want to delete this follow-up? This action cannot be undone.",
+        description:
+          "Are you sure you want to delete this follow-up? This action cannot be undone.",
         confirm: "Delete",
         cancel: "Cancel",
       },
@@ -218,7 +219,8 @@ export default {
         personContacted: "Client/Investor (Person Contacted)",
         selectDate: "Select date",
         selectPerson: "Select person",
-        descriptionPlaceholder: "Describe what was discussed during this interaction...",
+        descriptionPlaceholder:
+          "Describe what was discussed during this interaction...",
       },
       validation: {
         dateRequired: "Follow-up date is required",

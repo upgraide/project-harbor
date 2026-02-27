@@ -1,9 +1,19 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { CommissionRole, NotificationType, Role, OpportunityStatus, OpportunityType } from "@/generated/prisma";
-import { createNotifications, notifyAdmins } from "@/features/notifications/server/notifications";
+import { createNotifications } from "@/features/notifications/server/notifications";
+import {
+  CommissionRole,
+  NotificationType,
+  OpportunityStatus,
+  OpportunityType,
+  Role,
+} from "@/generated/prisma";
 import prisma from "@/lib/db";
-import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+} from "@/trpc/init";
 import { calculateOpportunityCommissions } from "./calculations";
 
 export const commissionsRouter = createTRPCRouter({
@@ -51,7 +61,7 @@ export const commissionsRouter = createTRPCRouter({
     const resolvedCommissionValues = await prisma.commissionValue.findMany({
       where: {
         commission: {
-          userId: userId,
+          userId,
         },
         totalCommissionValue: { not: null },
       },
@@ -61,7 +71,9 @@ export const commissionsRouter = createTRPCRouter({
       },
     });
 
-    const resolvedOpportunityIds = resolvedCommissionValues.map(cv => cv.opportunityId);
+    const resolvedOpportunityIds = resolvedCommissionValues.map(
+      (cv) => cv.opportunityId
+    );
 
     // Fetch ALL CONCLUDED opportunities where user has a commission role (resolved or not)
     const clientAcquisitionMNA = await prisma.mergerAndAcquisition.findMany({
@@ -142,13 +154,14 @@ export const commissionsRouter = createTRPCRouter({
     });
 
     // Fetch assignments where user is account manager
-    const accountManagerAssignments = await prisma.opportunityAccountManager.findMany({
-      where: { userId },
-      select: {
-        opportunityId: true,
-        opportunityType: true,
-      },
-    });
+    const accountManagerAssignments =
+      await prisma.opportunityAccountManager.findMany({
+        where: { userId },
+        select: {
+          opportunityId: true,
+          opportunityType: true,
+        },
+      });
 
     const accountManagerMNAIds = accountManagerAssignments
       .filter((a) => a.opportunityType === "MNA")
@@ -199,10 +212,7 @@ export const commissionsRouter = createTRPCRouter({
     // Fetch assignments where user is deal support
     const dealSupportAnalytics = await prisma.opportunityAnalytics.findMany({
       where: {
-        OR: [
-          { invested_person_id: userId },
-          { followup_person_id: userId },
-        ],
+        OR: [{ invested_person_id: userId }, { followup_person_id: userId }],
       },
       select: {
         mergerAndAcquisitionId: true,
@@ -261,38 +271,41 @@ export const commissionsRouter = createTRPCRouter({
 
     // Fetch all commission values for this user's projects (only resolved ones)
     const allOpportunityIds = [
-      ...clientAcquisitionMNA.map(p => p.id),
-      ...clientAcquisitionRE.map(p => p.id),
-      ...clientOriginatorMNA.map(p => p.id),
-      ...clientOriginatorRE.map(p => p.id),
-      ...accountManagerMNA.map(p => p.id),
-      ...accountManagerRE.map(p => p.id),
-      ...dealSupportMNA.map(p => p.id),
-      ...dealSupportRE.map(p => p.id),
+      ...clientAcquisitionMNA.map((p) => p.id),
+      ...clientAcquisitionRE.map((p) => p.id),
+      ...clientOriginatorMNA.map((p) => p.id),
+      ...clientOriginatorRE.map((p) => p.id),
+      ...accountManagerMNA.map((p) => p.id),
+      ...accountManagerRE.map((p) => p.id),
+      ...dealSupportMNA.map((p) => p.id),
+      ...dealSupportRE.map((p) => p.id),
     ];
 
     // Fetch commission schedules to check if they are resolved
-    const commissionSchedules = await prisma.opportunityCommissionSchedule.findMany({
-      where: {
-        opportunityId: { in: allOpportunityIds },
-        isResolved: true,
-      },
-      select: {
-        id: true,
-        opportunityId: true,
-        opportunityType: true,
-        isResolved: true,
-        resolvedAt: true,
-      },
-    });
+    const commissionSchedules =
+      await prisma.opportunityCommissionSchedule.findMany({
+        where: {
+          opportunityId: { in: allOpportunityIds },
+          isResolved: true,
+        },
+        select: {
+          id: true,
+          opportunityId: true,
+          opportunityType: true,
+          isResolved: true,
+          resolvedAt: true,
+        },
+      });
 
-    const resolvedScheduleOpportunityIds = commissionSchedules.map(s => s.opportunityId);
+    const resolvedScheduleOpportunityIds = commissionSchedules.map(
+      (s) => s.opportunityId
+    );
 
     const commissionValues = await prisma.commissionValue.findMany({
       where: {
         opportunityId: { in: resolvedScheduleOpportunityIds },
         commission: {
-          userId: userId,
+          userId,
         },
       },
       select: {
@@ -314,7 +327,7 @@ export const commissionsRouter = createTRPCRouter({
         commissionValue: {
           opportunityId: { in: resolvedScheduleOpportunityIds },
           commission: {
-            userId: userId,
+            userId,
           },
         },
       },
@@ -330,8 +343,11 @@ export const commissionsRouter = createTRPCRouter({
     });
 
     // Group payments by opportunity
-    const paymentsByOpportunity = new Map<string, Array<{ isPaid: boolean; paymentAmount: number | null }>>();
-    
+    const paymentsByOpportunity = new Map<
+      string,
+      Array<{ isPaid: boolean; paymentAmount: number | null }>
+    >();
+
     for (const payment of userCommissionPayments) {
       const oppId = payment.commissionValue.opportunityId;
       if (!paymentsByOpportunity.has(oppId)) {
@@ -345,7 +361,7 @@ export const commissionsRouter = createTRPCRouter({
 
     // Create a map for easy lookup: `${opportunityId}-${roleType}` -> commissionValue
     const commissionValueMap = new Map(
-      commissionValues.map(cv => [
+      commissionValues.map((cv) => [
         `${cv.opportunityId}-${cv.commission.roleType}`,
         cv.totalCommissionValue,
       ])
@@ -353,13 +369,19 @@ export const commissionsRouter = createTRPCRouter({
 
     // Create schedule map for isResolved check with payment status
     const scheduleMap = new Map(
-      commissionSchedules.map(s => {
+      commissionSchedules.map((s) => {
         // Get payments for this opportunity
         const allPayments = paymentsByOpportunity.get(s.opportunityId) || [];
-        const totalPaid = allPayments.filter(p => p.isPaid).reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
-        const totalAmount = allPayments.reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
-        const allPaid = allPayments.length > 0 && allPayments.every(p => p.isPaid);
-        const hasUnpaid = allPayments.some(p => !p.isPaid);
+        const totalPaid = allPayments
+          .filter((p) => p.isPaid)
+          .reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
+        const totalAmount = allPayments.reduce(
+          (sum, p) => sum + (p.paymentAmount ?? 0),
+          0
+        );
+        const allPaid =
+          allPayments.length > 0 && allPayments.every((p) => p.isPaid);
+        const hasUnpaid = allPayments.some((p) => !p.isPaid);
 
         return [
           s.opportunityId,
@@ -383,7 +405,7 @@ export const commissionsRouter = createTRPCRouter({
         commissionValue: {
           opportunityId: { in: resolvedScheduleOpportunityIds },
           commission: {
-            userId: userId,
+            userId,
           },
         },
       },
@@ -394,16 +416,16 @@ export const commissionsRouter = createTRPCRouter({
     });
 
     const totalPaid = allUserPayments
-      .filter(p => p.isPaid)
+      .filter((p) => p.isPaid)
       .reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
 
     const totalYetToPay = allUserPayments
-      .filter(p => !p.isPaid)
+      .filter((p) => !p.isPaid)
       .reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
 
     return {
       commissions,
-      commissionValues: commissionValues, // Use the correctly structured query results
+      commissionValues, // Use the correctly structured query results
       commissionValueMap: Object.fromEntries(commissionValueMap),
       scheduleMap: Object.fromEntries(scheduleMap),
       projects: {
@@ -432,10 +454,7 @@ export const commissionsRouter = createTRPCRouter({
           },
         },
       },
-      orderBy: [
-        { user: { name: "asc" } },
-        { roleType: "asc" },
-      ],
+      orderBy: [{ user: { name: "asc" } }, { roleType: "asc" }],
     });
 
     return commissions;
@@ -479,7 +498,9 @@ export const commissionsRouter = createTRPCRouter({
       const clientAcquisitionMNA = await prisma.mergerAndAcquisition.findMany({
         where: {
           clientAcquisitionerId: input.userId,
-          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+          status: {
+            in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED],
+          },
         },
         select: {
           id: true,
@@ -498,7 +519,9 @@ export const commissionsRouter = createTRPCRouter({
       const clientAcquisitionRE = await prisma.realEstate.findMany({
         where: {
           clientAcquisitionerId: input.userId,
-          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+          status: {
+            in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED],
+          },
         },
         select: {
           id: true,
@@ -518,7 +541,9 @@ export const commissionsRouter = createTRPCRouter({
       const clientOriginatorMNA = await prisma.mergerAndAcquisition.findMany({
         where: {
           clientOriginatorId: input.userId,
-          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+          status: {
+            in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED],
+          },
         },
         select: {
           id: true,
@@ -537,7 +562,9 @@ export const commissionsRouter = createTRPCRouter({
       const clientOriginatorRE = await prisma.realEstate.findMany({
         where: {
           clientOriginatorId: input.userId,
-          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+          status: {
+            in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED],
+          },
         },
         select: {
           id: true,
@@ -553,13 +580,14 @@ export const commissionsRouter = createTRPCRouter({
         },
       });
 
-      const accountManagerAssignments = await prisma.opportunityAccountManager.findMany({
-        where: { userId: input.userId },
-        select: {
-          opportunityId: true,
-          opportunityType: true,
-        },
-      });
+      const accountManagerAssignments =
+        await prisma.opportunityAccountManager.findMany({
+          where: { userId: input.userId },
+          select: {
+            opportunityId: true,
+            opportunityType: true,
+          },
+        });
 
       const accountManagerMNAIds = accountManagerAssignments
         .filter((a) => a.opportunityType === "MNA")
@@ -572,7 +600,9 @@ export const commissionsRouter = createTRPCRouter({
       const accountManagerMNA = await prisma.mergerAndAcquisition.findMany({
         where: {
           id: { in: accountManagerMNAIds },
-          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+          status: {
+            in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED],
+          },
         },
         select: {
           id: true,
@@ -591,7 +621,9 @@ export const commissionsRouter = createTRPCRouter({
       const accountManagerRE = await prisma.realEstate.findMany({
         where: {
           id: { in: accountManagerREIds },
-          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+          status: {
+            in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED],
+          },
         },
         select: {
           id: true,
@@ -635,7 +667,9 @@ export const commissionsRouter = createTRPCRouter({
       const dealSupportMNA = await prisma.mergerAndAcquisition.findMany({
         where: {
           id: { in: dealSupportMNAIds },
-          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+          status: {
+            in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED],
+          },
         },
         select: {
           id: true,
@@ -654,7 +688,9 @@ export const commissionsRouter = createTRPCRouter({
       const dealSupportRE = await prisma.realEstate.findMany({
         where: {
           id: { in: dealSupportREIds },
-          status: { in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED] },
+          status: {
+            in: [OpportunityStatus.ACTIVE, OpportunityStatus.CONCLUDED],
+          },
         },
         select: {
           id: true,
@@ -672,29 +708,30 @@ export const commissionsRouter = createTRPCRouter({
 
       // Fetch all commission values for this user's projects
       const allOpportunityIds = [
-        ...clientAcquisitionMNA.map(p => p.id),
-        ...clientAcquisitionRE.map(p => p.id),
-        ...clientOriginatorMNA.map(p => p.id),
-        ...clientOriginatorRE.map(p => p.id),
-        ...accountManagerMNA.map(p => p.id),
-        ...accountManagerRE.map(p => p.id),
-        ...dealSupportMNA.map(p => p.id),
-        ...dealSupportRE.map(p => p.id),
+        ...clientAcquisitionMNA.map((p) => p.id),
+        ...clientAcquisitionRE.map((p) => p.id),
+        ...clientOriginatorMNA.map((p) => p.id),
+        ...clientOriginatorRE.map((p) => p.id),
+        ...accountManagerMNA.map((p) => p.id),
+        ...accountManagerRE.map((p) => p.id),
+        ...dealSupportMNA.map((p) => p.id),
+        ...dealSupportRE.map((p) => p.id),
       ];
 
       // Fetch commission schedules
-      const commissionSchedules = await prisma.opportunityCommissionSchedule.findMany({
-        where: {
-          opportunityId: { in: allOpportunityIds },
-        },
-        select: {
-          id: true,
-          opportunityId: true,
-          opportunityType: true,
-          isResolved: true,
-          resolvedAt: true,
-        },
-      });
+      const commissionSchedules =
+        await prisma.opportunityCommissionSchedule.findMany({
+          where: {
+            opportunityId: { in: allOpportunityIds },
+          },
+          select: {
+            id: true,
+            opportunityId: true,
+            opportunityType: true,
+            isResolved: true,
+            resolvedAt: true,
+          },
+        });
 
       const commissionValues = await prisma.commissionValue.findMany({
         where: {
@@ -718,7 +755,7 @@ export const commissionsRouter = createTRPCRouter({
 
       // Create a map for easy lookup: `${opportunityId}-${roleType}` -> commissionValue
       const commissionValueMap = new Map(
-        commissionValues.map(cv => [
+        commissionValues.map((cv) => [
           `${cv.opportunityId}-${cv.commission.roleType}`,
           cv.totalCommissionValue,
         ])
@@ -726,7 +763,7 @@ export const commissionsRouter = createTRPCRouter({
 
       // Create schedule map for isResolved check
       const scheduleMap = new Map(
-        commissionSchedules.map(s => [
+        commissionSchedules.map((s) => [
           s.opportunityId,
           { isResolved: s.isResolved, resolvedAt: s.resolvedAt },
         ])
@@ -735,7 +772,7 @@ export const commissionsRouter = createTRPCRouter({
       return {
         user,
         commissions,
-        commissionValues: commissionValues, // Add this for consistency
+        commissionValues, // Add this for consistency
         commissionValueMap: Object.fromEntries(commissionValueMap),
         scheduleMap: Object.fromEntries(scheduleMap),
         projects: {
@@ -897,9 +934,11 @@ export const commissionsRouter = createTRPCRouter({
   // Get commission detail for a specific commission value
   // Now only retrieves existing data - no auto-creation
   getCommissionDetail: protectedProcedure
-    .input(z.object({ 
-      commissionValueId: z.string(),
-    }))
+    .input(
+      z.object({
+        commissionValueId: z.string(),
+      })
+    )
     .query(async ({ ctx, input }) => {
       const commissionValue = await prisma.commissionValue.findUnique({
         where: { id: input.commissionValueId },
@@ -939,7 +978,7 @@ export const commissionsRouter = createTRPCRouter({
       const isAdmin = user?.role === Role.ADMIN;
       const isOwner = commissionValue.commission.userId === ctx.auth.user.id;
 
-      if (!isAdmin && !isOwner) {
+      if (!(isAdmin || isOwner)) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "You do not have permission to view this commission",
@@ -1027,19 +1066,26 @@ export const commissionsRouter = createTRPCRouter({
       });
 
       // Calculate effective percentage for each commission to detect halved commissions
-      const commissionableAmount = opportunityDetails?.commissionableAmount ?? 0;
-      const allProjectCommissionsWithEffective = allProjectCommissions.map(cv => {
-        const effectivePercentage = commissionableAmount > 0 && cv.totalCommissionValue
-          ? (cv.totalCommissionValue / commissionableAmount) * 100
-          : cv.commission.commissionPercentage;
-        const isHalved = cv.commission.commissionPercentage > 0 && 
-          Math.abs(effectivePercentage - cv.commission.commissionPercentage / 2) < 0.01;
-        return {
-          ...cv,
-          effectivePercentage,
-          isHalved,
-        };
-      });
+      const commissionableAmount =
+        opportunityDetails?.commissionableAmount ?? 0;
+      const allProjectCommissionsWithEffective = allProjectCommissions.map(
+        (cv) => {
+          const effectivePercentage =
+            commissionableAmount > 0 && cv.totalCommissionValue
+              ? (cv.totalCommissionValue / commissionableAmount) * 100
+              : cv.commission.commissionPercentage;
+          const isHalved =
+            cv.commission.commissionPercentage > 0 &&
+            Math.abs(
+              effectivePercentage - cv.commission.commissionPercentage / 2
+            ) < 0.01;
+          return {
+            ...cv,
+            effectivePercentage,
+            isHalved,
+          };
+        }
+      );
 
       return {
         ...commissionValue,
@@ -1078,26 +1124,27 @@ export const commissionsRouter = createTRPCRouter({
 
       // Update or create payment records
       const updatedPayments = await Promise.all(
-        input.payments.map(async (payment) => {
-          return await prisma.commissionPayment.upsert({
-            where: {
-              commissionValueId_installmentNumber: {
+        input.payments.map(
+          async (payment) =>
+            await prisma.commissionPayment.upsert({
+              where: {
+                commissionValueId_installmentNumber: {
+                  commissionValueId: input.commissionValueId,
+                  installmentNumber: payment.installmentNumber,
+                },
+              },
+              create: {
                 commissionValueId: input.commissionValueId,
                 installmentNumber: payment.installmentNumber,
+                paymentDate: payment.paymentDate,
+                paymentAmount: payment.paymentAmount,
               },
-            },
-            create: {
-              commissionValueId: input.commissionValueId,
-              installmentNumber: payment.installmentNumber,
-              paymentDate: payment.paymentDate,
-              paymentAmount: payment.paymentAmount,
-            },
-            update: {
-              paymentDate: payment.paymentDate,
-              paymentAmount: payment.paymentAmount,
-            },
-          });
-        })
+              update: {
+                paymentDate: payment.paymentDate,
+                paymentAmount: payment.paymentAmount,
+              },
+            })
+        )
       );
 
       return updatedPayments;
@@ -1135,9 +1182,7 @@ export const commissionsRouter = createTRPCRouter({
           isPaid,
           // If marking as paid and no custom paidAt provided, use the scheduled paymentDate
           // If marking as unpaid, set paidAt to null
-          paidAt: isPaid 
-            ? (paidAt ?? payment.paymentDate) 
-            : null,
+          paidAt: isPaid ? (paidAt ?? payment.paymentDate) : null,
         },
       });
 
@@ -1300,7 +1345,7 @@ export const commissionsRouter = createTRPCRouter({
       if (analytics.commissionable_amount == null) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: `Opportunity "${opportunity.name}" has no commissionable amount set. Current final amount: ${analytics.final_amount ?? 'not set'}. Please configure the commissionable amount in opportunity analytics.`,
+          message: `Opportunity "${opportunity.name}" has no commissionable amount set. Current final amount: ${analytics.final_amount ?? "not set"}. Please configure the commissionable amount in opportunity analytics.`,
         });
       }
 
@@ -1317,7 +1362,10 @@ export const commissionsRouter = createTRPCRouter({
       }> = [];
 
       // Client Acquisitioner (Angariação do Cliente)
-      if (opportunity.clientAcquisitionerId && opportunity.clientAcquisitioner) {
+      if (
+        opportunity.clientAcquisitionerId &&
+        opportunity.clientAcquisitioner
+      ) {
         const commission = await prisma.commission.findUnique({
           where: {
             userId_roleType: {
@@ -1397,9 +1445,7 @@ export const commissionsRouter = createTRPCRouter({
         // This allows admins to see all role assignments and configure percentages
         const basePercentage = commission?.commissionPercentage ?? 0;
         const adjustedPercentage =
-          accountManagerCount === 2
-            ? basePercentage / 2
-            : basePercentage;
+          accountManagerCount === 2 ? basePercentage / 2 : basePercentage;
 
         commissionRecipients.push({
           userId: manager.user.id,
@@ -1440,21 +1486,22 @@ export const commissionsRouter = createTRPCRouter({
       }
 
       // Check if already resolved
-      const existingSchedule = await prisma.opportunityCommissionSchedule.findUnique({
-        where: {
-          opportunityId_opportunityType: {
-            opportunityId,
-            opportunityType: detectedOpportunityType,
-          },
-        },
-        include: {
-          paymentPlans: {
-            orderBy: {
-              installmentNumber: "asc",
+      const existingSchedule =
+        await prisma.opportunityCommissionSchedule.findUnique({
+          where: {
+            opportunityId_opportunityType: {
+              opportunityId,
+              opportunityType: detectedOpportunityType,
             },
           },
-        },
-      });
+          include: {
+            paymentPlans: {
+              orderBy: {
+                installmentNumber: "asc",
+              },
+            },
+          },
+        });
 
       return {
         opportunity: {
@@ -1465,7 +1512,7 @@ export const commissionsRouter = createTRPCRouter({
           commissionableAmount: analytics.commissionable_amount,
         },
         recipients: commissionRecipients,
-        isResolved: existingSchedule?.isResolved || false,
+        isResolved: existingSchedule?.isResolved,
         existingSchedule: existingSchedule || null,
       };
     }),
@@ -1583,15 +1630,16 @@ export const commissionsRouter = createTRPCRouter({
     });
 
     // Get all resolved commission schedules
-    const resolvedSchedules = await prisma.opportunityCommissionSchedule.findMany({
-      where: {
-        isResolved: true,
-      },
-      select: {
-        opportunityId: true,
-        opportunityType: true,
-      },
-    });
+    const resolvedSchedules =
+      await prisma.opportunityCommissionSchedule.findMany({
+        where: {
+          isResolved: true,
+        },
+        select: {
+          opportunityId: true,
+          opportunityType: true,
+        },
+      });
 
     // Filter out opportunities that already have resolved commissions
     const resolvedSet = new Set(
@@ -1673,7 +1721,8 @@ export const commissionsRouter = createTRPCRouter({
               name: opportunity.name,
               status: opportunity.status,
               finalAmount: opportunity.analytics?.final_amount,
-              commissionableAmount: opportunity.analytics?.commissionable_amount,
+              commissionableAmount:
+                opportunity.analytics?.commissionable_amount,
             };
           }
         } else {
@@ -1696,7 +1745,8 @@ export const commissionsRouter = createTRPCRouter({
               name: opportunity.name,
               status: opportunity.status,
               finalAmount: opportunity.analytics?.final_amount,
-              commissionableAmount: opportunity.analytics?.commissionable_amount,
+              commissionableAmount:
+                opportunity.analytics?.commissionable_amount,
             };
           }
         }
@@ -1726,14 +1776,17 @@ export const commissionsRouter = createTRPCRouter({
 
         // Calculate payment statistics
         const totalPaid = allPayments
-          .filter(p => p.isPaid)
+          .filter((p) => p.isPaid)
           .reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
 
-        const totalAmount = allPayments
-          .reduce((sum, p) => sum + (p.paymentAmount ?? 0), 0);
+        const totalAmount = allPayments.reduce(
+          (sum, p) => sum + (p.paymentAmount ?? 0),
+          0
+        );
 
-        const allPaymentsPaid = allPayments.length > 0 && allPayments.every(p => p.isPaid);
-        const hasUnpaidPayments = allPayments.some(p => !p.isPaid);
+        const allPaymentsPaid =
+          allPayments.length > 0 && allPayments.every((p) => p.isPaid);
+        const hasUnpaidPayments = allPayments.some((p) => !p.isPaid);
 
         return {
           ...schedule,
@@ -1772,7 +1825,10 @@ export const commissionsRouter = createTRPCRouter({
       let opportunityType = input.opportunityType;
 
       // Validate percentages sum to 100
-      const totalPercentage = paymentPlan.reduce((sum, p) => sum + p.percentage, 0);
+      const totalPercentage = paymentPlan.reduce(
+        (sum, p) => sum + p.percentage,
+        0
+      );
       if (Math.abs(totalPercentage - 100) > 0.01) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -1881,7 +1937,7 @@ export const commissionsRouter = createTRPCRouter({
           recipients.push({
             userId: opportunity.clientAcquisitionerId,
             roleType: CommissionRole.CLIENT_ACQUISITION,
-            percentage: percentage,
+            percentage,
             totalValue: (commissionableAmount * percentage) / 100,
           });
         }
@@ -1901,7 +1957,7 @@ export const commissionsRouter = createTRPCRouter({
           recipients.push({
             userId: opportunity.clientOriginatorId,
             roleType: CommissionRole.CLIENT_ORIGINATOR,
-            percentage: percentage,
+            percentage,
             totalValue: (commissionableAmount * percentage) / 100,
           });
         }
@@ -1925,9 +1981,7 @@ export const commissionsRouter = createTRPCRouter({
 
           const basePercentage = commission?.commissionPercentage ?? 0;
           const adjustedPercentage =
-            accountManagerCount === 2
-              ? basePercentage / 2
-              : basePercentage;
+            accountManagerCount === 2 ? basePercentage / 2 : basePercentage;
 
           recipients.push({
             userId: manager.userId,
@@ -1956,7 +2010,7 @@ export const commissionsRouter = createTRPCRouter({
           recipients.push({
             userId,
             roleType: CommissionRole.DEAL_SUPPORT,
-            percentage: percentage,
+            percentage,
             totalValue: (commissionableAmount * percentage) / 100,
           });
         }

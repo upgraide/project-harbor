@@ -1,8 +1,8 @@
 "use client";
 
+import { Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Users } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -121,8 +121,10 @@ export const EditorHeader = ({ opportunityId }: { opportunityId: string }) => (
   <header className="flex h-14 shrink-0 items-center gap-2 border-b bg-background px-4">
     <div className="flex w-full flex-row items-center justify-between gap-x-4">
       <EditorBreadcrumbs opportunityId={opportunityId} />
-      <Link href={`${backofficeMergeAndAcquisitionPath()}/${opportunityId}/interests`}>
-        <Button variant="outline" size="sm">
+      <Link
+        href={`${backofficeMergeAndAcquisitionPath()}/${opportunityId}/interests`}
+      >
+        <Button size="sm" variant="outline">
           <Users className="mr-2 h-4 w-4" />
           View Interests
         </Button>

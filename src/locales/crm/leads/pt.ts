@@ -4,7 +4,7 @@ export default {
   searchPlaceholder: "Pesquisar por nome, email ou empresa...",
   errorMessage: "Falha ao carregar leads. Por favor, tente novamente.",
   emptyMessage: "Nenhum lead encontrado.",
-  
+
   filters: {
     title: "Filtros",
     leadSource: "Origem do Lead",
@@ -157,7 +157,8 @@ export default {
     createdAt: "Registado em",
     addDialog: {
       title: "Adicionar Follow-up",
-      description: "Registe detalhes sobre esta interação com cliente/investidor",
+      description:
+        "Registe detalhes sobre esta interação com cliente/investidor",
       save: "Guardar Follow-up",
       saving: "A guardar...",
       cancel: "Cancelar",
@@ -171,7 +172,8 @@ export default {
     },
     deleteDialog: {
       title: "Eliminar Follow-up",
-      description: "Tem a certeza de que deseja eliminar este follow-up? Esta ação não pode ser desfeita.",
+      description:
+        "Tem a certeza de que deseja eliminar este follow-up? Esta ação não pode ser desfeita.",
       confirm: "Eliminar",
       cancel: "Cancelar",
     },
@@ -182,7 +184,8 @@ export default {
       personContacted: "Cliente/Investidor (Foi Contactado)",
       selectDate: "Selecione a data",
       selectPerson: "Selecione a pessoa",
-      descriptionPlaceholder: "Descreva o que foi discutido durante esta interação...",
+      descriptionPlaceholder:
+        "Descreva o que foi discutido durante esta interação...",
     },
     validation: {
       dateRequired: "A data do follow-up é obrigatória",

@@ -17,7 +17,9 @@ export const auth = betterAuth({
       });
 
       if (dbUser?.disabled) {
-        throw new Error("Account has been disabled. Please contact an administrator.");
+        throw new Error(
+          "Account has been disabled. Please contact an administrator."
+        );
       }
 
       return user;

@@ -5,12 +5,12 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useScopedI18n } from "@/locales/client";
-import { CloseOpportunitiesTable } from "./close-opportunities-table";
 import {
   CloseOpportunitiesHeader,
   useCloseOpportunitiesParams,
   useSuspenseCloseOpportunities,
 } from "./close-opportunities-container";
+import { CloseOpportunitiesTable } from "./close-opportunities-table";
 
 export const CloseOpportunitiesSearch = () => {
   const t = useScopedI18n("backoffice.closeOpportunities");
@@ -40,10 +40,10 @@ export const CloseOpportunitiesSearch = () => {
 
   return (
     <Input
+      className="max-w-sm"
+      onChange={(e) => setLocalSearch(e.target.value)}
       placeholder={t("searchPlaceholder")}
       value={localSearch}
-      onChange={(e) => setLocalSearch(e.target.value)}
-      className="max-w-sm"
     />
   );
 };
@@ -69,7 +69,11 @@ export const CloseOpportunitiesList = () => {
   const [params, setParams] = useCloseOpportunitiesParams();
 
   const handleTypeChange = (value: string) => {
-    setParams({ ...params, type: value as "all" | "mna" | "realEstate", page: "1" });
+    setParams({
+      ...params,
+      type: value as "all" | "mna" | "realEstate",
+      page: "1",
+    });
   };
 
   const handleStatusChange = (value: string) => {
@@ -83,10 +87,10 @@ export const CloseOpportunitiesList = () => {
   return (
     <div className="flex flex-col gap-6 p-6">
       <CloseOpportunitiesHeader
-        typeFilter={params.type}
-        statusFilter={params.status}
-        onTypeChange={handleTypeChange}
         onStatusChange={handleStatusChange}
+        onTypeChange={handleTypeChange}
+        statusFilter={params.status}
+        typeFilter={params.type}
       />
 
       <div className="flex items-center gap-4">

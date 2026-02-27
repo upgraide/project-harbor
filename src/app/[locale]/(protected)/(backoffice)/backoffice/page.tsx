@@ -37,7 +37,7 @@ const Page = async () => {
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Backoffice</h1>
+        <h1 className="font-bold text-3xl tracking-tight">Backoffice</h1>
         <p className="text-muted-foreground">
           Welcome to the backoffice management area
         </p>
@@ -185,9 +185,7 @@ const Page = async () => {
               <UserPlusIcon className="size-5" />
               {t("accessRequests.title")}
             </CardTitle>
-            <CardDescription>
-              {t("accessRequests.description")}
-            </CardDescription>
+            <CardDescription>{t("accessRequests.description")}</CardDescription>
           </CardHeader>
           <CardContent className="mt-auto">
             <Link href={backofficeAccessRequestsPath()}>

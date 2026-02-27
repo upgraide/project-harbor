@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
-import { LeadsFilters, type LeadFilters } from "./leads-filters";
+import { type LeadFilters, LeadsFilters } from "./leads-filters";
 import { LeadsTable } from "./leads-table";
 
 export const LeadsListContainer = () => {
@@ -24,7 +24,9 @@ export const LeadsListContainer = () => {
 
   // State
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<"lastContactDate" | "createdAt" | "name" | "minTicketSize" | "maxTicketSize">("lastContactDate");
+  const [sortBy, setSortBy] = useState<
+    "lastContactDate" | "createdAt" | "name" | "minTicketSize" | "maxTicketSize"
+  >("lastContactDate");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<LeadFilters>({});
@@ -77,19 +79,19 @@ export const LeadsListContainer = () => {
       {/* Search and Filters Bar */}
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         {/* Search */}
-        <div className="flex-1 max-w-md">
-          <Label htmlFor="search" className="sr-only">
+        <div className="max-w-md flex-1">
+          <Label className="sr-only" htmlFor="search">
             {t("searchPlaceholder")}
           </Label>
           <div className="relative">
-            <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <SearchIcon className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
             <Input
-              id="search"
-              type="search"
-              placeholder={t("searchPlaceholder")}
-              value={search}
-              onChange={(e) => handleSearchChange(e.target.value)}
               className="pl-9"
+              id="search"
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder={t("searchPlaceholder")}
+              type="search"
+              value={search}
             />
           </div>
         </div>
@@ -98,11 +100,11 @@ export const LeadsListContainer = () => {
         <div className="flex items-center gap-2">
           {/* Sort */}
           <div className="flex items-center gap-2">
-            <Label htmlFor="sortBy" className="text-sm whitespace-nowrap">
+            <Label className="whitespace-nowrap text-sm" htmlFor="sortBy">
               {t("sorting.title")}:
             </Label>
-            <Select value={sortBy} onValueChange={handleSortChange}>
-              <SelectTrigger id="sortBy" className="w-[180px]">
+            <Select onValueChange={handleSortChange} value={sortBy}>
+              <SelectTrigger className="w-[180px]" id="sortBy">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -123,11 +125,11 @@ export const LeadsListContainer = () => {
             </Select>
 
             <Button
-              variant="outline"
-              size="icon"
               onClick={() =>
                 setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
               }
+              size="icon"
+              variant="outline"
             >
               {sortDirection === "asc" ? "↑" : "↓"}
             </Button>
@@ -144,44 +146,44 @@ export const LeadsListContainer = () => {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="flex items-center justify-center h-64">
+        <div className="flex h-64 items-center justify-center">
           <p className="text-muted-foreground">Loading leads...</p>
         </div>
       )}
 
       {/* Error State */}
       {error && (
-        <div className="flex items-center justify-center h-64">
+        <div className="flex h-64 items-center justify-center">
           <p className="text-destructive">{t("errorMessage")}</p>
         </div>
       )}
 
       {/* Table */}
-      {!isLoading && !error && data && (
+      {!(isLoading || error) && data && (
         <>
           <LeadsTable leads={data.items} />
 
           {/* Pagination */}
           {data.totalPages > 1 && (
             <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Page {data.page} of {data.totalPages} ({data.totalCount} total
                 leads)
               </p>
               <div className="flex items-center gap-2">
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={!data.hasPreviousPage}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  size="sm"
+                  variant="outline"
                 >
                   Previous
                 </Button>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => p + 1)}
                   disabled={!data.hasNextPage}
+                  onClick={() => setPage((p) => p + 1)}
+                  size="sm"
+                  variant="outline"
                 >
                   Next
                 </Button>

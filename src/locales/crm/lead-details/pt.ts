@@ -3,7 +3,7 @@ export default {
   loading: "Carregando...",
   notFound: "Lead não encontrado",
   backToList: "Voltar para Leads",
-  
+
   sections: {
     basicInfo: {
       title: "Informações Básicas",
@@ -20,14 +20,14 @@ export default {
       createdAt: "Criado em",
       tags: "Tags",
     },
-    
+
     assignment: {
       title: "Atribuição",
       responsible: "Responsável",
       mainContact: "Contacto Principal",
       unassigned: "Não atribuído",
     },
-    
+
     financial: {
       title: "Informações Financeiras",
       ticketSize: "Ticket Size",
@@ -35,7 +35,7 @@ export default {
       commissionRate: "Taxa de Comissão",
       commissionNotes: "Notas de Comissão",
     },
-    
+
     strategy: {
       title: "Estratégia de Investimento",
       type: "Tipo de Investidor",
@@ -43,7 +43,7 @@ export default {
       segment: "Segmento",
       locations: "Localizações Preferidas",
     },
-    
+
     timeline: {
       title: "Cronologia",
       lastContact: "Último Contacto",
@@ -53,7 +53,7 @@ export default {
       lostReason: "Motivo da Perda",
       noDate: "Não agendado",
     },
-    
+
     notes: {
       title: "Notas",
       addNote: "Adicionar Nota",
@@ -69,7 +69,7 @@ export default {
       personContacted: "Pessoa Contactada",
       recordedOn: "Registado em",
     },
-    
+
     activities: {
       title: "Cronologia de Atividades",
       noActivities: "Ainda sem atividades",
@@ -86,7 +86,7 @@ export default {
         LOST: "Perdido",
       },
     },
-    
+
     contact: {
       title: "Detalhes de Contacto",
       representative: "Nome do Representante",
@@ -97,7 +97,7 @@ export default {
       otherFacts: "Outros Factos",
     },
   },
-  
+
   actions: {
     assign: "Atribuir Lead",
     addNote: "Adicionar Nota",

@@ -4,7 +4,6 @@ import {
   LeadPriority,
   LeadSource,
   LeadStatus,
-  TeamMember,
 } from "@/generated/prisma";
 
 // Enum for sort fields
@@ -28,7 +27,7 @@ export const leadListInputSchema = z.object({
   page: z.number().min(1).default(1),
   pageSize: z.number().min(1).max(100).default(20),
   search: z.string().optional(),
-  
+
   // Filters
   leadSource: z.nativeEnum(LeadSource).optional(),
   assignedTo: z.string().optional(), // User ID
@@ -37,7 +36,7 @@ export const leadListInputSchema = z.object({
   priorities: z.array(z.nativeEnum(LeadPriority)).optional(), // Array for checkbox filtering
   lastContactDateFrom: z.coerce.date().optional(),
   lastContactDateTo: z.coerce.date().optional(),
-  
+
   // Sorting
   sortBy: LeadSortField.default("lastContactDate"),
   sortDirection: SortDirection.default("desc"),

@@ -31,14 +31,12 @@ import { useDeleteUser } from "../hooks/use-delete-user";
 import { useSuspenseUsers } from "../hooks/use-users";
 import { UsersPagination } from "./users-pagination";
 
-export const UsersContent = () => {
-  return (
-    <>
-      <UsersList />
-      <UsersPagination />
-    </>
-  );
-};
+export const UsersContent = () => (
+  <>
+    <UsersList />
+    <UsersPagination />
+  </>
+);
 
 export const UsersList = () => {
   const users = useSuspenseUsers();
@@ -119,7 +117,9 @@ export const UsersList = () => {
               <TableCell className="font-medium">{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>
-                <Badge variant={user.role === Role.ADMIN ? "default" : "secondary"}>
+                <Badge
+                  variant={user.role === Role.ADMIN ? "default" : "secondary"}
+                >
                   {getRoleLabel(user.role)}
                 </Badge>
               </TableCell>
@@ -132,14 +132,19 @@ export const UsersList = () => {
                 <TableCell>
                   <div className="flex items-center gap-1">
                     {canEditUser(user) && (
-                      <Button asChild size="sm" variant="ghost" title={t("table.edit")}>
+                      <Button
+                        asChild
+                        size="sm"
+                        title={t("table.edit")}
+                        variant="ghost"
+                      >
                         <Link href={`${backofficeUsersPath()}/${user.id}/edit`}>
                           <EditIcon className="size-4" />
                         </Link>
                       </Button>
                     )}
-                    {canChangeStatus(user) && (
-                      user.isActive ? (
+                    {canChangeStatus(user) &&
+                      (user.isActive ? (
                         <Button
                           disabled={deactivateUser.isPending}
                           onClick={() => handleDeactivate(user.id)}
@@ -159,8 +164,7 @@ export const UsersList = () => {
                         >
                           <CheckCircle className="size-4" />
                         </Button>
-                      )
-                    )}
+                      ))}
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
@@ -171,29 +175,29 @@ export const UsersList = () => {
                           <TrashIcon className="size-4" />
                         </Button>
                       </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogTitle>
-                        {t("deleteDialog.title")}
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t("deleteDialog.description").replace(
-                          "{name}",
-                          user.name
-                        )}
-                      </AlertDialogDescription>
-                      <div className="flex justify-end gap-2">
-                        <AlertDialogCancel>
-                          {t("deleteDialog.cancel")}
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          onClick={() => handleDelete(user.id)}
-                        >
-                          {t("deleteDialog.confirm")}
-                        </AlertDialogAction>
-                      </div>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                      <AlertDialogContent>
+                        <AlertDialogTitle>
+                          {t("deleteDialog.title")}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t("deleteDialog.description").replace(
+                            "{name}",
+                            user.name
+                          )}
+                        </AlertDialogDescription>
+                        <div className="flex justify-end gap-2">
+                          <AlertDialogCancel>
+                            {t("deleteDialog.cancel")}
+                          </AlertDialogCancel>
+                          <AlertDialogAction
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            onClick={() => handleDelete(user.id)}
+                          >
+                            {t("deleteDialog.confirm")}
+                          </AlertDialogAction>
+                        </div>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </TableCell>
               )}

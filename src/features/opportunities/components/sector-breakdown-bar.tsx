@@ -111,13 +111,9 @@ export const SectorBreakdownBarChart = () => {
               content={<ChartTooltipContent hideLabel />}
               cursor={false}
             />
-            <Bar
-              dataKey="count"
-              layout="vertical"
-              radius={4}
-            >
+            <Bar dataKey="count" layout="vertical" radius={4}>
               {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
+                <Cell fill={entry.fill} key={`cell-${index}`} />
               ))}
             </Bar>
           </BarChart>

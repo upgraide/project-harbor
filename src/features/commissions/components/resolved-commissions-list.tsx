@@ -1,10 +1,18 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { ExternalLinkIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { EmptyView } from "@/components/entity-components";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -13,20 +21,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { EmptyView } from "@/components/entity-components";
-import { useTRPC } from "@/trpc/client";
-import { ExternalLinkIcon } from "lucide-react";
 import { useScopedI18n } from "@/locales/client";
-import Link from "next/link";
+import { useTRPC } from "@/trpc/client";
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat("en-US", {
+const formatCurrency = (value: number): string =>
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "EUR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
-};
 
 const formatDate = (date: Date | string | null | undefined): string => {
   if (!date) return "-";
@@ -39,15 +43,15 @@ export function ResolvedCommissionsList() {
   const trpc = useTRPC();
   const t = useScopedI18n("crm.commissions");
 
-  const activeTab = searchParams.get('tab') || 'resolved';
+  const activeTab = searchParams.get("tab") || "resolved";
 
   const { data: schedules } = useSuspenseQuery(
     trpc.commissions.getAllResolvedCommissions.queryOptions()
   ) as { data: any[] };
 
   // Separate into pending payments and fully paid
-  const pendingPayments = schedules.filter(s => s.paymentStatus?.hasUnpaid);
-  const fullyPaid = schedules.filter(s => s.paymentStatus?.allPaid);
+  const pendingPayments = schedules.filter((s) => s.paymentStatus?.hasUnpaid);
+  const fullyPaid = schedules.filter((s) => s.paymentStatus?.allPaid);
 
   const renderTable = (data: any[], showTotalPaid = false) => (
     <Table>
@@ -55,13 +59,21 @@ export function ResolvedCommissionsList() {
         <TableRow>
           <TableHead>{t("resolvedList.table.name")}</TableHead>
           <TableHead>{t("resolvedList.table.type")}</TableHead>
-          <TableHead className="text-right">{t("resolvedList.table.commissionable")}</TableHead>
-          <TableHead className="text-center">{t("resolvedList.table.recipients")}</TableHead>
+          <TableHead className="text-right">
+            {t("resolvedList.table.commissionable")}
+          </TableHead>
+          <TableHead className="text-center">
+            {t("resolvedList.table.recipients")}
+          </TableHead>
           {showTotalPaid && (
-            <TableHead className="text-right">{t("resolvedList.table.totalPaid")}</TableHead>
+            <TableHead className="text-right">
+              {t("resolvedList.table.totalPaid")}
+            </TableHead>
           )}
-          <TableHead className="text-center">{t("resolvedList.table.resolvedDate")}</TableHead>
-          <TableHead></TableHead>
+          <TableHead className="text-center">
+            {t("resolvedList.table.resolvedDate")}
+          </TableHead>
+          <TableHead />
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -90,23 +102,25 @@ export function ResolvedCommissionsList() {
                 </span>
               </TableCell>
             )}
-            <TableCell className="text-center text-sm text-muted-foreground">
+            <TableCell className="text-center text-muted-foreground text-sm">
               {formatDate(schedule.resolvedAt)}
             </TableCell>
             <TableCell className="text-right">
               <Button
-                variant="ghost"
-                size="sm"
                 onClick={() => {
-                  const currentParams = new URLSearchParams(searchParams.toString());
-                  const view = currentParams.get('view');
+                  const currentParams = new URLSearchParams(
+                    searchParams.toString()
+                  );
+                  const view = currentParams.get("view");
                   const params = new URLSearchParams();
-                  if (view) params.set('view', view);
-                  params.set('tab', activeTab);
+                  if (view) params.set("view", view);
+                  params.set("tab", activeTab);
                   router.push(
                     `/crm/commissions/resolve/${schedule.opportunityId}?${params.toString()}`
                   );
                 }}
+                size="sm"
+                variant="ghost"
               >
                 <ExternalLinkIcon className="mr-2 h-4 w-4" />
                 {t("resolvedList.table.viewButton")}
@@ -140,8 +154,8 @@ export function ResolvedCommissionsList() {
         <CardContent>
           {pendingPayments.length === 0 ? (
             <EmptyView
-              title={t("resolvedList.emptyPendingPayments")}
               message={t("resolvedList.emptyPendingPaymentsMessage")}
+              title={t("resolvedList.emptyPendingPayments")}
             />
           ) : (
             renderTable(pendingPayments, false)
@@ -169,8 +183,8 @@ export function ResolvedCommissionsList() {
         <CardContent>
           {fullyPaid.length === 0 ? (
             <EmptyView
-              title={t("resolvedList.emptyFullyPaid")}
               message={t("resolvedList.emptyFullyPaidMessage")}
+              title={t("resolvedList.emptyFullyPaid")}
             />
           ) : (
             renderTable(fullyPaid, true)

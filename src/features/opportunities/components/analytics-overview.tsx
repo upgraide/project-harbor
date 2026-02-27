@@ -1,12 +1,12 @@
 "use client";
 
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useBackofficeKPIsWithTrends } from "@/features/opportunities/hooks/use-analytics";
 import { useScopedI18n } from "@/locales/client";
-import { ArrowDown, ArrowUp } from "lucide-react";
 
 const formatNumber = (value: number): string => value.toLocaleString("en-US");
-const formatCurrency = (value: number): string => 
+const formatCurrency = (value: number): string =>
   new Intl.NumberFormat("pt-PT", {
     style: "currency",
     currency: "EUR",
@@ -23,7 +23,14 @@ type KPICardProps = {
   isCurrency?: boolean;
 };
 
-const KPICard = ({ label, value, trend, isLoading, isFuture, isCurrency }: KPICardProps) => {
+const KPICard = ({
+  label,
+  value,
+  trend,
+  isLoading,
+  isFuture,
+  isCurrency,
+}: KPICardProps) => {
   const isTrendPositive = trend ? trend >= 0 : false;
 
   return (
@@ -36,12 +43,14 @@ const KPICard = ({ label, value, trend, isLoading, isFuture, isCurrency }: KPICa
               ? "-"
               : // biome-ignore lint/style/noNestedTernary: value is string or number
                 typeof value === "number"
-                ? isCurrency ? formatCurrency(value) : formatNumber(value)
+                ? isCurrency
+                  ? formatCurrency(value)
+                  : formatNumber(value)
                 : value}
           </p>
           {!isFuture && trend !== undefined && trend !== 0 && (
             <div
-              className={`flex items-center gap-1 text-xs font-medium ${isTrendPositive ? "text-green-600" : "text-red-600"}`}
+              className={`flex items-center gap-1 font-medium text-xs ${isTrendPositive ? "text-green-600" : "text-red-600"}`}
             >
               {isTrendPositive ? (
                 <ArrowUp className="h-3 w-3" />
@@ -71,57 +80,57 @@ export const AnalyticsOverview = () => {
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <KPICard
-          isLoading={isLoading}
           isFuture={isFuture}
+          isLoading={isLoading}
           label={t("kpis.aum")}
-          value={kpis?.totalAUM ?? 0}
           trend={kpis?.totalAUMTrend}
+          value={kpis?.totalAUM ?? 0}
         />
         <KPICard
-          isLoading={isLoading}
           isFuture={isFuture}
+          isLoading={isLoading}
           label={t("kpis.assetsTransacted")}
-          value={kpis?.totalAssetsTransacted ?? 0}
           trend={kpis?.totalAssetsTransactedTrend}
+          value={kpis?.totalAssetsTransacted ?? 0}
         />
         <KPICard
-          isLoading={isLoading}
           isFuture={isFuture}
+          isLoading={isLoading}
           label={t("kpis.mandatesClosedYTD")}
-          value={kpis?.mandatesClosedYTD ?? 0}
           trend={kpis?.mandatesClosedYTDTrend}
+          value={kpis?.mandatesClosedYTD ?? 0}
         />
         <KPICard
-          isLoading={isLoading}
           isFuture={isFuture}
+          isLoading={isLoading}
           label={t("kpis.activeClients")}
-          value={kpis?.activeClients ?? 0}
           trend={kpis?.activeClientsTrend}
+          value={kpis?.activeClients ?? 0}
         />
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <KPICard
-          isLoading={isLoading}
           isFuture={isFuture}
+          isLoading={isLoading}
           label={t("kpis.newClientsQuarter")}
-          value={kpis?.newClientsQuarter ?? 0}
           trend={kpis?.newClientsQuarterTrend}
+          value={kpis?.newClientsQuarter ?? 0}
         />
         <KPICard
-          isLoading={isLoading}
-          isFuture={isFuture}
           isCurrency
+          isFuture={isFuture}
+          isLoading={isLoading}
           label={t("kpis.pipelineValue")}
-          value={kpis?.pipelineValue ?? 0}
           trend={kpis?.pipelineValueTrend}
+          value={kpis?.pipelineValue ?? 0}
         />
         <KPICard
-          isLoading={isLoading}
-          isFuture={isFuture}
           isCurrency
+          isFuture={isFuture}
+          isLoading={isLoading}
           label={t("kpis.averageDealSize")}
-          value={kpis?.averageDealSize ?? 0}
           trend={kpis?.averageDealSizeTrend}
+          value={kpis?.averageDealSize ?? 0}
         />
       </div>
     </div>

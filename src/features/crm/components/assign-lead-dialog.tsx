@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,10 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Department } from "@/generated/prisma";
+import type { Department } from "@/generated/prisma";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
-import { toast } from "sonner";
 
 type AssignLeadDialogProps = {
   leadId: string | null;
@@ -41,11 +41,11 @@ export const AssignLeadDialog = ({
 
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  
+
   const { data: teamMembers } = useQuery(
     trpc.crm.leads.getTeamMembers.queryOptions()
   );
-  
+
   const assignLead = useMutation(
     trpc.crm.leads.assign.mutationOptions({
       onSuccess: () => {
@@ -73,7 +73,7 @@ export const AssignLeadDialog = ({
   };
 
   const handleAssign = () => {
-    if (!leadId || !assignedToId) return;
+    if (!(leadId && assignedToId)) return;
 
     assignLead.mutate({
       leadId,
@@ -83,7 +83,7 @@ export const AssignLeadDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{t("title")}</DialogTitle>
@@ -93,16 +93,18 @@ export const AssignLeadDialog = ({
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="assignTo">{t("labels.assignTo")}</Label>
-            <Select value={assignedToId} onValueChange={setAssignedToId}>
+            <Select onValueChange={setAssignedToId} value={assignedToId}>
               <SelectTrigger id="assignTo">
                 <SelectValue placeholder={t("placeholders.selectUser")} />
               </SelectTrigger>
               <SelectContent>
-                {teamMembers?.map((member: { id: string; name: string; email: string }) => (
-                  <SelectItem key={member.id} value={member.id}>
-                    {member.name} ({member.email})
-                  </SelectItem>
-                ))}
+                {teamMembers?.map(
+                  (member: { id: string; name: string; email: string }) => (
+                    <SelectItem key={member.id} value={member.id}>
+                      {member.name} ({member.email})
+                    </SelectItem>
+                  )
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -110,8 +112,8 @@ export const AssignLeadDialog = ({
           <div className="grid gap-2">
             <Label htmlFor="department">{t("labels.department")}</Label>
             <Select
-              value={department}
               onValueChange={(value) => setDepartment(value as Department)}
+              value={department}
             >
               <SelectTrigger id="department">
                 <SelectValue placeholder={t("placeholders.selectDepartment")} />
@@ -127,17 +129,17 @@ export const AssignLeadDialog = ({
 
         <DialogFooter>
           <Button
+            disabled={assignLead.isPending}
+            onClick={resetAndClose}
             type="button"
             variant="outline"
-            onClick={resetAndClose}
-            disabled={assignLead.isPending}
           >
             {t("cancel")}
           </Button>
           <Button
-            type="button"
-            onClick={handleAssign}
             disabled={!assignedToId || assignLead.isPending}
+            onClick={handleAssign}
+            type="button"
           >
             {assignLead.isPending ? t("assigning") : t("assign")}
           </Button>

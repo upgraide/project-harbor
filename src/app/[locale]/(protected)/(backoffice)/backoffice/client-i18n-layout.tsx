@@ -1,11 +1,19 @@
 "use client";
 
-import { I18nProviderClient } from "@/locales/client";
 import { AppHeader } from "@/components/app-header";
 import { SidebarInset } from "@/components/ui/sidebar";
-import { Role } from "@/generated/prisma";
+import type { Role } from "@/generated/prisma";
+import { I18nProviderClient } from "@/locales/client";
 
-export default function ClientI18nLayout({ children, locale, user }: { children: React.ReactNode; locale: string; user: { name: string; email: string; image: string | null; role?: Role } }) {
+export default function ClientI18nLayout({
+  children,
+  locale,
+  user,
+}: {
+  children: React.ReactNode;
+  locale: string;
+  user: { name: string; email: string; image: string | null; role?: Role };
+}) {
   return (
     <I18nProviderClient locale={locale}>
       <SidebarInset className="bg-accent/20">

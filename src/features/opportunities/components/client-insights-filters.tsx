@@ -10,7 +10,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useClientInsightsFilters } from "@/features/opportunities/context/client-insights-filters";
-import { useAdvisors, useAvailableRegions } from "@/features/opportunities/hooks/use-client-insights";
+import {
+  useAdvisors,
+  useAvailableRegions,
+} from "@/features/opportunities/hooks/use-client-insights";
 import { useScopedI18n } from "@/locales/client";
 
 export const ClientInsightsFilters = () => {
@@ -25,7 +28,8 @@ export const ClientInsightsFilters = () => {
   } = useClientInsightsFilters();
 
   const { data: advisors, isLoading: isLoadingAdvisors } = useAdvisors();
-  const { data: availableRegions, isLoading: isLoadingRegions } = useAvailableRegions();
+  const { data: availableRegions, isLoading: isLoadingRegions } =
+    useAvailableRegions();
 
   // Define client types (from schema: InvestorClientType enum)
   const clientTypes = [
@@ -61,10 +65,12 @@ export const ClientInsightsFilters = () => {
     <div className="flex flex-wrap items-center gap-4">
       {/* Advisor Filter */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">{t("advisor")}</label>
+        <label className="font-medium text-sm">{t("advisor")}</label>
         <Select
+          onValueChange={(value) =>
+            setAdvisorId(value === "all" ? null : value)
+          }
           value={filters.advisorId ?? "all"}
-          onValueChange={(value) => setAdvisorId(value === "all" ? null : value)}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder={t("advisorPlaceholder")} />
@@ -72,7 +78,7 @@ export const ClientInsightsFilters = () => {
           <SelectContent>
             <SelectItem value="all">{t("advisorPlaceholder")}</SelectItem>
             {isLoadingAdvisors ? (
-              <SelectItem value="loading" disabled>
+              <SelectItem disabled value="loading">
                 Loading...
               </SelectItem>
             ) : (
@@ -88,10 +94,12 @@ export const ClientInsightsFilters = () => {
 
       {/* Client Type Filter */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">{t("clientType")}</label>
+        <label className="font-medium text-sm">{t("clientType")}</label>
         <Select
+          onValueChange={(value) =>
+            setClientType(value === "all" ? null : value)
+          }
           value={filters.clientType ?? "all"}
-          onValueChange={(value) => setClientType(value === "all" ? null : value)}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder={t("clientTypePlaceholder")} />
@@ -109,10 +117,10 @@ export const ClientInsightsFilters = () => {
 
       {/* Region Filter */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">{t("region")}</label>
+        <label className="font-medium text-sm">{t("region")}</label>
         <Select
-          value={filters.region ?? "all"}
           onValueChange={(value) => setRegion(value === "all" ? null : value)}
+          value={filters.region ?? "all"}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder={t("regionPlaceholder")} />
@@ -120,7 +128,7 @@ export const ClientInsightsFilters = () => {
           <SelectContent>
             <SelectItem value="all">{t("regionPlaceholder")}</SelectItem>
             {isLoadingRegions ? (
-              <SelectItem value="loading" disabled>
+              <SelectItem disabled value="loading">
                 Loading...
               </SelectItem>
             ) : (
@@ -136,18 +144,20 @@ export const ClientInsightsFilters = () => {
 
       {/* Investment Range Filter */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium">{t("investmentRange")}</label>
+        <label className="font-medium text-sm">{t("investmentRange")}</label>
         <Select
-          value={filters.investmentRange ?? "all"}
           onValueChange={(value) =>
             setInvestmentRange(value === "all" ? null : value)
           }
+          value={filters.investmentRange ?? "all"}
         >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder={t("investmentRangePlaceholder")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("investmentRangePlaceholder")}</SelectItem>
+            <SelectItem value="all">
+              {t("investmentRangePlaceholder")}
+            </SelectItem>
             {investmentRanges.map((range) => (
               <SelectItem key={range.value} value={range.value}>
                 {range.label}
@@ -159,8 +169,8 @@ export const ClientInsightsFilters = () => {
 
       {/* Reset Button */}
       <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium invisible">Reset</label>
-        <Button variant="outline" size="icon" onClick={resetFilters}>
+        <label className="invisible font-medium text-sm">Reset</label>
+        <Button onClick={resetFilters} size="icon" variant="outline">
           <RotateCcw className="h-4 w-4" />
         </Button>
       </div>

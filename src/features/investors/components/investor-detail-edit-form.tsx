@@ -1,9 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,17 +12,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -30,26 +30,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { UserSelect } from "@/features/users/components/user-select";
 import {
   Department,
   InvestorClientType,
   InvestorSegment,
   InvestorStrategy,
-  TeamMember,
-  LeadStatus,
   LeadPriority,
   LeadSource,
+  LeadStatus,
+  TeamMember,
 } from "@/generated/prisma";
 import { useUpdateInvestor } from "../hooks/use-update-investor";
 import {
-  investorClientTypeOptions,
-  investorStrategyOptions,
-  investorSegmentOptions,
-  teamMemberOptions,
   departmentOptions,
+  investorClientTypeOptions,
+  investorSegmentOptions,
+  investorStrategyOptions,
+  teamMemberOptions,
 } from "../utils/enum-mappings";
-import { UserSelect } from "@/features/users/components/user-select";
 
 const updateFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -95,7 +95,9 @@ type InvestorDetailEditFormProps = {
   investor: any;
 };
 
-export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps) => {
+export const InvestorDetailEditForm = ({
+  investor,
+}: InvestorDetailEditFormProps) => {
   const updateInvestor = useUpdateInvestor();
   const [isSaving, setIsSaving] = useState(false);
 
@@ -107,11 +109,11 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
   const formatInvestorType = (
     type: string | null | undefined
   ): "<€10M" | "€10M-€100M" | ">€100M" | undefined => {
-    if (!type) return undefined;
+    if (!type) return;
     if (type === "LESS_THAN_10M") return "<€10M";
     if (type === "BETWEEN_10M_100M") return "€10M-€100M";
     if (type === "GREATER_THAN_100M") return ">€100M";
-    return undefined;
+    return;
   };
 
   const form = useForm<UpdateFormValues>({
@@ -164,8 +166,12 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
         minTicketSize: data.minTicketSize,
         maxTicketSize: data.maxTicketSize,
         targetReturnIRR: data.targetReturnIRR,
-        nextFollowUpDate: data.nextFollowUpDate ? new Date(data.nextFollowUpDate) : null,
-        lastContactDate: data.lastContactDate ? new Date(data.lastContactDate) : null,
+        nextFollowUpDate: data.nextFollowUpDate
+          ? new Date(data.nextFollowUpDate)
+          : null,
+        lastContactDate: data.lastContactDate
+          ? new Date(data.lastContactDate)
+          : null,
       });
     } catch (error) {
       console.error("Failed to update investor:", error);
@@ -176,9 +182,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex justify-end">
-          <Button type="submit" disabled={isSaving}>
+          <Button disabled={isSaving} type="submit">
             {isSaving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
@@ -188,7 +194,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
           <Card>
             <CardHeader>
               <CardTitle>Basic Information</CardTitle>
-              <CardDescription>Primary contact details and identification</CardDescription>
+              <CardDescription>
+                Primary contact details and identification
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -289,7 +297,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
           <Card>
             <CardHeader>
               <CardTitle>Classification</CardTitle>
-              <CardDescription>Investor type and categorization</CardDescription>
+              <CardDescription>
+                Investor type and categorization
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <FormField
@@ -370,7 +380,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
         <Card>
           <CardHeader>
             <CardTitle>Investment Preferences</CardTitle>
-            <CardDescription>Strategy, segments, and target locations</CardDescription>
+            <CardDescription>
+              Strategy, segments, and target locations
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-6 md:grid-cols-3">
@@ -383,7 +395,10 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Strategy</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
@@ -391,7 +406,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                         </FormControl>
                         <SelectContent>
                           {investorStrategyOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -405,7 +422,10 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Segment</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
@@ -413,7 +433,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                         </FormControl>
                         <SelectContent>
                           {investorSegmentOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -424,7 +446,7 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                 <FormField
                   control={form.control}
                   name="location1"
-                  render={({ field}) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Location</FormLabel>
                       <FormControl>
@@ -445,7 +467,10 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Strategy</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
@@ -453,7 +478,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                         </FormControl>
                         <SelectContent>
                           {investorStrategyOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -467,7 +494,10 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Segment</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
@@ -475,7 +505,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                         </FormControl>
                         <SelectContent>
                           {investorSegmentOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -507,7 +539,10 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Strategy</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
@@ -515,7 +550,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                         </FormControl>
                         <SelectContent>
                           {investorStrategyOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -529,7 +566,10 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Segment</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue />
@@ -537,7 +577,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                         </FormControl>
                         <SelectContent>
                           {investorSegmentOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -560,7 +602,7 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                 />
               </div>
             </div>
-            
+
             <div className="mt-6 grid gap-4 md:grid-cols-4">
               <FormField
                 control={form.control}
@@ -585,7 +627,11 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                       <Input
                         type="number"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? Number(e.target.value) : undefined
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -602,7 +648,11 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                       <Input
                         type="number"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? Number(e.target.value) : undefined
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -617,10 +667,14 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                     <FormLabel>Target IRR (%)</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
                         step="0.1"
+                        type="number"
                         {...field}
-                        onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value ? Number(e.target.value) : undefined
+                          )
+                        }
                       />
                     </FormControl>
                     <FormMessage />
@@ -635,7 +689,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
         <Card>
           <CardHeader>
             <CardTitle>Lead Management</CardTitle>
-            <CardDescription>CRM tracking and follow-up information</CardDescription>
+            <CardDescription>
+              CRM tracking and follow-up information
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-3">
@@ -653,7 +709,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                       </FormControl>
                       <SelectContent>
                         {Object.values(LeadStatus).map((status) => (
-                          <SelectItem key={status} value={status}>{status.replace(/_/g, " ")}</SelectItem>
+                          <SelectItem key={status} value={status}>
+                            {status.replace(/_/g, " ")}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -675,7 +733,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                       </FormControl>
                       <SelectContent>
                         {Object.values(LeadPriority).map((priority) => (
-                          <SelectItem key={priority} value={priority}>{priority}</SelectItem>
+                          <SelectItem key={priority} value={priority}>
+                            {priority}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -697,7 +757,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                       </FormControl>
                       <SelectContent>
                         {Object.values(LeadSource).map((source) => (
-                          <SelectItem key={source} value={source}>{source.replace(/_/g, " ")}</SelectItem>
+                          <SelectItem key={source} value={source}>
+                            {source.replace(/_/g, " ")}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -712,8 +774,8 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                   <FormItem>
                     <FormLabel>Lead Responsible</FormLabel>
                     <UserSelect
-                      value={field.value ?? ""}
                       onValueChange={field.onChange}
+                      value={field.value ?? ""}
                     />
                     <FormMessage />
                   </FormItem>
@@ -726,8 +788,8 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                   <FormItem>
                     <FormLabel>Main Contact</FormLabel>
                     <UserSelect
-                      value={field.value ?? ""}
                       onValueChange={field.onChange}
+                      value={field.value ?? ""}
                     />
                     <FormMessage />
                   </FormItem>
@@ -747,7 +809,9 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
                       </FormControl>
                       <SelectContent>
                         {teamMemberOptions.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -841,7 +905,7 @@ export const InvestorDetailEditForm = ({ investor }: InvestorDetailEditFormProps
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit" disabled={isSaving}>
+          <Button disabled={isSaving} type="submit">
             {isSaving ? "Saving..." : "Save Changes"}
           </Button>
         </div>

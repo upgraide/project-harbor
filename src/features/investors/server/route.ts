@@ -6,11 +6,11 @@ import {
   InvestorSegment,
   InvestorStrategy,
   InvestorType,
-  Role,
-  TeamMember,
-  LeadStatus,
   LeadPriority,
   LeadSource,
+  LeadStatus,
+  Role,
+  TeamMember,
 } from "@/generated/prisma";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
@@ -772,7 +772,7 @@ export const investorsRouter = createTRPCRouter({
 
       return user;
     }),
-  
+
   getInterests: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input }) => {
@@ -839,8 +839,8 @@ export const investorsRouter = createTRPCRouter({
 
   getNotes: protectedProcedure
     .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
-      return prisma.userNote.findMany({
+    .query(async ({ input }) =>
+      prisma.userNote.findMany({
         where: { userId: input.userId },
         select: {
           id: true,
@@ -855,13 +855,13 @@ export const investorsRouter = createTRPCRouter({
           },
         },
         orderBy: { createdAt: "desc" },
-      });
-    }),
+      })
+    ),
 
   getActivities: protectedProcedure
     .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
-      return prisma.leadActivity.findMany({
+    .query(async ({ input }) =>
+      prisma.leadActivity.findMany({
         where: { userId: input.userId },
         select: {
           id: true,
@@ -871,8 +871,8 @@ export const investorsRouter = createTRPCRouter({
           createdAt: true,
         },
         orderBy: { createdAt: "desc" },
-      });
-    }),
+      })
+    ),
 
   updatePersonalNotes: teamOrAdminProcedure
     .input(
@@ -895,8 +895,8 @@ export const investorsRouter = createTRPCRouter({
   // Last Follow-up endpoints
   getFollowUps: protectedProcedure
     .input(z.object({ userId: z.string() }))
-    .query(async ({ input }) => {
-      return prisma.lastFollowUp.findMany({
+    .query(async ({ input }) =>
+      prisma.lastFollowUp.findMany({
         where: { userId: input.userId },
         include: {
           contactedBy: {
@@ -915,8 +915,8 @@ export const investorsRouter = createTRPCRouter({
           },
         },
         orderBy: { followUpDate: "desc" },
-      });
-    }),
+      })
+    ),
 
   addFollowUp: protectedProcedure
     .input(
@@ -929,7 +929,13 @@ export const investorsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const { userId, followUpDate, description, contactedById, personContactedId } = input;
+      const {
+        userId,
+        followUpDate,
+        description,
+        contactedById,
+        personContactedId,
+      } = input;
 
       const newFollowUp = await prisma.lastFollowUp.create({
         data: {
@@ -979,7 +985,13 @@ export const investorsRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input }) => {
-      const { id, followUpDate, description, contactedById, personContactedId } = input;
+      const {
+        id,
+        followUpDate,
+        description,
+        contactedById,
+        personContactedId,
+      } = input;
 
       const updatedFollowUp = await prisma.lastFollowUp.update({
         where: { id },

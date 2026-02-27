@@ -3,7 +3,7 @@ export default {
   description: "Customer Relationship Management",
   welcome: "Welcome to the CRM management area",
   accessButton: "Access Feature",
-  
+
   features: {
     leads: {
       title: "Lead Management",

@@ -1,8 +1,17 @@
 import { z } from "zod";
+import { notifyTeamAndAdmins } from "@/features/notifications/server/notifications";
 import { NotificationType, OpportunityType, Role } from "@/generated/prisma";
 import prisma from "@/lib/db";
-import { notifyTeamAndAdmins } from "@/features/notifications/server/notifications";
-import { adminProcedure, createTRPCRouter, protectedProcedure } from "@/trpc/init";
+import { env } from "@/lib/env";
+import {
+  createDocumentFromTemplate,
+  createSigningSession,
+  getSigningUrl,
+  listDocuments,
+  sendDocument,
+  waitForDocumentDraft,
+} from "@/lib/pandadocs";
+import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 
 export const userInterestRouter = createTRPCRouter({
   /**
@@ -68,8 +77,14 @@ export const userInterestRouter = createTRPCRouter({
 
       // Notify team about interest
       const [user, opp] = await Promise.all([
-        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
-        prisma.mergerAndAcquisition.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+        prisma.user.findUnique({
+          where: { id: ctx.auth.user.id },
+          select: { name: true },
+        }),
+        prisma.mergerAndAcquisition.findUnique({
+          where: { id: input.opportunityId },
+          select: { name: true },
+        }),
       ]);
       await notifyTeamAndAdmins({
         type: NotificationType.OPPORTUNITY_INTEREST,
@@ -117,8 +132,14 @@ export const userInterestRouter = createTRPCRouter({
 
       // Notify team about no interest
       const [user, opp] = await Promise.all([
-        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
-        prisma.mergerAndAcquisition.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+        prisma.user.findUnique({
+          where: { id: ctx.auth.user.id },
+          select: { name: true },
+        }),
+        prisma.mergerAndAcquisition.findUnique({
+          where: { id: input.opportunityId },
+          select: { name: true },
+        }),
       ]);
       await notifyTeamAndAdmins({
         type: NotificationType.OPPORTUNITY_NOT_INTERESTED,
@@ -133,7 +154,8 @@ export const userInterestRouter = createTRPCRouter({
     }),
 
   /**
-   * Mark NDA as signed for an M&A opportunity
+   * Start NDA signing flow for an M&A opportunity via PandaDocs.
+   * Returns a signing URL — does NOT flip ndaSigned (webhook does that).
    */
   signMergerAndAcquisitionNDA: protectedProcedure
     .input(z.object({ opportunityId: z.string() }))
@@ -145,38 +167,63 @@ export const userInterestRouter = createTRPCRouter({
         },
       });
 
-      let result;
-      if (existing) {
-        result = await prisma.userMergerAndAcquisitionInterest.update({
-          where: { id: existing.id },
-          data: { ndaSigned: true, interested: true },
-        });
-      } else {
-        result = await prisma.userMergerAndAcquisitionInterest.create({
-          data: {
-            userId: ctx.auth.user.id,
-            mergerAndAcquisitionId: input.opportunityId,
-            ndaSigned: true,
-            interested: true,
-          },
-        });
+      if (existing?.ndaSigned) {
+        throw new Error("NDA already signed for this opportunity");
       }
 
-      // Notify team about NDA signing
       const [user, opp] = await Promise.all([
-        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
-        prisma.mergerAndAcquisition.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+        prisma.user.findUnique({
+          where: { id: ctx.auth.user.id },
+          select: { name: true, email: true, companyName: true },
+        }),
+        prisma.mergerAndAcquisition.findUnique({
+          where: { id: input.opportunityId },
+          select: { name: true },
+        }),
       ]);
-      await notifyTeamAndAdmins({
-        type: NotificationType.OPPORTUNITY_NDA_SIGNED,
-        title: `${user?.name ?? "User"} signed NDA`,
-        message: `${user?.name ?? "User"} signed NDA for ${opp?.name ?? "opportunity"} (M&A)`,
-        opportunityId: input.opportunityId,
-        opportunityType: OpportunityType.MNA,
-        relatedUserId: ctx.auth.user.id,
+
+      const userName = user?.name ?? "Investor";
+      const userEmail = user?.email ?? ctx.auth.user.email;
+      const docName = `NDA - ${opp?.name ?? "Opportunity"} - ${userName}`;
+
+      // Check for existing in-progress document
+      const existingDocs = await listDocuments(docName);
+      const inProgressDoc = existingDocs.find(
+        (d) =>
+          d.status !== "document.completed" &&
+          d.status !== "document.voided" &&
+          d.status !== "document.declined"
+      );
+
+      if (inProgressDoc) {
+        const session = await createSigningSession(inProgressDoc.id, userEmail);
+        return { signingUrl: getSigningUrl(session.id) };
+      }
+
+      // Create new document from template
+      const doc = await createDocumentFromTemplate({
+        templateId: env.PANDADOCS_NDA_TEMPLATE_ID,
+        name: docName,
+        recipientEmail: userEmail,
+        recipientName: userName,
+        metadata: {
+          userId: ctx.auth.user.id,
+          opportunityId: input.opportunityId,
+          opportunityType: OpportunityType.MNA,
+        },
+        tokens: [
+          { name: "investor.name", value: userName },
+          { name: "investor.email", value: userEmail },
+          { name: "investor.company", value: user?.companyName ?? "" },
+          { name: "deal.name", value: opp?.name ?? "" },
+        ],
       });
 
-      return result;
+      await waitForDocumentDraft(doc.id);
+      await sendDocument(doc.id);
+
+      const session = await createSigningSession(doc.id, userEmail);
+      return { signingUrl: getSigningUrl(session.id) };
     }),
 
   /**
@@ -210,8 +257,14 @@ export const userInterestRouter = createTRPCRouter({
 
       // Notify team about interest
       const [user, opp] = await Promise.all([
-        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
-        prisma.realEstate.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+        prisma.user.findUnique({
+          where: { id: ctx.auth.user.id },
+          select: { name: true },
+        }),
+        prisma.realEstate.findUnique({
+          where: { id: input.opportunityId },
+          select: { name: true },
+        }),
       ]);
       await notifyTeamAndAdmins({
         type: NotificationType.OPPORTUNITY_INTEREST,
@@ -259,8 +312,14 @@ export const userInterestRouter = createTRPCRouter({
 
       // Notify team about no interest
       const [user, opp] = await Promise.all([
-        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
-        prisma.realEstate.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+        prisma.user.findUnique({
+          where: { id: ctx.auth.user.id },
+          select: { name: true },
+        }),
+        prisma.realEstate.findUnique({
+          where: { id: input.opportunityId },
+          select: { name: true },
+        }),
       ]);
       await notifyTeamAndAdmins({
         type: NotificationType.OPPORTUNITY_NOT_INTERESTED,
@@ -275,7 +334,8 @@ export const userInterestRouter = createTRPCRouter({
     }),
 
   /**
-   * Mark NDA as signed for a Real Estate opportunity
+   * Start NDA signing flow for a Real Estate opportunity via PandaDocs.
+   * Returns a signing URL — does NOT flip ndaSigned (webhook does that).
    */
   signRealEstateNDA: protectedProcedure
     .input(z.object({ opportunityId: z.string() }))
@@ -287,38 +347,63 @@ export const userInterestRouter = createTRPCRouter({
         },
       });
 
-      let result;
-      if (existing) {
-        result = await prisma.userRealEstateInterest.update({
-          where: { id: existing.id },
-          data: { ndaSigned: true, interested: true },
-        });
-      } else {
-        result = await prisma.userRealEstateInterest.create({
-          data: {
-            userId: ctx.auth.user.id,
-            realEstateId: input.opportunityId,
-            ndaSigned: true,
-            interested: true,
-          },
-        });
+      if (existing?.ndaSigned) {
+        throw new Error("NDA already signed for this opportunity");
       }
 
-      // Notify team about NDA signing
       const [user, opp] = await Promise.all([
-        prisma.user.findUnique({ where: { id: ctx.auth.user.id }, select: { name: true } }),
-        prisma.realEstate.findUnique({ where: { id: input.opportunityId }, select: { name: true } }),
+        prisma.user.findUnique({
+          where: { id: ctx.auth.user.id },
+          select: { name: true, email: true, companyName: true },
+        }),
+        prisma.realEstate.findUnique({
+          where: { id: input.opportunityId },
+          select: { name: true },
+        }),
       ]);
-      await notifyTeamAndAdmins({
-        type: NotificationType.OPPORTUNITY_NDA_SIGNED,
-        title: `${user?.name ?? "User"} signed NDA`,
-        message: `${user?.name ?? "User"} signed NDA for ${opp?.name ?? "opportunity"} (Real Estate)`,
-        opportunityId: input.opportunityId,
-        opportunityType: OpportunityType.REAL_ESTATE,
-        relatedUserId: ctx.auth.user.id,
+
+      const userName = user?.name ?? "Investor";
+      const userEmail = user?.email ?? ctx.auth.user.email;
+      const docName = `NDA - ${opp?.name ?? "Opportunity"} - ${userName}`;
+
+      // Check for existing in-progress document
+      const existingDocs = await listDocuments(docName);
+      const inProgressDoc = existingDocs.find(
+        (d) =>
+          d.status !== "document.completed" &&
+          d.status !== "document.voided" &&
+          d.status !== "document.declined"
+      );
+
+      if (inProgressDoc) {
+        const session = await createSigningSession(inProgressDoc.id, userEmail);
+        return { signingUrl: getSigningUrl(session.id) };
+      }
+
+      // Create new document from template
+      const doc = await createDocumentFromTemplate({
+        templateId: env.PANDADOCS_NDA_TEMPLATE_ID,
+        name: docName,
+        recipientEmail: userEmail,
+        recipientName: userName,
+        metadata: {
+          userId: ctx.auth.user.id,
+          opportunityId: input.opportunityId,
+          opportunityType: OpportunityType.REAL_ESTATE,
+        },
+        tokens: [
+          { name: "investor.name", value: userName },
+          { name: "investor.email", value: userEmail },
+          { name: "investor.company", value: user?.companyName ?? "" },
+          { name: "deal.name", value: opp?.name ?? "" },
+        ],
       });
 
-      return result;
+      await waitForDocumentDraft(doc.id);
+      await sendDocument(doc.id);
+
+      const session = await createSigningSession(doc.id, userEmail);
+      return { signingUrl: getSigningUrl(session.id) };
     }),
 
   /**
@@ -352,7 +437,7 @@ export const userInterestRouter = createTRPCRouter({
           },
         },
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
       });
     }),
@@ -388,7 +473,7 @@ export const userInterestRouter = createTRPCRouter({
           },
         },
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc",
         },
       });
     }),

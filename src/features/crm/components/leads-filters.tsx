@@ -1,6 +1,6 @@
 "use client";
 
-import { FilterIcon, XIcon } from "lucide-react";
+import { FilterIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
+import type {
   Department,
   LeadPriority,
   LeadSource,
@@ -71,27 +71,30 @@ export const LeadsFilters = ({
   ).length;
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu onOpenChange={setIsOpen} open={isOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button className="gap-2" variant="outline">
           <FilterIcon className="h-4 w-4" />
           {t("filters.title")}
           {activeFiltersCount > 0 && (
-            <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+            <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-primary-foreground text-xs">
               {activeFiltersCount}
             </span>
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 max-h-[600px] overflow-y-auto">
-        <DropdownMenuLabel className="flex items-center justify-between sticky top-0 bg-popover z-10">
+      <DropdownMenuContent
+        align="end"
+        className="max-h-[600px] w-80 overflow-y-auto"
+      >
+        <DropdownMenuLabel className="sticky top-0 z-10 flex items-center justify-between bg-popover">
           {t("filters.title")}
           {activeFiltersCount > 0 && (
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleReset}
               className="h-auto p-0 text-xs"
+              onClick={handleReset}
+              size="sm"
+              variant="ghost"
             >
               {t("filters.reset")}
             </Button>
@@ -104,18 +107,19 @@ export const LeadsFilters = ({
           <div className="grid gap-2">
             <Label htmlFor="leadSource">{t("filters.leadSource")}</Label>
             <Select
-              value={filters.leadSource || "__all__"}
               onValueChange={(value) =>
-                updateFilter("leadSource", value === "__all__" ? undefined : (value as LeadSource))
+                updateFilter(
+                  "leadSource",
+                  value === "__all__" ? undefined : (value as LeadSource)
+                )
               }
+              value={filters.leadSource || "__all__"}
             >
               <SelectTrigger id="leadSource">
                 <SelectValue placeholder={t("filters.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">
-                  {t("filters.all")}
-                </SelectItem>
+                <SelectItem value="__all__">{t("filters.all")}</SelectItem>
                 <SelectItem value="WEBSITE">
                   {t("leadSource.WEBSITE")}
                 </SelectItem>
@@ -143,9 +147,7 @@ export const LeadsFilters = ({
                 <SelectItem value="ACCESS_REQUEST">
                   {t("leadSource.ACCESS_REQUEST")}
                 </SelectItem>
-                <SelectItem value="OTHER">
-                  {t("leadSource.OTHER")}
-                </SelectItem>
+                <SelectItem value="OTHER">{t("leadSource.OTHER")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -154,18 +156,19 @@ export const LeadsFilters = ({
           <div className="grid gap-2">
             <Label htmlFor="status">{t("filters.status")}</Label>
             <Select
-              value={filters.status || "__all__"}
               onValueChange={(value) =>
-                updateFilter("status", value === "__all__" ? undefined : (value as LeadStatus))
+                updateFilter(
+                  "status",
+                  value === "__all__" ? undefined : (value as LeadStatus)
+                )
               }
+              value={filters.status || "__all__"}
             >
               <SelectTrigger id="status">
                 <SelectValue placeholder={t("filters.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">
-                  {t("filters.all")}
-                </SelectItem>
+                <SelectItem value="__all__">{t("filters.all")}</SelectItem>
                 <SelectItem value="NEW">{t("leadStatus.NEW")}</SelectItem>
                 <SelectItem value="CONTACTED">
                   {t("leadStatus.CONTACTED")}
@@ -202,12 +205,13 @@ export const LeadsFilters = ({
             <div className="space-y-2">
               {(["URGENT", "HIGH", "MEDIUM", "LOW"] as LeadPriority[]).map(
                 (priority) => {
-                  const isChecked = filters.priorities?.includes(priority) ?? false;
+                  const isChecked =
+                    filters.priorities?.includes(priority) ?? false;
                   return (
-                    <div key={priority} className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2" key={priority}>
                       <Checkbox
-                        id={`priority-${priority}`}
                         checked={isChecked}
+                        id={`priority-${priority}`}
                         onCheckedChange={(checked) => {
                           const currentPriorities = filters.priorities || [];
                           if (checked) {
@@ -224,8 +228,8 @@ export const LeadsFilters = ({
                         }}
                       />
                       <label
+                        className="cursor-pointer font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         htmlFor={`priority-${priority}`}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                       >
                         {t(`leadPriority.${priority}`)}
                       </label>
@@ -240,18 +244,19 @@ export const LeadsFilters = ({
           <div className="grid gap-2">
             <Label htmlFor="department">{t("filters.department")}</Label>
             <Select
-              value={filters.department || "__all__"}
               onValueChange={(value) =>
-                updateFilter("department", value === "__all__" ? undefined : (value as Department))
+                updateFilter(
+                  "department",
+                  value === "__all__" ? undefined : (value as Department)
+                )
               }
+              value={filters.department || "__all__"}
             >
               <SelectTrigger id="department">
                 <SelectValue placeholder={t("filters.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">
-                  {t("filters.all")}
-                </SelectItem>
+                <SelectItem value="__all__">{t("filters.all")}</SelectItem>
                 <SelectItem value="MNA">{t("department.MNA")}</SelectItem>
                 <SelectItem value="CRE">{t("department.CRE")}</SelectItem>
                 <SelectItem value="MNA_AND_CRE">
@@ -265,16 +270,19 @@ export const LeadsFilters = ({
           <div className="grid gap-2">
             <Label htmlFor="assignedTo">{t("filters.assignedTo")}</Label>
             <Select
+              onValueChange={(value) =>
+                updateFilter(
+                  "assignedTo",
+                  value === "__all__" ? undefined : value
+                )
+              }
               value={filters.assignedTo || "__all__"}
-              onValueChange={(value) => updateFilter("assignedTo", value === "__all__" ? undefined : value)}
             >
               <SelectTrigger id="assignedTo">
                 <SelectValue placeholder={t("filters.all")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="__all__">
-                  {t("filters.all")}
-                </SelectItem>
+                <SelectItem value="__all__">{t("filters.all")}</SelectItem>
                 {teamMembers.map((member) => (
                   <SelectItem key={member.id} value={member.id}>
                     {member.name}
@@ -289,18 +297,18 @@ export const LeadsFilters = ({
             <Label>{t("filters.lastContactDate")}</Label>
             <div className="grid grid-cols-2 gap-2">
               <Input
-                type="date"
-                value={filters.lastContactDateFrom || ""}
                 onChange={(e) =>
                   updateFilter("lastContactDateFrom", e.target.value)
                 }
+                type="date"
+                value={filters.lastContactDateFrom || ""}
               />
               <Input
-                type="date"
-                value={filters.lastContactDateTo || ""}
                 onChange={(e) =>
                   updateFilter("lastContactDateTo", e.target.value)
                 }
+                type="date"
+                value={filters.lastContactDateTo || ""}
               />
             </div>
           </div>

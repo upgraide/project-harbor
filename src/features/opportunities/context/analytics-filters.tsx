@@ -1,9 +1,22 @@
 "use client";
 
-import { createContext, ReactNode, useCallback, useContext, useState } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
 
 export type OpportunityType = "all" | "mna" | "realEstate";
-export type Period = "q1" | "q2" | "q3" | "q4" | "full" | "last7days" | "last30days";
+export type Period =
+  | "q1"
+  | "q2"
+  | "q3"
+  | "q4"
+  | "full"
+  | "last7days"
+  | "last30days";
 
 export interface AnalyticsFilters {
   year: string; // "2025", "2026", "allTime"
@@ -35,7 +48,11 @@ const DEFAULT_FILTERS: AnalyticsFilters = {
   clientType: undefined,
 };
 
-export const AnalyticsFiltersProvider = ({ children }: { children: ReactNode }) => {
+export const AnalyticsFiltersProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [filters, setFilters] = useState<AnalyticsFilters>(DEFAULT_FILTERS);
 
   const setYear = useCallback((year: string) => {

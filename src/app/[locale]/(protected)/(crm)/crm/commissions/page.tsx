@@ -1,8 +1,8 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { CommissionsContainer } from "@/features/commissions/components/commissions-container";
-import { requireTeam } from "@/lib/auth-utils";
-import { HydrateClient, trpc, prefetch } from "@/trpc/server";
 import { Role } from "@/generated/prisma";
+import { requireTeam } from "@/lib/auth-utils";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
 export const metadata: Metadata = {
   title: "Commissions | CRM",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const Page = async () => {
   const { role } = await requireTeam();
-  
+
   // Prefetch admin queries if user is admin
   if (role === Role.ADMIN) {
     prefetch(trpc.commissions.getEmployeeSummary.queryOptions());

@@ -18,7 +18,9 @@ export const useUpdatePersonalNotes = (userId: string) => {
       },
       onError: (error: unknown) => {
         const errorMessage =
-          error instanceof Error ? error.message : "Failed to update personal notes";
+          error instanceof Error
+            ? error.message
+            : "Failed to update personal notes";
         toast.error(errorMessage);
       },
     })

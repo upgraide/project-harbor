@@ -82,10 +82,10 @@ export const AssetsTransactedLineChart = () => {
               tickMargin={10}
             />
             <YAxis
+              domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.1)]}
               tickFormatter={(value) => value.toLocaleString()}
               tickLine={false}
               tickMargin={10}
-              domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.1)]}
             />
             <ChartTooltip
               content={
@@ -102,10 +102,16 @@ export const AssetsTransactedLineChart = () => {
             />
             <Line
               dataKey="count"
-              stroke={chartData.length >= 2 ? (isDark ? "#FFFFFF" : "#000000") : "transparent"}
+              dot={{ fill: isDark ? "#FFFFFF" : "#000000", r: 4 }}
+              stroke={
+                chartData.length >= 2
+                  ? isDark
+                    ? "#FFFFFF"
+                    : "#000000"
+                  : "transparent"
+              }
               strokeWidth={2}
               type="monotone"
-              dot={{ fill: isDark ? "#FFFFFF" : "#000000", r: 4 }}
             />
           </LineChart>
         </ChartContainer>

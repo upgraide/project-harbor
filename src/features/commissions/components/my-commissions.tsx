@@ -1,25 +1,30 @@
 "use client";
 
-import { useState, useMemo } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import { DollarSign, TrendingUp } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import { EmptyView } from "@/components/entity-components";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CommissionRole, OpportunityStatus } from "@/generated/prisma";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
 
-const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat("en-US", {
+const formatCurrency = (value: number): string =>
+  new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "EUR",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
-};
 
 // Type for a grouped project (one per opportunity, with all roles)
 interface GroupedProject {
@@ -33,22 +38,22 @@ interface GroupedProject {
   } | null;
   roles: CommissionRole[];
   totalCommissionValue: number;
-  commissionValueIds: string[];  // All CommissionValue IDs for this user on this opportunity
-  primaryCommissionValueId: string | null;  // First CommissionValue ID for linking
+  commissionValueIds: string[]; // All CommissionValue IDs for this user on this opportunity
+  primaryCommissionValueId: string | null; // First CommissionValue ID for linking
 }
 
 export const MyCommissions = () => {
   const t = useScopedI18n("crm.commissions");
   const trpc = useTRPC();
-  const [activeTab, setActiveTab] = useState<"pendingPayments" | "pending" | "concluded">("pendingPayments");
+  const [activeTab, setActiveTab] = useState<
+    "pendingPayments" | "pending" | "concluded"
+  >("pendingPayments");
 
   const { data } = useSuspenseQuery(
     trpc.commissions.getMyCommissions.queryOptions()
   );
 
-  const getRoleLabel = (role: CommissionRole) => {
-    return t(`roles.${role}`);
-  };
+  const getRoleLabel = (role: CommissionRole) => t(`roles.${role}`);
 
   const getCommissionPercentage = (role: CommissionRole) => {
     const commission = data.commissions.find((c) => c.roleType === role);
@@ -78,7 +83,7 @@ export const MyCommissions = () => {
 
     // Group by opportunity ID
     const grouped = new Map<string, GroupedProject>();
-    
+
     for (const project of allProjects) {
       if (!grouped.has(project.id)) {
         grouped.set(project.id, {
@@ -92,13 +97,15 @@ export const MyCommissions = () => {
           primaryCommissionValueId: null,
         });
       }
-      
+
       const group = grouped.get(project.id)!;
       group.roles.push(project.role);
-      
+
       // Find commission value for this role
       const commissionValue = data.commissionValues.find(
-        cv => cv.opportunityId === project.id && cv.commission.roleType === project.role
+        (cv) =>
+          cv.opportunityId === project.id &&
+          cv.commission.roleType === project.role
       );
       if (commissionValue) {
         group.totalCommissionValue += commissionValue.totalCommissionValue ?? 0;
@@ -108,57 +115,67 @@ export const MyCommissions = () => {
         }
       }
     }
-    
+
     return Array.from(grouped.values());
   }, [data]);
 
   // Filter grouped projects by status
-  const pendingProjects = useMemo(() => {
-    return groupedProjects.filter((project) => {
-      if (project.status === OpportunityStatus.ACTIVE) return true;
-      if (project.status === OpportunityStatus.CONCLUDED) {
+  const pendingProjects = useMemo(
+    () =>
+      groupedProjects.filter((project) => {
+        if (project.status === OpportunityStatus.ACTIVE) return true;
+        if (project.status === OpportunityStatus.CONCLUDED) {
+          const schedule = data.scheduleMap?.[project.id];
+          return !(schedule && schedule.isResolved);
+        }
+        return false;
+      }),
+    [groupedProjects, data.scheduleMap]
+  );
+
+  const pendingPaymentProjects = useMemo(
+    () =>
+      groupedProjects.filter((project) => {
+        if (project.status !== OpportunityStatus.CONCLUDED) return false;
         const schedule = data.scheduleMap?.[project.id];
-        return !schedule || !schedule.isResolved;
-      }
-      return false;
-    });
-  }, [groupedProjects, data.scheduleMap]);
+        return schedule?.isResolved && schedule?.paymentStatus?.hasUnpaid;
+      }),
+    [groupedProjects, data.scheduleMap]
+  );
 
-  const pendingPaymentProjects = useMemo(() => {
-    return groupedProjects.filter((project) => {
-      if (project.status !== OpportunityStatus.CONCLUDED) return false;
-      const schedule = data.scheduleMap?.[project.id];
-      return schedule?.isResolved && schedule?.paymentStatus?.hasUnpaid;
-    });
-  }, [groupedProjects, data.scheduleMap]);
-
-  const fullyPaidProjects = useMemo(() => {
-    return groupedProjects.filter((project) => {
-      if (project.status !== OpportunityStatus.CONCLUDED) return false;
-      const schedule = data.scheduleMap?.[project.id];
-      return schedule?.isResolved && schedule?.paymentStatus?.allPaid;
-    });
-  }, [groupedProjects, data.scheduleMap]);
+  const fullyPaidProjects = useMemo(
+    () =>
+      groupedProjects.filter((project) => {
+        if (project.status !== OpportunityStatus.CONCLUDED) return false;
+        const schedule = data.scheduleMap?.[project.id];
+        return schedule?.isResolved && schedule?.paymentStatus?.allPaid;
+      }),
+    [groupedProjects, data.scheduleMap]
+  );
 
   // Calculate role stats from all projects (not grouped)
-  const allProjectsWithRoles = useMemo(() => [
-    ...data.projects.clientAcquisition.map((p) => ({
-      ...p,
-      role: CommissionRole.CLIENT_ACQUISITION,
-    })),
-    ...(data.projects.clientOriginator || []).map((p) => ({
-      ...p,
-      role: CommissionRole.CLIENT_ORIGINATOR,
-    })),
-    ...data.projects.accountManager.map((p) => ({
-      ...p,
-      role: CommissionRole.ACCOUNT_MANAGER,
-    })),
-    ...(data.projects.dealSupport || []).map((p) => ({
-      ...p,
-      role: CommissionRole.DEAL_SUPPORT,
-    })),
-  ].filter((p) => p.status !== OpportunityStatus.INACTIVE), [data]);
+  const allProjectsWithRoles = useMemo(
+    () =>
+      [
+        ...data.projects.clientAcquisition.map((p) => ({
+          ...p,
+          role: CommissionRole.CLIENT_ACQUISITION,
+        })),
+        ...(data.projects.clientOriginator || []).map((p) => ({
+          ...p,
+          role: CommissionRole.CLIENT_ORIGINATOR,
+        })),
+        ...data.projects.accountManager.map((p) => ({
+          ...p,
+          role: CommissionRole.ACCOUNT_MANAGER,
+        })),
+        ...(data.projects.dealSupport || []).map((p) => ({
+          ...p,
+          role: CommissionRole.DEAL_SUPPORT,
+        })),
+      ].filter((p) => p.status !== OpportunityStatus.INACTIVE),
+    [data]
+  );
 
   return (
     <div className="space-y-6">
@@ -167,7 +184,7 @@ export const MyCommissions = () => {
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="font-medium text-sm">
                 {t("paymentStats.totalReceived")}
               </CardTitle>
               <DollarSign className="h-4 w-4 text-green-600" />
@@ -177,7 +194,7 @@ export const MyCommissions = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="font-bold text-2xl text-green-600">
               {formatCurrency(data.paymentStats?.totalPaid ?? 0)}
             </div>
           </CardContent>
@@ -186,7 +203,7 @@ export const MyCommissions = () => {
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="font-medium text-sm">
                 {t("paymentStats.totalYetToReceive")}
               </CardTitle>
               <TrendingUp className="h-4 w-4 text-orange-600" />
@@ -196,7 +213,7 @@ export const MyCommissions = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">
+            <div className="font-bold text-2xl text-orange-600">
               {formatCurrency(data.paymentStats?.totalYetToPay ?? 0)}
             </div>
           </CardContent>
@@ -204,25 +221,28 @@ export const MyCommissions = () => {
       </div>
 
       {/* Commission Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">{[
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[
           CommissionRole.ACCOUNT_MANAGER,
           CommissionRole.CLIENT_ACQUISITION,
           CommissionRole.CLIENT_ORIGINATOR,
           CommissionRole.DEAL_SUPPORT,
         ].map((role) => {
-          const roleProjects = allProjectsWithRoles.filter((p) => p.role === role);
+          const roleProjects = allProjectsWithRoles.filter(
+            (p) => p.role === role
+          );
           const percentage = getCommissionPercentage(role);
 
           return (
             <Card key={role}>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium">
+                <CardTitle className="font-medium text-sm">
                   {getRoleLabel(role)}
                 </CardTitle>
-                <div className="text-2xl font-bold">{percentage}%</div>
+                <div className="font-bold text-2xl">{percentage}%</div>
               </CardHeader>
               <CardContent>
-                <div className="text-xs text-muted-foreground">
+                <div className="text-muted-foreground text-xs">
                   {roleProjects.length} {t("summary.totalProjects")}
                 </div>
               </CardContent>
@@ -237,10 +257,16 @@ export const MyCommissions = () => {
           <CardTitle>{t("projects.title")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pendingPayments" | "pending" | "concluded")}>
-            <TabsList className="grid w-full grid-cols-3 mb-6">
+          <Tabs
+            onValueChange={(v) =>
+              setActiveTab(v as "pendingPayments" | "pending" | "concluded")
+            }
+            value={activeTab}
+          >
+            <TabsList className="mb-6 grid w-full grid-cols-3">
               <TabsTrigger value="pendingPayments">
-                {t("projects.tabs.pendingPayments")} ({pendingPaymentProjects.length})
+                {t("projects.tabs.pendingPayments")} (
+                {pendingPaymentProjects.length})
               </TabsTrigger>
               <TabsTrigger value="pending">
                 {t("projects.tabs.pending")} ({pendingProjects.length})
@@ -253,8 +279,8 @@ export const MyCommissions = () => {
             <TabsContent value="pendingPayments">
               {pendingPaymentProjects.length === 0 ? (
                 <EmptyView
-                  title={t("projects.noPendingPayments")}
                   message={t("projects.noPendingPaymentsDescription")}
+                  title={t("projects.noPendingPayments")}
                 />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -262,18 +288,23 @@ export const MyCommissions = () => {
                     const schedule = data.scheduleMap?.[project.id];
 
                     const cardContent = (
-                      <Card className="overflow-hidden flex flex-col hover:shadow-lg transition-shadow cursor-pointer border-orange-200">
+                      <Card className="flex cursor-pointer flex-col overflow-hidden border-orange-200 transition-shadow hover:shadow-lg">
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between">
-                            <CardTitle className="text-base line-clamp-1">
+                            <CardTitle className="line-clamp-1 text-base">
                               {project.name}
                             </CardTitle>
-                            <Badge variant="outline" className="border-orange-600 text-orange-600">
+                            <Badge
+                              className="border-orange-600 text-orange-600"
+                              variant="outline"
+                            >
                               {t("projects.status.pendingPayment")}
                             </Badge>
                           </div>
                           <CardDescription className="text-xs">
-                            {project.roles.map(role => getRoleLabel(role)).join(", ")}
+                            {project.roles
+                              .map((role) => getRoleLabel(role))
+                              .join(", ")}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="flex-1">
@@ -284,7 +315,9 @@ export const MyCommissions = () => {
                                   {t("projects.details.finalAmount")}:
                                 </span>
                                 <span className="font-medium">
-                                  {formatCurrency(project.analytics.final_amount)}
+                                  {formatCurrency(
+                                    project.analytics.final_amount
+                                  )}
                                 </span>
                               </div>
                             ) : (
@@ -305,13 +338,16 @@ export const MyCommissions = () => {
                                 </span>
                               </div>
                             ) : null}
-                            {schedule?.paymentStatus?.totalPaid !== undefined && (
+                            {schedule?.paymentStatus?.totalPaid !==
+                              undefined && (
                               <div className="flex justify-between border-t pt-2">
                                 <span className="text-muted-foreground">
                                   {t("projects.details.totalPaid")}:
                                 </span>
                                 <span className="font-bold text-green-600">
-                                  {formatCurrency(schedule.paymentStatus.totalPaid)}
+                                  {formatCurrency(
+                                    schedule.paymentStatus.totalPaid
+                                  )}
                                 </span>
                               </div>
                             )}
@@ -322,21 +358,17 @@ export const MyCommissions = () => {
 
                     if (project.primaryCommissionValueId) {
                       return (
-                        <Link 
-                          key={project.id}
-                          href={`/crm/commissions/${project.primaryCommissionValueId}`}
+                        <Link
                           className="block"
+                          href={`/crm/commissions/${project.primaryCommissionValueId}`}
+                          key={project.id}
                         >
                           {cardContent}
                         </Link>
                       );
                     }
 
-                    return (
-                      <div key={project.id}>
-                        {cardContent}
-                      </div>
-                    );
+                    return <div key={project.id}>{cardContent}</div>;
                   })}
                 </div>
               )}
@@ -345,28 +377,41 @@ export const MyCommissions = () => {
             <TabsContent value="pending">
               {pendingProjects.length === 0 ? (
                 <EmptyView
-                  title={t("projects.emptyState")}
                   message={t("projects.emptyStateDescription")}
+                  title={t("projects.emptyState")}
                 />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {pendingProjects.map((project) => {
                     const schedule = data.scheduleMap?.[project.id];
-                    const isConcludedNotSetUp = project.status === OpportunityStatus.CONCLUDED && (!schedule || !schedule.isResolved);
-                    
+                    const isConcludedNotSetUp =
+                      project.status === OpportunityStatus.CONCLUDED &&
+                      !(schedule && schedule.isResolved);
+
                     return (
-                      <Card key={project.id} className="overflow-hidden flex flex-col">
+                      <Card
+                        className="flex flex-col overflow-hidden"
+                        key={project.id}
+                      >
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between">
-                            <CardTitle className="text-base line-clamp-1">
+                            <CardTitle className="line-clamp-1 text-base">
                               {project.name}
                             </CardTitle>
-                            <Badge variant={isConcludedNotSetUp ? "outline" : "secondary"}>
-                              {isConcludedNotSetUp ? t("projects.status.notSetUp") : t("projects.status.pending")}
+                            <Badge
+                              variant={
+                                isConcludedNotSetUp ? "outline" : "secondary"
+                              }
+                            >
+                              {isConcludedNotSetUp
+                                ? t("projects.status.notSetUp")
+                                : t("projects.status.pending")}
                             </Badge>
                           </div>
                           <CardDescription className="text-xs">
-                            {project.roles.map(role => getRoleLabel(role)).join(", ")}
+                            {project.roles
+                              .map((role) => getRoleLabel(role))
+                              .join(", ")}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="flex-1">
@@ -379,7 +424,9 @@ export const MyCommissions = () => {
                                       {t("projects.details.finalAmount")}:
                                     </span>
                                     <span className="font-medium">
-                                      {formatCurrency(project.analytics.final_amount)}
+                                      {formatCurrency(
+                                        project.analytics.final_amount
+                                      )}
                                     </span>
                                   </div>
                                 ) : null}
@@ -387,7 +434,9 @@ export const MyCommissions = () => {
                                   <span className="text-muted-foreground">
                                     {t("projects.details.myCommission")}:
                                   </span>
-                                  <span className="font-medium text-amber-600">{t("projects.status.notSetUp")}</span>
+                                  <span className="font-medium text-amber-600">
+                                    {t("projects.status.notSetUp")}
+                                  </span>
                                 </div>
                               </>
                             ) : (
@@ -407,17 +456,17 @@ export const MyCommissions = () => {
             <TabsContent value="concluded">
               {fullyPaidProjects.length === 0 ? (
                 <EmptyView
-                  title={t("projects.noConcludedProjects")}
                   message={t("projects.noConcludedProjectsDescription")}
+                  title={t("projects.noConcludedProjects")}
                 />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {fullyPaidProjects.map((project) => {
                     const cardContent = (
-                      <Card className="overflow-hidden flex flex-col hover:shadow-lg transition-shadow cursor-pointer">
+                      <Card className="flex cursor-pointer flex-col overflow-hidden transition-shadow hover:shadow-lg">
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between">
-                            <CardTitle className="text-base line-clamp-1">
+                            <CardTitle className="line-clamp-1 text-base">
                               {project.name}
                             </CardTitle>
                             <Badge variant="default">
@@ -425,7 +474,9 @@ export const MyCommissions = () => {
                             </Badge>
                           </div>
                           <CardDescription className="text-xs">
-                            {project.roles.map(role => getRoleLabel(role)).join(", ")}
+                            {project.roles
+                              .map((role) => getRoleLabel(role))
+                              .join(", ")}
                           </CardDescription>
                         </CardHeader>
                         <CardContent className="flex-1">
@@ -436,7 +487,9 @@ export const MyCommissions = () => {
                                   {t("projects.details.finalAmount")}:
                                 </span>
                                 <span className="font-medium">
-                                  {formatCurrency(project.analytics.final_amount)}
+                                  {formatCurrency(
+                                    project.analytics.final_amount
+                                  )}
                                 </span>
                               </div>
                             ) : (
@@ -472,10 +525,10 @@ export const MyCommissions = () => {
                     // Link to the primary commission value
                     if (project.primaryCommissionValueId) {
                       return (
-                        <Link 
-                          key={project.id}
-                          href={`/crm/commissions/${project.primaryCommissionValueId}`}
+                        <Link
                           className="block"
+                          href={`/crm/commissions/${project.primaryCommissionValueId}`}
+                          key={project.id}
                         >
                           {cardContent}
                         </Link>
@@ -483,11 +536,7 @@ export const MyCommissions = () => {
                     }
 
                     // Fallback - just show card without link
-                    return (
-                      <div key={project.id}>
-                        {cardContent}
-                      </div>
-                    );
+                    return <div key={project.id}>{cardContent}</div>;
                   })}
                 </div>
               )}

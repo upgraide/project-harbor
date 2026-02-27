@@ -1,6 +1,16 @@
 "use client";
 
-import { Bar, BarChart, Line, LineChart, Pie, PieChart, Cell, XAxis, YAxis } from "recharts";
+import {
+  Bar,
+  BarChart,
+  Cell,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
@@ -8,15 +18,14 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import {
-  useClientInsightsStats,
-  useClientsByRegion,
   useClientAcquisitionTrend,
+  useClientInsightsStats,
   useClientsByInvestmentRange,
+  useClientsByRegion,
   useClientsPerAdvisor,
   useClientTypeDistribution,
 } from "@/features/opportunities/hooks/use-client-insights";
 import { useScopedI18n } from "@/locales/client";
-import { TrendingUp, TrendingDown } from "lucide-react";
 
 const COLORS = [
   "#1D5C9B", // blue from schema
@@ -40,9 +49,7 @@ const formatInvestmentRange = (range: string): string => {
   return range.replace(/_/g, " ");
 };
 
-const formatClientType = (type: string): string => {
-  return type.replace(/_/g, " ");
-};
+const formatClientType = (type: string): string => type.replace(/_/g, " ");
 
 export const ClientInsights = () => {
   const t = useScopedI18n("backoffice.analytics");
@@ -54,7 +61,8 @@ export const ClientInsights = () => {
     useClientAcquisitionTrend();
   const { data: investmentRangeData, isLoading: isLoadingInvestmentRange } =
     useClientsByInvestmentRange();
-  const { data: advisorData, isLoading: isLoadingAdvisor } = useClientsPerAdvisor();
+  const { data: advisorData, isLoading: isLoadingAdvisor } =
+    useClientsPerAdvisor();
   const { data: clientTypeData, isLoading: isLoadingClientType } =
     useClientTypeDistribution();
 
@@ -84,10 +92,10 @@ export const ClientInsights = () => {
         {kpiCards.map((kpi, index) => (
           <Card key={index}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{kpi.title}</CardTitle>
+              <CardTitle className="font-medium text-sm">{kpi.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="font-bold text-2xl">
                 {isLoadingStats ? "-" : kpi.value}
               </div>
             </CardContent>
@@ -107,7 +115,9 @@ export const ClientInsights = () => {
           <CardContent>
             {isLoadingRegion ? (
               <div className="flex items-center justify-center py-12">
-                <p className="text-muted-foreground text-sm">{t("loadingMessage")}</p>
+                <p className="text-muted-foreground text-sm">
+                  {t("loadingMessage")}
+                </p>
               </div>
             ) : !regionData || regionData.length === 0 ? (
               <div className="flex items-center justify-center py-12">
@@ -130,11 +140,11 @@ export const ClientInsights = () => {
                 >
                   <YAxis
                     dataKey="region"
-                    type="category"
+                    fontSize={12}
                     tickLine={false}
                     tickMargin={10}
+                    type="category"
                     width={120}
-                    fontSize={12}
                   />
                   <XAxis hide type="number" />
                   <ChartTooltip content={<ChartTooltipContent hideLabel />} />
@@ -155,7 +165,9 @@ export const ClientInsights = () => {
           <CardContent>
             {isLoadingClientType ? (
               <div className="flex items-center justify-center py-12">
-                <p className="text-muted-foreground text-sm">{t("loadingMessage")}</p>
+                <p className="text-muted-foreground text-sm">
+                  {t("loadingMessage")}
+                </p>
               </div>
             ) : !clientTypeData || clientTypeData.length === 0 ? (
               <div className="flex items-center justify-center py-12">
@@ -172,20 +184,23 @@ export const ClientInsights = () => {
               >
                 <PieChart>
                   <Pie
+                    cx="50%"
+                    cy="50%"
                     data={clientTypeData.map((item, index) => ({
                       name: formatClientType(item.type),
                       value: item.count,
                       fill: COLORS[index % COLORS.length],
                     }))}
                     dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
                     innerRadius={60}
+                    nameKey="name"
                     outerRadius={100}
                   >
                     {clientTypeData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell
+                        fill={COLORS[index % COLORS.length]}
+                        key={`cell-${index}`}
+                      />
                     ))}
                   </Pie>
                   <ChartTooltip content={<ChartTooltipContent />} />
@@ -205,7 +220,9 @@ export const ClientInsights = () => {
           <CardContent>
             {isLoadingAcquisition ? (
               <div className="flex items-center justify-center py-12">
-                <p className="text-muted-foreground text-sm">{t("loadingMessage")}</p>
+                <p className="text-muted-foreground text-sm">
+                  {t("loadingMessage")}
+                </p>
               </div>
             ) : !acquisitionData || acquisitionData.length === 0 ? (
               <div className="flex items-center justify-center py-12">
@@ -221,7 +238,10 @@ export const ClientInsights = () => {
                   },
                 }}
               >
-                <LineChart data={acquisitionData} margin={{ left: 12, right: 12 }}>
+                <LineChart
+                  data={acquisitionData}
+                  margin={{ left: 12, right: 12 }}
+                >
                   <XAxis
                     dataKey="month"
                     tickFormatter={(value) => {
@@ -266,14 +286,16 @@ export const ClientInsights = () => {
             <CardTitle className="text-base">
               {tInsights("charts.investmentRangeBreakdown.title")}
             </CardTitle>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-muted-foreground text-xs">
               {tInsights("charts.investmentRangeBreakdown.description")}
             </p>
           </CardHeader>
           <CardContent>
             {isLoadingInvestmentRange ? (
               <div className="flex items-center justify-center py-12">
-                <p className="text-muted-foreground text-sm">{t("loadingMessage")}</p>
+                <p className="text-muted-foreground text-sm">
+                  {t("loadingMessage")}
+                </p>
               </div>
             ) : !investmentRangeData || investmentRangeData.length === 0 ? (
               <div className="flex items-center justify-center py-12">
@@ -289,22 +311,29 @@ export const ClientInsights = () => {
                   },
                 }}
               >
-                <BarChart data={investmentRangeData.map((item, index) => ({
-                  range: formatInvestmentRange(item.range),
-                  count: item.count,
-                  fill: ["#1D5C9B", "#679A85", "#9C3E11"][index] || "#1D5C9B",
-                }))}>
+                <BarChart
+                  data={investmentRangeData.map((item, index) => ({
+                    range: formatInvestmentRange(item.range),
+                    count: item.count,
+                    fill: ["#1D5C9B", "#679A85", "#9C3E11"][index] || "#1D5C9B",
+                  }))}
+                >
                   <XAxis
                     dataKey="range"
+                    fontSize={12}
                     tickLine={false}
                     tickMargin={10}
-                    fontSize={12}
                   />
                   <YAxis tickLine={false} tickMargin={10} />
                   <ChartTooltip content={<ChartTooltipContent hideLabel />} />
                   <Bar dataKey="count" radius={4}>
                     {investmentRangeData.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={["#1D5C9B", "#679A85", "#9C3E11"][index] || "#1D5C9B"} />
+                      <Cell
+                        fill={
+                          ["#1D5C9B", "#679A85", "#9C3E11"][index] || "#1D5C9B"
+                        }
+                        key={`cell-${index}`}
+                      />
                     ))}
                   </Bar>
                 </BarChart>

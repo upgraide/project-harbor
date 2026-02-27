@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/select";
 import { useScopedI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
-import { EntityContainer } from "@/components/entity-components";
 
 type CloseOpportunitiesHeaderProps = {
   typeFilter: string;
@@ -32,22 +31,24 @@ export const CloseOpportunitiesHeader = ({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t("title")}</h1>
+        <h1 className="font-bold text-3xl tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground">{t("description")}</p>
       </div>
       <div className="flex gap-2">
-        <Select value={typeFilter} onValueChange={onTypeChange}>
+        <Select onValueChange={onTypeChange} value={typeFilter}>
           <SelectTrigger className="w-[150px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t("filters.all")}</SelectItem>
             <SelectItem value="mna">{t("filters.mna")}</SelectItem>
-            <SelectItem value="realEstate">{t("filters.realEstate")}</SelectItem>
+            <SelectItem value="realEstate">
+              {t("filters.realEstate")}
+            </SelectItem>
           </SelectContent>
         </Select>
 
-        <Select value={statusFilter} onValueChange={onStatusChange}>
+        <Select onValueChange={onStatusChange} value={statusFilter}>
           <SelectTrigger className="w-[150px]">
             <SelectValue />
           </SelectTrigger>
@@ -63,14 +64,18 @@ export const CloseOpportunitiesHeader = ({
   );
 };
 
-export const useCloseOpportunitiesParams = () => {
-  return useQueryStates({
+export const useCloseOpportunitiesParams = () =>
+  useQueryStates({
     page: parseAsString.withDefault("1"),
     search: parseAsString.withDefault(""),
     type: parseAsStringEnum(["all", "mna", "realEstate"]).withDefault("all"),
-    status: parseAsStringEnum(["all", "ACTIVE", "INACTIVE", "CONCLUDED"]).withDefault("all"),
+    status: parseAsStringEnum([
+      "all",
+      "ACTIVE",
+      "INACTIVE",
+      "CONCLUDED",
+    ]).withDefault("all"),
   });
-};
 
 export const useSuspenseCloseOpportunities = () => {
   const trpc = useTRPC();

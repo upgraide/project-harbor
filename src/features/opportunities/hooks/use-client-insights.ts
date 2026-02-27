@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
 import { useClientInsightsFilters } from "@/features/opportunities/context/client-insights-filters";
+import { useTRPC } from "@/trpc/client";
 
 /**
  * Hook to get list of advisors for filtering

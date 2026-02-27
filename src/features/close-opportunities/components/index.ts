@@ -1,11 +1,11 @@
-export { CloseOpportunitiesTable } from "./close-opportunities-table";
 export {
   CloseOpportunitiesHeader,
   useCloseOpportunitiesParams,
   useSuspenseCloseOpportunities,
 } from "./close-opportunities-container";
 export {
+  CloseOpportunitiesError,
   CloseOpportunitiesList,
   CloseOpportunitiesLoading,
-  CloseOpportunitiesError,
 } from "./close-opportunities-list";
+export { CloseOpportunitiesTable } from "./close-opportunities-table";

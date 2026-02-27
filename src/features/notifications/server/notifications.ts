@@ -1,5 +1,5 @@
 import {
-  NotificationType,
+  type NotificationType,
   OpportunityType,
   Role,
 } from "@/generated/prisma";
@@ -84,9 +84,7 @@ export async function createNotification(
  * Creates notifications for multiple users at once.
  * DB writes happen in parallel; a single Pusher broadcast is sent at the end.
  */
-export async function createNotifications(
-  inputs: CreateNotificationInput[]
-) {
+export async function createNotifications(inputs: CreateNotificationInput[]) {
   if (inputs.length === 0) return [];
 
   // Create DB records without per-notification broadcasting

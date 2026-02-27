@@ -31,8 +31,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { OpportunityStatus } from "@/generated/prisma";
-import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 import {
   useUpdateMergerAndAcquisitionFinalValues,
   useUpdateMergerAndAcquisitionStatus,
@@ -41,8 +39,10 @@ import {
   useUpdateRealEstateFinalValues,
   useUpdateRealEstateStatus,
 } from "@/features/opportunities/hooks/use-real-estate-opportunities";
-import { UserSelect } from "@/features/users/components/user-select";
 import { InvestorSelect } from "@/features/users/components/investor-select";
+import { UserSelect } from "@/features/users/components/user-select";
+import type { OpportunityStatus } from "@/generated/prisma";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
 
 type OpportunityItem = {
   id: string;
@@ -65,7 +65,7 @@ const UpdateStatusDialog = ({
 }: UpdateDialogProps) => {
   const t = useScopedI18n("backoffice.closeOpportunities.updateDialog");
   const [status, setStatus] = useState<OpportunityStatus | "">("");
-  
+
   // Simplified fields for CONCLUDED status
   const [finalAmount, setFinalAmount] = useState("");
   const [closingDate, setClosingDate] = useState("");
@@ -80,7 +80,7 @@ const UpdateStatusDialog = ({
   const updateReValues = useUpdateRealEstateFinalValues();
 
   const handleUpdate = async () => {
-    if (!opportunity || !status) return;
+    if (!(opportunity && status)) return;
 
     try {
       // Update status
@@ -94,12 +94,16 @@ const UpdateStatusDialog = ({
         if (status === "CONCLUDED") {
           await updateMnaValues.mutateAsync({
             id: opportunity.id,
-            final_amount: finalAmount ? Number.parseFloat(finalAmount) : undefined,
+            final_amount: finalAmount
+              ? Number.parseFloat(finalAmount)
+              : undefined,
             closed_at: closingDate ? new Date(closingDate) : undefined,
             client_originator_id: clientOriginatorId || null,
             invested_person_id: investedPersonId || null,
             followup_person_id: followupPersonId || null,
-            commissionable_amount: commissionableAmount ? Number.parseFloat(commissionableAmount) : undefined,
+            commissionable_amount: commissionableAmount
+              ? Number.parseFloat(commissionableAmount)
+              : undefined,
           });
         }
       } else {
@@ -112,12 +116,16 @@ const UpdateStatusDialog = ({
         if (status === "CONCLUDED") {
           await updateReValues.mutateAsync({
             id: opportunity.id,
-            final_amount: finalAmount ? Number.parseFloat(finalAmount) : undefined,
+            final_amount: finalAmount
+              ? Number.parseFloat(finalAmount)
+              : undefined,
             closed_at: closingDate ? new Date(closingDate) : undefined,
             client_originator_id: clientOriginatorId || null,
             invested_person_id: investedPersonId || null,
             followup_person_id: followupPersonId || null,
-            commissionable_amount: commissionableAmount ? Number.parseFloat(commissionableAmount) : undefined,
+            commissionable_amount: commissionableAmount
+              ? Number.parseFloat(commissionableAmount)
+              : undefined,
           });
         }
       }
@@ -143,7 +151,7 @@ const UpdateStatusDialog = ({
     updateReValues.isPending;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{t("title")}</DialogTitle>
@@ -154,7 +162,10 @@ const UpdateStatusDialog = ({
           {/* Status Selection */}
           <div className="grid gap-2">
             <Label htmlFor="status">{t("labels.status")}</Label>
-            <Select value={status} onValueChange={(value) => setStatus(value as OpportunityStatus)}>
+            <Select
+              onValueChange={(value) => setStatus(value as OpportunityStatus)}
+              value={status}
+            >
               <SelectTrigger id="status">
                 <SelectValue placeholder={t("placeholders.selectStatus")} />
               </SelectTrigger>
@@ -173,10 +184,10 @@ const UpdateStatusDialog = ({
                 <Label htmlFor="finalAmount">{t("labels.finalAmount")}</Label>
                 <Input
                   id="finalAmount"
-                  type="number"
-                  placeholder={t("placeholders.finalAmount")}
-                  value={finalAmount}
                   onChange={(e) => setFinalAmount(e.target.value)}
+                  placeholder={t("placeholders.finalAmount")}
+                  type="number"
+                  value={finalAmount}
                 />
               </div>
 
@@ -184,67 +195,81 @@ const UpdateStatusDialog = ({
                 <Label htmlFor="closingDate">{t("labels.closingDate")}</Label>
                 <Input
                   id="closingDate"
+                  onChange={(e) => setClosingDate(e.target.value)}
                   type="date"
                   value={closingDate}
-                  onChange={(e) => setClosingDate(e.target.value)}
                 />
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="clientOriginator">{t("labels.clientOriginator")}</Label>
+                <Label htmlFor="clientOriginator">
+                  {t("labels.clientOriginator")}
+                </Label>
                 <UserSelect
-                  value={clientOriginatorId}
                   onValueChange={setClientOriginatorId}
                   placeholder={t("placeholders.clientOriginator")}
+                  value={clientOriginatorId}
                 />
-                <p className="text-xs text-muted-foreground">{t("helper.clientOriginator")}</p>
+                <p className="text-muted-foreground text-xs">
+                  {t("helper.clientOriginator")}
+                </p>
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="investedPerson">{t("labels.investedPerson")}</Label>
+                <Label htmlFor="investedPerson">
+                  {t("labels.investedPerson")}
+                </Label>
                 {/* InvestorSelect shows USER role users (actual investors/clients).
                     This is NOT a commission role - just for record/display purposes. */}
                 <InvestorSelect
-                  value={investedPersonId}
                   onValueChange={setInvestedPersonId}
                   placeholder={t("placeholders.investedPerson")}
+                  value={investedPersonId}
                 />
-                <p className="text-xs text-muted-foreground">{t("helper.investedPerson")}</p>
+                <p className="text-muted-foreground text-xs">
+                  {t("helper.investedPerson")}
+                </p>
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="followupPerson">{t("labels.followupPerson")}</Label>
+                <Label htmlFor="followupPerson">
+                  {t("labels.followupPerson")}
+                </Label>
                 {/* UserSelect for TEAM/ADMIN users - this person gets the
                     "Acompanhamento do Investidor" (DEAL_SUPPORT) commission role */}
                 <UserSelect
-                  value={followupPersonId}
                   onValueChange={setFollowupPersonId}
                   placeholder={t("placeholders.followupPerson")}
+                  value={followupPersonId}
                 />
-                <p className="text-xs text-muted-foreground">{t("helper.followupPerson")}</p>
+                <p className="text-muted-foreground text-xs">
+                  {t("helper.followupPerson")}
+                </p>
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="commissionableAmount">{t("labels.commissionableAmount")}</Label>
+                <Label htmlFor="commissionableAmount">
+                  {t("labels.commissionableAmount")}
+                </Label>
                 <Input
                   id="commissionableAmount"
-                  type="number"
-                  placeholder={t("placeholders.commissionableAmount")}
-                  value={commissionableAmount}
                   onChange={(e) => setCommissionableAmount(e.target.value)}
+                  placeholder={t("placeholders.commissionableAmount")}
+                  type="number"
+                  value={commissionableAmount}
                 />
               </div>
             </>
           )}
 
-          <p className="text-sm text-muted-foreground">{t("helper.values")}</p>
+          <p className="text-muted-foreground text-sm">{t("helper.values")}</p>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button onClick={() => onOpenChange(false)} variant="outline">
             {t("cancel")}
           </Button>
-          <Button onClick={handleUpdate} disabled={!status || isUpdating}>
+          <Button disabled={!status || isUpdating} onClick={handleUpdate}>
             {isUpdating ? t("updating") : t("update")}
           </Button>
         </DialogFooter>
@@ -328,9 +353,9 @@ export const CloseOpportunitiesTable = ({
                 </TableCell>
                 <TableCell>
                   <Button
+                    onClick={() => handleEdit(opportunity)}
                     size="sm"
                     variant="ghost"
-                    onClick={() => handleEdit(opportunity)}
                   >
                     <PencilIcon className="size-4" />
                   </Button>
@@ -342,9 +367,9 @@ export const CloseOpportunitiesTable = ({
       </div>
 
       <UpdateStatusDialog
-        opportunity={selectedOpportunity}
-        open={dialogOpen}
         onOpenChange={setDialogOpen}
+        open={dialogOpen}
+        opportunity={selectedOpportunity}
       />
     </>
   );

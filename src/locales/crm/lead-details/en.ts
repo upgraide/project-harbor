@@ -3,7 +3,7 @@ export default {
   loading: "Loading...",
   notFound: "Lead not found",
   backToList: "Back to Leads",
-  
+
   sections: {
     basicInfo: {
       title: "Basic Information",
@@ -20,14 +20,14 @@ export default {
       createdAt: "Created At",
       tags: "Tags",
     },
-    
+
     assignment: {
       title: "Assignment",
       responsible: "Responsible",
       mainContact: "Main Contact",
       unassigned: "Unassigned",
     },
-    
+
     financial: {
       title: "Financial Information",
       ticketSize: "Ticket Size",
@@ -35,7 +35,7 @@ export default {
       commissionRate: "Commission Rate",
       commissionNotes: "Commission Notes",
     },
-    
+
     strategy: {
       title: "Investment Strategy",
       type: "Investor Type",
@@ -43,7 +43,7 @@ export default {
       segment: "Segment",
       locations: "Preferred Locations",
     },
-    
+
     timeline: {
       title: "Timeline",
       lastContact: "Last Contact",
@@ -53,7 +53,7 @@ export default {
       lostReason: "Lost Reason",
       noDate: "Not scheduled",
     },
-    
+
     notes: {
       title: "Notes",
       addNote: "Add Note",
@@ -69,7 +69,7 @@ export default {
       personContacted: "Person Contacted",
       recordedOn: "Recorded On",
     },
-    
+
     activities: {
       title: "Activity Timeline",
       noActivities: "No activities yet",
@@ -86,7 +86,7 @@ export default {
         LOST: "Lost",
       },
     },
-    
+
     contact: {
       title: "Contact Details",
       representative: "Representative Name",
@@ -97,7 +97,7 @@ export default {
       otherFacts: "Other Facts",
     },
   },
-  
+
   actions: {
     assign: "Assign Lead",
     addNote: "Add Note",

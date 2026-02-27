@@ -29,6 +29,9 @@ export const env = createEnv({
     PUSHER_KEY: z.string().min(1),
     PUSHER_SECRET: z.string().min(1),
     PUSHER_CLUSTER: z.string().min(1),
+    PANDADOCS_API_KEY: z.string().min(1),
+    PANDADOCS_NDA_TEMPLATE_ID: z.string().min(1),
+    PANDADOCS_WEBHOOK_KEY: z.string().min(1),
   },
 
   /**
@@ -47,7 +50,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_PUSHER_KEY: process.env.NEXT_PUBLIC_PUSHER_KEY,
     NEXT_PUBLIC_PUSHER_CLUSTER: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
-    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    NEXT_PUBLIC_GOOGLE_MAPS_API_KEY:
+      process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
   },
   skipValidation:
     !!process.env.CI ||

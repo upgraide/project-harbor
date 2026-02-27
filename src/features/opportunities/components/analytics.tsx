@@ -84,19 +84,19 @@ export const AnalyticsError = () => {
   return <ErrorView message={t("errorMessage")} />;
 };
 
+export { AdvisorPerformanceChart } from "./advisor-performance";
+export { AnalyticsFilters } from "./analytics-filters";
 // biome-ignore lint/performance/noBarrelFile: export is needed for suspense fallback
 export { AnalyticsOverview } from "./analytics-overview";
 export { AssetsTransactedLineChart } from "./assets-transacted-line";
 export { AumLineChart } from "./aum-line";
-export { ClientSegmentationDonutChart } from "./client-segmentation-donut";
-export { PipelineFunnelChart } from "./pipeline-funnel";
-export { SectorBreakdownBarChart } from "./sector-breakdown-bar";
 export { ClientActivityCard } from "./client-activity";
-export { AdvisorPerformanceChart } from "./advisor-performance";
-export { AnalyticsFilters } from "./analytics-filters";
 export { ClientInsights } from "./client-insights";
 export { ClientInsightsFilters } from "./client-insights-filters";
+export { ClientSegmentationDonutChart } from "./client-segmentation-donut";
 export { PerformanceFilters } from "./performance-filters";
+export { PipelineFunnelChart } from "./pipeline-funnel";
+export { SectorBreakdownBarChart } from "./sector-breakdown-bar";
 
 export const AnalyticsList = () => {
   const t = useScopedI18n("backoffice.analytics");
@@ -177,13 +177,9 @@ export const AnalyticsList = () => {
               content={<ChartTooltipContent hideLabel />}
               cursor={false}
             />
-            <Bar
-              dataKey="views"
-              layout="vertical"
-              radius={4}
-            >
+            <Bar dataKey="views" layout="vertical" radius={4}>
               {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
+                <Cell fill={entry.fill} key={`cell-${index}`} />
               ))}
             </Bar>
           </BarChart>

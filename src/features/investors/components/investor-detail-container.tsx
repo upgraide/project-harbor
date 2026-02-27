@@ -2,51 +2,44 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { 
-  Building2, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Globe, 
+import {
+  Building2,
   Calendar,
   FileText,
+  Globe,
+  Mail,
+  MapPin,
+  Phone,
+  Star,
   TrendingUp,
   Users,
-  Star,
-  Lock
 } from "lucide-react";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCurrentUserRole } from "@/features/users/hooks/use-current-user-role";
 import { Role } from "@/generated/prisma";
-import { useTRPC } from "@/trpc/client";
 import { useScopedI18n } from "@/locales/client";
 import { backofficeInvestorsPath } from "@/paths";
-import { useCurrentUserRole } from "@/features/users/hooks/use-current-user-role";
+import { useTRPC } from "@/trpc/client";
 import {
   departmentLabels,
   investorClientTypeLabels,
   investorSegmentLabels,
   investorStrategyLabels,
-  teamMemberLabels,
-  leadStatusLabels,
   leadPriorityLabels,
   leadSourceLabels,
+  leadStatusLabels,
+  teamMemberLabels,
 } from "../utils/enum-mappings";
+import { InvestorActivities } from "./investor-activities";
 import { InvestorDetailEditForm } from "./investor-detail-edit-form";
 import { InvestorInterests } from "./investor-interests";
-import { InvestorNotes } from "./investor-notes";
-import { InvestorActivities } from "./investor-activities";
-import { InvestorTimeline } from "./investor-timeline";
 import { InvestorLastFollowUps } from "./investor-last-followups";
+import { InvestorNotes } from "./investor-notes";
+import { InvestorTimeline } from "./investor-timeline";
 
 type InvestorDetailContainerProps = {
   investorId: string;
@@ -63,7 +56,8 @@ export const InvestorDetailContainer = ({
   );
 
   const { data: currentUserRole } = useCurrentUserRole();
-  const isTeamOrAdmin = currentUserRole === Role.TEAM || currentUserRole === Role.ADMIN;
+  const isTeamOrAdmin =
+    currentUserRole === Role.TEAM || currentUserRole === Role.ADMIN;
 
   const formatTicketSize = (value: number | null | undefined): string => {
     if (value === null || value === undefined) return "-";
@@ -80,40 +74,47 @@ export const InvestorDetailContainer = ({
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <Button variant="ghost" size="sm" asChild className="mb-2 -ml-2">
-            <Link href={backofficeInvestorsPath()}>
-              ← Back to Investors
-            </Link>
+          <Button asChild className="-ml-2 mb-2" size="sm" variant="ghost">
+            <Link href={backofficeInvestorsPath()}>← Back to Investors</Link>
           </Button>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="font-bold text-3xl tracking-tight">
             {investor.companyName || investor.name}
           </h1>
           {investor.companyName && (
-            <p className="text-muted-foreground mt-1">{investor.name}</p>
+            <p className="mt-1 text-muted-foreground">{investor.name}</p>
           )}
         </div>
-        <div className="flex flex-col gap-2 items-end">
+        <div className="flex flex-col items-end gap-2">
           {investor.leadStatus && (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Status:</span>
-              <Badge variant={
-                investor.leadStatus === "CONVERTED" ? "default" :
-                investor.leadStatus === "LOST" ? "destructive" :
-                "secondary"
-              }>
+              <span className="text-muted-foreground text-sm">Status:</span>
+              <Badge
+                variant={
+                  investor.leadStatus === "CONVERTED"
+                    ? "default"
+                    : investor.leadStatus === "LOST"
+                      ? "destructive"
+                      : "secondary"
+                }
+              >
                 {leadStatusLabels[investor.leadStatus] || investor.leadStatus}
               </Badge>
             </div>
           )}
           {investor.leadPriority && (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Priority:</span>
-              <Badge variant={
-                investor.leadPriority === "URGENT" ? "destructive" :
-                investor.leadPriority === "HIGH" ? "default" :
-                "outline"
-              }>
-                {leadPriorityLabels[investor.leadPriority] || investor.leadPriority}
+              <span className="text-muted-foreground text-sm">Priority:</span>
+              <Badge
+                variant={
+                  investor.leadPriority === "URGENT"
+                    ? "destructive"
+                    : investor.leadPriority === "HIGH"
+                      ? "default"
+                      : "outline"
+                }
+              >
+                {leadPriorityLabels[investor.leadPriority] ||
+                  investor.leadPriority}
               </Badge>
             </div>
           )}
@@ -122,7 +123,7 @@ export const InvestorDetailContainer = ({
 
       {/* Main Content */}
       <div>
-        <Tabs defaultValue="overview" className="space-y-6">
+        <Tabs className="space-y-6" defaultValue="overview">
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
@@ -133,7 +134,7 @@ export const InvestorDetailContainer = ({
           </TabsList>
 
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
+          <TabsContent className="space-y-6" value="overview">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {/* Contact Information */}
               <Card>
@@ -146,55 +147,71 @@ export const InvestorDetailContainer = ({
                 <CardContent className="space-y-3">
                   {investor.companyName && (
                     <div className="flex items-start gap-2">
-                      <Building2 className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                      <Building2 className="mt-0.5 h-4 w-4 text-muted-foreground" />
                       <div>
-                        <p className="text-sm font-medium">Company</p>
-                        <p className="text-sm text-muted-foreground">{investor.companyName}</p>
+                        <p className="font-medium text-sm">Company</p>
+                        <p className="text-muted-foreground text-sm">
+                          {investor.companyName}
+                        </p>
                       </div>
                     </div>
                   )}
                   {investor.representativeName && (
                     <div className="flex items-start gap-2">
-                      <Users className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                      <Users className="mt-0.5 h-4 w-4 text-muted-foreground" />
                       <div>
-                        <p className="text-sm font-medium">Representative</p>
-                        <p className="text-sm text-muted-foreground">{investor.representativeName}</p>
+                        <p className="font-medium text-sm">Representative</p>
+                        <p className="text-muted-foreground text-sm">
+                          {investor.representativeName}
+                        </p>
                       </div>
                     </div>
                   )}
                   <div className="flex items-start gap-2">
-                    <Mail className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                    <Mail className="mt-0.5 h-4 w-4 text-muted-foreground" />
                     <div>
-                      <p className="text-sm font-medium">Email</p>
-                      <a href={`mailto:${investor.email}`} className="text-sm text-blue-600 hover:underline">
+                      <p className="font-medium text-sm">Email</p>
+                      <a
+                        className="text-blue-600 text-sm hover:underline"
+                        href={`mailto:${investor.email}`}
+                      >
                         {investor.email}
                       </a>
                     </div>
                   </div>
                   {investor.phoneNumber && (
                     <div className="flex items-start gap-2">
-                      <Phone className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                      <Phone className="mt-0.5 h-4 w-4 text-muted-foreground" />
                       <div>
-                        <p className="text-sm font-medium">Phone</p>
-                        <p className="text-sm text-muted-foreground">{investor.phoneNumber}</p>
+                        <p className="font-medium text-sm">Phone</p>
+                        <p className="text-muted-foreground text-sm">
+                          {investor.phoneNumber}
+                        </p>
                       </div>
                     </div>
                   )}
                   {investor.physicalAddress && (
                     <div className="flex items-start gap-2">
-                      <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                      <MapPin className="mt-0.5 h-4 w-4 text-muted-foreground" />
                       <div>
-                        <p className="text-sm font-medium">Address</p>
-                        <p className="text-sm text-muted-foreground">{investor.physicalAddress}</p>
+                        <p className="font-medium text-sm">Address</p>
+                        <p className="text-muted-foreground text-sm">
+                          {investor.physicalAddress}
+                        </p>
                       </div>
                     </div>
                   )}
                   {investor.website && (
                     <div className="flex items-start gap-2">
-                      <Globe className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                      <Globe className="mt-0.5 h-4 w-4 text-muted-foreground" />
                       <div>
-                        <p className="text-sm font-medium">Website</p>
-                        <a href={investor.website} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                        <p className="font-medium text-sm">Website</p>
+                        <a
+                          className="text-blue-600 text-sm hover:underline"
+                          href={investor.website}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
                           {investor.website}
                         </a>
                       </div>
@@ -202,10 +219,10 @@ export const InvestorDetailContainer = ({
                   )}
                   {investor.lastContactDate && (
                     <div className="flex items-start gap-2">
-                      <Calendar className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                      <Calendar className="mt-0.5 h-4 w-4 text-muted-foreground" />
                       <div>
-                        <p className="text-sm font-medium">Last Contact</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="font-medium text-sm">Last Contact</p>
+                        <p className="text-muted-foreground text-sm">
                           {format(new Date(investor.lastContactDate), "PPP")}
                         </p>
                       </div>
@@ -225,42 +242,47 @@ export const InvestorDetailContainer = ({
                 <CardContent className="space-y-3">
                   {investor.type && (
                     <div>
-                      <p className="text-sm font-medium">Type</p>
-                      <p className="text-sm text-muted-foreground">
-                        {investorClientTypeLabels[investor.type] || investor.type}
+                      <p className="font-medium text-sm">Type</p>
+                      <p className="text-muted-foreground text-sm">
+                        {investorClientTypeLabels[investor.type] ||
+                          investor.type}
                       </p>
                     </div>
                   )}
                   {investor.investorType && (
                     <div>
-                      <p className="text-sm font-medium">Investor Size</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium text-sm">Investor Size</p>
+                      <p className="text-muted-foreground text-sm">
                         {investor.investorType === "LESS_THAN_10M" && "<€10M"}
-                        {investor.investorType === "BETWEEN_10M_100M" && "€10M-€100M"}
-                        {investor.investorType === "GREATER_THAN_100M" && ">€100M"}
+                        {investor.investorType === "BETWEEN_10M_100M" &&
+                          "€10M-€100M"}
+                        {investor.investorType === "GREATER_THAN_100M" &&
+                          ">€100M"}
                       </p>
                     </div>
                   )}
                   {investor.department && (
                     <div>
-                      <p className="text-sm font-medium">Department</p>
-                      <p className="text-sm text-muted-foreground">
-                        {departmentLabels[investor.department] || investor.department}
+                      <p className="font-medium text-sm">Department</p>
+                      <p className="text-muted-foreground text-sm">
+                        {departmentLabels[investor.department] ||
+                          investor.department}
                       </p>
                     </div>
                   )}
                   {(investor.minTicketSize || investor.maxTicketSize) && (
                     <div>
-                      <p className="text-sm font-medium">Ticket Size</p>
-                      <p className="text-sm text-muted-foreground">
-                        {formatTicketSize(investor.minTicketSize)} - {formatTicketSize(investor.maxTicketSize)}
+                      <p className="font-medium text-sm">Ticket Size</p>
+                      <p className="text-muted-foreground text-sm">
+                        {formatTicketSize(investor.minTicketSize)} -{" "}
+                        {formatTicketSize(investor.maxTicketSize)}
                       </p>
                     </div>
                   )}
                   {investor.targetReturnIRR && (
                     <div>
-                      <p className="text-sm font-medium">Target IRR</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-medium text-sm">Target IRR</p>
+                      <p className="text-muted-foreground text-sm">
                         {formatPercentage(investor.targetReturnIRR)}
                       </p>
                     </div>
@@ -279,16 +301,18 @@ export const InvestorDetailContainer = ({
                 <CardContent className="space-y-3">
                   {(investor.strategy1 || investor.segment1) && (
                     <div>
-                      <p className="text-sm font-medium">Primary Strategy</p>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <p className="font-medium text-sm">Primary Strategy</p>
+                      <div className="mt-1 flex flex-wrap gap-1">
                         {investor.strategy1 && (
                           <Badge variant="outline">
-                            {investorStrategyLabels[investor.strategy1] || investor.strategy1}
+                            {investorStrategyLabels[investor.strategy1] ||
+                              investor.strategy1}
                           </Badge>
                         )}
                         {investor.segment1 && (
                           <Badge variant="secondary">
-                            {investorSegmentLabels[investor.segment1] || investor.segment1}
+                            {investorSegmentLabels[investor.segment1] ||
+                              investor.segment1}
                           </Badge>
                         )}
                       </div>
@@ -296,16 +320,18 @@ export const InvestorDetailContainer = ({
                   )}
                   {(investor.strategy2 || investor.segment2) && (
                     <div>
-                      <p className="text-sm font-medium">Secondary Strategy</p>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <p className="font-medium text-sm">Secondary Strategy</p>
+                      <div className="mt-1 flex flex-wrap gap-1">
                         {investor.strategy2 && (
                           <Badge variant="outline">
-                            {investorStrategyLabels[investor.strategy2] || investor.strategy2}
+                            {investorStrategyLabels[investor.strategy2] ||
+                              investor.strategy2}
                           </Badge>
                         )}
                         {investor.segment2 && (
                           <Badge variant="secondary">
-                            {investorSegmentLabels[investor.segment2] || investor.segment2}
+                            {investorSegmentLabels[investor.segment2] ||
+                              investor.segment2}
                           </Badge>
                         )}
                       </div>
@@ -313,25 +339,30 @@ export const InvestorDetailContainer = ({
                   )}
                   {(investor.strategy3 || investor.segment3) && (
                     <div>
-                      <p className="text-sm font-medium">Tertiary Strategy</p>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <p className="font-medium text-sm">Tertiary Strategy</p>
+                      <div className="mt-1 flex flex-wrap gap-1">
                         {investor.strategy3 && (
                           <Badge variant="outline">
-                            {investorStrategyLabels[investor.strategy3] || investor.strategy3}
+                            {investorStrategyLabels[investor.strategy3] ||
+                              investor.strategy3}
                           </Badge>
                         )}
                         {investor.segment3 && (
                           <Badge variant="secondary">
-                            {investorSegmentLabels[investor.segment3] || investor.segment3}
+                            {investorSegmentLabels[investor.segment3] ||
+                              investor.segment3}
                           </Badge>
                         )}
                       </div>
                     </div>
                   )}
-                  {(investor.location1 || investor.location2 || investor.location3 || investor.preferredLocation) && (
+                  {(investor.location1 ||
+                    investor.location2 ||
+                    investor.location3 ||
+                    investor.preferredLocation) && (
                     <div>
-                      <p className="text-sm font-medium">Preferred Locations</p>
-                      <div className="flex flex-wrap gap-1 mt-1">
+                      <p className="font-medium text-sm">Preferred Locations</p>
+                      <div className="mt-1 flex flex-wrap gap-1">
                         {investor.preferredLocation && (
                           <Badge>{investor.preferredLocation}</Badge>
                         )}
@@ -351,7 +382,9 @@ export const InvestorDetailContainer = ({
               </Card>
 
               {/* Lead Information */}
-              {(investor.leadSource || investor.leadResponsible || investor.leadMainContact) && (
+              {(investor.leadSource ||
+                investor.leadResponsible ||
+                investor.leadMainContact) && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -362,60 +395,72 @@ export const InvestorDetailContainer = ({
                   <CardContent className="space-y-3">
                     {investor.leadSource && (
                       <div>
-                        <p className="text-sm font-medium">Source</p>
-                        <p className="text-sm text-muted-foreground">
-                          {leadSourceLabels[investor.leadSource] || investor.leadSource}
+                        <p className="font-medium text-sm">Source</p>
+                        <p className="text-muted-foreground text-sm">
+                          {leadSourceLabels[investor.leadSource] ||
+                            investor.leadSource}
                         </p>
                       </div>
                     )}
-                    {investor.leadScore !== null && investor.leadScore !== undefined && (
-                      <div>
-                        <p className="text-sm font-medium">Lead Score</p>
-                        <p className="text-sm text-muted-foreground">{investor.leadScore}</p>
-                      </div>
-                    )}
+                    {investor.leadScore !== null &&
+                      investor.leadScore !== undefined && (
+                        <div>
+                          <p className="font-medium text-sm">Lead Score</p>
+                          <p className="text-muted-foreground text-sm">
+                            {investor.leadScore}
+                          </p>
+                        </div>
+                      )}
                     {investor.nextFollowUpDate && (
                       <div>
-                        <p className="text-sm font-medium">Next Follow-up</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="font-medium text-sm">Next Follow-up</p>
+                        <p className="text-muted-foreground text-sm">
                           {format(new Date(investor.nextFollowUpDate), "PPP")}
                         </p>
                       </div>
                     )}
                     {investor.leadResponsible && (
                       <div>
-                        <p className="text-sm font-medium">Lead Responsible</p>
-                        <p className="text-sm text-muted-foreground">{investor.leadResponsible.name}</p>
+                        <p className="font-medium text-sm">Lead Responsible</p>
+                        <p className="text-muted-foreground text-sm">
+                          {investor.leadResponsible.name}
+                        </p>
                       </div>
                     )}
                     {investor.leadResponsibleTeam && (
                       <div>
-                        <p className="text-sm font-medium">Responsible Team</p>
-                        <p className="text-sm text-muted-foreground">
-                          {teamMemberLabels[investor.leadResponsibleTeam] || investor.leadResponsibleTeam}
+                        <p className="font-medium text-sm">Responsible Team</p>
+                        <p className="text-muted-foreground text-sm">
+                          {teamMemberLabels[investor.leadResponsibleTeam] ||
+                            investor.leadResponsibleTeam}
                         </p>
                       </div>
                     )}
                     {investor.leadMainContact && (
                       <div>
-                        <p className="text-sm font-medium">Main Contact</p>
-                        <p className="text-sm text-muted-foreground">{investor.leadMainContact.name}</p>
+                        <p className="font-medium text-sm">Main Contact</p>
+                        <p className="text-muted-foreground text-sm">
+                          {investor.leadMainContact.name}
+                        </p>
                       </div>
                     )}
                     {investor.leadMainContactTeam && (
                       <div>
-                        <p className="text-sm font-medium">Contact Team</p>
-                        <p className="text-sm text-muted-foreground">
-                          {teamMemberLabels[investor.leadMainContactTeam] || investor.leadMainContactTeam}
+                        <p className="font-medium text-sm">Contact Team</p>
+                        <p className="text-muted-foreground text-sm">
+                          {teamMemberLabels[investor.leadMainContactTeam] ||
+                            investor.leadMainContactTeam}
                         </p>
                       </div>
                     )}
                     {investor.tags && investor.tags.length > 0 && (
                       <div>
-                        <p className="text-sm font-medium mb-1">Tags</p>
+                        <p className="mb-1 font-medium text-sm">Tags</p>
                         <div className="flex flex-wrap gap-1">
                           {investor.tags.map((tag) => (
-                            <Badge key={tag} variant="secondary">{tag}</Badge>
+                            <Badge key={tag} variant="secondary">
+                              {tag}
+                            </Badge>
                           ))}
                         </div>
                       </div>
@@ -425,7 +470,9 @@ export const InvestorDetailContainer = ({
               )}
 
               {/* Additional Notes */}
-              {(investor.otherFacts || investor.lastNotes || (isTeamOrAdmin && investor.personalNotes)) && (
+              {(investor.otherFacts ||
+                investor.lastNotes ||
+                (isTeamOrAdmin && investor.personalNotes)) && (
                 <Card className="md:col-span-2">
                   <CardHeader>
                     <CardTitle>Additional Information</CardTitle>
@@ -433,22 +480,43 @@ export const InvestorDetailContainer = ({
                   <CardContent className="space-y-3">
                     {isTeamOrAdmin && investor.personalNotes && (
                       <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="text-sm font-medium">{t("personalNotes.title")}</p>
+                        <div className="mb-1 flex items-center gap-2">
+                          <p className="font-medium text-sm">
+                            {t("personalNotes.title")}
+                          </p>
                         </div>
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{investor.personalNotes}</p>
+                        <p className="whitespace-pre-wrap text-muted-foreground text-sm">
+                          {investor.personalNotes}
+                        </p>
                       </div>
                     )}
                     {investor.otherFacts && (
-                      <div className={(isTeamOrAdmin && investor.personalNotes) ? "border-t pt-3" : ""}>
-                        <p className="text-sm font-medium">Other Facts</p>
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{investor.otherFacts}</p>
+                      <div
+                        className={
+                          isTeamOrAdmin && investor.personalNotes
+                            ? "border-t pt-3"
+                            : ""
+                        }
+                      >
+                        <p className="font-medium text-sm">Other Facts</p>
+                        <p className="whitespace-pre-wrap text-muted-foreground text-sm">
+                          {investor.otherFacts}
+                        </p>
                       </div>
                     )}
                     {investor.lastNotes && (
-                      <div className={(isTeamOrAdmin && investor.personalNotes) || investor.otherFacts ? "border-t pt-3" : ""}>
-                        <p className="text-sm font-medium">Last Notes</p>
-                        <p className="text-sm text-muted-foreground whitespace-pre-wrap">{investor.lastNotes}</p>
+                      <div
+                        className={
+                          (isTeamOrAdmin && investor.personalNotes) ||
+                          investor.otherFacts
+                            ? "border-t pt-3"
+                            : ""
+                        }
+                      >
+                        <p className="font-medium text-sm">Last Notes</p>
+                        <p className="whitespace-pre-wrap text-muted-foreground text-sm">
+                          {investor.lastNotes}
+                        </p>
                       </div>
                     )}
                   </CardContent>

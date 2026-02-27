@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useTRPC } from "@/trpc/client";
 import { usePerformanceFilters } from "@/features/opportunities/context/performance-filters";
+import { useTRPC } from "@/trpc/client";
 
 /**
  * Hook to get list of lead responsibles for filtering

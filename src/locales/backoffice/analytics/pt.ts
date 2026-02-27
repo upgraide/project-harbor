@@ -38,12 +38,14 @@ export default {
       },
       clientTypeDistribution: {
         title: "Distribuição de Clientes por Tipo",
-        description: "Divisão de clientes por categoria de investidor (Family Office, PE Fund, etc.).",
+        description:
+          "Divisão de clientes por categoria de investidor (Family Office, PE Fund, etc.).",
         clients: "Clientes",
       },
       acquisitionTrend: {
         title: "Tendência de Aquisição de Clientes (Últimos 12 Meses)",
-        description: "Número de novos clientes adicionados mensalmente no último ano.",
+        description:
+          "Número de novos clientes adicionados mensalmente no último ano.",
         newClients: "Novos Clientes",
       },
       advisorClientLoad: {
@@ -55,7 +57,8 @@ export default {
       },
       investmentRangeBreakdown: {
         title: "Clientes por Capacidade de Investimento",
-        description: "Distribuição de clientes por faixa de ticket size (<€10M, €10M-€100M, >€100M).",
+        description:
+          "Distribuição de clientes por faixa de ticket size (<€10M, €10M-€100M, >€100M).",
         count: "Clientes",
       },
     },
@@ -74,7 +77,8 @@ export default {
     performanceSection: "3. Desempenho e Métricas da Equipe",
     assetsTransacted: {
       title: "Crescimento de Ativos Transacionados ao Longo do Tempo",
-      description: "Contagem de negócios concluídos por mês, mostrando velocidade de transação.",
+      description:
+        "Contagem de negócios concluídos por mês, mostrando velocidade de transação.",
       yLabel: "Total de Ativos Transacionados",
     },
     aum: {
@@ -84,7 +88,8 @@ export default {
     },
     pipeline: {
       title: "Funil do Pipeline de Negócios",
-      description: "Oportunidades ativas em cada etapa do processo de negociação.",
+      description:
+        "Oportunidades ativas em cada etapa do processo de negociação.",
       stages: {
         leads: "Leads",
         dueDiligence: "Due Diligence",
@@ -94,7 +99,8 @@ export default {
     },
     segmentation: {
       title: "Segmentação de Clientes",
-      description: "Clientes agrupados por faixa de capacidade de investimento.",
+      description:
+        "Clientes agrupados por faixa de capacidade de investimento.",
       valueLabel: "Clientes",
     },
     sector: {
@@ -104,7 +110,8 @@ export default {
     },
     clientActivity: {
       title: "Atividade de Follow-up de Clientes",
-      description: "Clientes categorizados por data do último follow-up (limite de 30 dias).",
+      description:
+        "Clientes categorizados por data do último follow-up (limite de 30 dias).",
       noContact: "Sem Follow-up Recente",
       recentContact: "Follow-up Recente",
       percentage: "% dos clientes",
@@ -117,7 +124,8 @@ export default {
     },
     advisorPerformance: {
       title: "Desempenho do Consultor",
-      description: "Negócios fechados e oportunidades ativas geridas por cada membro da equipa.",
+      description:
+        "Negócios fechados e oportunidades ativas geridas por cada membro da equipa.",
       dealsClosed: "Negócios Fechados",
       aumManaged: "AUM Gerenciado",
       closureRate: "Taxa de Fechamento",

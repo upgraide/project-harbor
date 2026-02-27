@@ -370,32 +370,51 @@ export const Editor = ({ opportunityId }: { opportunityId: string }) => {
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Final Amount</p>
-              <p className="text-2xl font-bold">
-                {opportunity.analytics.final_amount ? new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(opportunity.analytics.final_amount) : "N/A"}
+              <p className="font-medium text-muted-foreground text-sm">
+                Final Amount
+              </p>
+              <p className="font-bold text-2xl">
+                {opportunity.analytics.final_amount
+                  ? new Intl.NumberFormat(locale, {
+                      style: "currency",
+                      currency: "EUR",
+                    }).format(opportunity.analytics.final_amount)
+                  : "N/A"}
               </p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Closing Date</p>
+              <p className="font-medium text-muted-foreground text-sm">
+                Closing Date
+              </p>
               <p className="text-lg">
-                {opportunity.analytics.closed_at ? new Date(opportunity.analytics.closed_at).toLocaleDateString(locale) : "N/A"}
+                {opportunity.analytics.closed_at
+                  ? new Date(
+                      opportunity.analytics.closed_at
+                    ).toLocaleDateString(locale)
+                  : "N/A"}
               </p>
             </div>
             {opportunity.analytics.invested_person && (
               <div>
                 {/* Pessoa investidora: NOT a commission role - just the investor record */}
-                <p className="text-sm font-medium text-muted-foreground">Investor (Client)</p>
+                <p className="font-medium text-muted-foreground text-sm">
+                  Investor (Client)
+                </p>
                 <p className="text-base">
-                  {opportunity.analytics.invested_person.name} ({opportunity.analytics.invested_person.email})
+                  {opportunity.analytics.invested_person.name} (
+                  {opportunity.analytics.invested_person.email})
                 </p>
               </div>
             )}
             {opportunity.analytics.followup_person && (
               <div>
                 {/* Commission role: Acompanhamento do Investidor (DEAL_SUPPORT) */}
-                <p className="text-sm font-medium text-muted-foreground">Investor Follow-up</p>
+                <p className="font-medium text-muted-foreground text-sm">
+                  Investor Follow-up
+                </p>
                 <p className="text-base">
-                  {opportunity.analytics.followup_person.name} ({opportunity.analytics.followup_person.email})
+                  {opportunity.analytics.followup_person.name} (
+                  {opportunity.analytics.followup_person.email})
                 </p>
               </div>
             )}

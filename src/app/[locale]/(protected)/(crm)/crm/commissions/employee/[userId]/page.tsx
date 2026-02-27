@@ -1,6 +1,6 @@
 import { EmployeeCommissions } from "@/features/commissions/components/employee-commissions";
-import { HydrateClient, trpc, prefetch } from "@/trpc/server";
 import { requireAdmin } from "@/lib/auth-utils";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
 interface EmployeeCommissionsPageProps {
   params: Promise<{ userId: string }>;

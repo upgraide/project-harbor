@@ -1,5 +1,3 @@
-import { email } from "zod";
-
 export const siteConfig = {
   name: "Harbor Partners | Web Application",
   applicationName: "Harbor Partners",

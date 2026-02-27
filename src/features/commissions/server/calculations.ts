@@ -1,4 +1,8 @@
-import { CommissionRole, OpportunityType, OpportunityStatus } from "@/generated/prisma";
+import {
+  CommissionRole,
+  OpportunityStatus,
+  OpportunityType,
+} from "@/generated/prisma";
 import prisma from "@/lib/db";
 
 interface CalculateCommissionsInput {
@@ -19,12 +23,14 @@ interface UserRoleInfo {
  * 2. Retrieves their commission percentages from the Commission table
  * 3. Calculates the commission amounts based on the commissionable_amount
  * 4. Creates or updates CommissionValue records
- * 
+ *
  * Special handling:
  * - ACCOUNT_MANAGER: If 2 managers exist, each gets half the percentage
  * - Handles zero percentages without throwing errors
  */
-export async function calculateOpportunityCommissions(input: CalculateCommissionsInput) {
+export async function calculateOpportunityCommissions(
+  input: CalculateCommissionsInput
+) {
   const { opportunityId, opportunityType } = input;
 
   // Step 1: Get the opportunity and its analytics
@@ -77,12 +83,16 @@ export async function calculateOpportunityCommissions(input: CalculateCommission
 
   // Only calculate commissions for concluded opportunities with a commissionable amount
   if (opportunity.status !== OpportunityStatus.CONCLUDED) {
-    console.log(`Opportunity ${opportunityId} is not concluded, skipping commission calculation`);
+    console.log(
+      `Opportunity ${opportunityId} is not concluded, skipping commission calculation`
+    );
     return;
   }
 
   if (!analytics || analytics.commissionable_amount == null) {
-    console.log(`Opportunity ${opportunityId} has no commissionable amount set, skipping commission calculation`);
+    console.log(
+      `Opportunity ${opportunityId} has no commissionable amount set, skipping commission calculation`
+    );
     return;
   }
 
@@ -205,7 +215,8 @@ export async function calculateOpportunityCommissions(input: CalculateCommission
   const results = await Promise.all(
     usersWithRoles.map(async (userRole) => {
       // Calculate commission amount
-      const commissionValue = (commissionableAmount * userRole.commissionPercentage) / 100;
+      const commissionValue =
+        (commissionableAmount * userRole.commissionPercentage) / 100;
 
       // Get the commission ID
       const commission = await prisma.commission.findUnique({

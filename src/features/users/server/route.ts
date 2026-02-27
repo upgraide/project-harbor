@@ -133,7 +133,7 @@ export const usersRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const { id, ...data } = input;
-      
+
       const currentUser = ctx.auth;
       if (!currentUser) {
         throw new Error("Unauthorized");
@@ -151,7 +151,7 @@ export const usersRouter = createTRPCRouter({
         select: { role: true },
       });
 
-      if (!caller || !targetUser) {
+      if (!(caller && targetUser)) {
         throw new Error("User not found");
       }
 
@@ -169,18 +169,18 @@ export const usersRouter = createTRPCRouter({
       if (caller.role === Role.USER) {
         throw new Error("Insufficient permissions");
       }
-      
+
       // Check if email is being changed and if it's already in use
       if (data.email) {
         const existingUser = await prisma.user.findUnique({
           where: { email: data.email },
         });
-        
+
         if (existingUser && existingUser.id !== id) {
           throw new Error("Email is already in use");
         }
       }
-      
+
       const user = await prisma.user.update({
         where: { id },
         data,
@@ -191,7 +191,7 @@ export const usersRouter = createTRPCRouter({
           role: true,
         },
       });
-      
+
       return user;
     }),
 
@@ -215,7 +215,7 @@ export const usersRouter = createTRPCRouter({
         select: { role: true },
       });
 
-      if (!caller || !targetUser) {
+      if (!(caller && targetUser)) {
         throw new Error("User not found");
       }
 
@@ -263,7 +263,7 @@ export const usersRouter = createTRPCRouter({
         select: { role: true },
       });
 
-      if (!caller || !targetUser) {
+      if (!(caller && targetUser)) {
         throw new Error("User not found");
       }
 

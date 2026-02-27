@@ -1,8 +1,8 @@
 /**
  * CAGR (Compound Annual Growth Rate) Calculator
- * 
+ *
  * Calculates Sales CAGR and EBITDA CAGR from graph data.
- * 
+ *
  * Rules:
  * - Returns null if there are fewer than 3 rows of data
  * - Uses only the most recent 5 years if more than 5 years exist
@@ -24,7 +24,7 @@ interface CAGRResult {
 
 /**
  * Calculate both Sales CAGR and EBITDA CAGR from graph rows
- * 
+ *
  * @param graphRows Array of yearly financial data
  * @returns Object with salesCAGR and ebitdaCAGR (null if <3 rows)
  */
@@ -35,14 +35,13 @@ export function calculateCAGR(graphRows: GraphRow[]): CAGRResult {
   }
 
   // Sort by year (ascending) to ensure correct ordering
-  const sortedRows = [...graphRows].sort((a, b) => 
+  const sortedRows = [...graphRows].sort((a, b) =>
     a.year.localeCompare(b.year)
   );
 
   // Take only the most recent 5 years if more than 5 exist
-  const relevantRows = sortedRows.length > 5 
-    ? sortedRows.slice(-5) 
-    : sortedRows;
+  const relevantRows =
+    sortedRows.length > 5 ? sortedRows.slice(-5) : sortedRows;
 
   // Get first and last year data
   const firstYear = relevantRows[0];
@@ -60,18 +59,18 @@ export function calculateCAGR(graphRows: GraphRow[]): CAGRResult {
   // Formula: (Sales_end / Sales_start)^(1/n) - 1
   let salesCAGR: number | null = null;
   if (firstYear.revenue > 0 && lastYear.revenue > 0) {
-    salesCAGR = Math.pow(lastYear.revenue / firstYear.revenue, 1 / n) - 1;
+    salesCAGR = (lastYear.revenue / firstYear.revenue) ** (1 / n) - 1;
     // Convert to percentage and round to 2 decimal places
-    salesCAGR = Math.round(salesCAGR * 10000) / 100;
+    salesCAGR = Math.round(salesCAGR * 10_000) / 100;
   }
 
   // Calculate EBITDA CAGR
   // Formula: (EBITDA_end / EBITDA_start)^(1/n) - 1
   let ebitdaCAGR: number | null = null;
   if (firstYear.ebitda > 0 && lastYear.ebitda > 0) {
-    ebitdaCAGR = Math.pow(lastYear.ebitda / firstYear.ebitda, 1 / n) - 1;
+    ebitdaCAGR = (lastYear.ebitda / firstYear.ebitda) ** (1 / n) - 1;
     // Convert to percentage and round to 2 decimal places
-    ebitdaCAGR = Math.round(ebitdaCAGR * 10000) / 100;
+    ebitdaCAGR = Math.round(ebitdaCAGR * 10_000) / 100;
   }
 
   return { salesCAGR, ebitdaCAGR };

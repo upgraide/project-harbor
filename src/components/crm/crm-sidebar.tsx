@@ -1,6 +1,11 @@
 "use client";
 
-import { BookUserIcon, LayoutPanelLeft, LogOutIcon, DollarSignIcon } from "lucide-react";
+import {
+  BookUserIcon,
+  DollarSignIcon,
+  LayoutPanelLeft,
+  LogOutIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { DynamicImage } from "@/components/dynamic-image";
@@ -18,7 +23,13 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { useScopedI18n } from "@/locales/client";
-import { backofficePath, crmPath, crmLeadsPath, crmCommissionsPath, indexPath } from "@/paths";
+import {
+  backofficePath,
+  crmCommissionsPath,
+  crmLeadsPath,
+  crmPath,
+  indexPath,
+} from "@/paths";
 
 const LOGO_EXPANDED_SIZE = 175;
 const LOGO_COLLAPSED_SIZE = 64;

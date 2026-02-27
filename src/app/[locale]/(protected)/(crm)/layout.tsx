@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
-import { CrmSidebar } from "@/components/crm/crm-sidebar";
+import type { ReactNode } from "react";
 import { AppHeader } from "@/components/app-header";
+import { CrmSidebar } from "@/components/crm/crm-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { requireAdmin } from "@/lib/auth-utils";
 

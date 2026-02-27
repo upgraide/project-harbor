@@ -103,8 +103,10 @@ export default {
         },
         ebitdaNormalized: {
           label: "EBITDA (Normalizado)",
-          placeholder: "Digite o valor de EBITDA Normalizado em euros (exemplo: 150000)",
-          description: "Digite o valor absoluto de EBITDA Normalizado da oportunidade",
+          placeholder:
+            "Digite o valor de EBITDA Normalizado em euros (exemplo: 150000)",
+          description:
+            "Digite o valor absoluto de EBITDA Normalizado da oportunidade",
           units: "€",
         },
         netDebt: {
@@ -324,7 +326,8 @@ export default {
         actions: "Ações",
       },
     },
-    noDataMessage: "Ainda não há dados do gráfico. Clique em 'Adicionar Linha' para começar.",
+    noDataMessage:
+      "Ainda não há dados do gráfico. Clique em 'Adicionar Linha' para começar.",
     openMenuText: "Abrir menu",
     editButtonText: "Editar",
     editGraphRowTitle: "Editar Linha do Gráfico",

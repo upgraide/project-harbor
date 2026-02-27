@@ -2,13 +2,12 @@ import {
   eachMonthOfInterval,
   endOfMonth,
   endOfQuarter,
-  endOfYear,
   format,
   startOfMonth,
   startOfQuarter,
   startOfYear,
-  subMonths,
   subDays,
+  subMonths,
 } from "date-fns";
 import { z } from "zod";
 import prisma from "@/lib/db";
@@ -21,14 +20,19 @@ const MONTHS_BACK_FOR_ANALYTICS = MONTHS_IN_YEAR - 1; // Last 12 months
 // Filter schemas
 const analyticsFiltersSchema = z.object({
   year: z.string().default("2026"), // "2025", "2026", "allTime"
-  period: z.enum(["q1", "q2", "q3", "q4", "full", "last7days", "last30days"]).default("q1"),
+  period: z
+    .enum(["q1", "q2", "q3", "q4", "full", "last7days", "last30days"])
+    .default("q1"),
   opportunityType: z.enum(["all", "mna", "realEstate"]).default("all"),
 });
 
 // Helper function to get date ranges based on year and period
-const getDateRange = (year: string, period: string): { start: Date; end: Date } => {
+const getDateRange = (
+  year: string,
+  period: string
+): { start: Date; end: Date } => {
   const now = new Date();
-  
+
   // Handle special periods
   if (period === "last7days") {
     return { start: subDays(now, 7), end: now };
@@ -39,38 +43,38 @@ const getDateRange = (year: string, period: string): { start: Date; end: Date } 
   if (year === "allTime") {
     return { start: new Date("2020-01-01"), end: now };
   }
-  
-  const yearNum = parseInt(year);
-  
+
+  const yearNum = Number.parseInt(year);
+
   // Handle full year
   if (period === "full") {
-    return { 
-      start: new Date(`${yearNum}-01-01`), 
-      end: new Date(`${yearNum}-12-31`) 
+    return {
+      start: new Date(`${yearNum}-01-01`),
+      end: new Date(`${yearNum}-12-31`),
     };
   }
-  
+
   // Handle quarters
   switch (period) {
     case "q1":
-      return { 
-        start: new Date(`${yearNum}-01-01`), 
-        end: new Date(`${yearNum}-03-31`) 
+      return {
+        start: new Date(`${yearNum}-01-01`),
+        end: new Date(`${yearNum}-03-31`),
       };
     case "q2":
-      return { 
-        start: new Date(`${yearNum}-04-01`), 
-        end: new Date(`${yearNum}-06-30`) 
+      return {
+        start: new Date(`${yearNum}-04-01`),
+        end: new Date(`${yearNum}-06-30`),
       };
     case "q3":
-      return { 
-        start: new Date(`${yearNum}-07-01`), 
-        end: new Date(`${yearNum}-09-30`) 
+      return {
+        start: new Date(`${yearNum}-07-01`),
+        end: new Date(`${yearNum}-09-30`),
       };
     case "q4":
-      return { 
-        start: new Date(`${yearNum}-10-01`), 
-        end: new Date(`${yearNum}-12-31`) 
+      return {
+        start: new Date(`${yearNum}-10-01`),
+        end: new Date(`${yearNum}-12-31`),
       };
     default:
       return { start: startOfQuarter(now), end: endOfQuarter(now) };
@@ -78,9 +82,12 @@ const getDateRange = (year: string, period: string): { start: Date; end: Date } 
 };
 
 // Helper to get previous period for trend calculation
-const getPreviousPeriodRange = (year: string, period: string): { start: Date; end: Date } => {
+const getPreviousPeriodRange = (
+  year: string,
+  period: string
+): { start: Date; end: Date } => {
   const now = new Date();
-  
+
   // Handle special periods
   if (period === "last7days") {
     return { start: subDays(now, 14), end: subDays(now, 7) };
@@ -91,42 +98,46 @@ const getPreviousPeriodRange = (year: string, period: string): { start: Date; en
   if (year === "allTime") {
     return { start: new Date("2020-01-01"), end: new Date("2020-01-01") }; // No trend for all time
   }
-  
-  const yearNum = parseInt(year);
-  
+
+  const yearNum = Number.parseInt(year);
+
   // Handle full year
   if (period === "full") {
-    return { 
-      start: new Date(`${yearNum - 1}-01-01`), 
-      end: new Date(`${yearNum - 1}-12-31`) 
+    return {
+      start: new Date(`${yearNum - 1}-01-01`),
+      end: new Date(`${yearNum - 1}-12-31`),
     };
   }
-  
+
   // Handle quarters - previous quarter
   switch (period) {
     case "q1":
-      return { 
-        start: new Date(`${yearNum - 1}-10-01`), 
-        end: new Date(`${yearNum - 1}-12-31`) 
+      return {
+        start: new Date(`${yearNum - 1}-10-01`),
+        end: new Date(`${yearNum - 1}-12-31`),
       };
     case "q2":
-      return { 
-        start: new Date(`${yearNum}-01-01`), 
-        end: new Date(`${yearNum}-03-31`) 
+      return {
+        start: new Date(`${yearNum}-01-01`),
+        end: new Date(`${yearNum}-03-31`),
       };
     case "q3":
-      return { 
-        start: new Date(`${yearNum}-04-01`), 
-        end: new Date(`${yearNum}-06-30`) 
+      return {
+        start: new Date(`${yearNum}-04-01`),
+        end: new Date(`${yearNum}-06-30`),
       };
     case "q4":
-      return { 
-        start: new Date(`${yearNum}-07-01`), 
-        end: new Date(`${yearNum}-09-30`) 
+      return {
+        start: new Date(`${yearNum}-07-01`),
+        end: new Date(`${yearNum}-09-30`),
       };
-    default:
+    default: {
       const quarterStart = startOfQuarter(now);
-      return { start: subMonths(quarterStart, 3), end: subDays(quarterStart, 1) };
+      return {
+        start: subMonths(quarterStart, 3),
+        end: subDays(quarterStart, 1),
+      };
+    }
   }
 };
 
@@ -137,13 +148,13 @@ export const analyticsRouter = createTRPCRouter({
   getAvailableYears: protectedProcedure.query(async () => {
     // Get earliest M&A
     const earliestMna = await prisma.mergerAndAcquisition.findFirst({
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
       select: { createdAt: true },
     });
 
     // Get earliest Real Estate
     const earliestRealEstate = await prisma.realEstate.findFirst({
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
       select: { createdAt: true },
     });
 
@@ -151,10 +162,12 @@ export const analyticsRouter = createTRPCRouter({
       .filter(Boolean)
       .sort((a, b) => (a as Date).getTime() - (b as Date).getTime())[0];
 
-    const startYear = earliestDate ? new Date(earliestDate).getFullYear() : 2025;
+    const startYear = earliestDate
+      ? new Date(earliestDate).getFullYear()
+      : 2025;
     const currentYear = new Date().getFullYear();
 
-    const years: string[] = ['allTime'];
+    const years: string[] = ["allTime"];
     for (let year = currentYear; year >= startYear; year--) {
       years.push(year.toString());
     }
@@ -385,7 +398,7 @@ export const analyticsRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { year, period, opportunityType } = input;
       const dateRange = getDateRange(year, period);
-      
+
       // Generate months only within the selected date range
       const months = eachMonthOfInterval({
         start: startOfMonth(dateRange.start),
@@ -407,13 +420,15 @@ export const analyticsRouter = createTRPCRouter({
             },
           };
 
-          const concludedMna = opportunityType === "realEstate" 
-            ? 0 
-            : await prisma.mergerAndAcquisition.count({ where: whereClause });
+          const concludedMna =
+            opportunityType === "realEstate"
+              ? 0
+              : await prisma.mergerAndAcquisition.count({ where: whereClause });
 
-          const concludedRealEstate = opportunityType === "mna" 
-            ? 0 
-            : await prisma.realEstate.count({ where: whereClause });
+          const concludedRealEstate =
+            opportunityType === "mna"
+              ? 0
+              : await prisma.realEstate.count({ where: whereClause });
 
           return {
             month: format(month, "yyyy-MM"),
@@ -423,7 +438,7 @@ export const analyticsRouter = createTRPCRouter({
       );
 
       // Filter out months with zero count
-      return data.filter(item => item.count > 0);
+      return data.filter((item) => item.count > 0);
     }),
 
   /**
@@ -435,7 +450,7 @@ export const analyticsRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { year, period, opportunityType } = input;
       const dateRange = getDateRange(year, period);
-      
+
       // Generate months only within the selected date range
       const months = eachMonthOfInterval({
         start: startOfMonth(dateRange.start),
@@ -467,13 +482,17 @@ export const analyticsRouter = createTRPCRouter({
             ],
           };
 
-          const activeMna = opportunityType === "realEstate" 
-            ? 0 
-            : await prisma.mergerAndAcquisition.count({ where: activeWhereClause });
+          const activeMna =
+            opportunityType === "realEstate"
+              ? 0
+              : await prisma.mergerAndAcquisition.count({
+                  where: activeWhereClause,
+                });
 
-          const activeRealEstate = opportunityType === "mna" 
-            ? 0 
-            : await prisma.realEstate.count({ where: activeWhereClause });
+          const activeRealEstate =
+            opportunityType === "mna"
+              ? 0
+              : await prisma.realEstate.count({ where: activeWhereClause });
 
           return {
             month: format(month, "yyyy-MM"),
@@ -483,7 +502,7 @@ export const analyticsRouter = createTRPCRouter({
       );
 
       // Filter out months with zero count
-      return data.filter(item => item.count > 0);
+      return data.filter((item) => item.count > 0);
     }),
 
   /**
@@ -494,7 +513,7 @@ export const analyticsRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { year, period, opportunityType } = input;
       const dateRange = getDateRange(year, period);
-      
+
       const dateFilter = {
         createdAt: {
           gte: dateRange.start,
@@ -503,87 +522,95 @@ export const analyticsRouter = createTRPCRouter({
       };
 
       // Leads = ACTIVE opportunities
-      const activeMna = opportunityType === "realEstate" 
-        ? 0 
-        : await prisma.mergerAndAcquisition.count({
-            where: { status: "ACTIVE", ...dateFilter },
-          });
-      const activeRealEstate = opportunityType === "mna" 
-        ? 0 
-        : await prisma.realEstate.count({
-            where: { status: "ACTIVE", ...dateFilter },
-          });
+      const activeMna =
+        opportunityType === "realEstate"
+          ? 0
+          : await prisma.mergerAndAcquisition.count({
+              where: { status: "ACTIVE", ...dateFilter },
+            });
+      const activeRealEstate =
+        opportunityType === "mna"
+          ? 0
+          : await prisma.realEstate.count({
+              where: { status: "ACTIVE", ...dateFilter },
+            });
       const leads = activeMna + activeRealEstate;
 
       // Due Diligence = opportunities with at least one NDA signed
-      const mnaWithNDA = opportunityType === "realEstate" 
-        ? 0 
-        : await prisma.mergerAndAcquisition.count({
-            where: {
-              status: "ACTIVE",
-              ...dateFilter,
-              userInterests: {
-                some: {
-                  ndaSigned: true,
+      const mnaWithNDA =
+        opportunityType === "realEstate"
+          ? 0
+          : await prisma.mergerAndAcquisition.count({
+              where: {
+                status: "ACTIVE",
+                ...dateFilter,
+                userInterests: {
+                  some: {
+                    ndaSigned: true,
+                  },
                 },
               },
-            },
-          });
-      const realEstateWithNDA = opportunityType === "mna" 
-        ? 0 
-        : await prisma.realEstate.count({
-            where: {
-              status: "ACTIVE",
-              ...dateFilter,
-              userInterests: {
-                some: {
-                  ndaSigned: true,
+            });
+      const realEstateWithNDA =
+        opportunityType === "mna"
+          ? 0
+          : await prisma.realEstate.count({
+              where: {
+                status: "ACTIVE",
+                ...dateFilter,
+                userInterests: {
+                  some: {
+                    ndaSigned: true,
+                  },
                 },
               },
-            },
-          });
+            });
       const dueDiligence = mnaWithNDA + realEstateWithNDA;
 
       // Negotiation = opportunities with at least one interested user
-      const mnaWithInterest = opportunityType === "realEstate" 
-        ? 0 
-        : await prisma.mergerAndAcquisition.count({
-            where: {
-              status: "ACTIVE",
-              ...dateFilter,
-              userInterests: {
-                some: {
-                  interested: true,
+      const mnaWithInterest =
+        opportunityType === "realEstate"
+          ? 0
+          : await prisma.mergerAndAcquisition.count({
+              where: {
+                status: "ACTIVE",
+                ...dateFilter,
+                userInterests: {
+                  some: {
+                    interested: true,
+                  },
                 },
               },
-            },
-          });
-      const realEstateWithInterest = opportunityType === "mna" 
-        ? 0 
-        : await prisma.realEstate.count({
-            where: {
-              status: "ACTIVE",
-              ...dateFilter,
-              userInterests: {
-                some: {
-                  interested: true,
+            });
+      const realEstateWithInterest =
+        opportunityType === "mna"
+          ? 0
+          : await prisma.realEstate.count({
+              where: {
+                status: "ACTIVE",
+                ...dateFilter,
+                userInterests: {
+                  some: {
+                    interested: true,
+                  },
                 },
               },
-            },
-          });
+            });
       const negotiation = mnaWithInterest + realEstateWithInterest;
 
       // Closed = CONCLUDED opportunities
-      const concludedMna = opportunityType === "realEstate" 
-        ? 0 
-        : await prisma.mergerAndAcquisition.count({
-            where: { status: "CONCLUDED", ...dateFilter },
-          });
-      const concludedRealEstate = opportunityType === "mna" 
-        ? 0 
-        : await prisma.realEstate.count({
-            where: { status: "CONCLUDED", ...dateFilter },
-          });
+      const concludedMna =
+        opportunityType === "realEstate"
+          ? 0
+          : await prisma.mergerAndAcquisition.count({
+              where: { status: "CONCLUDED", ...dateFilter },
+            });
+      const concludedRealEstate =
+        opportunityType === "mna"
+          ? 0
+          : await prisma.realEstate.count({
+              where: { status: "CONCLUDED", ...dateFilter },
+            });
       const closed = concludedMna + concludedRealEstate;
 
       return {
@@ -628,7 +655,7 @@ export const analyticsRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { year, period, opportunityType } = input;
       const dateRange = getDateRange(year, period);
-      
+
       const dateFilter = {
         createdAt: {
           gte: dateRange.start,
@@ -738,16 +765,16 @@ export const analyticsRouter = createTRPCRouter({
     .input(analyticsFiltersSchema)
     .query(async ({ input }) => {
       const now = new Date();
-      
+
       // Get date ranges using helper functions with separate year and period
       const currentPeriod = getDateRange(input.year, input.period);
       const prevPeriod = getPreviousPeriodRange(input.year, input.period);
-      
+
       const yearStart = startOfYear(now);
 
       // Check if the period is in the future
       const isFuture = currentPeriod.start > now;
-      
+
       if (isFuture) {
         // Return null/zero values for future periods
         return {
@@ -771,36 +798,47 @@ export const analyticsRouter = createTRPCRouter({
 
       // For historical data, query based on createdAt within the period
       const currentActiveMna = await prisma.mergerAndAcquisition.count({
-        where: { 
+        where: {
           createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
           status: "ACTIVE",
-          ...(input.opportunityType !== "all" && input.opportunityType !== "realEstate" ? {} : {})
+          ...(input.opportunityType !== "all" &&
+          input.opportunityType !== "realEstate"
+            ? {}
+            : {}),
         },
       });
       const currentActiveRealEstate = await prisma.realEstate.count({
-        where: { 
+        where: {
           createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
           status: "ACTIVE",
-          ...(input.opportunityType !== "all" && input.opportunityType !== "mna" ? {} : {})
+          ...(input.opportunityType !== "all" && input.opportunityType !== "mna"
+            ? {}
+            : {}),
         },
       });
-      
-      const totalAUM = 
-        (input.opportunityType === "all" || input.opportunityType === "mna" ? currentActiveMna : 0) +
-        (input.opportunityType === "all" || input.opportunityType === "realEstate" ? currentActiveRealEstate : 0);
+
+      const totalAUM =
+        (input.opportunityType === "all" || input.opportunityType === "mna"
+          ? currentActiveMna
+          : 0) +
+        (input.opportunityType === "all" ||
+        input.opportunityType === "realEstate"
+          ? currentActiveRealEstate
+          : 0);
 
       const currentAssetsTransacted =
-        (input.opportunityType === "all" || input.opportunityType === "mna" 
+        (input.opportunityType === "all" || input.opportunityType === "mna"
           ? await prisma.mergerAndAcquisition.count({
-              where: { 
+              where: {
                 status: "CONCLUDED",
                 createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
               },
             })
           : 0) +
-        (input.opportunityType === "all" || input.opportunityType === "realEstate"
+        (input.opportunityType === "all" ||
+        input.opportunityType === "realEstate"
           ? await prisma.realEstate.count({
-              where: { 
+              where: {
                 status: "CONCLUDED",
                 createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
               },
@@ -818,7 +856,8 @@ export const analyticsRouter = createTRPCRouter({
               },
             })
           : 0) +
-        (input.opportunityType === "all" || input.opportunityType === "realEstate"
+        (input.opportunityType === "all" ||
+        input.opportunityType === "realEstate"
           ? await prisma.realEstate.count({
               where: {
                 status: "CONCLUDED",
@@ -838,28 +877,34 @@ export const analyticsRouter = createTRPCRouter({
       // Calculate pipeline value (sum of estimated values for ACTIVE opportunities)
       // For M&A: use entrepriseValue (estimated value)
       // For Real Estate: use totalInvestment or value (estimated value)
-      const mnaPipelineOpportunities = input.opportunityType === "realEstate" ? [] : await prisma.mergerAndAcquisition.findMany({
-        where: {
-          status: "ACTIVE",
-          createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
-        },
-        select: {
-          entrepriseValue: true,
-          equityValue: true,
-        },
-      });
+      const mnaPipelineOpportunities =
+        input.opportunityType === "realEstate"
+          ? []
+          : await prisma.mergerAndAcquisition.findMany({
+              where: {
+                status: "ACTIVE",
+                createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
+              },
+              select: {
+                entrepriseValue: true,
+                equityValue: true,
+              },
+            });
 
-      const rePipelineOpportunities = input.opportunityType === "mna" ? [] : await prisma.realEstate.findMany({
-        where: {
-          status: "ACTIVE",
-          createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
-        },
-        select: {
-          totalInvestment: true,
-          value: true,
-          price: true,
-        },
-      });
+      const rePipelineOpportunities =
+        input.opportunityType === "mna"
+          ? []
+          : await prisma.realEstate.findMany({
+              where: {
+                status: "ACTIVE",
+                createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
+              },
+              select: {
+                totalInvestment: true,
+                value: true,
+                price: true,
+              },
+            });
 
       // Sum up M&A pipeline value (prefer entrepriseValue, fallback to equityValue)
       const mnaPipelineValue = mnaPipelineOpportunities.reduce(
@@ -869,7 +914,8 @@ export const analyticsRouter = createTRPCRouter({
 
       // Sum up Real Estate pipeline value (prefer totalInvestment, fallback to value or price)
       const rePipelineValue = rePipelineOpportunities.reduce(
-        (sum, opp) => sum + (opp.totalInvestment || opp.value || opp.price || 0),
+        (sum, opp) =>
+          sum + (opp.totalInvestment || opp.value || opp.price || 0),
         0
       );
 
@@ -880,27 +926,39 @@ export const analyticsRouter = createTRPCRouter({
         where: {
           final_amount: { not: null },
           OR: [
-            input.opportunityType === "realEstate" ? {} : {
-              mergerAndAcquisition: {
-                status: "CONCLUDED",
-                createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
-              },
-            },
-            input.opportunityType === "mna" ? {} : {
-              realEstate: {
-                status: "CONCLUDED",
-                createdAt: { gte: currentPeriod.start, lte: currentPeriod.end },
-              },
-            },
+            input.opportunityType === "realEstate"
+              ? {}
+              : {
+                  mergerAndAcquisition: {
+                    status: "CONCLUDED",
+                    createdAt: {
+                      gte: currentPeriod.start,
+                      lte: currentPeriod.end,
+                    },
+                  },
+                },
+            input.opportunityType === "mna"
+              ? {}
+              : {
+                  realEstate: {
+                    status: "CONCLUDED",
+                    createdAt: {
+                      gte: currentPeriod.start,
+                      lte: currentPeriod.end,
+                    },
+                  },
+                },
           ],
         },
         _sum: { final_amount: true },
         _count: { id: true },
       });
 
-      const averageDealSize = concludedDealsValue._count.id > 0 
-        ? (concludedDealsValue._sum.final_amount || 0) / concludedDealsValue._count.id
-        : 0;
+      const averageDealSize =
+        concludedDealsValue._count.id > 0
+          ? (concludedDealsValue._sum.final_amount || 0) /
+            concludedDealsValue._count.id
+          : 0;
 
       // Previous period KPIs for trend calculation
       const prevAssetsTransacted =
@@ -915,7 +973,8 @@ export const analyticsRouter = createTRPCRouter({
               },
             })
           : 0) +
-        (input.opportunityType === "all" || input.opportunityType === "realEstate"
+        (input.opportunityType === "all" ||
+        input.opportunityType === "realEstate"
           ? await prisma.realEstate.count({
               where: {
                 status: "CONCLUDED",
@@ -958,9 +1017,11 @@ export const analyticsRouter = createTRPCRouter({
    */
   getClientActivity: protectedProcedure
     .input(
-      z.object({
-        leadResponsibleId: z.string().nullable().optional(),
-      }).optional()
+      z
+        .object({
+          leadResponsibleId: z.string().nullable().optional(),
+        })
+        .optional()
     )
     .query(async ({ input }) => {
       const thirtyDaysAgo = subDays(new Date(), 30);
@@ -1001,7 +1062,7 @@ export const analyticsRouter = createTRPCRouter({
       const recentFollowUps = await prisma.lastFollowUp.findMany({
         where: {
           personContactedId: {
-            in: allUsers.map(u => u.id),
+            in: allUsers.map((u) => u.id),
           },
         },
         select: {
@@ -1022,7 +1083,7 @@ export const analyticsRouter = createTRPCRouter({
       }
 
       // Categorize users based on their last follow-up
-      const usersWithLastFollowUp = allUsers.map(user => ({
+      const usersWithLastFollowUp = allUsers.map((user) => ({
         ...user,
         lastFollowUpDate: followUpMap.get(user.id),
       }));
@@ -1319,7 +1380,8 @@ export const analyticsRouter = createTRPCRouter({
       });
 
       // Calculate retention rate (clients active in last 90 days / total clients)
-      const retentionRate = totalClients > 0 ? (activeClients / totalClients) * 100 : 0;
+      const retentionRate =
+        totalClients > 0 ? (activeClients / totalClients) * 100 : 0;
 
       // Get average portfolio size (average number of interests per client)
       const clientsWithInterests = await prisma.user.findMany({
@@ -1334,15 +1396,16 @@ export const analyticsRouter = createTRPCRouter({
         },
       });
 
-      const avgPortfolioSize = totalClients > 0
-        ? clientsWithInterests.reduce(
-            (sum, client) =>
-              sum +
-              client._count.mergerAndAcquisitionInterests +
-              client._count.realEstateInterests,
-            0
-          ) / totalClients
-        : 0;
+      const avgPortfolioSize =
+        totalClients > 0
+          ? clientsWithInterests.reduce(
+              (sum, client) =>
+                sum +
+                client._count.mergerAndAcquisitionInterests +
+                client._count.realEstateInterests,
+              0
+            ) / totalClients
+          : 0;
 
       return {
         totalClients,
@@ -1407,13 +1470,15 @@ export const analyticsRouter = createTRPCRouter({
       // Aggregate by region
       const regionCounts = new Map<string, number>();
       for (const client of clients) {
-        [client.location1, client.location2, client.location3].forEach((loc) => {
-          if (loc && loc.trim()) {
-            const trimmedLoc = loc.trim();
-            const current = regionCounts.get(trimmedLoc) ?? 0;
-            regionCounts.set(trimmedLoc, current + 1);
+        [client.location1, client.location2, client.location3].forEach(
+          (loc) => {
+            if (loc && loc.trim()) {
+              const trimmedLoc = loc.trim();
+              const current = regionCounts.get(trimmedLoc) ?? 0;
+              regionCounts.set(trimmedLoc, current + 1);
+            }
           }
-        });
+        );
       }
 
       return Array.from(regionCounts.entries())
@@ -1622,15 +1687,16 @@ export const analyticsRouter = createTRPCRouter({
       const advisorMetrics = await Promise.all(
         advisors.map(async (advisor) => {
           // Account Manager role: Get from OpportunityAccountManager table
-          const accountManagerAssignments = await prisma.opportunityAccountManager.findMany({
-            where: {
-              userId: advisor.id,
-            },
-            select: {
-              opportunityId: true,
-              opportunityType: true,
-            },
-          });
+          const accountManagerAssignments =
+            await prisma.opportunityAccountManager.findMany({
+              where: {
+                userId: advisor.id,
+              },
+              select: {
+                opportunityId: true,
+                opportunityType: true,
+              },
+            });
 
           const accountManagerClients = new Set<string>();
           for (const assignment of accountManagerAssignments) {
@@ -1644,7 +1710,9 @@ export const analyticsRouter = createTRPCRouter({
                   },
                 },
               });
-              mna?.userInterests.forEach((ui: any) => accountManagerClients.add(ui.userId));
+              mna?.userInterests.forEach((ui: any) =>
+                accountManagerClients.add(ui.userId)
+              );
             } else if (assignment.opportunityType === "REAL_ESTATE") {
               const re = await prisma.realEstate.findUnique({
                 where: { id: assignment.opportunityId },
@@ -1655,7 +1723,9 @@ export const analyticsRouter = createTRPCRouter({
                   },
                 },
               });
-              re?.userInterests.forEach((ui: any) => accountManagerClients.add(ui.userId));
+              re?.userInterests.forEach((ui: any) =>
+                accountManagerClients.add(ui.userId)
+              );
             }
           }
 
@@ -1682,22 +1752,25 @@ export const analyticsRouter = createTRPCRouter({
 
           const clientAcquisitionerClients = new Set<string>();
           [...mnaClientAcq, ...reClientAcq].forEach((opp) => {
-            opp.userInterests.forEach((ui: any) => clientAcquisitionerClients.add(ui.userId));
+            opp.userInterests.forEach((ui: any) =>
+              clientAcquisitionerClients.add(ui.userId)
+            );
           });
 
           // Deal Closure role: invested_person or followup_person
-          const dealClosureAnalytics = await prisma.opportunityAnalytics.findMany({
-            where: {
-              OR: [
-                { invested_person_id: advisor.id },
-                { followup_person_id: advisor.id },
-              ],
-            },
-            select: {
-              mergerAndAcquisitionId: true,
-              realEstateId: true,
-            },
-          });
+          const dealClosureAnalytics =
+            await prisma.opportunityAnalytics.findMany({
+              where: {
+                OR: [
+                  { invested_person_id: advisor.id },
+                  { followup_person_id: advisor.id },
+                ],
+              },
+              select: {
+                mergerAndAcquisitionId: true,
+                realEstateId: true,
+              },
+            });
 
           const dealClosureClients = new Set<string>();
           for (const analytics of dealClosureAnalytics) {
@@ -1711,7 +1784,9 @@ export const analyticsRouter = createTRPCRouter({
                   },
                 },
               });
-              mna?.userInterests.forEach((ui: any) => dealClosureClients.add(ui.userId));
+              mna?.userInterests.forEach((ui: any) =>
+                dealClosureClients.add(ui.userId)
+              );
             } else if (analytics.realEstateId) {
               const re = await prisma.realEstate.findUnique({
                 where: { id: analytics.realEstateId },
@@ -1722,7 +1797,9 @@ export const analyticsRouter = createTRPCRouter({
                   },
                 },
               });
-              re?.userInterests.forEach((ui: any) => dealClosureClients.add(ui.userId));
+              re?.userInterests.forEach((ui: any) =>
+                dealClosureClients.add(ui.userId)
+              );
             }
           }
 
@@ -1731,7 +1808,10 @@ export const analyticsRouter = createTRPCRouter({
             accountManager: accountManagerClients.size,
             clientAcquisitioner: clientAcquisitionerClients.size,
             dealClosure: dealClosureClients.size,
-            total: accountManagerClients.size + clientAcquisitionerClients.size + dealClosureClients.size,
+            total:
+              accountManagerClients.size +
+              clientAcquisitionerClients.size +
+              dealClosureClients.size,
           };
         })
       );

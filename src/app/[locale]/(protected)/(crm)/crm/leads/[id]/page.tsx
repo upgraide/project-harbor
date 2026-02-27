@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { pt, enUS } from "date-fns/locale";
+import { enUS, pt } from "date-fns/locale";
 import {
   ArrowLeftIcon,
   CalendarIcon,
@@ -22,12 +22,12 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCurrentLocale, useScopedI18n } from "@/locales/client";
-import { crmLeadsPath } from "@/paths";
-import { useTRPC } from "@/trpc/client";
 import { AddNoteDialog } from "@/features/crm/components/add-note-dialog";
 import { AssignLeadDialog } from "@/features/crm/components/assign-lead-dialog";
 import { ScheduleFollowUpDialog } from "@/features/crm/components/schedule-follow-up-dialog";
+import { useCurrentLocale, useScopedI18n } from "@/locales/client";
+import { crmLeadsPath } from "@/paths";
+import { useTRPC } from "@/trpc/client";
 
 type PageProps = {
   params: Promise<{ id: string }>;
@@ -112,7 +112,9 @@ const Page = ({ params }: PageProps) => {
     }
   };
 
-  const getPriorityBadgeVariant = (priority: string | null): "default" | "destructive" | "secondary" | "outline" => {
+  const getPriorityBadgeVariant = (
+    priority: string | null
+  ): "default" | "destructive" | "secondary" | "outline" => {
     if (!priority) return "outline";
     switch (priority) {
       case "URGENT":
@@ -139,7 +141,7 @@ const Page = ({ params }: PageProps) => {
                 <ArrowLeftIcon className="h-4 w-4" />
               </Link>
             </Button>
-            <h1 className="text-3xl font-bold">{lead.name}</h1>
+            <h1 className="font-bold text-3xl">{lead.name}</h1>
           </div>
           <p className="text-muted-foreground">{lead.email}</p>
         </div>
@@ -168,26 +170,28 @@ const Page = ({ params }: PageProps) => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.basicInfo.status")}
                 </p>
-                <Badge variant={getStatusBadgeVariant(lead.leadStatus || "NEW")}>
+                <Badge
+                  variant={getStatusBadgeVariant(lead.leadStatus || "NEW")}
+                >
                   {tLeads(`leadStatus.${lead.leadStatus || "NEW"}`)}
                 </Badge>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.basicInfo.priority")}
                 </p>
                 <Badge
-                  variant={getPriorityBadgeVariant(lead.leadPriority)}
                   className={
                     lead.leadPriority === "MEDIUM"
                       ? "bg-yellow-500/10 text-yellow-700 hover:bg-yellow-500/20 dark:text-yellow-400"
                       : lead.leadPriority === "LOW"
-                      ? "bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
-                      : ""
+                        ? "bg-green-500/10 text-green-700 hover:bg-green-500/20 dark:text-green-400"
+                        : ""
                   }
+                  variant={getPriorityBadgeVariant(lead.leadPriority)}
                 >
                   {lead.leadPriority
                     ? tLeads(`leadPriority.${lead.leadPriority}`)
@@ -200,28 +204,28 @@ const Page = ({ params }: PageProps) => {
 
             <div className="space-y-2">
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.basicInfo.company")}
                 </p>
                 <p className="font-medium">{lead.companyName || "N/A"}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.basicInfo.phone")}
                 </p>
                 <p className="font-medium">{lead.phoneNumber || "N/A"}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.basicInfo.website")}
                 </p>
                 <p className="font-medium">
                   {lead.website ? (
                     <a
-                      href={lead.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="text-primary hover:underline"
+                      href={lead.website}
+                      rel="noopener noreferrer"
+                      target="_blank"
                     >
                       {lead.website}
                     </a>
@@ -232,7 +236,7 @@ const Page = ({ params }: PageProps) => {
               </div>
               {lead.leadSource && (
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {t("sections.basicInfo.source")}
                   </p>
                   <p className="font-medium">
@@ -242,7 +246,7 @@ const Page = ({ params }: PageProps) => {
               )}
               {lead.department && (
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {t("sections.basicInfo.department")}
                   </p>
                   <p className="font-medium">
@@ -251,13 +255,13 @@ const Page = ({ params }: PageProps) => {
                 </div>
               )}
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.basicInfo.leadScore")}
                 </p>
                 <p className="font-medium">{lead.leadScore || 0}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.basicInfo.createdAt")}
                 </p>
                 <p className="font-medium">{formatDateShort(lead.createdAt)}</p>
@@ -273,14 +277,14 @@ const Page = ({ params }: PageProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {t("sections.assignment.responsible")}
               </p>
               <p className="font-medium">
                 {lead.leadResponsible ? (
                   <>
                     {lead.leadResponsible.name}
-                    <span className="ml-2 text-sm text-muted-foreground">
+                    <span className="ml-2 text-muted-foreground text-sm">
                       ({lead.leadResponsible.email})
                     </span>
                   </>
@@ -290,14 +294,14 @@ const Page = ({ params }: PageProps) => {
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {t("sections.assignment.mainContact")}
               </p>
               <p className="font-medium">
                 {lead.leadMainContact ? (
                   <>
                     {lead.leadMainContact.name}
-                    <span className="ml-2 text-sm text-muted-foreground">
+                    <span className="ml-2 text-muted-foreground text-sm">
                       ({lead.leadMainContact.email})
                     </span>
                   </>
@@ -316,7 +320,7 @@ const Page = ({ params }: PageProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {t("sections.financial.ticketSize")}
               </p>
               <p className="font-medium">
@@ -326,7 +330,7 @@ const Page = ({ params }: PageProps) => {
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {t("sections.financial.targetReturn")}
               </p>
               <p className="font-medium">
@@ -340,7 +344,7 @@ const Page = ({ params }: PageProps) => {
                 <Separator />
                 {lead.commissionRate && (
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {t("sections.financial.commissionRate")}
                     </p>
                     <p className="font-medium">
@@ -350,7 +354,7 @@ const Page = ({ params }: PageProps) => {
                 )}
                 {lead.commissionNotes && (
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {t("sections.financial.commissionNotes")}
                     </p>
                     <p className="font-medium">{lead.commissionNotes}</p>
@@ -368,7 +372,7 @@ const Page = ({ params }: PageProps) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {t("sections.timeline.lastContact")}
               </p>
               <p className="font-medium">
@@ -376,7 +380,7 @@ const Page = ({ params }: PageProps) => {
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {t("sections.timeline.nextFollowUp")}
               </p>
               <p className="font-medium">
@@ -391,7 +395,7 @@ const Page = ({ params }: PageProps) => {
             </div>
             {lead.convertedAt && (
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.timeline.converted")}
                 </p>
                 <p className="font-medium">
@@ -402,14 +406,14 @@ const Page = ({ params }: PageProps) => {
             {lead.lostAt && (
               <>
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {t("sections.timeline.lost")}
                   </p>
                   <p className="font-medium">{formatDateShort(lead.lostAt)}</p>
                 </div>
                 {lead.lostReason && (
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {t("sections.timeline.lostReason")}
                     </p>
                     <p className="font-medium">{lead.lostReason}</p>
@@ -435,7 +439,7 @@ const Page = ({ params }: PageProps) => {
             <CardContent className="space-y-4">
               {lead.type && (
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {t("sections.strategy.type")}
                   </p>
                   <p className="font-medium">{lead.type}</p>
@@ -444,12 +448,12 @@ const Page = ({ params }: PageProps) => {
               <div className="grid gap-4 md:grid-cols-3">
                 {lead.strategy1 && (
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {t("sections.strategy.strategy")} 1
                     </p>
                     <p className="font-medium">{lead.strategy1}</p>
                     {lead.segment1 && (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {lead.segment1}
                       </p>
                     )}
@@ -457,12 +461,12 @@ const Page = ({ params }: PageProps) => {
                 )}
                 {lead.strategy2 && (
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {t("sections.strategy.strategy")} 2
                     </p>
                     <p className="font-medium">{lead.strategy2}</p>
                     {lead.segment2 && (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {lead.segment2}
                       </p>
                     )}
@@ -470,12 +474,12 @@ const Page = ({ params }: PageProps) => {
                 )}
                 {lead.strategy3 && (
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {t("sections.strategy.strategy")} 3
                     </p>
                     <p className="font-medium">{lead.strategy3}</p>
                     {lead.segment3 && (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {lead.segment3}
                       </p>
                     )}
@@ -484,7 +488,7 @@ const Page = ({ params }: PageProps) => {
               </div>
               {(lead.location1 || lead.location2 || lead.location3) && (
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {t("sections.strategy.locations")}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -512,7 +516,7 @@ const Page = ({ params }: PageProps) => {
           <CardContent className="grid gap-4 md:grid-cols-2">
             {lead.representativeName && (
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.contact.representative")}
                 </p>
                 <p className="font-medium">{lead.representativeName}</p>
@@ -520,7 +524,7 @@ const Page = ({ params }: PageProps) => {
             )}
             {lead.physicalAddress && (
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.contact.physicalAddress")}
                 </p>
                 <p className="font-medium">{lead.physicalAddress}</p>
@@ -528,7 +532,7 @@ const Page = ({ params }: PageProps) => {
             )}
             {lead.acceptMarketingList !== null && (
               <div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.contact.acceptMarketing")}
                 </p>
                 <p className="font-medium">
@@ -540,7 +544,7 @@ const Page = ({ params }: PageProps) => {
             )}
             {lead.otherFacts && (
               <div className="md:col-span-2">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t("sections.contact.otherFacts")}
                 </p>
                 <p className="font-medium">{lead.otherFacts}</p>
@@ -554,8 +558,7 @@ const Page = ({ params }: PageProps) => {
           <CardHeader>
             <CardTitle>{t("sections.notes.title")}</CardTitle>
             <CardDescription>
-              {lead.notes.length}{" "}
-              {lead.notes.length === 1 ? "note" : "notes"}
+              {lead.notes.length} {lead.notes.length === 1 ? "note" : "notes"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -567,17 +570,17 @@ const Page = ({ params }: PageProps) => {
               <div className="space-y-4">
                 {lead.notes.map((note) => (
                   <div
-                    key={note.id}
                     className="rounded-lg border bg-muted/50 p-4"
+                    key={note.id}
                   >
                     <div className="mb-2 flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {t("sections.notes.by")}{" "}
                         <span className="font-medium">
                           {note.createdByUser?.name || "Unknown"}
                         </span>
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {formatDate(note.createdAt)}
                       </p>
                     </div>
@@ -603,25 +606,29 @@ const Page = ({ params }: PageProps) => {
               <div className="space-y-4">
                 {lead.lastFollowUps.map((followUp) => (
                   <div
-                    key={followUp.id}
                     className="rounded-lg border bg-muted/50 p-4"
+                    key={followUp.id}
                   >
                     <div className="mb-2 flex items-center justify-between">
                       <Badge variant="outline">
                         {formatDateShort(followUp.followUpDate)}
                       </Badge>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {formatDate(followUp.createdAt)}
                       </p>
                     </div>
-                    <p className="whitespace-pre-wrap mb-2">{followUp.description}</p>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                    <p className="mb-2 whitespace-pre-wrap">
+                      {followUp.description}
+                    </p>
+                    <div className="flex items-center gap-4 text-muted-foreground text-xs">
                       <span>
-                        {t("sections.followUps.contactedBy")}: {followUp.contactedBy.name}
+                        {t("sections.followUps.contactedBy")}:{" "}
+                        {followUp.contactedBy.name}
                       </span>
                       <span>•</span>
                       <span>
-                        {t("sections.followUps.personContacted")}: {followUp.personContacted.name}
+                        {t("sections.followUps.personContacted")}:{" "}
+                        {followUp.personContacted.name}
                       </span>
                     </div>
                   </div>
@@ -649,8 +656,8 @@ const Page = ({ params }: PageProps) => {
               <div className="space-y-4">
                 {lead.activities.map((activity) => (
                   <div
-                    key={activity.id}
                     className="flex items-start gap-4 rounded-lg border p-4"
+                    key={activity.id}
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
@@ -662,12 +669,12 @@ const Page = ({ params }: PageProps) => {
                         <p className="font-medium">{activity.title}</p>
                       </div>
                       {activity.description && (
-                        <p className="mt-2 text-sm text-muted-foreground">
+                        <p className="mt-2 text-muted-foreground text-sm">
                           {activity.description}
                         </p>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {formatDate(activity.createdAt)}
                     </p>
                   </div>
@@ -681,18 +688,18 @@ const Page = ({ params }: PageProps) => {
       {/* Dialogs */}
       <AssignLeadDialog
         leadId={leadId}
-        open={assignDialogOpen}
         onOpenChange={setAssignDialogOpen}
+        open={assignDialogOpen}
       />
       <AddNoteDialog
         leadId={leadId}
-        open={noteDialogOpen}
         onOpenChange={setNoteDialogOpen}
+        open={noteDialogOpen}
       />
       <ScheduleFollowUpDialog
         leadId={leadId}
-        open={followUpDialogOpen}
         onOpenChange={setFollowUpDialogOpen}
+        open={followUpDialogOpen}
       />
     </div>
   );

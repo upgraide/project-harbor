@@ -1,42 +1,34 @@
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AnalyticsContainer,
   AnalyticsError,
-  AnalyticsList,
+  AnalyticsFilters,
   AnalyticsLoading,
   AnalyticsOverview,
   AssetsTransactedLineChart,
   AumLineChart,
+  ClientActivityCard,
+  ClientInsights,
+  ClientInsightsFilters,
   ClientSegmentationDonutChart,
+  PerformanceFilters,
   PipelineFunnelChart,
   SectorBreakdownBarChart,
-  ClientActivityCard,
-  AdvisorPerformanceChart,
-  AnalyticsFilters,
-  ClientInsightsFilters,
-  ClientInsights,
-  PerformanceFilters,
 } from "@/features/opportunities/components/analytics";
-import {
-  AnalyticsFiltersProvider,
-} from "@/features/opportunities/context/analytics-filters";
-import {
-  ClientInsightsFiltersProvider,
-} from "@/features/opportunities/context/client-insights-filters";
-import {
-  PerformanceFiltersProvider,
-} from "@/features/opportunities/context/performance-filters";
+import { AnalyticsFiltersProvider } from "@/features/opportunities/context/analytics-filters";
+import { ClientInsightsFiltersProvider } from "@/features/opportunities/context/client-insights-filters";
+import { PerformanceFiltersProvider } from "@/features/opportunities/context/performance-filters";
 import { requireTeam } from "@/lib/auth-utils";
 import { getScopedI18n } from "@/locales/server";
 import { HydrateClient } from "@/trpc/server";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Page = async () => {
   await requireTeam();
   const t = await getScopedI18n("backoffice.analytics");
   const tInsights = await getScopedI18n("backoffice.analytics.clientInsights");
-  
+
   return (
     <AnalyticsContainer>
       <HydrateClient>
@@ -45,16 +37,18 @@ const Page = async () => {
           <AnalyticsFiltersProvider>
             <PerformanceFiltersProvider>
               <ClientInsightsFiltersProvider>
-                <Tabs defaultValue="overview" className="space-y-6">
+                <Tabs className="space-y-6" defaultValue="overview">
                   <TabsList>
                     <TabsTrigger value="overview">Overview</TabsTrigger>
                     <TabsTrigger value="charts">Charts & Metrics</TabsTrigger>
                     <TabsTrigger value="performance">Performance</TabsTrigger>
-                    <TabsTrigger value="advisor-performance">Advisor Performance</TabsTrigger>
+                    <TabsTrigger value="advisor-performance">
+                      Advisor Performance
+                    </TabsTrigger>
                   </TabsList>
 
                   {/* Overview Tab - KPIs */}
-                  <TabsContent value="overview" className="space-y-6">
+                  <TabsContent className="space-y-6" value="overview">
                     <AnalyticsFilters />
                     <ErrorBoundary fallback={<AnalyticsError />}>
                       <Suspense fallback={<AnalyticsLoading />}>
@@ -64,7 +58,7 @@ const Page = async () => {
                   </TabsContent>
 
                   {/* Charts Tab */}
-                  <TabsContent value="charts" className="space-y-6">
+                  <TabsContent className="space-y-6" value="charts">
                     <AnalyticsFilters />
                     <div className="grid gap-6 md:grid-cols-2">
                       <ErrorBoundary fallback={<AnalyticsError />}>
@@ -96,7 +90,7 @@ const Page = async () => {
                   </TabsContent>
 
                   {/* Performance Tab */}
-                  <TabsContent value="performance" className="space-y-6">
+                  <TabsContent className="space-y-6" value="performance">
                     <PerformanceFilters />
                     <ErrorBoundary fallback={<AnalyticsError />}>
                       <Suspense fallback={<AnalyticsLoading />}>
@@ -106,7 +100,10 @@ const Page = async () => {
                   </TabsContent>
 
                   {/* Advisor Performance Tab (formerly Client Insights) */}
-                  <TabsContent value="advisor-performance" className="space-y-6">
+                  <TabsContent
+                    className="space-y-6"
+                    value="advisor-performance"
+                  >
                     <ClientInsightsFilters />
                     <ErrorBoundary fallback={<AnalyticsError />}>
                       <Suspense fallback={<AnalyticsLoading />}>

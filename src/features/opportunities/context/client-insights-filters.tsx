@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import type React from "react";
+import { createContext, useContext, useState } from "react";
 
 export type ClientInsightsFilters = {
   advisorId: string | null;
@@ -18,9 +19,9 @@ type ClientInsightsFiltersContextType = {
   resetFilters: () => void;
 };
 
-const ClientInsightsFiltersContext = createContext<ClientInsightsFiltersContextType | undefined>(
-  undefined
-);
+const ClientInsightsFiltersContext = createContext<
+  ClientInsightsFiltersContextType | undefined
+>(undefined);
 
 const defaultFilters: ClientInsightsFilters = {
   advisorId: null,

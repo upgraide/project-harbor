@@ -25,7 +25,8 @@ export default {
   },
   updateDialog: {
     title: "Update Opportunity Status",
-    description: "Change the status and update final values for this opportunity",
+    description:
+      "Change the status and update final values for this opportunity",
     labels: {
       status: "New Status",
       finalAmount: "Final Transaction Amount",
@@ -50,11 +51,14 @@ export default {
       values: "Update final transaction amount when closing the opportunity",
       concluded: "Mark as concluded when the deal is finalized",
       // Commission role explanation
-      clientOriginator: "Commission role: person responsible for bringing the investor",
+      clientOriginator:
+        "Commission role: person responsible for bringing the investor",
       // NOT a commission role - clarify this
-      investedPerson: "Record only: the client/investor who invested (no commission)",
+      investedPerson:
+        "Record only: the client/investor who invested (no commission)",
       // Commission role explanation
-      followupPerson: "Commission role: person responsible for investor follow-up",
+      followupPerson:
+        "Commission role: person responsible for investor follow-up",
     },
     update: "Update Status",
     updating: "Updating...",

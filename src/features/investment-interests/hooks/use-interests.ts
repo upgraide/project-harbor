@@ -6,7 +6,9 @@ import { useTRPC } from "@/trpc/client";
 /**
  * Hook to get all interests for an M&A opportunity (Team/Admin only)
  */
-export const useGetAllMergerAndAcquisitionInterests = (opportunityId: string) => {
+export const useGetAllMergerAndAcquisitionInterests = (
+  opportunityId: string
+) => {
   const trpc = useTRPC();
 
   return useSuspenseQuery(

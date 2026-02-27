@@ -20,7 +20,7 @@ const Page = async ({ params }: Props) => {
   await requireTeam();
   const { id } = await params;
   prefetchUser(id);
-  
+
   return (
     <UserEditContainer>
       <HydrateClient>

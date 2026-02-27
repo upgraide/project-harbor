@@ -1,8 +1,9 @@
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ErrorView, LoadingView } from "@/components/entity-components";
 import {
   AlertDialog,
@@ -32,7 +33,10 @@ import {
   useSignRealEstateNDA,
 } from "@/features/opportunities/hooks/use-real-estate-interest";
 import { useSuspenseOpportunity } from "@/features/opportunities/hooks/use-real-estate-opportunities";
+import { authClient } from "@/lib/auth-client";
+import { getPusherClient } from "@/lib/pusher-client";
 import { useCurrentLocale, useScopedI18n } from "@/locales/client";
+import { useTRPC } from "@/trpc/client";
 import { LocationMap } from "./location-map";
 
 export const ViewerLoading = () => {
@@ -76,9 +80,40 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
   const handleMarkNoInterest = useMarkRealEstateNoInterest(() =>
     setUserInterest((prev) => ({ ...prev, interested: false }))
   );
-  const handleSignNDA = useSignRealEstateNDA(() =>
-    setUserInterest((prev) => ({ ...prev, ndaSigned: true }))
-  );
+  const handleSignNDA = useSignRealEstateNDA();
+
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { data: session } = authClient.useSession();
+
+  const invalidateInterestQueries = useCallback(() => {
+    queryClient.invalidateQueries(
+      trpc.realEstate.getOne.queryOptions({ id: opportunityId })
+    );
+    queryClient.invalidateQueries(
+      trpc.userInterest.getRealEstateInterest.queryOptions({
+        opportunityId,
+      })
+    );
+  }, [queryClient, trpc, opportunityId]);
+
+  // Subscribe to Pusher for real-time NDA status updates from webhook
+  useEffect(() => {
+    const email = session?.user?.email;
+    if (!email) return;
+
+    const pusher = getPusherClient();
+    const channel = pusher.subscribe(`user-${email}`);
+
+    channel.bind("nda-status-update", () => {
+      invalidateInterestQueries();
+    });
+
+    return () => {
+      channel.unbind("nda-status-update");
+      pusher.unsubscribe(`user-${email}`);
+    };
+  }, [session?.user?.email, invalidateInterestQueries]);
 
   useEffect(() => {
     setUserInterest((prev) => ({
@@ -1036,8 +1071,8 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
       )}
 
       <AlertDialog
-        open={showNotInterestedDialog}
         onOpenChange={setShowNotInterestedDialog}
+        open={showNotInterestedDialog}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -1055,7 +1090,7 @@ export const Viewer = ({ opportunityId }: { opportunityId: string }) => {
             rows={4}
             value={notInterestedReason}
           />
-          <div className="flex justify-end gap-3 mt-4">
+          <div className="mt-4 flex justify-end gap-3">
             <AlertDialogCancel disabled={handleMarkNoInterest.isPending}>
               {t("notInterestedDialog.cancel")}
             </AlertDialogCancel>

@@ -1,8 +1,8 @@
 "use client";
 
+import { Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Users } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -120,7 +120,7 @@ export const EditorHeader = ({ opportunityId }: { opportunityId: string }) => (
     <div className="flex w-full flex-row items-center justify-between gap-x-4">
       <EditorBreadcrumbs opportunityId={opportunityId} />
       <Link href={`${backofficeRealEstatePath()}/${opportunityId}/interests`}>
-        <Button variant="outline" size="sm">
+        <Button size="sm" variant="outline">
           <Users className="mr-2 h-4 w-4" />
           View Interests
         </Button>

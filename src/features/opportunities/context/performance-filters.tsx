@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import type React from "react";
+import { createContext, useContext, useState } from "react";
 
 export type PerformanceFilters = {
   leadResponsibleId: string | null;
@@ -12,9 +13,9 @@ type PerformanceFiltersContextType = {
   resetFilters: () => void;
 };
 
-const PerformanceFiltersContext = createContext<PerformanceFiltersContextType | undefined>(
-  undefined
-);
+const PerformanceFiltersContext = createContext<
+  PerformanceFiltersContextType | undefined
+>(undefined);
 
 const defaultFilters: PerformanceFilters = {
   leadResponsibleId: null,

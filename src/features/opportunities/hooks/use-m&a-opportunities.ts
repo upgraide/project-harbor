@@ -1883,32 +1883,19 @@ export const useMarkMergerAndAcquisitionNoInterest = (
 };
 
 /**
- * Hook to mark NDA as signed for an M&A opportunity
+ * Hook to start NDA signing flow for an M&A opportunity.
+ * Redirects to PandaDocs for signing on success.
  */
-export const useSignMergerAndAcquisitionNDA = (onSuccess?: () => void) => {
+export const useSignMergerAndAcquisitionNDA = () => {
   const trpc = useTRPC();
-  const queryClient = useQueryClient();
 
   return useMutation(
     trpc.userInterest.signMergerAndAcquisitionNDA.mutationOptions({
-      onSuccess: (_data, variables) => {
-        toast.success("NDA signed");
-        // Invalidate both queries to refetch and show post-NDA data
-        queryClient.invalidateQueries(
-          trpc.mergerAndAcquisition.getOne.queryOptions({
-            id: variables.opportunityId,
-          })
-        );
-        // Also invalidate the user interest query to update the interest status
-        queryClient.invalidateQueries(
-          trpc.userInterest.getMergerAndAcquisitionInterest.queryOptions({
-            opportunityId: variables.opportunityId,
-          })
-        );
-        onSuccess?.();
+      onSuccess: (data) => {
+        window.location.href = data.signingUrl;
       },
       onError: (error) => {
-        toast.error(`Failed to sign NDA: ${error.message}`);
+        toast.error(`Failed to start NDA signing: ${error.message}`);
       },
     })
   );

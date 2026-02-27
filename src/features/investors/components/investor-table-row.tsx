@@ -131,17 +131,15 @@ export const InvestorTableRow = ({
   };
 
   return (
-    <TableRow 
+    <TableRow
+      className="cursor-pointer"
       key={investor.id}
       onClick={handleRowClick}
-      className="cursor-pointer"
     >
       <TableCell className="sticky left-0 bg-background font-medium">
         {investor.companyName || "-"}
       </TableCell>
-      <TableCell>
-        {investor.name}
-      </TableCell>
+      <TableCell>{investor.name}</TableCell>
       <TableCell>{investor.email}</TableCell>
       <TableCell>{investor.representativeName || "-"}</TableCell>
       <TableCell>{investor.phoneNumber || "-"}</TableCell>
@@ -251,12 +249,7 @@ export const InvestorTableRow = ({
       {isAdmin && (
         <TableCell className="sticky right-0 z-10 bg-background">
           <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-            <Button
-              disabled={isDeleting}
-              asChild
-              size="sm"
-              variant="ghost"
-            >
+            <Button asChild disabled={isDeleting} size="sm" variant="ghost">
               <Link href={backofficeInvestorDetailPath(investor.id)}>
                 <EditIcon className="size-4" />
               </Link>

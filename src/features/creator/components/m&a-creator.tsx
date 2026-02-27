@@ -4,18 +4,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { EditIcon, EllipsisVerticalIcon, TrashIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   Bar,
   CartesianGrid,
+  Cell,
   ComposedChart,
+  LabelList,
   Line,
   XAxis,
   YAxis,
-  Cell,
-  LabelList,
 } from "recharts";
 import { toast } from "sonner";
 import z from "zod";
@@ -35,7 +35,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -43,16 +42,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { StyledUploadButton } from "@/features/editor/components/styled-upload-button";
-import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -70,7 +59,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { StyledUploadButton } from "@/features/editor/components/styled-upload-button";
 import { useCreateOpportunity } from "@/features/opportunities/hooks/use-m&a-opportunities";
 import { UserMultiSelect } from "@/features/users/components/user-multi-select";
 import { UserSelect } from "@/features/users/components/user-select";
@@ -82,6 +80,7 @@ import {
   Type,
   TypeDetails,
 } from "@/generated/prisma";
+import { cn } from "@/lib/utils";
 import { useScopedI18n } from "@/locales/client";
 import { backofficeMergeAndAcquisitionPath } from "@/paths";
 
@@ -102,15 +101,28 @@ const chartConfig = (t: (key: string) => string) =>
   }) satisfies ChartConfig;
 
 // Helper to determine if a year is future (projected)
-const getYearType = (year: string, currentYear: number = new Date().getFullYear()) => {
+const getYearType = (
+  year: string,
+  currentYear: number = new Date().getFullYear()
+) => {
   const yearNum = Number.parseInt(year);
-  return yearNum >= currentYear ? 'future' : 'historical';
+  return yearNum >= currentYear ? "future" : "historical";
 };
 
 // Helper to get CAGR label with dynamic years
-const getCAGRLabel = (graphRows: { year: string; revenue: number; ebitda: number; ebitdaMargin: number }[], t: (key: string) => string) => {
+const getCAGRLabel = (
+  graphRows: {
+    year: string;
+    revenue: number;
+    ebitda: number;
+    ebitdaMargin: number;
+  }[],
+  t: (key: string) => string
+) => {
   if (!graphRows || graphRows.length < 3) return null;
-  const sortedRows = [...graphRows].sort((a, b) => a.year.localeCompare(b.year));
+  const sortedRows = [...graphRows].sort((a, b) =>
+    a.year.localeCompare(b.year)
+  );
   const firstYear = sortedRows[0].year.slice(2, 4);
   const lastYear = sortedRows[sortedRows.length - 1].year.slice(2, 4);
   return `CAGR ${firstYear}–${lastYear}`;
@@ -153,16 +165,22 @@ const formSchema = z.object({
   exitExpectedMultiple: z.string().optional(),
   holdPeriod: z.string().optional(),
   clientAcquisitionerId: z.string().optional(),
-  accountManagerIds: z.string().array().min(1, "At least 1 account manager is required").max(2, "Maximum 2 account managers allowed"),
+  accountManagerIds: z
+    .string()
+    .array()
+    .min(1, "At least 1 account manager is required")
+    .max(2, "Maximum 2 account managers allowed"),
   images: z.string().array().optional(),
-  graphRows: z.array(
-    z.object({
-      year: z.string(),
-      revenue: z.number(),
-      ebitda: z.number(),
-      ebitdaMargin: z.number(),
-    })
-  ).optional(),
+  graphRows: z
+    .array(
+      z.object({
+        year: z.string(),
+        revenue: z.number(),
+        ebitda: z.number(),
+        ebitdaMargin: z.number(),
+      })
+    )
+    .optional(),
 });
 
 // Map industries to their allowed subsectors
@@ -193,8 +211,10 @@ export const Creator = () => {
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
-  const [graphUnit, setGraphUnit] = useState<"millions" | "thousands">("millions");
-  
+  const [graphUnit, setGraphUnit] = useState<"millions" | "thousands">(
+    "millions"
+  );
+
   // Initialize with 3 historical years and 1 future year: current, current-1, current-2, current-3
   const currentYear = new Date().getFullYear();
   const [graphRows, setGraphRows] = useState<
@@ -252,7 +272,7 @@ export const Creator = () => {
           : undefined,
         images: uploadedImages.length > 0 ? uploadedImages : undefined,
         graphRows: graphRows.length > 0 ? graphRows : undefined,
-        graphUnit: graphUnit,
+        graphUnit,
       };
       const newOpportunity = await createOpportunity.mutateAsync(submitValues);
 
@@ -286,7 +306,8 @@ export const Creator = () => {
                   endpoint="imageUploader"
                   onClientUploadComplete={async (res) => {
                     const imageUrls = res.map((file) => file.url);
-                    const totalImages = uploadedImages.length + imageUrls.length;
+                    const totalImages =
+                      uploadedImages.length + imageUrls.length;
 
                     if (totalImages > 10) {
                       toast.error(t("imagesCard.maxImagesError"));
@@ -895,14 +916,20 @@ export const Creator = () => {
                           const year = String(value);
                           const yearNum = Number.parseInt(year);
                           const currentYear = new Date().getFullYear();
-                          const suffix = yearNum >= currentYear ? t('graphCard.yearSuffixFuture') : t('graphCard.yearSuffixHistorical');
+                          const suffix =
+                            yearNum >= currentYear
+                              ? t("graphCard.yearSuffixFuture")
+                              : t("graphCard.yearSuffixHistorical");
                           return `${year.slice(0, 4)}-${suffix}`;
                         }}
                         tickLine={false}
                         tickMargin={8}
                       />
                       <YAxis
-                        domain={[0, (dataMax: number) => Math.ceil(dataMax * 1.3)]}
+                        domain={[
+                          0,
+                          (dataMax: number) => Math.ceil(dataMax * 1.3),
+                        ]}
                         hide={true}
                         stroke="#113152"
                         yAxisId="left"
@@ -934,12 +961,15 @@ export const Creator = () => {
                           fontSize: 14,
                           fontWeight: "bold",
                           fill: ((entry: any) => {
-                            const yearType = getYearType(String((entry as any)?.year || ''));
-                            if (yearType === 'future') return '#e2d8d3';
+                            const yearType = getYearType(
+                              String((entry as any)?.year || "")
+                            );
+                            if (yearType === "future") return "#e2d8d3";
                             return isDark ? "#ffffff" : "#123353";
                           }) as any,
                           formatter: (value: number) => {
-                            const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+                            const displayValue =
+                              graphUnit === "thousands" ? value * 1000 : value;
                             return Math.round(displayValue).toString();
                           },
                         }}
@@ -947,11 +977,19 @@ export const Creator = () => {
                         yAxisId="left"
                       >
                         {graphRows?.map((entry, index) => {
-                          const yearType = getYearType(String((entry as any)?.year || ''));
+                          const yearType = getYearType(
+                            String((entry as any)?.year || "")
+                          );
                           return (
                             <Cell
+                              fill={
+                                yearType === "future"
+                                  ? "#e2d8d3"
+                                  : isDark
+                                    ? "#b3a092"
+                                    : "#123353"
+                              }
                               key={`cell-${index}`}
-                              fill={yearType === 'future' ? '#e2d8d3' : (isDark ? "#b3a092" : "#123353")}
                             />
                           );
                         })}
@@ -965,38 +1003,39 @@ export const Creator = () => {
                         yAxisId="right"
                       >
                         <LabelList
-                          dataKey="ebitda"
-                          position="top"
                           content={(props: any) => {
                             const { x, y, value, index } = props;
                             if (!value && value !== 0) return null;
-                            
-                            const displayValue = graphUnit === 'thousands' ? value * 1000 : value;
+
+                            const displayValue =
+                              graphUnit === "thousands" ? value * 1000 : value;
                             const dataPoint = graphRows?.[index];
-                            const year = String(dataPoint?.year || '');
+                            const year = String(dataPoint?.year || "");
                             const yearNum = Number.parseInt(year, 10);
                             const currentYear = new Date().getFullYear();
                             const isFuture = yearNum >= currentYear;
-                            
+
                             let fillColor = "#6b6b6b";
                             if (!isDark) {
-                              fillColor = isFuture ? '#000000' : '#ffffff';
+                              fillColor = isFuture ? "#000000" : "#ffffff";
                             }
-                            
+
                             return (
                               <text
-                                x={x}
-                                y={y}
                                 dy={-6}
                                 fill={fillColor}
                                 fontSize={15}
                                 fontWeight="bold"
                                 textAnchor="middle"
+                                x={x}
+                                y={y}
                               >
                                 {Math.round(displayValue)}
                               </text>
                             );
                           }}
+                          dataKey="ebitda"
+                          position="top"
                         />
                       </Line>
                       <Line
@@ -1020,14 +1059,25 @@ export const Creator = () => {
                   </ChartContainer>
                   <div className="mt-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">{t("graphCard.unitLabel")}:</span>
-                      <Select value={graphUnit} onValueChange={(value: "millions" | "thousands") => setGraphUnit(value)}>
+                      <span className="text-muted-foreground text-sm">
+                        {t("graphCard.unitLabel")}:
+                      </span>
+                      <Select
+                        onValueChange={(value: "millions" | "thousands") =>
+                          setGraphUnit(value)
+                        }
+                        value={graphUnit}
+                      >
                         <SelectTrigger className="w-[140px]">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="millions">{t("graphCard.millions")}</SelectItem>
-                          <SelectItem value="thousands">{t("graphCard.thousands")}</SelectItem>
+                          <SelectItem value="millions">
+                            {t("graphCard.millions")}
+                          </SelectItem>
+                          <SelectItem value="thousands">
+                            {t("graphCard.thousands")}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -1044,7 +1094,15 @@ export const Creator = () => {
             <Card className="border-none bg-transparent shadow-none">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="font-bold text-lg">
-                  {graphRows.length > 0 ? t("graphCard.table.header.year") + " / " + t("graphCard.table.header.revenue") + " / " + t("graphCard.table.header.ebitda") + " / " + t("graphCard.table.header.ebitdaMargin") : t("graphCard.title")}
+                  {graphRows.length > 0
+                    ? t("graphCard.table.header.year") +
+                      " / " +
+                      t("graphCard.table.header.revenue") +
+                      " / " +
+                      t("graphCard.table.header.ebitda") +
+                      " / " +
+                      t("graphCard.table.header.ebitdaMargin")
+                    : t("graphCard.title")}
                 </CardTitle>
                 <Button
                   onClick={() => {
@@ -1070,12 +1128,16 @@ export const Creator = () => {
                   <Table>
                     <TableHeader className="bg-muted">
                       <TableRow>
-                        <TableHead>{t("graphCard.table.header.year")}</TableHead>
-                        <TableHead className="px-6 py-4 text-right">
-                          {t("graphCard.table.header.revenue")} ({graphUnit === 'millions' ? 'M€' : 'K€'})
+                        <TableHead>
+                          {t("graphCard.table.header.year")}
                         </TableHead>
                         <TableHead className="px-6 py-4 text-right">
-                          {t("graphCard.table.header.ebitda")} ({graphUnit === 'millions' ? 'M€' : 'K€'})
+                          {t("graphCard.table.header.revenue")} (
+                          {graphUnit === "millions" ? "M€" : "K€"})
+                        </TableHead>
+                        <TableHead className="px-6 py-4 text-right">
+                          {t("graphCard.table.header.ebitda")} (
+                          {graphUnit === "millions" ? "M€" : "K€"})
                         </TableHead>
                         <TableHead className="px-6 py-4 text-right">
                           {t("graphCard.table.header.ebitdaMargin")}
@@ -1089,6 +1151,7 @@ export const Creator = () => {
                       {graphRows.map((row, index) => (
                         <GraphRowTableRow
                           allRows={graphRows}
+                          autoOpen={newlyAddedIndex === index}
                           graphUnit={graphUnit}
                           key={`${row.year}-${index}`}
                           onUpdate={(updatedRows) => {
@@ -1097,7 +1160,6 @@ export const Creator = () => {
                           }}
                           row={row}
                           rowIndex={index}
-                          autoOpen={newlyAddedIndex === index}
                         />
                       ))}
                     </TableBody>
@@ -1758,7 +1820,9 @@ export const Creator = () => {
           <section>
             <Card className="border-none bg-transparent shadow-none">
               <CardHeader>
-                <CardTitle className="font-bold text-lg">{t("teamAssignmentCard.title")}</CardTitle>
+                <CardTitle className="font-bold text-lg">
+                  {t("teamAssignmentCard.title")}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <FormField
@@ -1900,10 +1964,14 @@ const GraphRowTableRow = ({
     <TableRow>
       <TableCell className="font-medium">{row.year}</TableCell>
       <TableCell className="text-right">
-        {graphUnit === 'thousands' ? Math.round(row.revenue * 1000).toString() : Math.round(row.revenue).toString()}
+        {graphUnit === "thousands"
+          ? Math.round(row.revenue * 1000).toString()
+          : Math.round(row.revenue).toString()}
       </TableCell>
       <TableCell className="text-right">
-        {graphUnit === 'thousands' ? Math.round(row.ebitda * 1000).toString() : Math.round(row.ebitda).toString()}
+        {graphUnit === "thousands"
+          ? Math.round(row.ebitda * 1000).toString()
+          : Math.round(row.ebitda).toString()}
       </TableCell>
       <TableCell className="text-right">
         {Math.round(row.ebitdaMargin)}%
@@ -1917,9 +1985,7 @@ const GraphRowTableRow = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => setIsEditOpen(true)}
-            >
+            <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
               <EditIcon className="mr-2 h-4 w-4" />
               {t("editButtonText")}
             </DropdownMenuItem>
@@ -1989,10 +2055,7 @@ const GraphRowTableRow = ({
                 />
               </div>
               <div className="space-y-2">
-                <label
-                  className="font-medium text-sm"
-                  htmlFor="ebitdaMargin"
-                >
+                <label className="font-medium text-sm" htmlFor="ebitdaMargin">
                   {t("ebitdaMargin")}
                 </label>
                 <Input
@@ -2000,8 +2063,7 @@ const GraphRowTableRow = ({
                   onChange={(e) =>
                     setEditedRow({
                       ...editedRow,
-                      ebitdaMargin:
-                        Number.parseFloat(e.target.value) || 0,
+                      ebitdaMargin: Number.parseFloat(e.target.value) || 0,
                     })
                   }
                   step="0.01"
@@ -2011,15 +2073,10 @@ const GraphRowTableRow = ({
               </div>
             </div>
             <DialogFooter>
-              <Button
-                onClick={() => setIsEditOpen(false)}
-                variant="outline"
-              >
+              <Button onClick={() => setIsEditOpen(false)} variant="outline">
                 {t("cancelButtonText")}
               </Button>
-              <Button onClick={handleSaveEdit}>
-                {t("saveButtonText")}
-              </Button>
+              <Button onClick={handleSaveEdit}>{t("saveButtonText")}</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

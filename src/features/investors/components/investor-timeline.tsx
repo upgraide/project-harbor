@@ -2,16 +2,17 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { 
-  Heart, 
-  XCircle, 
-  Building2, 
-  Home,
-  FileSignature,
+import {
+  Activity,
+  Building2,
   Calendar,
+  FileSignature,
+  Heart,
+  Home,
   StickyNote,
-  Activity
+  XCircle,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -19,7 +20,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTRPC } from "@/trpc/client";
 
@@ -53,16 +53,15 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
     trpc.investors.getActivities.queryOptions({ userId: investorId })
   );
 
-  const isLoading = interestsLoading || followUpsLoading || notesLoading || activitiesLoading;
+  const isLoading =
+    interestsLoading || followUpsLoading || notesLoading || activitiesLoading;
 
   if (isLoading || !interests || !followUps || !notes || !activities) {
     return (
       <Card>
         <CardHeader>
           <CardTitle>Complete Timeline</CardTitle>
-          <CardDescription>
-            Loading timeline...
-          </CardDescription>
+          <CardDescription>Loading timeline...</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -116,17 +115,20 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
       <CardHeader>
         <CardTitle>Complete Timeline</CardTitle>
         <CardDescription>
-          All interactions, interests, notes and activities ({timelineItems.length} total)
+          All interactions, interests, notes and activities (
+          {timelineItems.length} total)
         </CardDescription>
-        <div className="flex gap-4 mt-4 flex-wrap">
+        <div className="mt-4 flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm">
-              <span className="font-semibold">{interests.length}</span> Interests
+              <span className="font-semibold">{interests.length}</span>{" "}
+              Interests
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm">
-              <span className="font-semibold">{followUps.length}</span> Follow-ups
+              <span className="font-semibold">{followUps.length}</span>{" "}
+              Follow-ups
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -136,26 +138,30 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm">
-              <span className="font-semibold">{activities.length}</span> Activities
+              <span className="font-semibold">{activities.length}</span>{" "}
+              Activities
             </span>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         {timelineItems.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No timeline items recorded</p>
+          <p className="text-muted-foreground text-sm">
+            No timeline items recorded
+          </p>
         ) : (
           <div className="space-y-3">
             {sortedItems.map((item) => {
               if (item.type === "interest") {
                 const interest = item.data;
-                const Icon = interest.opportunityType === "mna" ? Building2 : Home;
+                const Icon =
+                  interest.opportunityType === "mna" ? Building2 : Home;
                 return (
                   <div
+                    className="relative flex gap-4 border-muted border-l-2 pb-4 pl-4 last:pb-0"
                     key={item.id}
-                    className="flex gap-4 border-l-2 border-muted pl-4 pb-4 last:pb-0 relative"
                   >
-                    <div className="absolute -left-2.5 top-1 h-5 w-5 rounded-full flex items-center justify-center border-2 border-muted bg-background">
+                    <div className="-left-2.5 absolute top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-muted bg-background">
                       {interest.interested ? (
                         <Heart className="h-2.5 w-2.5 text-green-500" />
                       ) : (
@@ -166,12 +172,16 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
                     <div className="flex-1 space-y-2 pt-1">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="mb-1 flex items-center gap-2">
                             <Icon className="h-4 w-4 text-muted-foreground" />
-                            <h4 className="font-medium">{interest.opportunityName}</h4>
+                            <h4 className="font-medium">
+                              {interest.opportunityName}
+                            </h4>
                           </div>
-                          <p className="text-xs text-muted-foreground">
-                            {interest.opportunityType === "mna" ? "Merger & Acquisition" : "Real Estate"}
+                          <p className="text-muted-foreground text-xs">
+                            {interest.opportunityType === "mna"
+                              ? "Merger & Acquisition"
+                              : "Real Estate"}
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
@@ -180,26 +190,26 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
                               Interested
                             </Badge>
                           ) : (
-                            <Badge variant="destructive">
-                              Not Interested
-                            </Badge>
+                            <Badge variant="destructive">Not Interested</Badge>
                           )}
                           {interest.ndaSigned && (
                             <Badge variant="outline">
-                              <FileSignature className="h-3 w-3 mr-1" />
+                              <FileSignature className="mr-1 h-3 w-3" />
                               NDA
                             </Badge>
                           )}
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                      <div className="grid grid-cols-2 gap-2 text-muted-foreground text-xs">
                         <div>
-                          <span className="font-medium">Date:</span> {format(item.date, "PPp")}
+                          <span className="font-medium">Date:</span>{" "}
+                          {format(item.date, "PPp")}
                         </div>
                         {interest.notInterestedReason && (
                           <div className="col-span-2">
-                            <span className="font-medium">Reason:</span> {interest.notInterestedReason}
+                            <span className="font-medium">Reason:</span>{" "}
+                            {interest.notInterestedReason}
                           </div>
                         )}
                       </div>
@@ -212,27 +222,33 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
                 const followUp = item.data;
                 return (
                   <div
+                    className="relative flex gap-4 border-muted border-l-2 pb-4 pl-4 last:pb-0"
                     key={item.id}
-                    className="flex gap-4 border-l-2 border-muted pl-4 pb-4 last:pb-0 relative"
                   >
-                    <div className="absolute -left-2.5 top-1 h-5 w-5 rounded-full flex items-center justify-center border-2 border-muted bg-background">
+                    <div className="-left-2.5 absolute top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-muted bg-background">
                       <Calendar className="h-2.5 w-2.5 text-blue-500" />
                     </div>
 
                     <div className="flex-1 space-y-2 pt-1">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="mb-1 flex items-center gap-2">
                             <h4 className="font-medium">Follow-up</h4>
-                            <Badge variant="outline">{format(item.date, "PPP")}</Badge>
+                            <Badge variant="outline">
+                              {format(item.date, "PPP")}
+                            </Badge>
                           </div>
-                          <p className="text-sm whitespace-pre-wrap mt-2">{followUp.description}</p>
+                          <p className="mt-2 whitespace-pre-wrap text-sm">
+                            {followUp.description}
+                          </p>
                         </div>
                       </div>
 
-                      <div className="text-xs text-muted-foreground">
-                        <span className="font-medium">Contacted by:</span> {followUp.contactedBy.name} • 
-                        <span className="font-medium"> Person contacted:</span> {followUp.personContacted.name}
+                      <div className="text-muted-foreground text-xs">
+                        <span className="font-medium">Contacted by:</span>{" "}
+                        {followUp.contactedBy.name} •
+                        <span className="font-medium"> Person contacted:</span>{" "}
+                        {followUp.personContacted.name}
                       </div>
                     </div>
                   </div>
@@ -243,25 +259,28 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
                 const note = item.data;
                 return (
                   <div
+                    className="relative flex gap-4 border-muted border-l-2 pb-4 pl-4 last:pb-0"
                     key={item.id}
-                    className="flex gap-4 border-l-2 border-muted pl-4 pb-4 last:pb-0 relative"
                   >
-                    <div className="absolute -left-2.5 top-1 h-5 w-5 rounded-full flex items-center justify-center border-2 border-muted bg-background">
+                    <div className="-left-2.5 absolute top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-muted bg-background">
                       <StickyNote className="h-2.5 w-2.5 text-yellow-500" />
                     </div>
 
                     <div className="flex-1 space-y-2 pt-1">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="mb-1 flex items-center gap-2">
                             <h4 className="font-medium">Note</h4>
                           </div>
-                          <p className="text-sm whitespace-pre-wrap mt-2">{note.note}</p>
+                          <p className="mt-2 whitespace-pre-wrap text-sm">
+                            {note.note}
+                          </p>
                         </div>
                       </div>
 
-                      <div className="text-xs text-muted-foreground">
-                        <span className="font-medium">By:</span> {note.createdByUser.name} • 
+                      <div className="text-muted-foreground text-xs">
+                        <span className="font-medium">By:</span>{" "}
+                        {note.createdByUser.name} •
                         <span> {format(item.date, "PPp")}</span>
                       </div>
                     </div>
@@ -273,27 +292,31 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
                 const activity = item.data;
                 return (
                   <div
+                    className="relative flex gap-4 border-muted border-l-2 pb-4 pl-4 last:pb-0"
                     key={item.id}
-                    className="flex gap-4 border-l-2 border-muted pl-4 pb-4 last:pb-0 relative"
                   >
-                    <div className="absolute -left-2.5 top-1 h-5 w-5 rounded-full flex items-center justify-center border-2 border-muted bg-background">
+                    <div className="-left-2.5 absolute top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-muted bg-background">
                       <Activity className="h-2.5 w-2.5 text-purple-500" />
                     </div>
 
                     <div className="flex-1 space-y-2 pt-1">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Badge variant="outline">{activity.activityType}</Badge>
+                          <div className="mb-1 flex items-center gap-2">
+                            <Badge variant="outline">
+                              {activity.activityType}
+                            </Badge>
                             <h4 className="font-medium">{activity.title}</h4>
                           </div>
                           {activity.description && (
-                            <p className="text-sm text-muted-foreground mt-2">{activity.description}</p>
+                            <p className="mt-2 text-muted-foreground text-sm">
+                              {activity.description}
+                            </p>
                           )}
                         </div>
                       </div>
 
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-muted-foreground text-xs">
                         {format(item.date, "PPp")}
                       </div>
                     </div>
@@ -309,4 +332,3 @@ export const InvestorTimeline = ({ investorId }: InvestorTimelineProps) => {
     </Card>
   );
 };
-

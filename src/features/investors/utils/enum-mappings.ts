@@ -3,10 +3,10 @@ import type {
   InvestorClientType,
   InvestorSegment,
   InvestorStrategy,
-  TeamMember,
-  LeadStatus,
   LeadPriority,
   LeadSource,
+  LeadStatus,
+  TeamMember,
 } from "@/generated/prisma";
 
 export const investorClientTypeLabels: Record<InvestorClientType, string> = {
